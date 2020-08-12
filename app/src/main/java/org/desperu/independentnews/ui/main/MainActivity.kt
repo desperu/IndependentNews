@@ -15,7 +15,7 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.filter.FiltersMotionLayout
-import org.desperu.independentnews.utils.bindView
+import org.desperu.independentnews.extension.design.bindView
 
 
 var animationPlaybackSpeed: Double = 0.8

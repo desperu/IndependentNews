@@ -8,10 +8,10 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
-import org.desperu.independentnews.utils.bindColor
-import org.desperu.independentnews.utils.bindOptionalViews
-import org.desperu.independentnews.utils.blendColors
-import org.desperu.independentnews.utils.getValueAnimator
+import org.desperu.independentnews.extension.design.bindColor
+import org.desperu.independentnews.extension.design.bindOptionalViews
+import org.desperu.independentnews.extension.design.blendColors
+import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.views.FilterSeekbar
 
 /**
@@ -58,11 +58,20 @@ class FiltersPagerAdapter(context: Context, private val listener: (updatedPositi
                 if (isToggled) selectedList -= index
                 else selectedList += index
 
-                val toggleAnimator = getValueAnimator(!isToggled,
-                        toggleAnimDuration, DecelerateInterpolator()) { progress ->
+                val toggleAnimator =
+                    getValueAnimator(
+                        !isToggled,
+                        toggleAnimDuration, DecelerateInterpolator()
+                    ) { progress ->
 
-                    filterView.setColorFilter(blendColors(unselectedColor, selectedColor, progress))
-                }
+                        filterView.setColorFilter(
+                            blendColors(
+                                unselectedColor,
+                                selectedColor,
+                                progress
+                            )
+                        )
+                    }
                 toggleAnimator.start()
 
                 listener(position, selectedMap)

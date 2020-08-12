@@ -15,8 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
-
-import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.extension.design.*
 
 /** List Model. A sample model that only contains id */
 data class MainListModel(val id: Int)
@@ -105,9 +104,10 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
 
     private fun expandItem(holder: ListViewHolder, expand: Boolean, animate: Boolean) {
         if (animate) {
-            val animator = getValueAnimator(
+            val animator =
+                getValueAnimator(
                     expand, listItemExpandDuration, AccelerateDecelerateInterpolator()
-            ) { progress -> setExpandProgress(holder, progress) }
+                ) { progress -> setExpandProgress(holder, progress) }
 
             if (expand) animator.doOnStart { holder.expandView.isVisible = true }
             else animator.doOnEnd { holder.expandView.isVisible = false }
@@ -152,7 +152,13 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
         holder.cardContainer.layoutParams.width =
                 (originalWidth + (expandedWidth - originalWidth) * progress).toInt()
 
-        holder.cardContainer.setBackgroundColor(blendColors(originalBg, expandedBg, progress))
+        holder.cardContainer.setBackgroundColor(
+            blendColors(
+                originalBg,
+                expandedBg,
+                progress
+            )
+        )
         holder.cardContainer.requestLayout()
 
         holder.chevron.rotation = 90 * progress
@@ -168,16 +174,18 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
     fun getScaleDownAnimator(isScaledDown: Boolean): ValueAnimator {
         val lm = recyclerView.layoutManager as LinearLayoutManager
 
-        val animator = getValueAnimator(isScaledDown,
+        val animator =
+            getValueAnimator(
+                isScaledDown,
                 duration = 300L, interpolator = AccelerateDecelerateInterpolator()
-        ) { progress ->
+            ) { progress ->
 
-            // Get viewHolder for all visible items and animate attributes
-            for (i in lm.visibleItemsRange) {
-                val holder = recyclerView.findViewHolderForLayoutPosition(i) as ListViewHolder
-                setScaleDownProgress(holder, i, progress)
+                // Get viewHolder for all visible items and animate attributes
+                for (i in lm.visibleItemsRange) {
+                    val holder = recyclerView.findViewHolderForLayoutPosition(i) as ListViewHolder
+                    setScaleDownProgress(holder, i, progress)
+                }
             }
-        }
 
         // Set adapter variable when animation starts so that newly binded views in
         // onBindViewHolder will respect the new size when they come into the screen

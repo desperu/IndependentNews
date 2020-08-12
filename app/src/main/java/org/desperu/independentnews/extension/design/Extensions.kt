@@ -1,4 +1,4 @@
-package org.desperu.independentnews.utils
+package org.desperu.independentnews.extension.design
 
 import android.animation.TimeInterpolator
 import android.animation.ValueAnimator

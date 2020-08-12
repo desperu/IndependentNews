@@ -11,7 +11,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.MainListAdapter
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
-import org.desperu.independentnews.utils.bindView
+import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.views.MultiListenerMotionLayout
 import org.desperu.independentnews.views.NoScrollRecyclerView
 import kotlinx.coroutines.launch

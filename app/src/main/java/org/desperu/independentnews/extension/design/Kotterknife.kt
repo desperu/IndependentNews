@@ -1,4 +1,4 @@
-package org.desperu.independentnews.utils
+package org.desperu.independentnews.extension.design
 
 import android.app.Activity
 import android.app.Dialog
@@ -28,79 +28,108 @@ import kotlin.reflect.KProperty
 
 
 fun <V : View> Any.bindView(fragment: Fragment, id: Int, onInitializedListener: ((V) -> Unit)? = null)
-        : ReadOnlyProperty<Any, V> = required(id, fragment.viewFinderAny, onInitializedListener)
+        : ReadOnlyProperty<Any, V> =
+    required(
+        id,
+        fragment.viewFinderAny,
+        onInitializedListener
+    )
 
 fun <V : View> View.bindView(id: Int)
-        : ReadOnlyProperty<View, V> = required(id, viewFinder)
+        : ReadOnlyProperty<View, V> =
+    required(id, viewFinder)
 
 fun <V : View> Activity.bindView(id: Int)
-        : ReadOnlyProperty<Activity, V> = required(id, viewFinder)
+        : ReadOnlyProperty<Activity, V> =
+    required(id, viewFinder)
 
 fun <V : View> Dialog.bindView(id: Int)
-        : ReadOnlyProperty<Dialog, V> = required(id, viewFinder)
+        : ReadOnlyProperty<Dialog, V> =
+    required(id, viewFinder)
 
 fun <V : View> DialogFragment.bindView(id: Int)
-        : ReadOnlyProperty<DialogFragment, V> = required(id, viewFinder)
+        : ReadOnlyProperty<DialogFragment, V> =
+    required(id, viewFinder)
 
 fun <V : View> Fragment.bindView(id: Int)
-        : ReadOnlyProperty<Fragment, V> = required(id, viewFinder)
+        : ReadOnlyProperty<Fragment, V> =
+    required(id, viewFinder)
 
 fun <V : View> RecyclerView.ViewHolder.bindView(id: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, V> = required(id, viewFinder)
+        : ReadOnlyProperty<RecyclerView.ViewHolder, V> =
+    required(id, viewFinder)
 
 fun <V : View> View.bindOptionalView(id: Int)
-        : ReadOnlyProperty<View, V?> = optional(id, viewFinder)
+        : ReadOnlyProperty<View, V?> =
+    optional(id, viewFinder)
 
 fun <V : View> Activity.bindOptionalView(id: Int)
-        : ReadOnlyProperty<Activity, V?> = optional(id, viewFinder)
+        : ReadOnlyProperty<Activity, V?> =
+    optional(id, viewFinder)
 
 fun <V : View> Dialog.bindOptionalView(id: Int)
-        : ReadOnlyProperty<Dialog, V?> = optional(id, viewFinder)
+        : ReadOnlyProperty<Dialog, V?> =
+    optional(id, viewFinder)
 
 fun <V : View> DialogFragment.bindOptionalView(id: Int)
-        : ReadOnlyProperty<DialogFragment, V?> = optional(id, viewFinder)
+        : ReadOnlyProperty<DialogFragment, V?> =
+    optional(id, viewFinder)
 
 fun <V : View> Fragment.bindOptionalView(id: Int)
-        : ReadOnlyProperty<Fragment, V?> = optional(id, viewFinder)
+        : ReadOnlyProperty<Fragment, V?> =
+    optional(id, viewFinder)
 
 fun <V : View> RecyclerView.ViewHolder.bindOptionalView(id: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, V?> = optional(id, viewFinder)
+        : ReadOnlyProperty<RecyclerView.ViewHolder, V?> =
+    optional(id, viewFinder)
 
 fun <V : View> View.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<View, List<V>> = required(ids, viewFinder)
+        : ReadOnlyProperty<View, List<V>> =
+    required(ids, viewFinder)
 
 fun <V : View> Activity.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<Activity, List<V>> = required(ids, viewFinder)
+        : ReadOnlyProperty<Activity, List<V>> =
+    required(ids, viewFinder)
 
 fun <V : View> Dialog.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<Dialog, List<V>> = required(ids, viewFinder)
+        : ReadOnlyProperty<Dialog, List<V>> =
+    required(ids, viewFinder)
 
 fun <V : View> DialogFragment.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<DialogFragment, List<V>> = required(ids, viewFinder)
+        : ReadOnlyProperty<DialogFragment, List<V>> =
+    required(ids, viewFinder)
 
 fun <V : View> Fragment.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<Fragment, List<V>> = required(ids, viewFinder)
+        : ReadOnlyProperty<Fragment, List<V>> =
+    required(ids, viewFinder)
 
 fun <V : View> RecyclerView.ViewHolder.bindViews(vararg ids: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> = required(ids, viewFinder)
+        : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> =
+    required(ids, viewFinder)
 
 fun <V : View> View.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<View, List<V>> = optional(ids, viewFinder)
+        : ReadOnlyProperty<View, List<V>> =
+    optional(ids, viewFinder)
 
 fun <V : View> Activity.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<Activity, List<V>> = optional(ids, viewFinder)
+        : ReadOnlyProperty<Activity, List<V>> =
+    optional(ids, viewFinder)
 
 fun <V : View> Dialog.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<Dialog, List<V>> = optional(ids, viewFinder)
+        : ReadOnlyProperty<Dialog, List<V>> =
+    optional(ids, viewFinder)
 
 fun <V : View> DialogFragment.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<DialogFragment, List<V>> = optional(ids, viewFinder)
+        : ReadOnlyProperty<DialogFragment, List<V>> =
+    optional(ids, viewFinder)
 
 fun <V : View> Fragment.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<Fragment, List<V>> = optional(ids, viewFinder)
+        : ReadOnlyProperty<Fragment, List<V>> =
+    optional(ids, viewFinder)
 
 fun <V : View> RecyclerView.ViewHolder.bindOptionalViews(vararg ids: Int)
-        : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> = optional(ids, viewFinder)
+        : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> =
+    optional(ids, viewFinder)
 
 private val Fragment.viewFinderAny: Any.(Int) -> View?
     get() = { view?.findViewById(it) }
@@ -128,22 +157,32 @@ private fun <T, V : View> required(
         onInitializedListener: ((V) -> Unit)? = null
 ) = Lazy { t: T, desc ->
     t.finder(id) as V?
-            ?: viewNotFound(id, desc)
+        ?: viewNotFound(id, desc)
 }.apply { this.onInitializedListener = onInitializedListener }
 
 @Suppress("UNCHECKED_CAST")
-private fun <T, V : View> optional(id: Int, finder: T.(Int) -> View?) = Lazy { t: T, desc -> t.finder(id) as V? }
+private fun <T, V : View> optional(id: Int, finder: T.(Int) -> View?) =
+    Lazy { t: T, desc -> t.finder(id) as V? }
 
 @Suppress("UNCHECKED_CAST")
-private fun <T, V : View> required(ids: IntArray, finder: T.(Int) -> View?) = Lazy { t: T, desc ->
-    ids.map {
-        t.finder(it) as V?
-                ?: viewNotFound(it, desc)
+private fun <T, V : View> required(ids: IntArray, finder: T.(Int) -> View?) =
+    Lazy { t: T, desc ->
+        ids.map {
+            t.finder(it) as V?
+                ?: viewNotFound(
+                    it,
+                    desc
+                )
+        }
     }
-}
 
 @Suppress("UNCHECKED_CAST")
-private fun <T, V : View> optional(ids: IntArray, finder: T.(Int) -> View?) = Lazy { t: T, desc -> ids.map { t.finder(it) as V? }.filterNotNull() }
+private fun <T, V : View> optional(ids: IntArray, finder: T.(Int) -> View?) =
+    Lazy { t: T, desc ->
+        ids.map {
+            t.finder(it) as V?
+        }.filterNotNull()
+    }
 
 // Like Kotlin's lazy delegate but the initializer gets the target and metadata passed to it
 private class Lazy<T, V>(private val initializer: (T, KProperty<*>) -> V)
@@ -153,7 +192,8 @@ private class Lazy<T, V>(private val initializer: (T, KProperty<*>) -> V)
 
     private object EMPTY
 
-    private var value: Any? = EMPTY
+    private var value: Any? =
+        EMPTY
     private var attachedToLifecycleOwner = false
 
     override fun getValue(thisRef: T, property: KProperty<*>): V {

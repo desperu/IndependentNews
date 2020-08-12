@@ -9,8 +9,8 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
-import org.desperu.independentnews.utils.bindView
-import org.desperu.independentnews.utils.setScale
+import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.design.setScale
 
 class FiltersTabsAdapter(context: Context, private val listener: (Int) -> Unit) : RecyclerView.Adapter<FiltersTabsAdapter.FiltersTabsViewHolder>() {
 

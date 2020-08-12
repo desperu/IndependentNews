@@ -11,7 +11,7 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import org.desperu.independentnews.R
-import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.extension.design.*
 import org.desperu.independentnews.views.NoScrollHorizontalLayoutManager
 import org.desperu.independentnews.views.NoScrollRecyclerView
 
@@ -84,9 +84,21 @@ class ViewPagerTabsHandler(
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     currentTabView.findViewById<View>(R.id.tab_pill).backgroundTintList =
-                            ColorStateList.valueOf(blendColors(tabColor, tabSelectedColor, 1 - positionOffset))
+                            ColorStateList.valueOf(
+                                blendColors(
+                                    tabColor,
+                                    tabSelectedColor,
+                                    1 - positionOffset
+                                )
+                            )
                     nextTabView?.findViewById<View>(R.id.tab_pill)?.backgroundTintList =
-                        ColorStateList.valueOf(blendColors(tabColor, tabSelectedColor, positionOffset))
+                        ColorStateList.valueOf(
+                            blendColors(
+                                tabColor,
+                                tabSelectedColor,
+                                positionOffset
+                            )
+                        )
                 } else {
                     val previousTabView = tabsRecyclerView.layoutManager?.findViewByPosition(position - 1)
                     previousTabView?.findViewById<View>(R.id.tab_pill)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
@@ -138,7 +150,12 @@ class ViewPagerTabsHandler(
             this.bottomBarAnimator = bottomBarAnimator.clone()
             this.hasActiveFilters = !this.hasActiveFilters
             this.bottomBarAnimator?.addUpdateListener { animation ->
-                val color = blendColors(bottomBarColor, bottomBarPinkColor, animation.animatedValue as Float)
+                val color =
+                    blendColors(
+                        bottomBarColor,
+                        bottomBarPinkColor,
+                        animation.animatedValue as Float
+                    )
                 bottomBarCardView.setCardBackgroundColor(color)
             }
             this.bottomBarAnimator?.duration = toggleAnimDuration
