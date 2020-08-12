@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Build
+import android.os.Handler
 import android.view.View
 import androidx.cardview.widget.CardView
 import androidx.core.view.updatePadding
@@ -126,15 +127,15 @@ class ViewPagerTabsHandler(
      */
     private fun onFilterSelected(updatedPosition: Int, selectedMap: Map<Int, List<Int>>) {
         val hasActiveFilters = selectedMap.filterValues { it.isNotEmpty() }.isNotEmpty()
-        val valueAnimator =
-                if (hasActiveFilters && !this.hasActiveFilters) floatArrayOf(0f, 1f)
-                else if (!hasActiveFilters && this.hasActiveFilters) floatArrayOf(1f, 0f)
-                else null
+        val bottomBarAnimator =
+            if (hasActiveFilters && !this.hasActiveFilters) ValueAnimator.ofFloat(0f, 1f)
+            else if (!hasActiveFilters && this.hasActiveFilters) ValueAnimator.ofFloat(1f, 0f)
+            else null
 
         tabsAdapter.updateBadge(updatedPosition, !selectedMap[updatedPosition].isNullOrEmpty())
 
-        valueAnimator?.let {
-            this.bottomBarAnimator = ValueAnimator.ofFloat(*it)
+        bottomBarAnimator?.let {
+            this.bottomBarAnimator = bottomBarAnimator.clone()
             this.hasActiveFilters = !this.hasActiveFilters
             this.bottomBarAnimator?.addUpdateListener { animation ->
                 val color = blendColors(bottomBarColor, bottomBarPinkColor, animation.animatedValue as Float)
@@ -142,6 +143,14 @@ class ViewPagerTabsHandler(
             }
             this.bottomBarAnimator?.duration = toggleAnimDuration
             this.bottomBarAnimator?.start()
+        }
+
+        // To correct Motion Layout reset color when change tab and select filter
+        if (bottomBarAnimator == null) {
+            Handler().postDelayed({
+                this.bottomBarAnimator?.duration = 0
+                this.bottomBarAnimator?.start()
+            }, 50)
         }
     }
 }

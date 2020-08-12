@@ -75,14 +75,14 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                 toolbarTitle.scaleX = if (scale < minScale) minScale else scale
                 toolbarTitle.scaleY = toolbarTitle.scaleX
             }
-        } else if (dyUnconsumed < 0) {
+        } else if (dyConsumed < 0) {
 
             // scroll down
             if (toolbar.layoutParams.height < toolbarOriginalHeight) {
 
                 //--- expand toolbar
-                // subtract because dyUnconsumed is < 0
-                val height = toolbar.layoutParams.height - dyUnconsumed
+                // subtract because dyConsumed is < 0
+                val height = toolbar.layoutParams.height - dyConsumed
                 toolbar.layoutParams.height = if (height > toolbarOriginalHeight) toolbarOriginalHeight.toInt() else height
                 toolbar.requestLayout()
 
