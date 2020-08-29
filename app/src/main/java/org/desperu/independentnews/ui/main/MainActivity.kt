@@ -2,10 +2,10 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.os.Bundle
+import android.content.Intent
+import android.os.Handler
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,14 +14,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
+import org.desperu.independentnews.base.BaseActivity
+import org.desperu.independentnews.di.module.networkModule
+import org.desperu.independentnews.di.module.viewModelModule
 import org.desperu.independentnews.ui.filter.FiltersMotionLayout
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.ui.ARTICLE
+import org.desperu.independentnews.ui.ShowArticleActivity
+import org.desperu.independentnews.ui.TITLE
+import org.jsoup.Jsoup
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 var animationPlaybackSpeed: Double = 0.8
 
-class MainActivity : AppCompatActivity() {
+class MainActivity: BaseActivity(viewModelModule, networkModule) {
 
+    // FOR UI
     private val recyclerView: RecyclerView by bindView(R.id.recycler_view)
     private val appbar: AppBarLayout by bindView(R.id.appbar)
     private val drawerIcon: View by bindView(R.id.drawer_icon)
@@ -32,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     private val animationSpeedSeekbar: CrystalSeekbar by bindView(R.id.animation_speed_seekbar)
     private val animationSpeedText: TextView by bindView(R.id.animation_speed_text)
 
+    // FOR DATA
+    private val viewModel by viewModel<MainViewModel>()
     private lateinit var mainListAdapter: MainListAdapter
     private val loadingDuration: Long
         get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
@@ -54,26 +65,48 @@ class MainActivity : AppCompatActivity() {
             mainListAdapter.isFiltered = value
         }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Methods
-    ///////////////////////////////////////////////////////////////////////////
+    // --------------
+    // BASE METHODS
+    // --------------
 
-    @SuppressLint("SetTextI18n")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    override fun getActivityLayout(): Int = R.layout.activity_main
 
-        // Appbar behavior init
+    override fun configureDesign() {
+//        configureKoinDependency()
+        configureAppBar()
+        configureDrawerLayout()
+//        configureNavigationView()
+//        configureViewModel()
+        configureRecyclerView()
+        testRequest()
+    }
+
+    // -----------------
+    // CONFIGURATION
+    // -----------------
+
+    /**
+     * Configure koin dependency for main communication interface.
+     */
+//    private fun configureKoinDependency() = get<MainCommunication> { parametersOf(this@MainActivity) }
+
+    /**
+     * Configure App Bar.
+     */
+    private fun configureAppBar() {
         (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior = ToolbarBehavior()
+        // TODO wrap toolbar in appBar to allow menu item usage
+    }
 
-        // RecyclerView Init
-        mainListAdapter = MainListAdapter(this)
-        recyclerView.adapter = mainListAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.setHasFixedSize(true)
-        updateRecyclerViewAnimDuration()
-
-        // Nav Drawer Init
+    /**
+     * Configure Drawer layout.
+     */
+    @SuppressLint("SetTextI18n")
+    private fun configureDrawerLayout() {
+//        val toggle = ActionBarDrawerToggle(this, activity_main_drawer_layout, toolbar,
+//            R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+//        activity_main_drawer_layout.addDrawerListener(toggle)
+//        toggle.syncState()
         animationSpeedSeekbar.setOnSeekbarChangeListener { value ->
             animationPlaybackSpeed = value as Double
             animationSpeedText.text = "${"%.1f".format(animationPlaybackSpeed)}x"
@@ -81,6 +114,82 @@ class MainActivity : AppCompatActivity() {
             updateRecyclerViewAnimDuration()
         }
         drawerIcon.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
+    }
+
+    /**
+     * Configure Recycler view.
+     */
+    private fun configureRecyclerView() {
+        mainListAdapter = MainListAdapter(this)
+        recyclerView.adapter = mainListAdapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.setHasFixedSize(true)
+        updateRecyclerViewAnimDuration()
+    }
+
+    private fun testRequest() { // TODO for test
+//        viewModel.getResults()
+//
+//        Handler().postDelayed( {
+//            val rssXml = viewModel.getResults()
+//            println("Rss Xml result :")
+//            println(rssXml)
+//            println(rssXml?.channel?.language)
+//            println(rssXml?.channel?.articleList?.get(0)?.title)
+//        }, 2000)
+//
+//        viewModel.getArticle()
+//
+//        var title: String
+//        var article = String()
+//
+//        Handler().postDelayed( {
+//            val pageHtml = viewModel.getArticle()
+//            val document = Jsoup.parse(pageHtml?.string())
+//            val element = document.select("li")
+//            element.forEach {
+//                if (it.attr("class") == "active") {
+//                    println("Page Html result :")
+//                    println(it.attr("class"))
+//                    println(it.child(0).ownText())
+//                }
+//
+//            }
+//            val elementTitle = document.select("title")
+//            title = elementTitle[0].ownText()
+//            if (!title.isNullOrBlank()) println("Title : $title")
+//
+//            val element2 = document.select("img")
+//            element2.forEach {
+//                if (it.attr("class") == "adapt-img spip_logo spip_logos intrinsic" && it.attr("itemprop") == "image") {
+//                    println(it.attr("src"))
+//                    println("Width : ${it.attr("width")}")
+//                    println("Height : ${it.attr("height")}")
+//                }
+//            }
+//            val element3 = document.select("div")
+//            element3.forEach {
+////                if (it.attr("itemprop") == "articleBody") {
+//                if (it.attr("class") == "main") {
+//                    println(it.child(0).data())
+//                    println("outerHtml : ${it.outerHtml()}")
+//                    article = it.outerHtml()
+//                }
+//            }
+//
+//            showArticleActivity(title, article)
+//        }, 2000)
+
+        viewModel.getArticle()
+
+        Handler().postDelayed( {
+            showArticleActivity(viewModel.getArticle()?.getTitle(), viewModel.getArticle()?.getArticle())
+        }, 2000)
+    }
+
+    private fun showArticleActivity(title: String?, article: String?) {
+        startActivity(Intent(this, ShowArticleActivity::class.java).putExtra(TITLE, title).putExtra(
+            ARTICLE, article))
     }
 
     /**
