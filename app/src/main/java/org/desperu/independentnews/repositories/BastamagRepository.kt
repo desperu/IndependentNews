@@ -82,7 +82,7 @@ class BastamagRepositoryImpl(
      */
     override suspend fun getRssArticles(): List<Article>? {
         val articleList = rssService.getRssArticles().channel?.articleList
-        articleList?.forEach { it.imageUrl = BastamagArticle(webService.getArticle(it.url.toString()), 0).getImage()[0].toString() }
+        articleList?.forEach { it.imageUrl = BastamagArticle(webService.getArticle(it.url.toString())).getImage()[0].toString() }
 //        persist(articleList)
         return articleList
     }

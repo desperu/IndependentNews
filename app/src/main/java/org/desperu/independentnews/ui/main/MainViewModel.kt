@@ -27,7 +27,7 @@ class MainViewModel(private val bastamagRssService: BastamagRssService,
     }
 
     private fun fetchArticle() = viewModelScope.launch {
-        article = BastamagArticle(bastamagWebService.getArticle("reformes-police-Defund-police-cameras-pietons-desarmement"), 0)
+        article = BastamagArticle(bastamagWebService.getArticle("reformes-police-Defund-police-cameras-pietons-desarmement"))
     }
 
     // --- GETTERS ---
