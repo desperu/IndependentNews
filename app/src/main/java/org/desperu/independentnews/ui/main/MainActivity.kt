@@ -15,20 +15,17 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.BaseActivity
-import org.desperu.independentnews.di.module.networkModule
-import org.desperu.independentnews.di.module.viewModelModule
 import org.desperu.independentnews.ui.filter.FiltersMotionLayout
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.ui.ARTICLE
 import org.desperu.independentnews.ui.ShowArticleActivity
 import org.desperu.independentnews.ui.TITLE
-import org.jsoup.Jsoup
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 var animationPlaybackSpeed: Double = 0.8
 
-class MainActivity: BaseActivity(viewModelModule, networkModule) {
+class MainActivity: BaseActivity() {
 
     // FOR UI
     private val recyclerView: RecyclerView by bindView(R.id.recycler_view)

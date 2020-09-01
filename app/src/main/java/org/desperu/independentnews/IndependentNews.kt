@@ -2,6 +2,9 @@ package org.desperu.independentnews
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import org.desperu.independentnews.di.module.dbModule
+import org.desperu.independentnews.di.module.networkModule
+import org.desperu.independentnews.di.module.repositoryModule
 import org.desperu.independentnews.di.module.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -19,7 +22,7 @@ class IndependentNews : Application() {
             startKoin {
                 androidLogger()
                 androidContext(this@IndependentNews)
-//                modules(listOf(viewModelModule))
+                modules(listOf(dbModule, networkModule, repositoryModule, viewModelModule))
             }
         }
 
