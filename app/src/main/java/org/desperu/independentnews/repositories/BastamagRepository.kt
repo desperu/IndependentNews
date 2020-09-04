@@ -4,8 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.api.bastamag.BastamagArticle
-import org.desperu.independentnews.models.api.rss.RssArticle
+import org.desperu.independentnews.models.web.bastamag.BastamagArticle
+import org.desperu.independentnews.models.web.rss.RssArticle
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
 
@@ -86,16 +86,17 @@ class BastamagRepositoryImpl(
      * @return the list of articles from the Rss flux of Bastamag.
      */
     override suspend fun getRssArticles(): List<RssArticle>? {
-        val rssArticleList = rssService.getRssArticles().channel.rssArticleList
-        rssArticleList.let {
+        val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
+        return if (rssArticleList != null) {
             rssArticleList.forEach {
                 it.imageUrl =
-                    BastamagArticle(webService.getArticle(it.url)).getImage()[0].toString()
+                    BastamagArticle(webService.getArticle(it.url.toString())).getImage()[0].toString()
             }
             val articleList = rssArticleList.map { it.toArticle() }
             persist(articleList)
-        }
-        return rssArticleList
+            return rssArticleList
+        } else
+            null
     }
 
     /**

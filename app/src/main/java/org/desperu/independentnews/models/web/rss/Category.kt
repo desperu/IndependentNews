@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.api.rss
+package org.desperu.independentnews.models.web.rss
 
 import com.tickaroo.tikxml.annotation.TextContent
 import com.tickaroo.tikxml.annotation.Xml
@@ -17,7 +17,7 @@ import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 data class Category(
 
     @TextContent(writeAsCData = true)
-    var category: String
+    var category: String?
 ) {
 
     init {

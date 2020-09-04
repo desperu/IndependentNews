@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.api.bastamag
+package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
 

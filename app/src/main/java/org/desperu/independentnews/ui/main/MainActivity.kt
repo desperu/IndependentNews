@@ -15,7 +15,7 @@ import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.BaseActivity
-import org.desperu.independentnews.ui.filter.FiltersMotionLayout
+import org.desperu.independentnews.ui.main.filter.FiltersMotionLayout
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.ui.ARTICLE
 import org.desperu.independentnews.ui.ShowArticleActivity
@@ -181,6 +181,12 @@ class MainActivity: BaseActivity() {
 
         Handler().postDelayed( {
             showArticleActivity(viewModel.getArticle()?.getTitle(), viewModel.getArticle()?.getArticle())
+        }, 2000)
+
+        viewModel.getResults()
+
+        Handler().postDelayed( {
+            println(viewModel.getResults()?.channel?.rssArticleList?.get(0)?.description)
         }, 2000)
     }
 

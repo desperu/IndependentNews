@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.api.rss
+package org.desperu.independentnews.models.web.rss
 
 import com.tickaroo.tikxml.annotation.Attribute
 import com.tickaroo.tikxml.annotation.Element
@@ -19,8 +19,8 @@ import com.tickaroo.tikxml.annotation.Xml
 data class Channel(
 
     @Attribute(name = "xml:lang")
-    val language: String,
+    val language: String?,
 
     @Element(name = "item")
-    val rssArticleList: List<RssArticle>
+    val rssArticleList: List<RssArticle>?
 )

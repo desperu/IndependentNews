@@ -56,7 +56,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:listitem="@layout/item_list" />
 
-        <org.desperu.independentnews.ui.filter.FiltersMotionLayout
+        <org.desperu.independentnews.ui.main.filter.FiltersMotionLayout
             android:id="@+id/filters_motion_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

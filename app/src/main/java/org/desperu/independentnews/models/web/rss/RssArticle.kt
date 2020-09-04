@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.api.rss
+package org.desperu.independentnews.models.web.rss
 
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
@@ -34,25 +34,25 @@ import org.desperu.independentnews.utils.Utils.stringToDate
 data class RssArticle(
 
     @PropertyElement(name = "title", converter = HtmlEscapeStringConverter::class)
-    val title: String,
+    val title: String?,
 
     @PropertyElement(name = "link", converter = HtmlEscapeStringConverter::class)
-    val url: String,
+    val url: String?,
 
     @PropertyElement(name = "guid", converter = HtmlEscapeStringConverter::class)
-    val permUrl: String,
+    val permUrl: String?,
 
     @PropertyElement(name = "dc:date", converter = HtmlEscapeStringConverter::class)
-    val publishedDate: String,
+    val publishedDate: String?,
 
     @PropertyElement(name = "dc:creator", converter = HtmlEscapeStringConverter::class)
-    val author: String,
+    val author: String?,
 
     @Element(name = "dc:subject")
-    val categoryList: List<Category>,
+    val categoryList: List<Category>?,
 
     @PropertyElement(name = "description", converter = HtmlEscapeStringConverter::class)
-    val description: String
+    val description: String?
 ) {
 
     internal lateinit var imageUrl: String
@@ -62,13 +62,17 @@ data class RssArticle(
      */
     internal fun toArticle(): Article {
         val article = Article(
-            url = url,
-            title = title,
-            author = author,
-            categories = concatenateStringFromMutableList(categoryList.map { it.category }.toMutableList()),
-            description = description)
+            url = url.toString(),
+            title = title.toString(),
+            author = author.toString(),
+            description = description.toString()
+        )
 
-        stringToDate(publishedDate)?.time?.let { article.publishedDate = it }
+        if (categoryList != null)
+            concatenateStringFromMutableList(categoryList.mapNotNull { it.category }.toMutableList())
+
+        if (publishedDate != null)
+            stringToDate(publishedDate)?.time?.let { article.publishedDate = it }
 
         return article
     }

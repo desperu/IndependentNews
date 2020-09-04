@@ -3,9 +3,8 @@ package org.desperu.independentnews.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import okhttp3.ResponseBody
-import org.desperu.independentnews.models.api.bastamag.BastamagArticle
-import org.desperu.independentnews.models.api.rss.RssResponse
+import org.desperu.independentnews.models.web.bastamag.BastamagArticle
+import org.desperu.independentnews.models.web.rss.RssResponse
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
 

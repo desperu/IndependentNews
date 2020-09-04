@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.api.rss
+package org.desperu.independentnews.models.web.rss
 
 import com.tickaroo.tikxml.annotation.Attribute
 import com.tickaroo.tikxml.annotation.Element
@@ -19,8 +19,8 @@ import com.tickaroo.tikxml.annotation.Xml
 data class RssResponse(
 
     @Attribute(name = "version")
-    val version: String,
+    val version: String?,
 
     @Element(name = "channel")
-    val channel: Channel
+    val channel: Channel?
 )

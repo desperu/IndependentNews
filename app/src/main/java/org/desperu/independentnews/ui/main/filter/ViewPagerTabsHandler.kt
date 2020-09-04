@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.filter
+package org.desperu.independentnews.ui.main.filter
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
