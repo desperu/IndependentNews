@@ -13,6 +13,7 @@ abstract class ArticleDatabase: RoomDatabase() {
 
     /**
      * Returns the database access object for articles.
+     *
      * @return the database access object for articles.
      */
     abstract fun articleDao(): ArticleDao

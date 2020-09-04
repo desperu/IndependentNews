@@ -19,8 +19,8 @@ import com.tickaroo.tikxml.annotation.Xml
 data class RssResponse(
 
     @Attribute(name = "version")
-    val version: String?,
+    val version: String,
 
     @Element(name = "channel")
-    val channel: Channel?
+    val channel: Channel
 )

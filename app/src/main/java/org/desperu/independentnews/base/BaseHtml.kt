@@ -38,7 +38,7 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
     protected fun findData(tag: String, attr: String?, value: String?): Element? {
         val elements = document.select(tag)
         elements.forEach {
-            if (it.attr(attr) == value)
+            if (it.attr(attr) == value) // Get first match
                 return it
             else if (attr == null && value == null)
                 return it

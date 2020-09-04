@@ -14,7 +14,7 @@ val repositoryModule = module {
      */
     single<BastamagRepository> {
         BastamagRepositoryImpl(
-                get(), get()
+                get(), get(), get()
         )
     }
 }

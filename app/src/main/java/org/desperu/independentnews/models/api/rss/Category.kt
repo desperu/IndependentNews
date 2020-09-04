@@ -17,7 +17,7 @@ import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 data class Category(
 
     @TextContent(writeAsCData = true)
-    var category: String?
+    var category: String
 ) {
 
     init {
