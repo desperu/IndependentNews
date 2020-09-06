@@ -1,252 +1,178 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-FrameLayout is used as top level layout because when the CardView is getting
-animated, it needs to stay centered. Otherwise we need to animate x and y values
-too. layout_gravity="center_horizontal" is a lot simpler.
--->
-<FrameLayout
+<?xml version="1.0" encoding="utf-8"?>
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/root_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:ignore="UnusedAttribute">
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.main.ItemListViewModel"/>
+    </data>
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:orientation="vertical"
-        app:cardBackgroundColor="@color/list_item_bg_collapsed"
-        app:cardCornerRadius="6dp"
-        app:cardElevation="0dp"
-        app:cardMaxElevation="0dp"
-        tools:layout_marginLeft="20dp"
-        tools:layout_marginRight="20dp">
+    <!--
+    FrameLayout is used as top level layout because when the CardView is getting
+    animated, it needs to stay centered. Otherwise we need to animate x and y values
+    too. layout_gravity="center_horizontal" is a lot simpler.
+    -->
+    <FrameLayout
+        android:id="@+id/root_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:id="@+id/card_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical"
+            app:cardBackgroundColor="@color/list_item_bg_collapsed"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="0dp"
+            app:cardMaxElevation="0dp"
+            tools:layout_marginLeft="20dp"
+            tools:layout_marginRight="20dp">
 
-            <!--
-            scale_container is used to scale down the item when the scale down
-            animation happens. card_container re-sizes height and width while
-            scale_container scales the inside views to make it look natural
-            -->
-
-            <RelativeLayout
-                android:id="@+id/scale_container"
+            <FrameLayout
+                android:id="@+id/card_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/list_item_horizontal_padding"
-                android:paddingTop="@dimen/list_item_vertical_padding"
-                android:paddingRight="@dimen/list_item_horizontal_padding"
-                android:paddingBottom="@dimen/list_item_vertical_padding"
-                android:transformPivotX="0dp">
+                android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/chevron"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/title"
-                    android:layout_alignBottom="@+id/subtitle1"
-                    android:layout_marginEnd="16dp"
-                    app:srcCompat="@drawable/ic_chevron_right"
-                    app:tint="@color/title_color" />
+                <!--
+                scale_container is used to scale down the item when the scale down
+                animation happens. card_container re-sizes height and width while
+                scale_container scales the inside views to make it look natural
+                -->
 
-                <View
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="10dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toEndOf="@id/chevron"
-                    android:background="@drawable/ic_pill"
-                    android:backgroundTint="@color/title_color" />
-
-                <View
-                    android:id="@+id/subtitle1"
-                    android:layout_width="100dp"
-                    android:layout_height="10dp"
-                    android:layout_below="@id/title"
-                    android:layout_marginTop="8dp"
-                    android:layout_toEndOf="@id/chevron"
-                    android:background="@drawable/ic_pill"
-                    android:backgroundTint="@color/subtitle_color" />
-
-                <View
-                    android:id="@+id/subtitle2"
-                    android:layout_width="85dp"
-                    android:layout_height="10dp"
-                    android:layout_below="@id/title"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toEndOf="@id/subtitle1"
-                    android:background="@drawable/ic_pill"
-                    android:backgroundTint="@color/subtitle_color" />
-
-                <LinearLayout
-                    android:id="@+id/expand_view"
+                <RelativeLayout
+                    android:id="@+id/scale_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/subtitle2"
-                    android:layout_alignStart="@id/title"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginEnd="16dp"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    tools:visibility="gone">
+                    android:layout_height="match_parent"
+                    android:paddingLeft="@dimen/list_item_horizontal_padding"
+                    android:paddingTop="10dp"
+                    android:paddingRight="@dimen/list_item_horizontal_padding"
+                    android:paddingBottom="@dimen/list_item_vertical_padding"
+                    android:transformPivotX="0dp"
+                    tools:layout_paddingTop="10dp">
 
-                    <LinearLayout
+<!--                    <ImageView-->
+<!--                        android:id="@+id/source_image"-->
+<!--                        android:layout_width="20dp"-->
+<!--                        android:layout_height="20dp"-->
+<!--                        android:layout_marginTop="-14dp"-->
+<!--                        android:scaleType="centerCrop"-->
+<!--                        android:src="@drawable/no_image" />-->
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/source_name"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_alignStart="@id/title"-->
+<!--                        android:layout_marginTop="-14dp"-->
+<!--                        android:textStyle="italic"-->
+<!--                        android:textSize="12sp"-->
+<!--                        android:text="@{viewModel.article.source}"/>-->
+
+                    <ImageView
+                        android:id="@+id/chevron"
+                        android:transitionName="@string/animation_main_to_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/image"
+                        android:layout_alignBottom="@+id/image"
+                        android:layout_marginEnd="16dp"
+                        app:srcCompat="@drawable/ic_chevron_right"
+                        app:tint="@color/title_color"
+                        tools:ignore="UnusedAttribute" />
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/image"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_toEndOf="@id/chevron"
+                        android:layout_toStartOf="@id/image"
+                        android:textSize="16sp"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textStyle="bold"
+                        android:text="@{viewModel.article.title}" />
+
+                    <TextView
+                        android:id="@+id/author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/title"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/chevron"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textStyle="italic"
+                        android:textColor="@color/colorLightDark"
+                        android:text="@{viewModel.article.author}" />
+
+                    <TextView
+                        android:id="@+id/published_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/title"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_toEndOf="@id/author"
+                        android:textStyle="italic"
+                        android:textColor="@color/colorLightDark"
+                        app:setDate="@{viewModel.article.publishedDate}"/>
+
+                    <ImageView
+                        android:id="@+id/image"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:scaleType="centerCrop"
+                        android:onClick="@{viewModel.onClickImage}"
+                        app:setImage="@{viewModel.article.imageUrl}"/>
+
+                    <RelativeLayout
+                        android:id="@+id/expand_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#E7F7F7"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
+                        android:layout_below="@id/published_date"
+                        android:layout_alignStart="@id/title"
+                        android:layout_marginTop="36dp"
+                        android:layout_marginEnd="16dp"
+                        android:visibility="gone"
+                        tools:visibility="gone">
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/title_color"
-                            android:transformPivotX="0dp" />
+                        <TextView
+                            android:id="@+id/description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#E7F7F7"
+                            android:padding="5dp"
+                            android:ellipsize="end"
+                            android:maxLines="6"
+                            android:text="@{viewModel.article.description}" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="0.8" />
+                    </RelativeLayout>
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1.5"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/subtitle_color" />
-                    </LinearLayout>
+                </RelativeLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#0000"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
+                <View
+                    android:id="@+id/list_item_fg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:alpha="0"
+                    android:background="@color/list_item_fg"
+                    android:visibility="visible"
+                    tools:visibility="gone" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/title_color" />
+            </FrameLayout>
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="0.8" />
+        </androidx.cardview.widget.CardView>
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1.5"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/subtitle_color" />
-                    </LinearLayout>
+    </FrameLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#E7F7F7"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/title_color" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="0.8" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1.5"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/subtitle_color" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#0000"
-                        android:orientation="horizontal"
-                        android:padding="14dp">
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/title_color" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="0.8" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="10dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_marginEnd="16dp"
-                            android:layout_weight="1.5"
-                            android:background="@drawable/ic_pill"
-                            android:backgroundTint="@color/subtitle_color" />
-                    </LinearLayout>
-                </LinearLayout>
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/list_item_fg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:alpha="0"
-                android:background="@color/list_item_fg"
-                android:visibility="visible"
-                tools:visibility="gone" />
-        </FrameLayout>
-    </androidx.cardview.widget.CardView>
-</FrameLayout>
+</layout>

@@ -1,8 +1,12 @@
 package org.desperu.independentnews.utils
 
 import android.net.ParseException
+import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.dateToString
+import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
+import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
+import org.desperu.independentnews.utils.Utils.millisToString
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -20,30 +24,31 @@ class UtilsTest {
 
     @Test
     fun given_intDateMonthSeptember_When_intDateToString_Then_checkStringDate() {
+        val expected = "01/09/2019"
+
         val day = 1
         val month = 8
         val year = 2019
         output = intDateToString(day, month, year)
-        val expected = "01/09/2019"
 
         assertEquals(expected, output)
     }
 
     @Test
     fun given_intDateMonthNovember_When_intDateToString_Then_checkStringDate() {
+        val expected = "21/11/2019"
+
         val day = 21
         val month = 10
         val year = 2019
         output = intDateToString(day, month, year)
-        val expected = "21/11/2019"
 
         assertEquals(expected, output)
     }
 
     @Test
     @Throws(ParseException::class)
-    fun given_stringDate_When_askStringToDate_Then_checkNewDateFormat() {
-        val givenDate = "2019-09-05T19:25:35+0200"
+    fun given_stringDate_When_stringToDate_Then_checkNewDateFormat() {
         val cal = Calendar.getInstance()
         cal.set(Calendar.MILLISECOND, 0)
         cal.set(Calendar.SECOND, 35)
@@ -52,8 +57,9 @@ class UtilsTest {
         cal.set(Calendar.DAY_OF_MONTH, 5)
         cal.set(Calendar.MONTH, 8)
         cal.set(Calendar.YEAR, 2019)
-        val expected = Date()
-        expected.time = cal.timeInMillis
+        val expected = cal.time
+
+        val givenDate = "2019-09-05T19:25:35Z"
         val output: Date? = stringToDate(givenDate)
 
         assertEquals(expected, output)
@@ -61,7 +67,7 @@ class UtilsTest {
 
     @Test
     @Throws(ParseException::class)
-    fun given_wrongStringDate_When_askStringToDate_Then_checkNull() {
+    fun given_wrongStringDate_When_stringToDate_Then_checkNull() {
         val givenDate = "592019"
         val output = stringToDate(givenDate)
 
@@ -70,7 +76,8 @@ class UtilsTest {
 
     @Test
     fun given_date_When_dateToString_Then_checkResult() {
-        val givenDate = Date()
+        val expected = "2020-09-04T19:22:56+0200"
+
         val cal = Calendar.getInstance()
         cal.set(Calendar.MILLISECOND, 0)
         cal.set(Calendar.SECOND, 56)
@@ -79,10 +86,17 @@ class UtilsTest {
         cal.set(Calendar.DAY_OF_MONTH, 4)
         cal.set(Calendar.MONTH, 8)
         cal.set(Calendar.YEAR, 2020)
-        givenDate.time = cal.timeInMillis
-        output = dateToString(givenDate)
+        output = dateToString(cal.time)
 
-        val expected = "2020-09-04T19:22:56+0200"
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_millis_When_millisToString_Then_checkResult() {
+        val expected = "5/9/2020"
+
+        val millis = 1599330621163
+        output = millisToString(millis)
 
         assertEquals(expected, output)
     }
@@ -91,11 +105,8 @@ class UtilsTest {
     fun given_mutableList_When_concatenateStringFromMutableList_Then_checkString() {
         val expected = "School, Shop, Park"
 
-        val interestPlaces = mutableListOf<String>()
-        interestPlaces.add("School")
-        interestPlaces.add("Shop")
-        interestPlaces.add("Park")
-        output = Utils.concatenateStringFromMutableList(interestPlaces)
+        val interestPlaces = mutableListOf("School", "Shop", "Park")
+        output = concatenateStringFromMutableList(interestPlaces)
 
         assertEquals(expected, output)
     }
@@ -105,20 +116,27 @@ class UtilsTest {
         val expected = ""
 
         val interestPlaces = mutableListOf<String>()
-        output = Utils.concatenateStringFromMutableList(interestPlaces)
+        output = concatenateStringFromMutableList(interestPlaces)
 
         assertEquals(expected, output)
     }
 
     @Test
     fun given_stringPlaces_When_deConcatenateStringToMutableList_Then_checkMutableList() {
-        val expected = mutableListOf<String>()
-        expected.add("School")
-        expected.add("Shop")
-        expected.add("Park")
+        val expected = mutableListOf("School", "Shop", "Park")
 
         val interestPlaces = "School, Shop, Park"
-        val output: List<String> = Utils.deConcatenateStringToMutableList(interestPlaces)
+        val output: List<String> = deConcatenateStringToMutableList(interestPlaces)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_url_When_getPageNameFromUrl_Then_checkResult() {
+        val expected ="ecologie-quartiers-populaires-front-des-meres-fatima-Ouassak-cantines-scolaires"
+
+        val url = "https://www.bastamag.net/ecologie-quartiers-populaires-front-des-meres-fatima-Ouassak-cantines-scolaires"
+        output = getPageNameFromUrl(url)
 
         assertEquals(expected, output)
     }

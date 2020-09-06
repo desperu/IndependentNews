@@ -1,12 +1,14 @@
-package org.desperu.independentnews.models.web.rss
+package org.desperu.independentnews.models.rss
 
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.utils.P
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.stringToDate
+import org.jsoup.Jsoup
 
 /**
  * Data class with provide an RssArticle.
@@ -65,13 +67,14 @@ data class RssArticle(
             url = url.toString(),
             title = title.toString(),
             author = author.toString(),
-            description = description.toString()
+            description = Jsoup.parse(description.toString()).select(P)[0].ownText()
+//            imageUrl = imageUrl
         )
 
-        if (categoryList != null)
-            concatenateStringFromMutableList(categoryList.mapNotNull { it.category }.toMutableList())
+        if (!categoryList.isNullOrEmpty())
+            article.categories = concatenateStringFromMutableList(categoryList.mapNotNull { it.category }.toMutableList()) // TODO HTML escape mistake??
 
-        if (publishedDate != null)
+        if (!publishedDate.isNullOrBlank())
             stringToDate(publishedDate)?.time?.let { article.publishedDate = it }
 
         return article

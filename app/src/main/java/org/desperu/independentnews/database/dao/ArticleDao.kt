@@ -35,15 +35,26 @@ interface ArticleDao {
     suspend fun getAll(): List<Article>
 
     /**
-     * Returns the articles with media metadata for which the unique identifiers are in the given list.
+     * Returns the articles for which the url are in the given list.
      *
-     * @param ids the list of unique identifiers of the articles to return.
+     * @param urls the list of urls of the articles to return.
      *
-     * @return the articles for which the unique identifier are in the given list.
+     * @return the articles for which the url are in the given list.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE id IN (:ids)")
-    suspend fun getWhereIdIn(ids: List<Long>): List<Article>
+    @Query("SELECT * FROM article WHERE url IN (:urls)")
+    suspend fun getWhereUrlsIn(urls: List<String>): List<Article>
+
+    /**
+     * Returns the articles for which the url are in the given list ordered from the most recent to the oldest.
+     *
+     * @param urls the list of urls of the articles to return.
+     *
+     * @return the articles for which the url are in the given list ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE url IN (:urls) ORDER BY publishedDate DESC ")
+    suspend fun getWhereUrlsInSorted(urls: List<String>): List<Article>
 
     /**
      * Inserts the given article in database.
@@ -64,18 +75,18 @@ interface ArticleDao {
     /**
      * Update the title, the author line and the published date of the article with the given unique identifier.
      *
-     * @param title          the title of the viewed article.
-     * @param publishedDate  the date (timestamp) when the viewed article has been published to set.
+     * @param title          the title of the article.
+     * @param publishedDate  the date (timestamp) when the article has been published to set.
      * @param article        the body of the article.
      * @param categories     the categories of the article.
      * @param description    the description of the article.
      * @param imageUrl       the image url of the article.
-     * @param url            the url of the viewed article
-     * @param id             the unique identifier of the viewed article to update.
+     * @param css            the css style of the article.
+     * @param url            the url of the article
      */
-    @Query("UPDATE article SET title=:title, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, url=:url WHERE id=:id")
+    @Query("UPDATE article SET title=:title, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, css=:css WHERE url=:url")
     suspend fun update(title: String, publishedDate: Long, article: String, categories: String,
-                       description: String, imageUrl: String, url: String, id: Long)
+                       description: String, imageUrl: String, css: String, url: String)
 
     /**
      * Update the given article in database.

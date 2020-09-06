@@ -16,11 +16,17 @@ abstract class BaseHtmlArticle(private val htmlPage: ResponseBody): BaseHtml(htm
 
     internal abstract fun getTitle(): String?
 
+    internal abstract fun getSubtitle(): String?
+
     internal abstract fun getAuthor(): String?
 
-    internal abstract fun getDate(): String?
+    internal abstract fun getPublishedDate(): String?
 
     internal abstract fun getArticle(): String?
 
+    internal abstract fun getDescription(): String?
+
     internal abstract fun getImage(): List<String?>
+
+    internal abstract fun getCss(): String?
 }

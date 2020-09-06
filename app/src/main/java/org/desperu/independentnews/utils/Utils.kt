@@ -34,7 +34,7 @@ internal object Utils {
      * @return Date object, null if an error happened.
      */
     internal fun stringToDate(givenDate: String): Date? {
-        val givenDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.FRANCE)
+        val givenDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.FRANCE)
         var date: Date? = null
         try {
             date = givenDateFormat.parse(givenDate)
@@ -52,6 +52,17 @@ internal object Utils {
     internal fun dateToString(givenDate: Date): String {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.FRANCE)
         return simpleDateFormat.format(givenDate)
+    }
+
+    /**
+     * Convert time in millis to string date with pattern "yyyy/mm/dd".
+     * @param millis the time in millis to convert.
+     * @return the time converted to string format.
+     */
+    internal fun millisToString(millis: Long): String {
+        val cal = Calendar.getInstance()
+        cal.time = Date(millis)
+        return "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}/${cal.get(Calendar.YEAR)}"
     }
 
     // -----------------
@@ -81,5 +92,19 @@ internal object Utils {
         val list = string.split(", ").toTypedArray().toMutableList()
         list.forEach { it.replace(", ", "") }
         return list
+    }
+
+    // -----------------
+    // CONVERT URL
+    // -----------------
+
+    /**
+     * Return the page name from it's complete url.
+     * @param url the given url to parse.
+     * @return the page name from it's complete url.
+     */
+    internal fun getPageNameFromUrl(url: String): String {
+        val list = url.split("/").toTypedArray()
+        return list[list.size - 1]
     }
 }

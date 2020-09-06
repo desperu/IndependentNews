@@ -17,6 +17,13 @@ interface BastamagWebService {
     suspend fun getArticle(@Path("articleUrl") articleUrl: String): ResponseBody
 
     /**
+     * Returns the css data from the given url.
+     * @return the css data from the given url.
+     */
+    @GET("{cssUrl}")
+    suspend fun getCss(@Path("cssUrl") cssUrl: String): ResponseBody
+
+    /**
      * Returns the article for the asked category from the Bastamag Web Site.
      * @return the article for the asked category from the Bastamag Web Site.
      */

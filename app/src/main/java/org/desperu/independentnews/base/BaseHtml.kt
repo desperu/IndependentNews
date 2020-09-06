@@ -40,13 +40,15 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
         elements.forEach {
             if (it.attr(attr) == value) // Get first match
                 return it
-            else if (attr == null && value == null)
+            else if (attr == null && value == null) // Get first element
                 return it
         }
         return null
     }
 
     // --- GETTERS ---
+
+    internal fun getUrl(): String = document.location()
 
     internal fun getHtmlPage(): String = htmlPage.string()
 }

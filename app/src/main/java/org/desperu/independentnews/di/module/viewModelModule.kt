@@ -13,6 +13,6 @@ val viewModelModule = module {
      * Provides the MainViewModel instance.
      */
     viewModel {
-        MainViewModel(get(), get())
+        MainViewModel(get())
     }
 }

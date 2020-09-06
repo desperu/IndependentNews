@@ -5,9 +5,11 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
-import org.desperu.independentnews.models.web.rss.RssArticle
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
+import org.desperu.independentnews.utils.BASTAMAG
+import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
+import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 
 /**
  * Repository interface to get data from services.
@@ -28,7 +30,7 @@ interface BastamagRepository {
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    suspend fun getRssArticles(): List<RssArticle>?
+    suspend fun getRssArticles(): List<Article>?
 
     /**
      * Marks an article as read in the repository.
@@ -85,16 +87,24 @@ class BastamagRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    override suspend fun getRssArticles(): List<RssArticle>? {
+    override suspend fun getRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
-        return if (rssArticleList != null) {
-            rssArticleList.forEach {
-                it.imageUrl =
-                    BastamagArticle(webService.getArticle(it.url.toString())).getImage()[0].toString()
-            }
+        return@withContext if (rssArticleList != null) {
             val articleList = rssArticleList.map { it.toArticle() }
+            articleList.forEach {
+                it.source = BASTAMAG
+
+                val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
+
+                bastamagArticle.getArticle()?.let { article -> it.article = article }
+                bastamagArticle.getImage()[0]?.let { imageUrl -> it.imageUrl = BASTAMAG_BASE_URL + imageUrl }
+                bastamagArticle.getDescription()?.let { description -> it.description = description }
+//                bastamagArticle.getCss()?.let { css -> it.css = webService.getCss(css).string() }
+                bastamagArticle.getCss()?.let { css -> it.css = css }
+            }
+
             persist(articleList)
-            return rssArticleList
+            articleDao.getWhereUrlsInSorted(articleList.map { it.url })
         } else
             null
     }
@@ -115,9 +125,9 @@ class BastamagRepositoryImpl(
      */
     private suspend fun persist(articleList: List<Article>?) = withContext(Dispatchers.IO) {
         articleList?.let {
-            val idsToUpdate = getExistingIds(it)
+            val urlsToUpdate = getExistingUrls(it)
 
-            val articleListPair = it.partition { article ->  idsToUpdate.contains(article.id) }
+            val articleListPair = it.partition { article ->  urlsToUpdate.contains(article.url) }
             val articlesToUpdate = articleListPair.first
             val articlesToInsert = articleListPair.second
 
@@ -129,29 +139,27 @@ class BastamagRepositoryImpl(
                     article.categories,
                     article.description,
                     article.imageUrl,
-                    article.url,
-                    article.id
+                    article.css,
+                    article.url
                 )
             }
             articleDao.insertArticles(*articlesToInsert.toTypedArray())
         }
-
-        return@withContext null
 
 //        mediaMetadataDao.deleteWhereViewedArticleIdIn(idsToUpdate)
 //        mediaMetadataDao.insertAll(*mediaMetadataToInsert.toTypedArray())
     }
 
     /**
-     * Returns the ids of the articles from the given list that already exists in database.
+     * Returns the url of the articles from the given list that already exists in database.
      *
-     * @param articleList the articles from which to get the list of existing ids in database.
+     * @param articleList the articles from which to get the list of existing url in database.
      *
-     * @return the ids of the articles from the given list that already exists in database.
+     * @return the url of the articles from the given list that already exists in database.
      */
-    private suspend fun getExistingIds(articleList: List<Article>) = withContext(Dispatchers.IO){
-        val ids = articleList.map { article -> article.id }
-        val listToUpdate = articleDao.getWhereIdIn(ids)
-        listToUpdate.map { article -> article.id }
+    private suspend fun getExistingUrls(articleList: List<Article>) = withContext(Dispatchers.IO){
+        val url = articleList.map { article -> article.url }
+        val listToUpdate = articleDao.getWhereUrlsIn(url)
+        listToUpdate.map { article -> article.url }
     }
 }

@@ -6,21 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.TextView
+import androidx.annotation.LayoutRes
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.*
 
-/** List Model. A sample model that only contains id */
-data class MainListModel(val id: Int)
-
-class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.ListViewHolder>() {
+class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<MainListAdapter.ListViewHolder>() {
 
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
@@ -34,9 +35,10 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
 
     // filteredItems is a static field to simulate filtering of random items
     private val filteredItems = intArrayOf(2, 5, 6, 8, 12)
-    private val modelList = List(20) { MainListModel(it) }
-    private val modelListFiltered = modelList.filter { it.id !in filteredItems }
-    private val adapterList: List<MainListModel> get() = if (isFiltered) modelListFiltered else modelList
+    private val modelList = (if (::list.isInitialized) list else mutableListOf<Any>(20)) as List<ItemListViewModel>
+    private val modelListFiltered = modelList.withIndex().filter { it.index !in filteredItems } as List<ItemListViewModel>
+//    private val adapterList: List<MainListModel> get() = if (isFiltered) modelListFiltered else modelList
+    private lateinit var list: MutableList<Any>
 
     /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
     var isFiltered = false
@@ -53,17 +55,19 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     private lateinit var recyclerView: RecyclerView
-    private var expandedModel: MainListModel? = null
+    private var expandedModel: Any? = null
     private var isScaledDown = false
 
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
 
-    override fun getItemCount(): Int = adapterList.size
+    override fun getItemCount(): Int = if (::list.isInitialized) list.size else 0
+
+    override fun getItemViewType(position: Int): Int = layoutId
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
-            ListViewHolder(inflater.inflate(R.layout.item_list, parent, false))
+            ListViewHolder(DataBindingUtil.inflate(inflater, viewType, parent, false))
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -71,7 +75,7 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val model = adapterList[position]
+        val model = list[position]
 
         expandItem(holder, model == expandedModel, animate = false)
         scaleDownItem(holder, position, isScaledDown)
@@ -90,7 +94,7 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
             } else {
 
                 // collapse previously expanded view
-                val expandedModelPosition = adapterList.indexOf(expandedModel!!)
+                val expandedModelPosition = list.indexOf(expandedModel!!)
                 val oldViewHolder =
                         recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ListViewHolder
                 if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
@@ -100,7 +104,16 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
                 expandedModel = model
             }
         }
+
+        // set data in item
+        holder.bind(list[position])
     }
+
+    /**
+     * Update all item list.
+     * @param newList the new list to set.
+     */
+    internal fun updateList(newList: MutableList<Any>) { list = newList }
 
     private fun expandItem(holder: ListViewHolder, expand: Boolean, animate: Boolean) {
         if (animate) {
@@ -162,6 +175,12 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
         holder.cardContainer.requestLayout()
 
         holder.chevron.rotation = 90 * progress
+
+        holder.title.maxLines = if (progress > 0.5f) 3 else 2
+
+        // TODO use dimens ...
+        holder.image.layoutParams.height = (75.dp + (90.dp - 75.dp) * progress).toInt()
+        holder.image.layoutParams.width = (75.dp + (90.dp - 75.dp) * progress).toInt()
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -200,7 +219,7 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
     }
 
     private fun setScaleDownProgress(holder: ListViewHolder, position: Int, progress: Float) {
-        val itemExpanded = position >= 0 && adapterList[position] == expandedModel
+        val itemExpanded = position >= 0 && list[position] == expandedModel
         holder.cardContainer.layoutParams.apply {
             width = ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
             height = ((if (itemExpanded) expandedHeight else originalHeight) * (1 - 0.1f * progress)).toInt()
@@ -213,7 +232,7 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
 
         holder.scaleContainer.setPadding(
                 (listItemHorizontalPadding * (1 - 0.2f * progress)).toInt(),
-                (listItemVerticalPadding * (1 - 0.2f * progress)).toInt(),
+                (listItemVerticalPadding * (1 - 0.2f * progress)).toInt(), // TODO to change for 10dp to allow show source
                 (listItemHorizontalPadding * (1 - 0.2f * progress)).toInt(),
                 (listItemVerticalPadding * (1 - 0.2f * progress)).toInt()
         )
@@ -230,11 +249,18 @@ class MainListAdapter(context: Context) : RecyclerView.Adapter<MainListAdapter.L
     // ViewHolder
     ///////////////////////////////////////////////////////////////////////////
 
-    class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ListViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         val expandView: View by bindView(R.id.expand_view)
         val chevron: View by bindView(R.id.chevron)
         val cardContainer: View by bindView(R.id.card_container)
         val scaleContainer: View by bindView(R.id.scale_container)
         val listItemFg: View by bindView(R.id.list_item_fg)
+        val title: TextView by bindView(R.id.title)
+        val image: View by bindView(R.id.image)
+
+        internal fun bind(any: Any?) {
+            binding.setVariable(org.desperu.independentnews.BR.viewModel, any)
+            binding.executePendingBindings()
+        }
     }
 }

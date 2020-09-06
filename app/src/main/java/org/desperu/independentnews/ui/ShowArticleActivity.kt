@@ -1,14 +1,20 @@
 package org.desperu.independentnews.ui
 
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.BaseActivity
+import org.desperu.independentnews.models.Article
 
 
-const val TITLE = "title"
 const val ARTICLE = "article"
 
 class ShowArticleActivity: BaseActivity() {
+
+    // FOR DATA
+    private val article: Article? get() = intent.getParcelableExtra(ARTICLE)
 
     // --------------
     // BASE METHODS
@@ -21,21 +27,34 @@ class ShowArticleActivity: BaseActivity() {
     }
 
     private fun bindData() {
-        test_title.text = intent.extras?.getString(TITLE)
-//        test_article.loadData(intent.extras?.getString(ARTICLE), "text/html; charset=UTF-8", null)
-        val data = intent.extras?.getString(ARTICLE)
+        show_article_title.text = article?.title
+        web_view.loadData(article?.article, "text/html; charset=UTF-8", null)
 //        val base64 = Base64.encodeToString(
 //            data.getBytes("UTF-8"),
 //            Base64.DEFAULT
 //        )
 //        test_article.loadData(base64, "text/html; charset=utf-8", "base64")
 
-//        test_article.settings.defaultTextEncodingName = "utf-8"
-//        test_article.loadDataWithBaseURL(null, data, "text/html", "utf-8", null)
+//        web_view.settings.defaultTextEncodingName = "utf-8"
+//        web_view.loadDataWithBaseURL(null, article?.article, "text/html", "utf-8", null)
 
-        test_article.settings.javaScriptEnabled = true
-        test_article.settings.javaScriptCanOpenWindowsAutomatically = true
-        test_article.loadUrl("https://www.bastamag.net/reformes-police-Defund-police-cameras-pietons-desarmement")
+        web_view.settings.javaScriptEnabled = true
+        web_view.settings.javaScriptCanOpenWindowsAutomatically = true
+//        web_view.loadUrl(article?.url)
+
+        web_view.webViewClient = object : WebViewClient() {
+
+            override fun onPageFinished(view: WebView, url: String) {
+
+                val css = article?.css
+//                val js = "var style = document.createElement('style'); style.innerHTML = '$css'; document.head.appendChild(style);"
+                val js = "var link = document.createElement('link'); link.setAttribute('href','$css'); link.setAttribute('rel', 'stylesheet'); link.setAttribute('type','text/css'); document.head.appendChild(link);"
+                view.evaluateJavascript(js,null)
+                super.onPageFinished(view, url)
+            }
+        }
+
+        Glide.with(this).load(article?.imageUrl).into(show_article_image)
     }
 
 //    /**

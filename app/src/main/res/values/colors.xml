@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="colorPrimary">#18BDD6</color>
     <color name="colorPrimaryDark">#0F6088</color>
     <color name="colorAccent">#FF6284</color>
@@ -28,4 +29,14 @@
 
     <color name="tab_unselected_color">#356E8C</color>
     <color name="tab_selected_color">@android:color/white</color>
+
+    <!-- Normal Colors -->
+    <color name="colorPink">#FF2ED1</color>
+    <color name="colorDark">#ff000000</color>
+    <color name="colorGrey">#4D4D4D</color>
+    <color name="colorLightDark">#454545</color>
+    <color name="colorLightBlue">#8C9EFF</color>
+    <color name="colorPassedWhite">#eeeeee</color>
+    <color name="colorPurple">@color/design_default_color_primary</color>
+
 </resources>
