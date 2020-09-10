@@ -10,7 +10,7 @@ import org.desperu.independentnews.R
  * This behavior animates the toolbar elements (toolbarTitle and drawerIcon) as
  * the recyclerView in MainActivity scrolls
  */
-class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
+class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look to AppBarLayout javadoc's source code
     private lateinit var toolbar: View
     private lateinit var toolbarTitle: View
     private lateinit var drawerIcon: View

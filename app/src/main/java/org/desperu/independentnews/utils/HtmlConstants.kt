@@ -3,6 +3,7 @@ package org.desperu.independentnews.utils
 // --- KEY TO PARSE HTML PAGE ---
 
 // Html tag
+const val BODY = "body"
 const val H1 = "h1"
 const val SPAN = "span"
 const val TIME = "time"
@@ -30,3 +31,4 @@ const val IMAGE = "image"
 const val SUBTITLE = "crayon article-surtitre-7989 surtitre"
 const val DESCRIPTION = "description"
 const val STYLESHEET = "stylesheet"
+const val MAIN_CONTAINER = "container main-container"

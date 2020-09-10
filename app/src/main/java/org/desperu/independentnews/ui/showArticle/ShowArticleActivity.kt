@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui
+package org.desperu.independentnews.ui.showArticle
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -24,8 +24,16 @@ class ShowArticleActivity: BaseActivity() {
 
     override fun configureDesign() {
         bindData()
+        scrollToTop()
     }
 
+    // --------------
+    // CONFIGURATION
+    // --------------
+
+    /**
+     *
+     */
     private fun bindData() {
         show_article_title.text = article?.title
         web_view.loadData(article?.article, "text/html; charset=UTF-8", null)
@@ -45,11 +53,13 @@ class ShowArticleActivity: BaseActivity() {
         web_view.webViewClient = object : WebViewClient() {
 
             override fun onPageFinished(view: WebView, url: String) {
-
-                val css = article?.css
-//                val js = "var style = document.createElement('style'); style.innerHTML = '$css'; document.head.appendChild(style);"
-                val js = "var link = document.createElement('link'); link.setAttribute('href','$css'); link.setAttribute('rel', 'stylesheet'); link.setAttribute('type','text/css'); document.head.appendChild(link);"
-                view.evaluateJavascript(js,null)
+                val cssLink = article?.css
+                val js = "var link = document.createElement('link');" +
+                        " link.setAttribute('rel', 'stylesheet');" +
+                        " link.setAttribute('href','$cssLink');" +
+                        " link.setAttribute('type','text/css');" +
+                        " document.head.appendChild(link);"
+                view.evaluateJavascript(js, null)
                 super.onPageFinished(view, url)
             }
         }
@@ -92,4 +102,13 @@ class ShowArticleActivity: BaseActivity() {
 //        })
 //        webView.loadUrl(articleUrl)
 //    }
+
+    // --------------
+    // UI
+    // --------------
+
+    /**
+     * Scroll to top the scroll view.
+     */
+    private fun scrollToTop() { show_article_scroll_view.scrollX = 0 }
 }

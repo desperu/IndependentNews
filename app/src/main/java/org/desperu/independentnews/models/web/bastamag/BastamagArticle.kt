@@ -5,6 +5,7 @@ import org.desperu.independentnews.base.BaseHtmlArticle
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
+import org.jsoup.Jsoup
 
 /**
  *
@@ -39,17 +40,17 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     override fun getPublishedDate(): String? = findData(TIME, PUBDATE, PUBDATE)?.attr(DATETIME)
 
 //    internal fun getArticle() = parseData("div", "itemprop", "articleBody")?.outerHtml()
-    override fun getArticle(): String? = findData(DIV, CLASS, MAIN)?.outerHtml()
+    override fun getArticle(): String? = setMainCssId(correctImagesUrl(findData(DIV, CLASS, MAIN)?.outerHtml()))
 
     override fun getDescription(): String? = findData(DIV, ITEMPROP, DESCRIPTION)?.child(0)?.ownText()//text()
 
     override fun getImage(): List<String?> {
         // if (it.attr("class") == "adapt-img spip_logo spip_logos intrinsic" && it.attr("itemprop") == "image") {
         val element = findData(IMG, ITEMPROP, IMAGE)
-        return listOf(element?.attr(SRC), element?.attr(WIDTH), element?.attr(HEIGHT))
+        return listOf(BASTAMAG_BASE_URL + element?.attr(SRC), element?.attr(WIDTH), element?.attr(HEIGHT))
     }
 
-    override fun getCss(): String? = findData(LINK, REL, STYLESHEET)?.attr(HREF)//findData("style", "type", "'text/css'")?.ownText()
+    override fun getCss(): String? = BASTAMAG_BASE_URL + findData(LINK, REL, STYLESHEET)?.attr(HREF)//findData("style", "type", "'text/css'")?.ownText()
 
     /**
      * Convert BastamagArticle to Article.
@@ -74,4 +75,26 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
 
         return article
     }
+
+    // TODO to put in utils?? or html utils with parse and find data.
+    /**
+     * Correct all images url's with their full url's in the given html code.
+     * @param html the html code to correct.
+     * @return the html code with corrected images url's.
+     */
+    private fun correctImagesUrl(html: String?): String? =
+        if (!html.isNullOrBlank()) {
+            val document = Jsoup.parse(html)
+            document.select(IMG).forEach { it.attr(SRC, BASTAMAG_BASE_URL + it.attr(SRC)) }
+            document.toString()
+        } else
+            null
+
+    private fun setMainCssId(html: String?): String? =
+        if(!html.isNullOrBlank()) {
+            val document = Jsoup.parse(html)
+            document.select(BODY)[0].attr(CLASS, MAIN_CONTAINER)
+            document.toString()
+        } else
+            null
 }

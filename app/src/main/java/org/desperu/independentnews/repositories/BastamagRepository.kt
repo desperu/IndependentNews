@@ -8,7 +8,6 @@ import org.desperu.independentnews.models.web.bastamag.BastamagArticle
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
 import org.desperu.independentnews.utils.BASTAMAG
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 
 /**
@@ -97,9 +96,8 @@ class BastamagRepositoryImpl(
                 val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
 
                 bastamagArticle.getArticle()?.let { article -> it.article = article }
-                bastamagArticle.getImage()[0]?.let { imageUrl -> it.imageUrl = BASTAMAG_BASE_URL + imageUrl }
+                bastamagArticle.getImage()[0]?.let { imageUrl -> it.imageUrl = imageUrl }
                 bastamagArticle.getDescription()?.let { description -> it.description = description }
-//                bastamagArticle.getCss()?.let { css -> it.css = webService.getCss(css).string() }
                 bastamagArticle.getCss()?.let { css -> it.css = css }
             }
 
