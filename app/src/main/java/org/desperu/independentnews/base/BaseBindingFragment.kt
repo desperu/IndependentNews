@@ -27,10 +27,16 @@ abstract class BaseBindingFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 //        Icepick.restoreInstanceState(this, savedInstanceState)
-        configureDesign()
+//        configureDesign()
+        super.onCreateView(inflater, container, savedInstanceState)
         this.inflater = inflater
         this.container = container
         return getBindingView()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        configureDesign()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

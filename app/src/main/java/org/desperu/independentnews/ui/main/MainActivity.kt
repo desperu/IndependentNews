@@ -2,9 +2,6 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.ActivityOptions
-import android.content.Intent
-import android.os.Build
 import android.view.View
 import android.widget.TextView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -18,14 +15,10 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.ui.ARTICLE
-import org.desperu.independentnews.ui.ShowArticleActivity
 import org.desperu.independentnews.ui.main.filter.FiltersMotionLayout
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-
 
 var animationPlaybackSpeed: Double = 0.8
 
@@ -87,9 +80,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
     // -----------------
 
     /**
-     * Configure koin dependency for main interface.
+     * Configure koin dependency for main interfaces.
      */
-    private fun configureKoinDependency() = get<MainInterface> { parametersOf(this@MainActivity) }
+    private fun configureKoinDependency() {
+        get<MainInterface> { parametersOf(this@MainActivity) }
+        get<ArticleRouter> { parametersOf(this@MainActivity) }
+    }
 
     /**
      * Configure App Bar.
@@ -197,31 +193,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
     // --------------
     // ACTIVITY
     // --------------
-
-    /**
-     * Navigate to Show Article Activity.
-     * @param article the article to show.
-     * @param clickedView the clicked view.
-     */
-    override fun navigateToShowArticle(
-        article: Article,
-        clickedView: View
-    ) {
-        val intent = Intent(this, ShowArticleActivity::class.java)
-            .putExtra(ARTICLE, article)
-
-        // Start Animation
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val options = ActivityOptions.makeSceneTransitionAnimation(
-                this,
-                clickedView,
-                getString(R.string.animation_main_to_detail)
-            )
-            startActivity(intent, options.toBundle())
-        } else {
-            startActivity(intent)
-        }
-    }
 
     /**
      * Update RecyclerView Item Animation Durations

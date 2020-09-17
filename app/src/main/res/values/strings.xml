@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Independent News</string>
 
-    <string name="animation_main_to_detail">AnimationMainToDetail</string>
+    <string name="animation_main_to_show_article">AnimationMainToShowArticle</string>
 </resources>

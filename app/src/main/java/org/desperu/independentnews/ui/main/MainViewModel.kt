@@ -1,14 +1,19 @@
 package org.desperu.independentnews.ui.main
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
 import org.desperu.independentnews.repositories.BastamagRepository
 import org.koin.java.KoinJavaComponent.inject
 
-class MainViewModel(private val bastamagRepository: BastamagRepository): ViewModel() {
+// TODO to comment
+class MainViewModel(private val bastamagRepository: BastamagRepository,
+                    private val router: ArticleRouter
+): ViewModel() {
 
     // FOR DATA
     private val mainInterface: MainInterface by inject(MainInterface::class.java)
@@ -21,10 +26,12 @@ class MainViewModel(private val bastamagRepository: BastamagRepository): ViewMod
     }
 
     private fun fetchBastamagRss() = viewModelScope.launch(Dispatchers.Main) {
-        itemListVM = bastamagRepository.getRssArticles()?.map { ItemListViewModel(it) }
+        itemListVM = bastamagRepository.getRssArticles()?.map { ItemListViewModel(it, this@MainViewModel) }
         itemListVM?.let {
-            mainInterface.getRecyclerAdapter()?.updateList(it.toMutableList())
-            mainInterface.getRecyclerAdapter()?.notifyDataSetChanged()
+            mainInterface.getRecyclerAdapter()?.apply {
+                updateList(it.toMutableList())
+                notifyDataSetChanged()
+            }
         }
     }
 
@@ -34,9 +41,25 @@ class MainViewModel(private val bastamagRepository: BastamagRepository): ViewMod
 //        article?.let { title?.value = it.toArticle().title }
 //    }
 
+    /**
+     * Perform article's click user redirection to the show article activity.
+     * @param article the clicked article to show.
+     * @param clickedView the clicked image view to animate.
+     */
+    internal fun onClickArticle(article: Article, clickedView: View) {
+        itemListVM?.map { it.article }?.let {
+            val position = it.indexOf(article)
+            router.openShowArticle(it, position, clickedView)
+        }
+    }
+
+    internal fun getArticlePosition(article: Article): Int? {
+        return itemListVM?.map { it.article }?.indexOf(article)
+    }
+
     // --- GETTERS ---
 
-    fun getItemListVM() = itemListVM
+    fun getArticleList(): List<Article>? = itemListVM?.map { it.article }
 
     fun getArticle() = article
 }

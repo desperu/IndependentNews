@@ -1,20 +1,26 @@
 package org.desperu.independentnews.ui.main
 
-import android.view.View
+import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
+import org.desperu.independentnews.R
 import org.desperu.independentnews.models.Article
-import org.koin.java.KoinJavaComponent
 
-class ItemListViewModel(val article: Article): ViewModel() {
+// TODO to comment
+class ItemListViewModel(val article: Article,
+                        private val mainViewModel: MainViewModel
+): ViewModel() {
 
-    // FOR DATA
-    private val mainInterface: MainInterface by KoinJavaComponent.inject(MainInterface::class.java)
+    val position get() = mainViewModel.getArticlePosition(article)
 
     // ------------
     // LISTENERS
     // ------------
 
-    val onClickImage = View.OnClickListener {
-        mainInterface.navigateToShowArticle(article, it)
+    val onClickImage = OnClickListener {
+        mainViewModel.onClickArticle(article, it)
+    }
+
+    val onClickDescriptionContainer = OnClickListener {
+        mainViewModel.onClickArticle(article, it.rootView.findViewById(R.id.image))
     }
 }
