@@ -2,4 +2,9 @@
     <string name="app_name">Independent News</string>
 
     <string name="animation_main_to_show_article">AnimationMainToShowArticle</string>
+
+    <!-- MENU -->
+    <!-- Nav Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

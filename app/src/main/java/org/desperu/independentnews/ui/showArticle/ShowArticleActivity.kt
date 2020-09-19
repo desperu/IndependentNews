@@ -6,13 +6,16 @@ import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_show_article.*
+import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.BaseActivity
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.ui.main.ToolbarBehavior
 import org.desperu.independentnews.views.pageTransformer.ZoomOutPageTransformer
 
 /**
@@ -81,6 +84,7 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
 
     override fun configureDesign() {
         postponeSceneTransition()
+        configureAppBar()
         configureViewPager()
         updateViewPager()
     }
@@ -88,6 +92,14 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
     // --------------
     // CONFIGURATION
     // --------------
+
+    /**
+     * Configure App Bar.
+     */
+    private fun configureAppBar() {
+        (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior = ToolbarBehavior()
+        // TODO wrap toolbar in appBar to allow menu item usage
+    }
 
     /**
      * Configure View pager with zoom out page transformer.

@@ -17,6 +17,7 @@
     <!-- LAYOUTS -->
 
     <!-- Main Activity -->
+    <dimen name="recycler_view_padding_top">20dp</dimen>
     <!-- Filter -->
     <dimen name="fab_size">72dp</dimen>
     <dimen name="fab_size_inset">56dp</dimen>
@@ -41,8 +42,13 @@
     <dimen name="bottom_bar_icon_padding">24dp</dimen>
     <dimen name="bottom_bar_height">@dimen/fab_size</dimen>
 
+    <!-- Show Article Activity -->
     <!-- Fragment Article -->
     <dimen name="article_progress_bar_height">4dp</dimen>
     <dimen name="article_title_text_size">24sp</dimen>
+
+    <!-- MENU -->
+    <!-- Toolbar -->
+    <dimen name="toolbar_title_text_size">28sp</dimen>
 
 </resources>

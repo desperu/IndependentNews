@@ -28,6 +28,6 @@ data class Category(
      * Set category with the html escape string converter.
      */
     private fun setCategory() {
-        category = HtmlEscapeStringConverter().write(category)
+        category = HtmlEscapeStringConverter().read(category)
     }
 }

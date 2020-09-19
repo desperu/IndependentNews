@@ -5,8 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ScrollView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.ViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.fragment_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.BaseBindingFragment
@@ -39,7 +44,8 @@ class ArticleFragment: BaseBindingFragment() {
 
     // FOR DATA
     private lateinit var binding: ViewDataBinding
-    private val viewModel by viewModel<ArticleViewModel> { parametersOf(article) }
+    private val viewModel: ArticleViewModel by viewModel { parametersOf(article) }
+    private val scrollView: ScrollView by lazy { article_scroll_view }
 
     /**
      * Companion object, used to create a new instance of this fragment.
@@ -68,12 +74,12 @@ class ArticleFragment: BaseBindingFragment() {
 
     override fun configureDesign() {
         configureWebView()
+        configureScrollViewListener()
     }
 
     override fun updateDesign() {
         updateTransitionName()
         scheduleStartPostponedTransition()
-        setupProgressBarWithScrollView()
     }
 
     // --------------
@@ -154,6 +160,28 @@ class ArticleFragment: BaseBindingFragment() {
 //    }
 
     /**
+     * Configure scroll view listener to setup progress bar and app bar with the scroll Y value.
+     */
+    private fun configureScrollViewListener() {
+        var svOldScrollX = 0
+        var svOldScrollY = 0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                setupProgressBarWithScrollView(scrollY)
+                setupAppBarWithScrollView(v, scrollX, scrollY, oldScrollX, oldScrollY)
+            }
+        else
+            scrollView.viewTreeObserver.addOnScrollChangedListener {
+                val scrollX = scrollView.scrollX
+                val scrollY = scrollView.scrollY
+                setupProgressBarWithScrollView(scrollY)
+                setupAppBarWithScrollView(scrollView, scrollX, scrollY, svOldScrollX, svOldScrollY)
+                svOldScrollX = scrollX
+                svOldScrollY = scrollY
+            }
+    }
+
+    /**
      * Update transition name of the shared element (image).
      */
     private fun updateTransitionName() {
@@ -172,27 +200,48 @@ class ArticleFragment: BaseBindingFragment() {
     private fun scheduleStartPostponedTransition() =
         (activity as ShowArticleInterface).scheduleStartPostponedTransition(article_image)
 
+    // --------------
+    // UTILS
+    // --------------
+
     /**
      * Setup progress bar with scroll view scroll position.
+     * @param scrollY the scroll Y position of the scroll view.
      */
-    private fun setupProgressBarWithScrollView() {
-        val sv = article_scroll_view
-        var svScrollY = 0
-        val setup = {
-            svScrollY = if (svScrollY != 0) svScrollY else sv.scrollY
-            val scrollHeight = sv.getChildAt(0).bottom - sv.measuredHeight
-            val progress = (svScrollY.toFloat() / scrollHeight.toFloat()) * 100f
+    private fun setupProgressBarWithScrollView(scrollY: Int) {
+        val svScrollY: Int = if (scrollY != 0) scrollY else scrollView.scrollY
+        val scrollHeight = scrollView.getChildAt(0).bottom - scrollView.measuredHeight
+        val progress = (svScrollY.toFloat() / scrollHeight.toFloat()) * 100f
 
-            // Use animation for API >= Nougat (24)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                article_progress_bar.setProgress(progress.toInt(), true)
-            else
-                article_progress_bar.progress = progress.toInt()
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> svScrollY = scrollY; setup() }
+        // Use animation for API >= Nougat (24)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            article_progress_bar.setProgress(progress.toInt(), true)
         else
-            sv.viewTreeObserver.addOnScrollChangedListener { svScrollY = 0; setup() }
+            article_progress_bar.progress = progress.toInt()
+    }
+
+    /**
+     * Setup app bar with scroll view scroll position.
+     * @param sv the scrollView.
+     * @param scrollX the scroll X position of the scroll view.
+     * @param scrollY the scroll Y position of the scroll view.
+     * @param oldScrollX the old scroll X position of the scroll view.
+     * @param oldScrollY the old scroll Y position of the scroll view.
+     */
+    private fun setupAppBarWithScrollView(sv: View, scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int) {
+        val target = sv.parent.parent as ViewPager
+        val coordinator = target.parent as CoordinatorLayout
+        val appbar = coordinator.findViewById<AppBarLayout>(R.id.appbar)
+        val behavior = (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior
+
+        val dxConsumed = if (scrollX == 0) 0 else scrollX - oldScrollX
+        val dyConsumed = if (scrollY == 0) 0 else scrollY - oldScrollY
+
+//        behavior?.onStartNestedScroll(coordinator, appbar, target, target, ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.SCROLL_AXIS_VERTICAL)
+        behavior?.onNestedScroll(
+            coordinator, appbar, target,
+            dxConsumed, dyConsumed, oldScrollX, oldScrollY,
+            ViewCompat.SCROLL_AXIS_VERTICAL, intArrayOf(0, 0)
+        )
     }
 }
