@@ -5,43 +5,36 @@ import android.content.Intent
 import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentPagerAdapter
-import androidx.viewpager.widget.ViewPager
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.activity_show_article.*
-import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
-import org.desperu.independentnews.base.BaseActivity
+import org.desperu.independentnews.base.BaseBindingActivity
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.ui.main.ToolbarBehavior
-import org.desperu.independentnews.views.pageTransformer.ZoomOutPageTransformer
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 /**
- * The name of the argument to received article list for this Activity.
+ * The name of the argument to received article for this Activity.
  */
-const val ARTICLE_LIST: String = "articleList"
-
-/**
- * The name of the argument to received the position of the clicked article in the list.
- */
-const val POSITION: String = "position"
+const val ARTICLE: String = "article"
 
 /**
  * Activity to show articles list.
  *
  * @constructor Instantiates a new ShowArticleActivity.
  */
-class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
+class ShowArticleActivity: BaseBindingActivity() {
 
-    // FROM BUNDLE
-    private val articleList: List<Article>? get() = intent.getParcelableArrayListExtra(ARTICLE_LIST)
-    private val position: Int? get() = intent.getIntExtra(POSITION, 0)
+    // FROM BUNDLE // TODO to perfect
+    private val article: Article get() = intent.getParcelableExtra(ARTICLE) ?: Article(title = "Error to retrieved article !")
 
     // FOR DATA
-    private lateinit var viewPager: ViewPager
-    private lateinit var mAdapter: ShowArticleAdapter
+    private lateinit var binding: ViewDataBinding
+    private val viewModel: ArticleViewModel by viewModel { parametersOf(article) }
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -50,24 +43,21 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
         /**
          * Redirects from an Activity to this Activity with transition animation.
          * @param activity the activity use to perform redirection.
-         * @param articleList the article list to show in this activity.
-         * @param position the position of the clicked article in the list.
-         * @param clickedView the clicked article's image view to animate.
+         * @param article the article to show in this activity.
+         * @param imageView the image view to animate.
          */
         fun routeFromActivity(activity: AppCompatActivity,
-                              articleList: ArrayList<Article>,
-                              position: Int,
-                              clickedView: View) {
+                              article: Article,
+                              imageView: View) {
             val intent = Intent(activity, ShowArticleActivity::class.java)
-                .putParcelableArrayListExtra(ARTICLE_LIST, articleList)
-                .putExtra(POSITION, position)
+                .putExtra(ARTICLE, article)
 
             // Start Animation
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     activity,
-                    clickedView,
-                    activity.getString(R.string.animation_main_to_show_article) + position
+                    imageView,
+                    activity.getString(R.string.animation_main_to_show_article)
                 )
                 activity.startActivity(intent, options.toBundle())
             } else {
@@ -80,13 +70,14 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
     // BASE METHODS
     // --------------
 
-    override fun getActivityLayout(): Int = R.layout.activity_show_article
+    override fun getBindingView(): View = configureDataBinding()
 
     override fun configureDesign() {
-        postponeSceneTransition()
+        configureWebView()
         configureAppBar()
-        configureViewPager()
-        updateViewPager()
+        postponeSceneTransition()
+        scheduleStartPostponedTransition(article_image)
+        setupProgressBarWithScrollView()
     }
 
     // --------------
@@ -94,45 +85,86 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
     // --------------
 
     /**
-     * Configure App Bar.
+     * Configure data binding and return the root view.
+     * @return the binding root view.
      */
-    private fun configureAppBar() {
-        (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior = ToolbarBehavior()
-        // TODO wrap toolbar in appBar to allow menu item usage
+    private fun configureDataBinding(): View {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_show_article)
+        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
+        return binding.root
     }
 
     /**
-     * Configure View pager with zoom out page transformer.
+     * Configure the web view.
      */
-    private fun configureViewPager() {
-        viewPager = show_article_view_pager
-        mAdapter = ShowArticleAdapter(supportFragmentManager,
-            FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-        viewPager.adapter = mAdapter
-        viewPager.setPageTransformer(true, ZoomOutPageTransformer())
+    private fun configureWebView() {
+        web_view.settings.javaScriptEnabled = true
+        web_view.settings.javaScriptCanOpenWindowsAutomatically = true
+        web_view.settings.setSupportZoom(true)
+        web_view.settings.setNeedInitialFocus(false)
+
+        // Set css style for the web view.
+        web_view.webViewClient = object : WebViewClient() {
+
+            override fun onPageFinished(view: WebView, url: String) {
+                val cssLink = article?.css
+                val js = "var link = document.createElement('link');" +
+                        " link.setAttribute('rel', 'stylesheet');" +
+                        " link.setAttribute('href','$cssLink');" +
+                        " link.setAttribute('type','text/css');" +
+                        " document.head.appendChild(link);"
+                view.evaluateJavascript(js, null)
+                super.onPageFinished(view, url)
+            }
+        }
+        // disable scroll on touch
+//        web_view.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
     }
+
+//    /**
+//     * Configure and show Web View with Progress Bar.
+//     */
+//    private fun configureAndShowWebViewWithProgressBar() {
+//
+//        // Set progress bar with page loading.
+//        webView.setWebChromeClient(object : WebChromeClient() {
+//            override fun onProgressChanged(view: WebView, newProgress: Int) {
+//                super.onProgressChanged(view, newProgress)
+//                progressBar.setVisibility(View.VISIBLE)
+//                progressBar.setMax(100)
+//                progressBar.setProgress(newProgress)
+//            }
+//        })
+//
+//        // Force links and redirects to open in the WebView.
+//        webView.setWebViewClient(object : WebViewClient() {
+//            override fun onPageStarted(
+//                view: WebView,
+//                url: String,
+//                favicon: Bitmap
+//            ) {
+//                super.onPageStarted(view, url, favicon)
+//                articleUrl = url
+//                progressBar.setProgress(0)
+//            }
+//
+//            override fun onPageFinished(view: WebView, url: String) {
+//                super.onPageFinished(view, url)
+//                progressBar.setVisibility(View.GONE)
+//                swipeRefreshLayout.setRefreshing(false)
+//            }
+//        })
+//        webView.loadUrl(articleUrl)
+//    }
 
     // --------------
     // METHODS OVERRIDE
     // --------------
 
-    override fun onStop() {// TODO not good
-        removeTransitionAnimation()
-        super.onStop()
-    }
 
     // --------------
     // UI
     // --------------
-
-    /**
-     * Update view pager data, and set current item.
-     */
-    private fun updateViewPager() {
-        articleList?.let { mAdapter.updateImageList(it) }
-        mAdapter.notifyDataSetChanged()
-        position?.let { viewPager.currentItem = it }
-    }
 
     /**
      * Postpone the shared elements enter transition, because the shared elements
@@ -147,7 +179,7 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
      *
      * @param sharedElement the shared element to animate for the transition.
      */
-    override fun scheduleStartPostponedTransition(sharedElement: View) {
+    private fun scheduleStartPostponedTransition(sharedElement: View) {
         sharedElement.viewTreeObserver.addOnPreDrawListener(
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
@@ -160,29 +192,26 @@ class ShowArticleActivity: BaseActivity(), ShowArticleInterface {
     }
 
     /**
-     * Remove the transition scene animation from intent extra if the article shown
-     * is different from the clicked article.
+     * Setup progress bar with scroll view scroll position.
      */
-    private fun removeTransitionAnimation() {
-        if (position != viewPager.currentItem)
-            intent.removeExtra("android.app.ActivityOptions")
+    private fun setupProgressBarWithScrollView() {
+        val sv = article_scroll_view
+        var svScrollY = 0
+        val setup = {
+            svScrollY = if (svScrollY != 0) svScrollY else sv.scrollY
+            val scrollHeight = sv.getChildAt(0).bottom - sv.measuredHeight
+            val progress = (svScrollY.toFloat() / scrollHeight.toFloat()) * 100f
+
+            // Use animation for API >= Nougat (24)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                article_progress_bar.setProgress(progress.toInt(), true)
+            else
+                article_progress_bar.progress = progress.toInt()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> svScrollY = scrollY; setup() }
+        else
+            sv.viewTreeObserver.addOnScrollChangedListener { svScrollY = 0; setup() }
     }
-
-    // TODO update revert transition position of recycler view and views to animate !!! ActivityOptions.update
-
-    // --------------
-    // UTILS
-    // --------------
-
-    /**
-     * Return the given fragment position into the view pager.
-     * @param fragment the fragment to find position into the view pager view.
-     */ // TODO remove unused...
-    override fun getFragmentPosition(fragment: Fragment): Int? = viewPager.currentItem
-
-    /**
-     * Return the position of the clicked item into the recycler view.
-     * @return the position of the clicked item into the recycler view.
-     */
-    override fun getClickedItemPosition(): Int? = position
 }

@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.showArticle.fragment
+package org.desperu.independentnews.ui.showArticle
 
 import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.models.Article

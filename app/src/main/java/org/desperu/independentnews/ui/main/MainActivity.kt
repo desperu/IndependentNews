@@ -88,14 +88,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
     }
 
     /**
-     * Configure App Bar.
-     */
-    private fun configureAppBar() {
-        (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior = ToolbarBehavior()
-        // TODO wrap toolbar in appBar to allow menu item usage
-    }
-
-    /**
      * Configure Drawer layout.
      */
     @SuppressLint("SetTextI18n")
@@ -125,69 +117,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
     }
 
     private fun testRequest() { // TODO for test
-//        viewModel.getResults()
-//
-//        Handler().postDelayed( {
-//            val rssXml = viewModel.getResults()
-//            println("Rss Xml result :")
-//            println(rssXml)
-//            println(rssXml?.channel?.language)
-//            println(rssXml?.channel?.articleList?.get(0)?.title)
-//        }, 2000)
-//
-//        viewModel.getArticle()
-//
-//        var title: String
-//        var article = String()
-//
-//        Handler().postDelayed( {
-//            val pageHtml = viewModel.getArticle()
-//            val document = Jsoup.parse(pageHtml?.string())
-//            val element = document.select("li")
-//            element.forEach {
-//                if (it.attr("class") == "active") {
-//                    println("Page Html result :")
-//                    println(it.attr("class"))
-//                    println(it.child(0).ownText())
-//                }
-//
-//            }
-//            val elementTitle = document.select("title")
-//            title = elementTitle[0].ownText()
-//            if (!title.isNullOrBlank()) println("Title : $title")
-//
-//            val element2 = document.select("img")
-//            element2.forEach {
-//                if (it.attr("class") == "adapt-img spip_logo spip_logos intrinsic" && it.attr("itemprop") == "image") {
-//                    println(it.attr("src"))
-//                    println("Width : ${it.attr("width")}")
-//                    println("Height : ${it.attr("height")}")
-//                }
-//            }
-//            val element3 = document.select("div")
-//            element3.forEach {
-////                if (it.attr("itemprop") == "articleBody") {
-//                if (it.attr("class") == "main") {
-//                    println(it.child(0).data())
-//                    println("outerHtml : ${it.outerHtml()}")
-//                    article = it.outerHtml()
-//                }
-//            }
-//
-//            showArticleActivity(title, article)
-//        }, 2000)
-
         viewModel.getArticle()
-//
-//        Handler().postDelayed( {
-//            showArticleActivity(viewModel.getArticle()?.getTitle(), viewModel.getArticle()?.getArticle())
-//        }, 2000)
-//
-//        viewModel.getItemListVM()
-//
-//        Handler().postDelayed( {
-//            println(viewModel.getItemListVM()?.get(0)?.article?.description)
-//        }, 2000)
     }
 
     // --------------

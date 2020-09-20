@@ -1,8 +1,10 @@
 package org.desperu.independentnews.base
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import kotlinx.android.synthetic.main.app_bar.*
+import org.desperu.independentnews.views.ToolbarBehavior
 //import icepick.Icepick
 //import kotlinx.android.synthetic.main.toolbar.*
 import org.koin.core.context.loadKoinModules
@@ -66,4 +68,13 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
 //        }
 //        return super.onOptionsItemSelected(item)
 //    }
+
+    /**
+     * Configure App Bar.
+     */
+    protected fun configureAppBar() {
+        (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior =
+            ToolbarBehavior()
+        // TODO wrap toolbar in appBar to allow menu item usage
+    }
 }

@@ -1,6 +1,5 @@
 package org.desperu.independentnews.ui.main
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +11,7 @@ import org.koin.java.KoinJavaComponent.inject
 
 // TODO to comment
 class MainViewModel(private val bastamagRepository: BastamagRepository,
-                    private val router: ArticleRouter
+                    private val router: ArticleRouter // TODO can use get<> {} koin function
 ): ViewModel() {
 
     // FOR DATA
@@ -26,7 +25,7 @@ class MainViewModel(private val bastamagRepository: BastamagRepository,
     }
 
     private fun fetchBastamagRss() = viewModelScope.launch(Dispatchers.Main) {
-        itemListVM = bastamagRepository.getRssArticles()?.map { ItemListViewModel(it, this@MainViewModel) }
+        itemListVM = bastamagRepository.getRssArticles()?.map { ItemListViewModel(it, router) }
         itemListVM?.let {
             mainInterface.getRecyclerAdapter()?.apply {
                 updateList(it.toMutableList())
@@ -36,35 +35,13 @@ class MainViewModel(private val bastamagRepository: BastamagRepository,
     }
 
     internal fun getArticles() = viewModelScope.launch(Dispatchers.Main) {
-        itemListVM = bastamagRepository.getArticles().map { ItemListViewModel(it, this@MainViewModel) }
+        itemListVM = bastamagRepository.getArticles().map { ItemListViewModel(it, router) }
         itemListVM?.let {
             mainInterface.getRecyclerAdapter()?.apply {
                 updateList(it.toMutableList())
                 notifyDataSetChanged()
             }
         }
-    }
-
-//    private fun fetchArticle() = viewModelScope.launch {
-//        article = BastamagArticle(bastamagRepository.getArticle("reformes-police-Defund-police-cameras-pietons-desarmement"))
-//        title?.value = (article as BaseHtmlArticle).getTitle().toString()
-//        article?.let { title?.value = it.toArticle().title }
-//    }
-
-    /**
-     * Perform article's click user redirection to the show article activity.
-     * @param article the clicked article to show.
-     * @param clickedView the clicked image view to animate.
-     */
-    internal fun onClickArticle(article: Article, clickedView: View) {
-        itemListVM?.map { it.article }?.let {
-            val position = it.indexOf(article)
-            router.openShowArticle(it, position, clickedView)
-        }
-    }
-
-    internal fun getArticlePosition(article: Article): Int? {
-        return itemListVM?.map { it.article }?.indexOf(article)
     }
 
     // --- GETTERS ---

@@ -12,14 +12,10 @@ interface ArticleRouter {
 
     /**
      * Redirects the user to the ShowArticle Activity to show articles.
-     * @param articleList the article list to show in the Activity.
-     * @param position the position of the clicked article in the list.
-     * @param clickedView the clicked view.
+     * @param article the article to show in the Activity.
+     * @param imageView the image view to animate.
      */
-    fun openShowArticle(articleList: List<Article>,
-                        position: Int,
-                        clickedView: View
-    )
+    fun openShowArticle(article: Article, imageView: View)
 }
 
 /**
@@ -35,13 +31,9 @@ class ArticleRouterImpl(private val activity: AppCompatActivity): ArticleRouter 
 
     /**
      * Redirects the user to the ManageEstate Activity to manage estate.
-     * @param articleList the article list to show in the Activity.
-     * @param position the position of the clicked article in the list.
-     * @param clickedView the clicked view.
+     * @param article the article to show in the Activity.
+     * @param imageView the image view to animate.
      */
-    override fun openShowArticle(articleList: List<Article>,
-                                 position: Int,
-                                 clickedView: View
-    ) =
-        ShowArticleActivity.routeFromActivity(activity, ArrayList(articleList), position, clickedView)
+    override fun openShowArticle(article: Article, imageView: View) =
+        ShowArticleActivity.routeFromActivity(activity, article, imageView)
 }

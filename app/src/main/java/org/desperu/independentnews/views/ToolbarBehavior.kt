@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.main
+package org.desperu.independentnews.views
 
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout

@@ -132,7 +132,6 @@
                         android:onClick="@{viewModel.onClickImage}"
                         android:transitionName="@string/animation_main_to_show_article"
                         app:setImage="@{viewModel.article.imageUrl}"
-                        app:updateTransitionName="@{viewModel.position}"
                         tools:ignore="UnusedAttribute" />
 
                     <RelativeLayout

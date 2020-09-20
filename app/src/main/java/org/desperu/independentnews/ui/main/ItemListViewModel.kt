@@ -10,19 +10,16 @@ import org.desperu.independentnews.models.Article
  * View Model witch provide data for article item.
  *
  * @param article the given article data for this view model.
- * @param mainViewModel the instance of parent view model.
+ * @param router the router that allows redirection of the user.
  *
  * @constructor Instantiates a new ItemListViewModel.
  *
  * @property article the given article data for this view model to set.
- * @property mainViewModel the instance of parent view model to set.
+ * @property router the router that allows redirection of the user to set.
  */
 class ItemListViewModel(val article: Article,
-                        private val mainViewModel: MainViewModel
+                        private val router: ArticleRouter
 ): ViewModel() {
-
-    // FOR DATA
-    val position: Int? get() = mainViewModel.getArticlePosition(article)
 
     // ------------
     // LISTENERS
@@ -32,13 +29,13 @@ class ItemListViewModel(val article: Article,
      * On click image listener.
      */
     val onClickImage = OnClickListener {
-        mainViewModel.onClickArticle(article, it)
+        router.openShowArticle(article, it)
     }
 
     /**
      * On click description container listener.
      */
     val onClickDescriptionContainer = OnClickListener {
-        mainViewModel.onClickArticle(article, (it.parent as View).findViewById(R.id.image))
+        router.openShowArticle(article, (it.parent as View).findViewById<View>(R.id.image))
     }
 }

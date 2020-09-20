@@ -2,7 +2,7 @@ package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.ui.main.MainViewModel
-import org.desperu.independentnews.ui.showArticle.fragment.ArticleViewModel
+import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
