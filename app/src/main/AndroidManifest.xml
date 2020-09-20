@@ -25,7 +25,8 @@
 
         <!-- SHOW ARTICLE ACTIVITY -->
         <activity android:name=".ui.showArticle.ShowArticleActivity"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/ShowArticleTheme"/>
 
     </application>
 

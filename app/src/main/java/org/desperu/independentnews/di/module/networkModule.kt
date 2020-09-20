@@ -66,14 +66,16 @@ val networkModule = module {
             .client(get() as OkHttpClient)
 
         if (type == XML)
-            retrofit.addConverterFactory(TikXmlConverterFactory.create(
-                TikXml.Builder()
-                    .exceptionOnUnreadXml(false)
-                    .addTypeConverter(String::class.java, HtmlEscapeStringConverter())
-                    .build()
-            ))
+            retrofit.addConverterFactory(
+                TikXmlConverterFactory.create(
+                    TikXml.Builder()
+                        .exceptionOnUnreadXml(false)
+                        .addTypeConverter(String::class.java, HtmlEscapeStringConverter())
+                        .build()
+                )
+            )
 
-        retrofit.build()
+        retrofit.build() // TODO java.net.SocketTimeoutException: SSL handshake timed out from OkkHttp ??
     }
 
     /**

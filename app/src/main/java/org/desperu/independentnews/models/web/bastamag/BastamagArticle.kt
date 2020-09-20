@@ -28,7 +28,8 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
                else null
     }
 
-    override fun getSubtitle(): String? = findData(P, CLASS, SUBTITLE)?.ownText()
+    override fun getSubtitle(): String? =
+        findData(HEADER, CLASS, CARTOUCHE)?.ownerDocument()?.select(P)?.get(0)?.ownText()
 
     override fun getAuthor() : String? {
         val author = findData(SPAN, ITEMPROP, AUTHOR)
@@ -42,7 +43,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
 //    internal fun getArticle() = parseData("div", "itemprop", "articleBody")?.outerHtml()
     override fun getArticle(): String? = setMainCssId(correctImagesUrl(findData(DIV, CLASS, MAIN)?.outerHtml()))
 
-    override fun getDescription(): String? = findData(DIV, ITEMPROP, DESCRIPTION)?.child(0)?.ownText()//text()
+    override fun getDescription(): String? = findData(DIV, ITEMPROP, DESCRIPTION)?.child(0)?.text()
 
     override fun getImage(): List<String?> {
         // if (it.attr("class") == "adapt-img spip_logo spip_logos intrinsic" && it.attr("itemprop") == "image") {

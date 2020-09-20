@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -149,8 +150,10 @@ class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : 
                 // it's called after layout is done. doOnNextLayout is called during
                 // layout phase which causes issues with hiding expandView.
                 holder.expandView.isVisible = true
-                view.doOnPreDraw {
-                    expandedHeight = view.height
+                holder.title.maxLines = 5
+                view.doOnPreDraw {// TODO use dimens
+                    expandedHeight = view.height + 20.dp// + if (length > 200) 100.dp else 50.dp
+                    holder.title.maxLines = 2
                     holder.expandView.isVisible = false
                 }
             }
@@ -176,7 +179,19 @@ class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : 
 
         holder.chevron.rotation = 90 * progress
 
-        holder.title.maxLines = if (progress > 0.5f) 3 else 2
+        // TODO animate text length with input filter ??
+        holder.title.maxLines = if (progress > 0.4f) 5 else 2
+        val originalLength = 56
+        val title = (list[holder.adapterPosition] as ItemListViewModel).article.title
+        val expandedLength = title.length
+        holder.title.filters = arrayOf(InputFilter.LengthFilter((originalLength + (expandedLength - originalLength) * progress).toInt()))
+        holder.title.text = title
+
+//        holder.cardContainer.layoutParams.height =
+//            if (progress >= 0.9f)
+//                RelativeLayout.LayoutParams.WRAP_CONTENT
+//            else
+//                (originalHeight + (expandedHeight - originalHeight) * progress).toInt()
 
         // TODO use dimens ...
         holder.image.layoutParams.height = (75.dp + (90.dp - 75.dp) * progress).toInt()
@@ -237,6 +252,8 @@ class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : 
                 (listItemVerticalPadding * (1 - 0.2f * progress)).toInt()
         )
 
+        // TODO animate image size !!
+
         holder.listItemFg.alpha = progress
     }
 
@@ -257,6 +274,7 @@ class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : 
         val listItemFg: View by bindView(R.id.list_item_fg)
         val title: TextView by bindView(R.id.title)
         val image: View by bindView(R.id.image)
+        val description: TextView by bindView(R.id.description)
 
         internal fun bind(any: Any?) {
             binding.setVariable(org.desperu.independentnews.BR.viewModel, any)

@@ -22,7 +22,7 @@ interface BastamagRepository {
      *
      * @return the list of articles with their image of the repository.
      */
-//    suspend fun getArticles(): List<Article>
+    suspend fun getArticles(): List<Article>
 
     /**
      * Returns the list of articles from the Rss flux of Bastamag.
@@ -71,15 +71,7 @@ class BastamagRepositoryImpl(
      *
      * @return the list of articles from all sources.
      */
-//    override suspend fun getArticles(): List<Article> {
-//        val apiArticles = apiService.getMostViewedArticles().convert()
-//        persist(apiArticles)
-//        return withContext(Dispatchers.IO){
-//            viewedArticleWithMediaMetadataDao.getAll()
-//        }
-//        val newArticles = webService.getCategory("A la Une")
-//
-//    }
+    override suspend fun getArticles(): List<Article> = articleDao.getAll() // TODO for test, to perfect
 
     /**
      * Returns the list of articles from the Rss flux of Bastamag.
@@ -95,9 +87,10 @@ class BastamagRepositoryImpl(
 
                 val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
 
+                bastamagArticle.getSubtitle()?.let { subtitle -> it.subtitle = subtitle }
                 bastamagArticle.getArticle()?.let { article -> it.article = article }
-                bastamagArticle.getImage()[0]?.let { imageUrl -> it.imageUrl = imageUrl }
                 bastamagArticle.getDescription()?.let { description -> it.description = description }
+                bastamagArticle.getImage()[0]?.let { imageUrl -> it.imageUrl = imageUrl }
                 bastamagArticle.getCss()?.let { css -> it.css = css }
             }
 
@@ -132,6 +125,7 @@ class BastamagRepositoryImpl(
             articlesToUpdate.forEach { article ->
                 articleDao.update(
                     article.title,
+                    article.subtitle,
                     article.publishedDate,
                     article.article,
                     article.categories,

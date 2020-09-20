@@ -35,6 +35,16 @@ class MainViewModel(private val bastamagRepository: BastamagRepository,
         }
     }
 
+    internal fun getArticles() = viewModelScope.launch(Dispatchers.Main) {
+        itemListVM = bastamagRepository.getArticles().map { ItemListViewModel(it, this@MainViewModel) }
+        itemListVM?.let {
+            mainInterface.getRecyclerAdapter()?.apply {
+                updateList(it.toMutableList())
+                notifyDataSetChanged()
+            }
+        }
+    }
+
 //    private fun fetchArticle() = viewModelScope.launch {
 //        article = BastamagArticle(bastamagRepository.getArticle("reformes-police-Defund-police-cameras-pietons-desarmement"))
 //        title?.value = (article as BaseHtmlArticle).getTitle().toString()

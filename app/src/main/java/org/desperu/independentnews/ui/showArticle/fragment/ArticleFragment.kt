@@ -3,6 +3,7 @@ package org.desperu.independentnews.ui.showArticle.fragment
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ScrollView
@@ -46,6 +47,7 @@ class ArticleFragment: BaseBindingFragment() {
     private lateinit var binding: ViewDataBinding
     private val viewModel: ArticleViewModel by viewModel { parametersOf(article) }
     private val scrollView: ScrollView by lazy { article_scroll_view }
+    private var scrollListener: Any? = null
 
     /**
      * Companion object, used to create a new instance of this fragment.
@@ -74,7 +76,6 @@ class ArticleFragment: BaseBindingFragment() {
 
     override fun configureDesign() {
         configureWebView()
-        configureScrollViewListener()
     }
 
     override fun updateDesign() {
@@ -165,13 +166,15 @@ class ArticleFragment: BaseBindingFragment() {
     private fun configureScrollViewListener() {
         var svOldScrollX = 0
         var svOldScrollY = 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            scrollView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            scrollListener = View.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
                 setupProgressBarWithScrollView(scrollY)
                 setupAppBarWithScrollView(v, scrollX, scrollY, oldScrollX, oldScrollY)
             }
-        else
-            scrollView.viewTreeObserver.addOnScrollChangedListener {
+            scrollView.setOnScrollChangeListener(scrollListener as View.OnScrollChangeListener)
+        }
+        else {
+            scrollListener = ViewTreeObserver.OnScrollChangedListener {
                 val scrollX = scrollView.scrollX
                 val scrollY = scrollView.scrollY
                 setupProgressBarWithScrollView(scrollY)
@@ -179,6 +182,19 @@ class ArticleFragment: BaseBindingFragment() {
                 svOldScrollX = scrollX
                 svOldScrollY = scrollY
             }
+            scrollView.viewTreeObserver.addOnScrollChangedListener(scrollListener as ViewTreeObserver.OnScrollChangedListener)
+        }
+    }
+
+    /**
+     * Remove scroll view listener.
+     */
+    private fun removeScrollViewListener() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            scrollView.setOnScrollChangeListener(null)
+        else
+            scrollView.viewTreeObserver.removeOnScrollChangedListener(scrollListener as ViewTreeObserver.OnScrollChangedListener?)
+        scrollListener = null
     }
 
     /**
@@ -188,6 +204,20 @@ class ArticleFragment: BaseBindingFragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             article_image.transitionName =
                 getString(R.string.animation_main_to_show_article) + fragPosition
+    }
+
+    // -----------------
+    // METHODS OVERRIDES
+    // -----------------
+
+    override fun onResume() {
+        super.onResume()
+        configureScrollViewListener()
+    }
+// TODO always mistake for restored frag
+    override fun onPause() {
+        super.onPause()
+        removeScrollViewListener()
     }
 
     // --------------
@@ -209,9 +239,8 @@ class ArticleFragment: BaseBindingFragment() {
      * @param scrollY the scroll Y position of the scroll view.
      */
     private fun setupProgressBarWithScrollView(scrollY: Int) {
-        val svScrollY: Int = if (scrollY != 0) scrollY else scrollView.scrollY
         val scrollHeight = scrollView.getChildAt(0).bottom - scrollView.measuredHeight
-        val progress = (svScrollY.toFloat() / scrollHeight.toFloat()) * 100f
+        val progress = (scrollY.toFloat() / scrollHeight.toFloat()) * 100f
 
         // Use animation for API >= Nougat (24)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -234,8 +263,8 @@ class ArticleFragment: BaseBindingFragment() {
         val appbar = coordinator.findViewById<AppBarLayout>(R.id.appbar)
         val behavior = (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior
 
-        val dxConsumed = if (scrollX == 0) 0 else scrollX - oldScrollX
-        val dyConsumed = if (scrollY == 0) 0 else scrollY - oldScrollY
+        val dxConsumed = if (scrollX <= 0) 0 else scrollX - oldScrollX
+        val dyConsumed = if (scrollY <= 0) 0 else scrollY - oldScrollY
 
 //        behavior?.onStartNestedScroll(coordinator, appbar, target, target, ViewCompat.SCROLL_AXIS_VERTICAL, ViewCompat.SCROLL_AXIS_VERTICAL)
         behavior?.onNestedScroll(
