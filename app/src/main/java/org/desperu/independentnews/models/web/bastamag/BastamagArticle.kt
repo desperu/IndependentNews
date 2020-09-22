@@ -1,7 +1,7 @@
 package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
-import org.desperu.independentnews.base.BaseHtmlArticle
+import org.desperu.independentnews.base.html.BaseHtmlArticle
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
@@ -28,6 +28,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
                else null
     }
 
+    // TODO mistake with rss categories and article subtitle or category??
     override fun getSubtitle(): String? =
         findData(HEADER, CLASS, CARTOUCHE)?.ownerDocument()?.select(P)?.get(0)?.ownText()
 
@@ -43,7 +44,13 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
 //    internal fun getArticle() = parseData("div", "itemprop", "articleBody")?.outerHtml()
     override fun getArticle(): String? = setMainCssId(correctImagesUrl(findData(DIV, CLASS, MAIN)?.outerHtml()))
 
-    override fun getDescription(): String? = findData(DIV, ITEMPROP, DESCRIPTION)?.child(0)?.text()
+    override fun getDescription(): String? {
+        val description = findData(DIV, ITEMPROP, DESCRIPTION)
+        return if (description != null && !description.allElements.isNullOrEmpty())
+                   description.child(0)?.text()
+               else
+                   null
+    }
 
     override fun getImage(): List<String?> {
         // if (it.attr("class") == "adapt-img spip_logo spip_logos intrinsic" && it.attr("itemprop") == "image") {

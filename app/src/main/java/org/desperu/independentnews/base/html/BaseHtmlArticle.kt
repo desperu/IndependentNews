@@ -1,6 +1,7 @@
-package org.desperu.independentnews.base
+package org.desperu.independentnews.base.html
 
 import okhttp3.ResponseBody
+import org.desperu.independentnews.base.html.BaseHtml
 
 /**
  * Abstract base html article class witch provide standard functions to parse data from article's html page.

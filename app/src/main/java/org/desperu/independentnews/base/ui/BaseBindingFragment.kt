@@ -1,4 +1,4 @@
-package org.desperu.independentnews.base
+package org.desperu.independentnews.base.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

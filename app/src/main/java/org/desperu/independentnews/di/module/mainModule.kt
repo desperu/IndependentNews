@@ -1,6 +1,6 @@
 package org.desperu.independentnews.di.module
 
-import org.desperu.independentnews.base.BaseActivity
+import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.ui.main.ArticleRouter
 import org.desperu.independentnews.ui.main.ArticleRouterImpl
 import org.desperu.independentnews.ui.main.MainInterface

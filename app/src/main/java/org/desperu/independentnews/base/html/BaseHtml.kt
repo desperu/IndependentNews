@@ -1,4 +1,4 @@
-package org.desperu.independentnews.base
+package org.desperu.independentnews.base.html
 
 import okhttp3.ResponseBody
 import org.jsoup.Jsoup
@@ -13,7 +13,7 @@ import org.jsoup.nodes.Element
 abstract class BaseHtml(private val htmlPage: ResponseBody) {
 
     // FOR DATA
-    private lateinit var document: Document
+    protected lateinit var document: Document
 
     init {
         parseHtml()

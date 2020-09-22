@@ -12,7 +12,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
-import org.desperu.independentnews.base.BaseBindingActivity
+import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.models.Article
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf

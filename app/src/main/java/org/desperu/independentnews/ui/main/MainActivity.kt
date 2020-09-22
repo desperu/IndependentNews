@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.view.View
 import android.widget.TextView
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
-import org.desperu.independentnews.base.BaseActivity
+import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.ui.main.filter.FiltersMotionLayout

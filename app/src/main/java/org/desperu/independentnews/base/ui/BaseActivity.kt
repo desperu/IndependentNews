@@ -1,22 +1,28 @@
-package org.desperu.independentnews.base
+package org.desperu.independentnews.base.ui
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.views.ToolbarBehavior
-
 //import icepick.Icepick
 //import kotlinx.android.synthetic.main.toolbar.*
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
+import org.koin.core.module.Module
 
-abstract class BaseBindingActivity: AppCompatActivity() {
+/**
+ * Abstract base activity class witch provide standard functions for activities.
+ *
+ * @param module the koin module to load for the corresponding activity.
+ */
+abstract class BaseActivity(private vararg val module: Module): AppCompatActivity() {
 
     // --------------------
     // BASE METHODS
     // --------------------
 
-    protected abstract fun getBindingView(): View
+    protected abstract fun getActivityLayout(): Int
     protected abstract fun configureDesign()
 
     // --------------------
@@ -25,8 +31,9 @@ abstract class BaseBindingActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.setContentView(getBindingView())
+        this.setContentView(getActivityLayout())
 //        Icepick.restoreInstanceState(this, savedInstanceState)
+        loadKoinModules(module.toList())
         configureDesign()
     }
 
@@ -35,10 +42,15 @@ abstract class BaseBindingActivity: AppCompatActivity() {
 //        Icepick.saveInstanceState(this, outState)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unloadKoinModules(listOf(*module))
+    }
+
     // --------------------
     // UI
     // --------------------
-// TODO to remove??
+// TODO to remove ???
 
 //    protected open fun configureToolBar() {
 //        setSupportActionBar(toolbar)

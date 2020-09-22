@@ -72,7 +72,7 @@ data class RssArticle(
         )
 
         if (!categoryList.isNullOrEmpty())
-            article.categories = concatenateStringFromMutableList(categoryList.mapNotNull { it.category }.toMutableList()) // TODO HTML escape mistake??
+            article.categories = concatenateStringFromMutableList(categoryList.mapNotNull { it.category }.toMutableList())
 
         if (!publishedDate.isNullOrBlank())
             stringToDate(publishedDate)?.time?.let { article.publishedDate = it }
