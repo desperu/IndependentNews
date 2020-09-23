@@ -75,6 +75,7 @@ class ShowArticleActivity: BaseBindingActivity() {
     override fun configureDesign() {
         configureWebView()
         configureAppBar()
+        showChildActivityIcon()
         postponeSceneTransition()
         scheduleStartPostponedTransition(article_image)
         setupProgressBarWithScrollView()
@@ -158,9 +159,20 @@ class ShowArticleActivity: BaseBindingActivity() {
 //    }
 
     // --------------
-    // METHODS OVERRIDE
+    // ACTION
     // --------------
 
+    /**
+     * On click back arrow icon menu.
+     */
+    @Suppress("unused_parameter")
+    fun onClickBackArrow(v: View) = onClickBackArrow()
+
+    /**
+     * On click share icon menu.
+     */
+    @Suppress("unused_parameter")
+    fun onClickShare(v: View) {}
 
     // --------------
     // UI

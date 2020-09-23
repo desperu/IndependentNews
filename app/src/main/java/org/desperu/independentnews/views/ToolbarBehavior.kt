@@ -11,9 +11,13 @@ import org.desperu.independentnews.R
  * the recyclerView in MainActivity scrolls
  */
 class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look to AppBarLayout javadoc's source code
+
     private lateinit var toolbar: View
     private lateinit var toolbarTitle: View
     private lateinit var drawerIcon: View
+    private lateinit var backArrowIcon: View
+    private lateinit var searchIcon: View
+    private lateinit var shareIcon: View
 
     private var toolbarOriginalHeight: Float = -1f
     private var toolbarCollapsedHeight: Float = -1f
@@ -30,6 +34,9 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look
         toolbar = child.findViewById(R.id.appbar_container)
         toolbarTitle = toolbar.findViewById(R.id.toolbar_title)
         drawerIcon = toolbar.findViewById(R.id.drawer_icon)
+        backArrowIcon = toolbar.findViewById(R.id.back_arrow_icon)
+        searchIcon = toolbar.findViewById(R.id.search_icon)
+        shareIcon = toolbar.findViewById(R.id.share_icon)
 
         toolbarOriginalHeight = toolbar.layoutParams.height.toFloat()
         toolbarCollapsedHeight = toolbarOriginalHeight * minScale
@@ -69,6 +76,9 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look
                 var translate: Float = (toolbarOriginalHeight - toolbar.layoutParams.height) / (toolbarOriginalHeight - toolbarCollapsedHeight)
                 translate *= toolbarOriginalHeight
                 drawerIcon.translationY = -translate
+                backArrowIcon.translationY = -translate
+                searchIcon.translationY = -translate
+                shareIcon.translationY = -translate
 
                 //--- title
                 val scale = toolbar.layoutParams.height / toolbarOriginalHeight
@@ -90,6 +100,9 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look
                 var translate: Float = (toolbarOriginalHeight - toolbar.layoutParams.height) / (toolbarOriginalHeight - toolbarCollapsedHeight)
                 translate *= toolbarOriginalHeight
                 drawerIcon.translationY = -translate
+                backArrowIcon.translationY = -translate
+                searchIcon.translationY = -translate
+                shareIcon.translationY = -translate
 
                 //--- title
                 val scale = toolbar.layoutParams.height / toolbarOriginalHeight

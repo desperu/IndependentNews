@@ -5,6 +5,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.app_bar.*
+import org.desperu.independentnews.R
+import org.desperu.independentnews.ui.main.MainActivity
+import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
 import org.desperu.independentnews.views.ToolbarBehavior
 
 //import icepick.Icepick
@@ -63,6 +66,28 @@ abstract class BaseBindingActivity: AppCompatActivity() {
     protected fun configureAppBar() {
         (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior =
             ToolbarBehavior()
-        // TODO wrap toolbar in appBar to allow menu item usage
     }
+
+    /**
+     * Show App Bar Icon for the given list.
+     */
+    private fun showAppBarIcon(iconList: List<Int>) {
+        iconList.forEach { findViewById<View>(it).visibility = View.VISIBLE }
+    }
+    /**
+     * Show Main Activity icon in app bar (drawer and search).
+     */
+    protected fun showMainActivityIcon() = showAppBarIcon(listOf(R.id.drawer_icon, R.id.search_icon))
+
+    /**
+     * Show child activity icon in app bar (back arrow and share).
+     */
+    protected fun showChildActivityIcon() = showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
+
+    // --- MENU ACION ---
+
+    /**
+     * Onc click on back arrow finish the child activity.
+     */
+    protected fun onClickBackArrow() = supportFinishAfterTransition()
 }

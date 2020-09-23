@@ -3,13 +3,11 @@ package org.desperu.independentnews.ui.main
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.view.View
-import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.crystal.crystalrangeseekbar.widgets.CrystalSeekbar
-import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
@@ -25,14 +23,11 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
 
     // FOR UI
     private val recyclerView: RecyclerView by bindView(R.id.recycler_view)
-    private val appbar: AppBarLayout by bindView(R.id.appbar)
     private val drawerIcon: View by bindView(R.id.drawer_icon)
     private val filtersMotionLayout: FiltersMotionLayout by bindView(R.id.filters_motion_layout)
 
     // layout/nav_drawer views
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
-    private val animationSpeedSeekbar: CrystalSeekbar by bindView(R.id.animation_speed_seekbar)
-    private val animationSpeedText: TextView by bindView(R.id.animation_speed_text)
 
     // FOR DATA
     private val viewModel by viewModel<MainViewModel>()
@@ -67,6 +62,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
     override fun configureDesign() {
         configureKoinDependency()
         configureAppBar()
+        showMainActivityIcon()
         configureDrawerLayout()
 //        configureNavigationView()
 //        configureViewModel()
@@ -91,16 +87,16 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
      */
     @SuppressLint("SetTextI18n")
     private fun configureDrawerLayout() {
-//        val toggle = ActionBarDrawerToggle(this, activity_main_drawer_layout, toolbar,
-//            R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-//        activity_main_drawer_layout.addDrawerListener(toggle)
-//        toggle.syncState()
-        animationSpeedSeekbar.setOnSeekbarChangeListener { value ->
-            animationPlaybackSpeed = value as Double
-            animationSpeedText.text = "${"%.1f".format(animationPlaybackSpeed)}x"
-            filtersMotionLayout.updateDurations()
-            updateRecyclerViewAnimDuration()
-        }
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, null,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+//        animationSpeedSeekbar.setOnSeekbarChangeListener { value ->
+//            animationPlaybackSpeed = value as Double
+//            animationSpeedText.text = "${"%.1f".format(animationPlaybackSpeed)}x"
+//            filtersMotionLayout.updateDurations()
+//            updateRecyclerViewAnimDuration()
+//        }
         drawerIcon.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
     }
 
@@ -108,7 +104,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
      * Configure Recycler view.
      */
     private fun configureRecyclerView() {
-        mainListAdapter = MainListAdapter(this, R.layout.item_list)
+        mainListAdapter = MainListAdapter(this, R.layout.item_article)
         recyclerView.adapter = mainListAdapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)

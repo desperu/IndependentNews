@@ -86,8 +86,6 @@
                     android:id="@+id/article_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minWidth="@dimen/match_parent"
-                    android:scaleType="centerCrop"
                     android:transitionName="@string/animation_main_to_show_article"
                     app:setImage="@{viewModel.article.imageUrl}"
                     tools:ignore="UnusedAttribute" />
