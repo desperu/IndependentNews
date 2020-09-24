@@ -1,5 +1,11 @@
 package org.desperu.independentnews.utils
 
+// --- FOR MAIN ---
+
+// Fragment identifier
+const val NO_FRAG = -1
+const val FRAG_ARTICLE_LIST = 0
+
 // --- FOR RETROFIT REQUEST ---
 
 // Key for response type

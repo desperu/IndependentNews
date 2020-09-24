@@ -29,9 +29,19 @@
             <group android:checkableBehavior="single">
 
                 <item
-                    android:id="@+id/activity_main_menu_drawer_Search"
+                    android:id="@+id/activity_main_menu_drawer_search"
                     android:icon="@drawable/ic_baseline_search_white_24"
                     android:title="@string/navigation_drawer_search"/>
+
+                <item
+                    android:id="@+id/activity_main_menu_drawer_notification"
+                    android:icon="@drawable/ic_baseline_notifications_active_white_24"
+                    android:title="@string/navigation_drawer_notification"/>
+
+                <item
+                    android:id="@+id/activity_main_menu_drawer_sources"
+                    android:icon="@drawable/ic_baseline_menu_book_white_24"
+                    android:title="@string/navigation_drawer_sources"/>
 
             </group>
 

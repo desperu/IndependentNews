@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.MainActivity
-import org.desperu.independentnews.ui.main.MainListAdapter
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.views.MultiListenerMotionLayout
@@ -219,14 +219,14 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
 
 
     /**
-     * Convenience method to start ScaleDown animation in [MainListAdapter].
+     * Convenience method to start ScaleDown animation in [ArticleListAdapter].
      * The duration of the scale down animation will match that of the current transition.
      */
-    private fun startScaleDownAnimator(isScaledDown: Boolean): Unit =
-            (context as MainActivity)
-                    .getAdapterScaleDownAnimator(isScaledDown)
-                    .apply { duration = transitionTimeMs }
-                    .start()
+    private fun startScaleDownAnimator(isScaledDown: Boolean): Unit? =
+        (context as MainActivity)
+            .getAdapterScaleDownAnimator(isScaledDown)
+            ?.apply { duration = transitionTimeMs }
+            ?.start()
 
     companion object {
         const val numTabs = 5

@@ -1,10 +1,11 @@
-package org.desperu.independentnews.ui.main
+package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 
 /**
  * View Model witch provide data for article item.

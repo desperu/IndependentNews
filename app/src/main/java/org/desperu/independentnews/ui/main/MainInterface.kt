@@ -1,13 +1,20 @@
 package org.desperu.independentnews.ui.main
 
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
+
 /**
  * Interface to allow communications with Main Activity.
  */
 interface MainInterface {
 
     /**
-     * Return the main list adapter instance.
-     * @return the main list adapter instance.
+     * Get the fragment key value.
      */
-    fun getRecyclerAdapter(): MainListAdapter?
+    fun getFragmentKey(): Int
+
+    /**
+     * Set fragment key value.
+     * @param fragmentKey the fragment key value to set.
+     */
+    fun setFragmentKey(fragmentKey: Int)
 }

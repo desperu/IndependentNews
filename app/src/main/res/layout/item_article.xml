@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="org.desperu.independentnews.ui.main.ItemListViewModel"/>
+            type="org.desperu.independentnews.ui.main.fragment.articleList.ItemListViewModel"/>
     </data>
 
     <!--

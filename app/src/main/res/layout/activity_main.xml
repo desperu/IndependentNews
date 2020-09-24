@@ -17,14 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <FrameLayout
+            android:id="@+id/main_frame_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="@dimen/recycler_view_padding_top"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:listitem="@layout/item_article" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <org.desperu.independentnews.ui.main.filter.FiltersMotionLayout
             android:id="@+id/filters_motion_layout"

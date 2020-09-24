@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.main
+package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -27,7 +27,8 @@ interface ArticleRouter {
  *
  * @param activity the Activity that is used to perform redirection to set.
  */
-class ArticleRouterImpl(private val activity: AppCompatActivity): ArticleRouter {
+class ArticleRouterImpl(private val activity: AppCompatActivity):
+    ArticleRouter {
 
     /**
      * Redirects the user to the ManageEstate Activity to manage estate.

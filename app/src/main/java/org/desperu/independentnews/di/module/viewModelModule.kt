@@ -1,7 +1,7 @@
 package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.ui.main.MainViewModel
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -12,10 +12,13 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     /**
-     * Provides the MainViewModel instance.
+     * Provides the ArticleListViewModel instance.
      */
     viewModel {
-        MainViewModel(get(), get())
+        ArticleListViewModel(
+            get(),
+            get()
+        )
     }
 
     /**

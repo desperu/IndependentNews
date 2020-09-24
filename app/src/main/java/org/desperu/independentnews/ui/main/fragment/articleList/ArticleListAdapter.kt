@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.main
+package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -21,8 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.*
+import org.desperu.independentnews.ui.main.MainListDiffUtil
+import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 
-class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<MainListAdapter.ListViewHolder>() {
+class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<ArticleListAdapter.ListViewHolder>() {
 
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
@@ -46,8 +48,8 @@ class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : 
         set(value) {
             field = value
             val diff = MainListDiffUtil(
-                    if (field) modelList else modelListFiltered,
-                    if (field) modelListFiltered else modelList
+                if (field) modelList else modelListFiltered,
+                if (field) modelListFiltered else modelList
             )
             DiffUtil.calculateDiff(diff).dispatchUpdatesTo(this)
         }
@@ -68,7 +70,9 @@ class MainListAdapter(context: Context, @LayoutRes private val layoutId: Int) : 
     override fun getItemViewType(position: Int): Int = layoutId
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
-            ListViewHolder(DataBindingUtil.inflate(inflater, viewType, parent, false))
+        ListViewHolder(
+            DataBindingUtil.inflate(inflater, viewType, parent, false)
+        )
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
