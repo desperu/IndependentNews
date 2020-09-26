@@ -13,9 +13,9 @@ import org.junit.Test
 class MainUtilsTest {
 
     @Test
-    fun given_fragListKey_When_getFragClassFromKey_Then_checkResult() {
+    fun given_fragKey_When_getFragClassFromKey_Then_checkResult() {
         val expected = ArticleListFragment::class.java
-        val output: Class<Fragment> = getFragClassFromKey(FRAG_ARTICLE_LIST)
+        val output: Class<Fragment> = getFragClassFromKey(FRAG_TOP_STORY)
 
         assertEquals(expected, output)
     }
@@ -49,7 +49,7 @@ class MainUtilsTest {
 
     @Test
     fun given_fragList_When_retrievedFragKeyFromClass_Then_checkResult() {
-        val expected = FRAG_ARTICLE_LIST
+        val expected = FRAG_TOP_STORY
         val output = retrievedFragKeyFromClass(ArticleListFragment::class.java)
 
         assertEquals(expected, output)

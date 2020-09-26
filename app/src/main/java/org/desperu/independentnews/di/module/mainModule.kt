@@ -32,7 +32,7 @@ val mainModule = module {
     /**
      * Provides a ArticleListInterface interface from the instance of ArticleListFragment.
      */
-    single { (fragment: BaseBindingFragment) ->
+    factory { (fragment: BaseBindingFragment) ->
         fragment as ArticleListInterface
     }
 }

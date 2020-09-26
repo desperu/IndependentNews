@@ -1,5 +1,6 @@
 package org.desperu.independentnews.ui.main.fragment
 
+import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -7,6 +8,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
+import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.utils.MainUtils.getFragClassFromKey
 import org.koin.core.KoinComponent
 
@@ -47,15 +49,16 @@ class MainFragmentManager(private val activity: AppCompatActivity,
             mainInterface.setFragmentKey(fragmentKey)
 
             // Get the fragment class from the fragment key
-            val fragmentClass: Class<Fragment> = getFragClassFromKey(fragmentKey)
+            val fragmentClass: Class<ArticleListFragment> = getFragClassFromKey(fragmentKey)
 
             // Restore instance from back stack if there's one,
             // else create a new instance for asked fragment.
-            val fragment =
-                fm.findFragmentByTag(fragmentClass.simpleName) ?: fragmentClass.newInstance()
+//            val fragment =
+//                fm.findFragmentByTag(fragmentClass.simpleName) ?: fragmentClass.newInstance()
+            val fragment = fragmentClass.newInstance()
 
             // Populate data to fragment with bundle.
-//            populateDataToFragment(fragment, estate)
+            populateDataToFragment(fragment, fragmentKey)
 
             // Clear all back stack when recall Estate List Fragment,
             // because it's the root fragment of this activity.
@@ -79,18 +82,19 @@ class MainFragmentManager(private val activity: AppCompatActivity,
     /**
      * Populate data to fragment with bundle.
      * @param fragment the fragment instance to send data.
-     * @param estate the to send to fragment.
+     * @param fragmentKey the fragment key to send to fragment, fro it's configuration.
      */
-//    private fun populateDataToFragment(fragment: Fragment, estate: Estate?) {
-//        // Populate estate to fragment with bundle if there's one.
+    private fun populateDataToFragment(fragment: Fragment, fragmentKey: Int) {
+        // Populate estate to fragment with bundle if there's one.
 //        if (estate != null) {
-//            // Try to update estate detail data if there is an instance of fragment.
+            // Try to update estate detail data if there is an instance of fragment.
 //            estateDetailFragment?.updateEstate(estate)
 //            populateEstateToFragment(fragment, estate)
 //        }
-//        // Populate estate list to maps fragment with bundle, and set map mode.
+        // Populate estate list to maps fragment with bundle, and set map mode.
 //        if (fragmentKey == FRAG_ESTATE_MAP) setMapsFragmentBundle(fragment)
-//    }
+        populateKeyToFragment(fragment, fragmentKey)
+    }
 
     /**
      * Show fragment in corresponding container, add to back stack and set transition.
@@ -174,12 +178,12 @@ class MainFragmentManager(private val activity: AppCompatActivity,
     // BUNDLE
     // --------------
 
-//    /**
-//     * Set bundle instance only if given is null.
-//     * @param bundle the bundle to set.
-//     */
-//    private fun setBundle(bundle: Bundle?): Bundle = bundle ?: Bundle()
-//
+    /**
+     * Set bundle instance only if given is null.
+     * @param bundle the bundle to set.
+     */
+    private fun setBundle(bundle: Bundle?): Bundle = bundle ?: Bundle()
+
 //    /**
 //     * Populate estate to fragment with bundle.
 //     * @param fragment the fragment instance to send estate.
@@ -214,6 +218,17 @@ class MainFragmentManager(private val activity: AppCompatActivity,
 //        populateEstateListToFragment(fragment)
 //        fragment.arguments?.putInt(MAP_MODE, FULL_MODE)
 //    }
+
+    /**
+     * Populate fragment key to the fragment instance with bundle.
+     * @param fragment the fragment to send data to.
+     * @param fragmentKey the fragment key to populate.
+     */
+    private fun populateKeyToFragment(fragment: Fragment, fragmentKey: Int) {
+        fragment.arguments = setBundle(fragment.arguments)
+        fragment.arguments?.putInt(FRAG_KEY, fragmentKey)
+//        (fragment as? ArticleListFragment?)?.updateRecycler()
+    }
 
     // ----------------------------
     // BOTTOM SHEET FILTER FRAGMENT

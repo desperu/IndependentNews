@@ -18,18 +18,32 @@ import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 interface BastamagRepository {
 
     /**
-     * Returns the list of articles with their image of the repository.
-     *
-     * @return the list of articles with their image of the repository.
-     */
-    suspend fun getArticles(): List<Article>
-
-    /**
      * Returns the list of articles from the Rss flux of Bastamag.
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
     suspend fun getRssArticles(): List<Article>?
+
+    /**
+     * Returns the top story list of articles from the Rss flux of Bastamag.
+     *
+     * @return the top story list of articles from the Rss flux of Bastamag.
+     */
+    suspend fun getTopStory(): List<Article>?
+
+    /**
+     * Returns the category list of articles from the Rss flux of Bastamag.
+     *
+     * @return the category list of articles from the Rss flux of Bastamag.
+     */
+    suspend fun getCategory(category: String): List<Article>?
+
+    /**
+     * Returns list of all articles from the database.
+     *
+     * @return the list of all articles from the database.
+     */
+    suspend fun getAllArticles(): List<Article>?
 
     /**
      * Marks an article as read in the repository.
@@ -47,31 +61,18 @@ interface BastamagRepository {
  * @property rssService                        the service to request the Bastamag Rss Service.
  * @property webService                        the service to request the Bastamag Web Site.
  * @property articleDao                        the database access object for article.
- * @property viewedArticleWithMediaMetadataDao the database access object for viewed articles with
- *                                             media metadata.
  *
  * @constructor Instantiates a new BastamagRepositoryImpl.
  *
  * @param rssService                        the service to request the Bastamag Rss Service to set.
  * @param webService                        the service to request the Bastamag Web Site to set.
  * @param articleDao                        the database access object for article to set.
- * @param viewedArticleWithMediaMetadataDao the database access object for viewed articles with
- *                                          media metadata to set.
  */
 class BastamagRepositoryImpl(
     private val rssService: BastamagRssService,
     private val webService: BastamagWebService,
     private val articleDao: ArticleDao
-//    private val mediaMetadataDao: MediaMetadataDao,
-//    private val viewedArticleWithMediaMetadataDao: ViewedArticleWithMediaMetadataDao
 ): BastamagRepository {
-
-    /**
-     * Returns the list of articles from all sources.
-     *
-     * @return the list of articles from all sources.
-     */
-    override suspend fun getArticles(): List<Article> = articleDao.getAll() // TODO for test, to perfect
 
     /**
      * Returns the list of articles from the Rss flux of Bastamag.
@@ -80,7 +81,7 @@ class BastamagRepositoryImpl(
      */
     override suspend fun getRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
-        return@withContext if (rssArticleList != null) {
+        return@withContext if (!rssArticleList.isNullOrEmpty()) {
             val articleList = rssArticleList.map { it.toArticle() }
             articleList.forEach {
                 it.source = BASTAMAG
@@ -98,6 +99,38 @@ class BastamagRepositoryImpl(
             articleDao.getWhereUrlsInSorted(articleList.map { it.url })
         } else
             null
+    }
+
+    /**
+     * Returns the top story list of articles from the Rss flux of Bastamag.
+     *
+     * @return the top story list of articles from the Rss flux of Bastamag.
+     */
+    override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
+        val topStory = rssService.getRssArticles().channel?.rssArticleList
+        return@withContext if (!topStory.isNullOrEmpty()) {
+            val topStoryUrls = topStory.map { it.url.toString() }
+            articleDao.getWhereUrlsInSorted(topStoryUrls)
+        } else
+            null
+    }
+
+    /**
+     * Returns the category list of articles from the Rss flux of Bastamag.
+     *
+     * @return the category list of articles from the Rss flux of Bastamag.
+     */
+    override suspend fun getCategory(category: String): List<Article>? = withContext(Dispatchers.IO) {
+        return@withContext articleDao.getCategory(category)
+    }
+
+    /**
+     * Returns list of all articles from the database.
+     *
+     * @return the list of all articles from the database.
+     */
+    override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
+        return@withContext articleDao.getAll()
     }
 
     /**

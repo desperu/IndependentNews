@@ -2,30 +2,33 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
+import kotlinx.android.synthetic.main.nav_drawer.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.ui.main.filter.FiltersMotionLayout
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
-import org.desperu.independentnews.utils.FRAG_ARTICLE_LIST
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
+import org.desperu.independentnews.utils.FRAG_ALL_ARTICLES
+import org.desperu.independentnews.utils.FRAG_TOP_STORY
 import org.desperu.independentnews.utils.NO_FRAG
 import org.koin.android.ext.android.get
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+
 
 var animationPlaybackSpeed: Double = 0.8
 
-class MainActivity: BaseActivity(mainModule), MainInterface {
+class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSelectedListener {
 
     // FOR UI
 //    @JvmField @State
@@ -39,10 +42,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
 
     // FOR DATA
     private val fm by lazy { MainFragmentManager(this, this as MainInterface) }
-    private val viewModel by viewModel<ArticleListViewModel>()
     private lateinit var mainListAdapter: ArticleListAdapter
-    private val loadingDuration: Long
-        get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
 
 //    /**
 //     * Used to open nav drawer when opening app for first time (to show options)
@@ -73,7 +73,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
         configureAppBar()
         showMainActivityIcon()
         configureDrawerLayout()
-        fm.configureAndShowFragment(FRAG_ARTICLE_LIST)
+        fm.configureAndShowFragment(FRAG_TOP_STORY)
 //        configureNavigationView()
 //        configureViewModel()
 //        configureRecyclerView()
@@ -101,6 +101,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
             R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        nav_view.setNavigationItemSelectedListener(this)
 //        animationSpeedSeekbar.setOnSeekbarChangeListener { value ->
 //            animationPlaybackSpeed = value as Double
 //            animationSpeedText.text = "${"%.1f".format(animationPlaybackSpeed)}x"
@@ -108,21 +109,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
 //            updateRecyclerViewAnimDuration()
 //        }
         drawerIcon.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
-    }
-
-//    /**
-//     * Configure Recycler view.
-//     */
-//    private fun configureRecyclerView() {
-//        mainListAdapter = MainListAdapter(this, R.layout.item_article)
-//        recyclerView.adapter = mainListAdapter
-//        recyclerView.layoutManager = LinearLayoutManager(this)
-//        recyclerView.setHasFixedSize(true)
-//        updateRecyclerViewAnimDuration()
-//    }
-
-    private fun testRequest() { // TODO for test
-        viewModel.getArticle()
     }
 
     // --------------
@@ -141,17 +127,28 @@ class MainActivity: BaseActivity(mainModule), MainInterface {
      */
     override fun setFragmentKey(fragmentKey: Int) { this.fragmentKey = fragmentKey }
 
+    // -----------------
+    // METHODS OVERRIDE
+    // -----------------
+
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.activity_main_menu_drawer_top_story -> fm.configureAndShowFragment(FRAG_TOP_STORY)
+//            R.id.activity_main_menu_drawer_categories ->
+            R.id.activity_main_menu_drawer_all_articles -> fm.configureAndShowFragment(FRAG_ALL_ARTICLES)
+//            R.id.activity_main_drawer_search -> this.showSearchArticlesActivity()
+//            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
+//            R.id.activity_main_drawer_about -> this.showAboutDialog()
+//            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
+            else -> {}
+        }
+        drawerLayout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
     // --------------
     // ACTIVITY
     // --------------
-
-    /**
-     * Update RecyclerView Item Animation Durations
-     */
-    private fun updateRecyclerViewAnimDuration() = recyclerView.itemAnimator?.run {
-        removeDuration = loadingDuration * 60 / 100
-        addDuration = loadingDuration
-    }
 
 //    /**
 //     * Open browser for given string resId URL

@@ -38,8 +38,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
     // filteredItems is a static field to simulate filtering of random items
     private val filteredItems = intArrayOf(2, 5, 6, 8, 12)
-    private val modelList = (if (::list.isInitialized) list else mutableListOf<Any>(20)) as List<ItemListViewModel>
-    private val modelListFiltered = modelList.withIndex().filter { it.index !in filteredItems } as List<ItemListViewModel>
+    private val modelList = (if (::list.isInitialized) list else mutableListOf<Any>(20)) as List<ArticleItemViewModel>
+    private val modelListFiltered = modelList.withIndex().filter { it.index !in filteredItems } as List<ArticleItemViewModel>
 //    private val adapterList: List<MainListModel> get() = if (isFiltered) modelListFiltered else modelList
     private lateinit var list: MutableList<Any>
 
@@ -186,7 +186,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         // TODO animate text length with input filter ??
         holder.title.maxLines = if (progress > 0.4f) 5 else 2
         val originalLength = 56
-        val title = (list[holder.adapterPosition] as ItemListViewModel).article.title
+        val title = (list[holder.adapterPosition] as ArticleItemViewModel).article.title
         val expandedLength = title.length
         holder.title.filters = arrayOf(InputFilter.LengthFilter((originalLength + (expandedLength - originalLength) * progress).toInt()))
         holder.title.text = title

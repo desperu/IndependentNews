@@ -5,7 +5,6 @@ import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 
 /**
  * View Model witch provide data for article item.
@@ -13,13 +12,13 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
  * @param article the given article data for this view model.
  * @param router the router that allows redirection of the user.
  *
- * @constructor Instantiates a new ItemListViewModel.
+ * @constructor Instantiates a new ArticleItemViewModel.
  *
  * @property article the given article data for this view model to set.
  * @property router the router that allows redirection of the user to set.
  */
-class ItemListViewModel(val article: Article,
-                        private val router: ArticleRouter
+class ArticleItemViewModel(val article: Article,
+                           private val router: ArticleRouter
 ): ViewModel() {
 
     // ------------

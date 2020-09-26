@@ -4,7 +4,13 @@ package org.desperu.independentnews.utils
 
 // Fragment identifier
 const val NO_FRAG = -1
-const val FRAG_ARTICLE_LIST = 0
+const val FRAG_TOP_STORY = 0
+const val FRAG_CATEGORY = 1
+const val FRAG_ALL_ARTICLES = 2
+const val FRAG_DECRYPTER = 3
+const val FRAG_RESISTER = 4
+const val FRAG_INVENTER = 5
+
 
 // --- FOR RETROFIT REQUEST ---
 
@@ -18,3 +24,8 @@ const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
 // Source value
 const val BASTAMAG = "Bastamag"
 const val REPORTERRE = "Reporterre"
+
+// Category value
+const val CAT_DECRYPTER = "Approfondir"
+const val CAT_RESISTER = "Resister"
+const val CAT_INVENTER = "Inventer"
