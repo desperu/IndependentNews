@@ -2,6 +2,7 @@ package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -18,7 +19,7 @@ val viewModelModule = module {
     viewModel { (fragment: ArticleListFragment) ->
         ArticleListViewModel(
             get(),
-            fragment,
+            fragment as ArticleListInterface,
             get()
         )
     }

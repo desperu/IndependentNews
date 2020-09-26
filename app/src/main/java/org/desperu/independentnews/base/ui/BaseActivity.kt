@@ -7,7 +7,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.views.ToolbarBehavior
-//import icepick.Icepick
+import icepick.Icepick
 //import kotlinx.android.synthetic.main.toolbar.*
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -34,14 +34,14 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(getActivityLayout())
-//        Icepick.restoreInstanceState(this, savedInstanceState)
+        Icepick.restoreInstanceState(this, savedInstanceState)
         loadKoinModules(module.toList())
         configureDesign()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-//        Icepick.saveInstanceState(this, outState)
+        Icepick.saveInstanceState(this, outState)
     }
 
     override fun onDestroy() {

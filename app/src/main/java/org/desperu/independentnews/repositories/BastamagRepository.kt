@@ -116,12 +116,12 @@ class BastamagRepositoryImpl(
     }
 
     /**
-     * Returns the category list of articles from the Rss flux of Bastamag.
+     * Returns the category list of articles from the database.
      *
-     * @return the category list of articles from the Rss flux of Bastamag.
+     * @return the category list of articles from the database.
      */
     override suspend fun getCategory(category: String): List<Article>? = withContext(Dispatchers.IO) {
-        return@withContext articleDao.getCategory(category)
+        return@withContext articleDao.getCategory("%$category%")
     }
 
     /**

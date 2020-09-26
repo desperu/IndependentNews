@@ -11,7 +11,6 @@ import org.desperu.independentnews.databinding.FragmentArticleListBinding
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
-import org.koin.core.KoinComponent
 import org.koin.core.parameter.parametersOf
 
 /**
@@ -24,7 +23,7 @@ const val FRAG_KEY: String = "fragKey"
  *
  * @constructor Instantiates a new ArticleListFragment.
  */
-class ArticleListFragment: BaseBindingFragment(), ArticleListInterface, KoinComponent {
+class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     // FOR DATA
     private lateinit var binding: FragmentArticleListBinding
@@ -41,7 +40,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface, KoinComp
      */
     companion object {
         /**
-         * Create a new instance of this fragment and set article.
+         * Create a new instance of this fragment and set fragment key.
          * @param fragKey the fragment key to configure the data to show in this fragment.
          * @return the new instance of ArticleListFragment.
          */
@@ -61,11 +60,11 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface, KoinComp
     override fun getBindingView(): View = configureViewModel()
 
     override fun configureDesign() {
-        configureCorrespondingFragment()
+        configureRecyclerView()
     }
 
     override fun updateDesign() {
-        configureRecyclerView()
+        configureCorrespondingFragment()
     }
 
     // --------------
@@ -97,9 +96,9 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface, KoinComp
      */
     private fun configureCorrespondingFragment() = when(fragKey) {
         FRAG_TOP_STORY -> viewModel.getTopStory()
-        FRAG_DECRYPTER -> viewModel.getCategory(CAT_DECRYPTER)
-        FRAG_RESISTER -> viewModel.getCategory(CAT_RESISTER)
-        FRAG_INVENTER -> viewModel.getCategory(CAT_INVENTER)
+        FRAG_SANTE -> viewModel.getCategory(CAT_SANTE)
+        FRAG_SOCIAL -> viewModel.getCategory(CAT_SOCIAL)
+        FRAG_CLIMAT -> viewModel.getCategory(CAT_CLIMAT)
         FRAG_ALL_ARTICLES -> viewModel.getAllArticles()
         else -> viewModel.getTopStory()
     }

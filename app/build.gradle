@@ -16,7 +16,12 @@ android {
         // Support vector drawable
         vectorDrawables.useSupportLibrary = true
 
+        // For Test
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testOptions {
+            unitTests.returnDefaultValues = true
+            unitTests.includeAndroidResources = true
+        }
 
         // Export room database schema
         javaCompileOptions {
@@ -110,6 +115,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
+    // Ice Pick
+    implementation "frankiesardo:icepick:$icepick_version"
+    annotationProcessor "frankiesardo:icepick-processor:$icepick_version"
+
     // SeekBar
     implementation 'com.crystal:crystalrangeseekbar:1.0.0'
 
@@ -119,6 +128,7 @@ dependencies {
     // Koin
     implementation "org.koin:koin-android:$koin_version"
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+    testImplementation "org.koin:koin-test:$koin_version"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"

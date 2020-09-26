@@ -27,11 +27,11 @@ interface ArticleDao {
     suspend fun getArticle(id: Long): Article
 
     /**
-     * Returns the article list from database ordered from the most recent to the oldest.
-     * @return the article list from database ordered from the most recent to the oldest.
+     * Returns the category article list from database ordered from the most recent to the oldest.
+     * @return the category article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE categories =:categories ORDER BY publishedDate DESC")
+    @Query("SELECT * FROM article WHERE categories LIKE :categories OR subtitle LIKE :categories ORDER BY publishedDate DESC")
     suspend fun getCategory(categories: String): List<Article>
 
     /**

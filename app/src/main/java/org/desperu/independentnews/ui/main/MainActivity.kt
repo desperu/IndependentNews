@@ -9,6 +9,8 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
+import icepick.State
+import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
@@ -20,6 +22,7 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapt
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.utils.FRAG_ALL_ARTICLES
+import org.desperu.independentnews.utils.FRAG_CATEGORY
 import org.desperu.independentnews.utils.FRAG_TOP_STORY
 import org.desperu.independentnews.utils.NO_FRAG
 import org.koin.android.ext.android.get
@@ -31,8 +34,7 @@ var animationPlaybackSpeed: Double = 0.8
 class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSelectedListener {
 
     // FOR UI
-//    @JvmField @State
-    private var fragmentKey: Int = NO_FRAG
+    @JvmField @State var fragmentKey: Int = NO_FRAG
     private val recyclerView: RecyclerView by bindView(R.id.recycler_view)
     private val drawerIcon: View by bindView(R.id.drawer_icon)
     private val filtersMotionLayout: FiltersMotionLayout by bindView(R.id.filters_motion_layout)
@@ -73,7 +75,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         configureAppBar()
         showMainActivityIcon()
         configureDrawerLayout()
-        fm.configureAndShowFragment(FRAG_TOP_STORY)
 //        configureNavigationView()
 //        configureViewModel()
 //        configureRecyclerView()
@@ -131,10 +132,15 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // METHODS OVERRIDE
     // -----------------
 
+    override fun onResume() {
+        super.onResume()
+        fm.configureAndShowFragment(if (fragmentKey != NO_FRAG) fragmentKey else FRAG_TOP_STORY)
+    }
+
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.activity_main_menu_drawer_top_story -> fm.configureAndShowFragment(FRAG_TOP_STORY)
-//            R.id.activity_main_menu_drawer_categories ->
+            R.id.activity_main_menu_drawer_categories -> fm.configureAndShowFragment(FRAG_CATEGORY)
             R.id.activity_main_menu_drawer_all_articles -> fm.configureAndShowFragment(FRAG_ALL_ARTICLES)
 //            R.id.activity_main_drawer_search -> this.showSearchArticlesActivity()
 //            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
@@ -142,8 +148,43 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 //            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
             else -> {}
         }
+        showTabLayout()
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onBackPressed() = when {
+        // If drawer is open, close it.
+        drawerLayout.isDrawerOpen(GravityCompat.START) ->
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+//        // If bottom sheet is state expanded , hide it.
+//        fm.isBottomSheetInitialized && fm.isExpanded ->
+//            closeFilterFragment(false)
+//
+//        // If search view is shown, hide it.
+//        toolbar_search_view != null && toolbar_search_view.isShown ->
+//            switchSearchView(false, isReload = false)
+//
+//        // If map is expended in estate detail fragment, collapse it.
+//        fm.mapsFragmentChildDetail?.view?.findViewById<ImageButton>(R.id.fragment_maps_fullscreen_button)?.tag == FULL_SIZE ->
+//            MapMotionLayout(this, fm.mapsFragmentChildDetail?.view).switchMapSize()
+
+        // If current fragment is Top Story, remove it and call super to finish activity.
+        fragmentKey == FRAG_TOP_STORY -> {
+            fm.clearAllBackStack()
+            super.onBackPressed()
+        }
+//        // If device is tablet and frag is not map frag, remove the two frags and call super to finish activity.
+//        isFrame2Visible && fragmentKey != FRAG_ESTATE_MAP -> {
+//            fm.clearAllBackStack()
+//            super.onBackPressed()
+//        }
+        // Else show previous fragment in back stack.
+        else -> {
+            fm.fragmentBack { super.onBackPressed() }
+            showTabLayout()
+        }
     }
 
     // --------------
@@ -155,6 +196,18 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 //     */
 //    private fun openBrowser(@StringRes resId: Int): Unit =
 //            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(resId))))
+
+    // --------------
+    // UI
+    // --------------
+
+    /**
+     * Show or hide tab layout, depends of fragment key value.
+     */
+    private fun showTabLayout() {
+        val toShow = fragmentKey == FRAG_CATEGORY
+        app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
+    }
 
     /**
      * Called from FiltersLayout to get adapter scale down animator

@@ -2,6 +2,8 @@ package org.desperu.independentnews.utils
 
 import androidx.fragment.app.Fragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
+import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
+import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 
 object MainUtils {
 
@@ -10,24 +12,26 @@ object MainUtils {
     // -----------------
 
     /**
-     * Get the associated fragment class with the given fragment key.
+     * Get the associated fragment with the given fragment key.
      * @param fragmentKey the given fragment key from witch get the key.
-     * @return the corresponding fragment class.
+     * @return the corresponding fragment instance.
      */
-    @Suppress("unchecked_cast")
-    internal fun <T: Fragment> getFragClassFromKey(fragmentKey: Int): Class<T> = when (fragmentKey) {
-        FRAG_TOP_STORY -> ArticleListFragment::class.java as Class<T>
-        FRAG_ALL_ARTICLES -> ArticleListFragment::class.java as Class<T>
+    internal fun getFragFromKey(fragmentKey: Int): Fragment = when(fragmentKey) {
+        FRAG_TOP_STORY -> ArticleListFragment()
+        FRAG_CATEGORY -> CategoriesFragment()
+        FRAG_ALL_ARTICLES -> ArticleListFragment()
         else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }
 
     /**
-     * Retrieve the associated fragment key with the fragment class.
-     * @param fragClass the given fragment class from witch retrieved the key.
+     * Retrieve the associated fragment key with the fragment instance.
+     * @param fragment the given fragment from witch retrieved the key.
      * @return the corresponding fragment key.
      */
-    internal fun <T: Fragment> retrievedFragKeyFromClass(fragClass: Class<T>) = when (fragClass) {
-        ArticleListFragment::class.java -> FRAG_TOP_STORY // TODO should create mistake
-        else -> throw IllegalArgumentException("Fragment class not found : ${fragClass.simpleName}")
+    internal fun retrievedKeyFromFrag(fragment: Fragment): Int = when(fragment) {
+        is ArticleListFragment -> if (fragment.arguments?.getInt(FRAG_KEY) == FRAG_TOP_STORY) FRAG_TOP_STORY
+                                  else FRAG_ALL_ARTICLES
+        is CategoriesFragment -> FRAG_CATEGORY
+        else -> throw IllegalArgumentException("Fragment class not found : ${fragment.tag}")
     }
 }

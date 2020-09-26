@@ -1,7 +1,5 @@
 package org.desperu.independentnews.ui.main
 
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
-
 /**
  * Interface to allow communications with Main Activity.
  */

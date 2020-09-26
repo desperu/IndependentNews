@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Fragment Categories -->
+    <string-array name="tab_titles">
+        <item>Santé</item>
+        <item>Social</item>
+        <item>Climat</item>
+    </string-array>
+
+</resources>

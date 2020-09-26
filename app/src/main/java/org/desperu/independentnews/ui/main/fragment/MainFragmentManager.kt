@@ -9,7 +9,9 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
-import org.desperu.independentnews.utils.MainUtils.getFragClassFromKey
+import org.desperu.independentnews.utils.FRAG_CATEGORY
+import org.desperu.independentnews.utils.MainUtils.getFragFromKey
+import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
 import org.koin.core.KoinComponent
 
 /**
@@ -48,14 +50,8 @@ class MainFragmentManager(private val activity: AppCompatActivity,
         if (this.fragmentKey != fragmentKey) {// || estate != null) {
             mainInterface.setFragmentKey(fragmentKey)
 
-            // Get the fragment class from the fragment key
-            val fragmentClass: Class<ArticleListFragment> = getFragClassFromKey(fragmentKey)
-
-            // Restore instance from back stack if there's one,
-            // else create a new instance for asked fragment.
-//            val fragment =
-//                fm.findFragmentByTag(fragmentClass.simpleName) ?: fragmentClass.newInstance()
-            val fragment = fragmentClass.newInstance()
+            // Get the fragment instance from the fragment key
+            val fragment = getFragFromKey(fragmentKey)
 
             // Populate data to fragment with bundle.
             populateDataToFragment(fragment, fragmentKey)
@@ -159,20 +155,20 @@ class MainFragmentManager(private val activity: AppCompatActivity,
 //            )
 //        }
 //    }
-//
-//    /**
-//     * Show previous fragment in back stack, with onBackPressed support and set fragmentKey with restored fragment.
-//     * @param block the super onBackPressed() call.
-//     */
-//    internal fun fragmentBack(block: () -> Unit) {
-//        val tempFragmentKey = fragmentKey
-//        block()
-//        getCurrentFragment()?.let { mainInterface.setFragmentKey(retrievedFragKeyFromClass(it::class.java)) }
+
+    /**
+     * Show previous fragment in back stack, with onBackPressed support and set fragmentKey with restored fragment.
+     * @param block the super onBackPressed() call.
+     */
+    internal fun fragmentBack(block: () -> Unit) {
+        val tempFragmentKey = fragmentKey
+        block()
+        getCurrentFragment()?.let { mainInterface.setFragmentKey(retrievedKeyFromFrag(it)) }
 //        setTitleActivity(activity, fragmentKey, isFrame2Visible)
 //        switchFrameSizeForTablet(frameLayout, fragmentKey, isFrame2Visible)
 //        fabFilter.adaptFabFilter(fragmentKey, isFrame2Visible)
-//        if (tempFragmentKey == fragmentKey) fragmentBack(block)
-//    }
+        if (tempFragmentKey == fragmentKey) fragmentBack(block)
+    }
 
     // --------------
     // BUNDLE
@@ -225,9 +221,11 @@ class MainFragmentManager(private val activity: AppCompatActivity,
      * @param fragmentKey the fragment key to populate.
      */
     private fun populateKeyToFragment(fragment: Fragment, fragmentKey: Int) {
-        fragment.arguments = setBundle(fragment.arguments)
-        fragment.arguments?.putInt(FRAG_KEY, fragmentKey)
+        if (fragmentKey != FRAG_CATEGORY) {
+            fragment.arguments = setBundle(fragment.arguments)
+            fragment.arguments?.putInt(FRAG_KEY, fragmentKey)
 //        (fragment as? ArticleListFragment?)?.updateRecycler()
+        }
     }
 
     // ----------------------------
@@ -300,14 +298,15 @@ class MainFragmentManager(private val activity: AppCompatActivity,
 //    internal val mapsFragmentChildDetail
 //        get() = (getCurrentFragment()?.childFragmentManager
 //            ?.findFragmentById(R.id.fragment_estate_detail_frame_map) as MapsFragment?)
-//
-//    /**
-//     * Return the current fragment instance attached to frame layout 1.
-//     * @return the current fragment instance attached to frame layout 1.
-//     */
-//    private fun getCurrentFragment(): Fragment? =
+
+    /**
+     * Return the current fragment instance attached to frame layout 1.
+     * @return the current fragment instance attached to frame layout 1.
+     */
+    private fun getCurrentFragment(): Fragment? =
+        fm.findFragmentById(R.id.main_frame_container)
 //        fm.findFragmentById(getFrame(fragmentKey, isFrame2Visible))
-//
+
 //    /**
 //     * Get Filter Fragment instance.
 //     * @return the current filter fragment instance.
