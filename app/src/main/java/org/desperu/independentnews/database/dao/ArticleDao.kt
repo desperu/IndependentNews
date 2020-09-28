@@ -31,7 +31,7 @@ interface ArticleDao {
      * @return the category article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE categories LIKE :categories OR subtitle LIKE :categories ORDER BY publishedDate DESC")
+    @Query("SELECT * FROM article WHERE categories LIKE :categories OR section LIKE :categories OR theme LIKE :categories ORDER BY publishedDate DESC")
     suspend fun getCategory(categories: String): List<Article>
 
     /**
@@ -84,7 +84,9 @@ interface ArticleDao {
      * Update the title, the author line and the published date of the article with the given unique identifier.
      *
      * @param title          the title of the article.
-     * @param subtitle       the subtitle of the article.
+     * @param section        the section of the article.
+     * @param theme          the theme of the article.
+     * @param author         the author of the article.
      * @param publishedDate  the date (timestamp) when the article has been published to set.
      * @param article        the body of the article.
      * @param categories     the categories of the article.
@@ -93,9 +95,10 @@ interface ArticleDao {
      * @param css            the css style of the article.
      * @param url            the url of the article
      */
-    @Query("UPDATE article SET title=:title, subtitle=:subtitle, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, css=:css WHERE url=:url")
-    suspend fun update(title: String, subtitle: String, publishedDate: Long, article: String,
-                       categories: String, description: String, imageUrl: String, css: String, url: String)
+    @Query("UPDATE article SET title=:title, section=:section, theme=:theme, author=:author, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, css=:css WHERE url=:url")
+    suspend fun update(title: String, section: String, theme: String, author: String,
+                       publishedDate: Long, article: String, categories: String, description: String,
+                       imageUrl: String, css: String, url: String)
 
     /**
      * Update the given article in database.

@@ -6,6 +6,7 @@ import org.desperu.independentnews.utils.Utils.dateToString
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
+import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.desperu.independentnews.utils.Utils.millisToString
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.junit.Assert.assertEquals
@@ -99,6 +100,29 @@ class UtilsTest {
         output = millisToString(millis)
 
         assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_literalDate_When_literalDateToMillis_Then_checkResult() {
+        val cal = Calendar.getInstance()
+        cal.set(2020, 8, 25, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val expected = cal.timeInMillis
+
+        val literalDate = "25 Septembre 2020"
+
+        val output = literalDateToMillis(literalDate)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_wrongLiteralDate_When_literalDateToMillis_Then_checkResult() {
+        val literalDate = "25 Septembre2020"
+
+        val output = literalDateToMillis(literalDate)
+
+        assertNull(output)
     }
 
     @Test

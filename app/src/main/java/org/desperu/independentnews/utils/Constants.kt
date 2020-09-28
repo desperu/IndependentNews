@@ -26,6 +26,7 @@ const val HTML = 1
 
 // Base url for retrofit request
 const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
+const val REPORTERRE_BASE_URL = "https://reporterre.net/"
 
 // Source value
 const val BASTAMAG = "Bastamag"
@@ -35,3 +36,15 @@ const val REPORTERRE = "Reporterre"
 const val SEC_DECRYPTER = "Approfondir"
 const val SEC_RESISTER = "Resister"
 const val SEC_INVENTER = "Inventer"
+
+
+// --- FOR UTILS ---
+
+// To Convert Date
+val monthNumber = arrayOf("Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre")
+
+// To parse author for Reporterre Html page
+const val SOURCE = "Source"
+const val PHOTO = "Photo"
+const val PHOTOS = "Photos"

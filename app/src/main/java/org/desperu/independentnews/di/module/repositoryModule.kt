@@ -2,6 +2,8 @@ package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.repositories.BastamagRepository
 import org.desperu.independentnews.repositories.BastamagRepositoryImpl
+import org.desperu.independentnews.repositories.ReporterreRepository
+import org.desperu.independentnews.repositories.ReporterreRepositoryImpl
 import org.koin.dsl.module
 
 /**
@@ -15,6 +17,15 @@ val repositoryModule = module {
     single<BastamagRepository> {
         BastamagRepositoryImpl(
                 get(), get(), get()
+        )
+    }
+
+    /**
+     * Provides an ReporterreRepository instance.
+     */
+    single<ReporterreRepository> {
+        ReporterreRepositoryImpl(
+            get(), get(), get()
         )
     }
 }

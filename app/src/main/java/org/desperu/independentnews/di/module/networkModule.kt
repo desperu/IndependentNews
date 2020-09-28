@@ -9,9 +9,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.desperu.independentnews.BuildConfig
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
-import org.desperu.independentnews.utils.HTML
-import org.desperu.independentnews.utils.XML
+import org.desperu.independentnews.network.reporterre.ReporterreRssService
+import org.desperu.independentnews.network.reporterre.ReporterreWebService
+import org.desperu.independentnews.utils.*
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -90,5 +90,19 @@ val networkModule = module {
      */
     single<BastamagWebService> {
         (get<Retrofit> { parametersOf(BASTAMAG_BASE_URL, HTML) }).create(BastamagWebService::class.java)
+    }
+
+    /**
+     * Provides the RSS service for Reporterre.
+     */
+    single<ReporterreRssService> {
+        (get<Retrofit> { parametersOf(REPORTERRE_BASE_URL, XML) }).create(ReporterreRssService::class.java)
+    }
+
+    /**
+     * Provides the Web service for Reporterre.
+     */
+    single<ReporterreWebService> {
+        (get<Retrofit> { parametersOf(REPORTERRE_BASE_URL, HTML) }).create(ReporterreWebService::class.java)
     }
 }

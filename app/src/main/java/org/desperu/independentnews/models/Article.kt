@@ -12,7 +12,8 @@ import kotlinx.android.parcel.Parcelize
  * @param source        the source of the article.
  * @param url           the url of the article.
  * @param title         the title of the article.
- * @param subtitle      the subtitle of the article.
+ * @param section       the section of the article.
+ * @param theme         the theme of the article.
  * @param author        the author of the article.
  * @param publishedDate the published date of the article.
  * @param article       the body of the article.
@@ -27,7 +28,8 @@ import kotlinx.android.parcel.Parcelize
  * @property source         the source of the article to set.
  * @property url            the url of the article to set.
  * @property title          the title of the article to set.
- * @property subtitle       the subtitle of the article to set.
+ * @property section        the section of the article to set.
+ * @property theme          the theme of the article to set.
  * @property author         the author of the article to set.
  * @property publishedDate  the published date of the article to set.
  * @property article        the body of the article to set.
@@ -43,7 +45,8 @@ data class Article(@PrimaryKey(autoGenerate = true)
                    var source: String = "",
                    var url: String = "",
                    var title: String = "",
-                   var subtitle: String = "",
+                   var section: String = "",
+                   var theme: String = "",
                    var author: String = "",
                    var publishedDate: Long = 0L,
                    var article: String = "",

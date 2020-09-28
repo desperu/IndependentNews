@@ -21,7 +21,7 @@ data class BastamagCategory(private val htmlPage: ResponseBody,
             if (article.attr(CLASS) == ARTICLE_ENTRY) {
                 article.select(H3).forEach {
                     if (it.attr(CLASS) == ENTRY_TITLE)
-                        articleUrlList.add(it.select(A).attr(HREF))
+                        articleUrlList.add(it.select(a).attr(HREF))
                 }
             }
         }
@@ -38,6 +38,6 @@ data class BastamagCategory(private val htmlPage: ResponseBody,
      * Return next 10 articles url for this category.
      * @return next 10 articles url for this category.
      */
-    override fun getNext10ArticlesUrl(): String? = findData(A, CLASS, LIEN_PAGINATION)?.attr(HREF) // TODO get more than 20 articles ...
+    override fun getNext10ArticlesUrl(): String? = findData(a, CLASS, LIEN_PAGINATION, null)?.attr(HREF) // TODO get more than 20 articles ...
 //    override fun getNextArticlesUrl(page: String): String? = "Approfondir?debut_articles=$page#pagination_articles"
 }

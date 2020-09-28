@@ -33,15 +33,18 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
      * @param tag the html tag to find.
      * @param attr the attribute to find.
      * @param value the value of the attribute to check.
+     * @param index the specific index to get into the founded list.
      * @return the found value, null if not found.
      */
-    protected fun findData(tag: String, attr: String?, value: String?): Element? {
+    protected fun findData(tag: String, attr: String?, value: String?, index: Int?): Element? {
         val elements = document.select(tag)
-        elements.forEach {
-            if (it.attr(attr) == value) // Get first match
-                return it
-            else if (attr == null && value == null) // Get first element
-                return it
+        elements.withIndex().forEach {
+            if (attr == null && value == null && index == null) // Get first element
+                return it.value
+            else if (it.value.attr(attr) == value && index == null) // Get first match
+                return it.value
+            else if (it.index == index) // Get specified index
+                return it.value
         }
         return null
     }
