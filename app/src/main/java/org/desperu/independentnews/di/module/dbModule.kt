@@ -28,4 +28,11 @@ val dbModule = module{
     single{
         (get() as ArticleDatabase).articleDao()
     }
+
+    /**
+     * Provides the database access object for sources.
+     */
+    single{
+        (get() as ArticleDatabase).sourceDao()
+    }
 }

@@ -12,7 +12,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
 // TODO to clean, comment and model or utils ??? set property when init class as in rss/category???
 
     // FOR DATA
-    override val source = REPORTERRE
+    override val sourceName = REPORTERRE
 
     // --- GETTERS ---
 
@@ -54,7 +54,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         )
     }
 
-    override fun getCss(): String? = REPORTERRE_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
+    override fun getCssUrl(): String? = REPORTERRE_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
 
     /**
      * Convert ReporterreArticle to Article.
@@ -66,7 +66,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         val publishedDate = getPublishedDate()?.let { literalDateToMillis(it) }
         val description = getDescription()
         article.apply {
-            source = this@ReporterreArticle.source
+            sourceName = this@ReporterreArticle.sourceName
             if (getUrl().isNotBlank()) url = getUrl()
             title = getTitle().toString()
             section = getSection().toString()
@@ -76,7 +76,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
             this.article = getArticle().toString()
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].toString()
-            css = getCss().toString()
+            cssUrl = getCssUrl().toString()
         }
 
         return article

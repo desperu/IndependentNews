@@ -108,7 +108,7 @@ class ShowArticleActivity: BaseBindingActivity() {
         web_view.webViewClient = object : WebViewClient() {
 
             override fun onPageFinished(view: WebView, url: String) {
-                val cssLink = article?.css
+                val cssLink = article?.cssUrl
                 val js = "var link = document.createElement('link');" +
                         " link.setAttribute('rel', 'stylesheet');" +
                         " link.setAttribute('href','$cssLink');" +
@@ -117,7 +117,7 @@ class ShowArticleActivity: BaseBindingActivity() {
                 view.evaluateJavascript(js, null)
                 super.onPageFinished(view, url)
             }
-        }
+        }// TODO use retro for click on article Basta or Reporterre
         // disable scroll on touch
 //        web_view.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
     }

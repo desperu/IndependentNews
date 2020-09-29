@@ -13,7 +13,7 @@ const val FRAG_CLIMAT = 5
 
 // Categories View Pager
 const val numberOfPage = 3
-const val CAT_SANTE = "santé"
+const val CAT_SANTE = "santé" // TODO use index???
 const val CAT_SOCIAL = "social"
 const val CAT_CLIMAT = "climat"
 
@@ -27,6 +27,9 @@ const val HTML = 1
 // Base url for retrofit request
 const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
 const val REPORTERRE_BASE_URL = "https://reporterre.net/"
+// Editorial
+const val BASTAMAG_EDITO_URL = "Site-d-informations-independant-sur-les-enjeux-sociaux-et-environnementaux"
+const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
 
 // Source value
 const val BASTAMAG = "Bastamag"

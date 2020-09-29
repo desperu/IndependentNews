@@ -43,13 +43,6 @@ interface BastamagRepository {
      * @return the list of all articles from the database.
      */
     suspend fun getAllArticles(): List<Article>?
-
-    /**
-     * Marks an article as read in the repository.
-     *
-     * @param article the article to mark as read.
-     */
-    suspend fun markArticleAsRead(article: Article)
 }
 
 /**
@@ -83,22 +76,11 @@ class BastamagRepositoryImpl(
         return@withContext if (!rssArticleList.isNullOrEmpty()) {
             val articleList = rssArticleList.map { it.toArticle() }
             articleList.forEach {
-//                it.source = BASTAMAG
-
                 val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
-
-//                bastamagArticle.getSection()?.let { section -> it.section = section }
-//                bastamagArticle.getTheme()?.let { theme -> it.theme = theme }
-//                bastamagArticle.getArticle()?.let { article -> it.article = article }
-//                bastamagArticle.getDescription()?.let { description -> it.description = description }
-//                bastamagArticle.getImage()[0]?.let { imageUrl -> it.imageUrl = imageUrl }
-//                bastamagArticle.getCss()?.let { css -> it.css = css }
-
                 bastamagArticle.toArticle(it)
             }
 
-            persist(articleList)
-            articleDao.getWhereUrlsInSorted(articleList.map { it.url })
+            articleList
         } else
             null
     }
@@ -133,62 +115,5 @@ class BastamagRepositoryImpl(
      */
     override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
         return@withContext articleDao.getAll()
-    }
-
-    /**
-     * Marks an article as read in database.
-     *
-     * @param article the viewed article to mark as read in database.
-     */
-    override suspend fun markArticleAsRead(article: Article) = withContext(Dispatchers.IO) {
-        articleDao.markAsRead(article.id)
-    }
-
-    /**
-     * Persists (update the existing ones, and insert the non-existing ones) the articles in database.
-     *
-     * @param articleList the articles list to persist.
-     */
-    private suspend fun persist(articleList: List<Article>?) = withContext(Dispatchers.IO) {
-        articleList?.let {
-            val urlsToUpdate = getExistingUrls(it)
-
-            val articleListPair = it.partition { article ->  urlsToUpdate.contains(article.url) }
-            val articlesToUpdate = articleListPair.first
-            val articlesToInsert = articleListPair.second
-
-            articlesToUpdate.forEach { article ->
-                articleDao.update(
-                    article.title,
-                    article.section,
-                    article.theme,
-                    article.author,
-                    article.publishedDate,
-                    article.article,
-                    article.categories,
-                    article.description,
-                    article.imageUrl,
-                    article.css,
-                    article.url
-                )
-            }
-            articleDao.insertArticles(*articlesToInsert.toTypedArray())
-        }
-
-//        mediaMetadataDao.deleteWhereViewedArticleIdIn(idsToUpdate)
-//        mediaMetadataDao.insertAll(*mediaMetadataToInsert.toTypedArray())
-    }
-
-    /**
-     * Returns the url of the articles from the given list that already exists in database.
-     *
-     * @param articleList the articles from which to get the list of existing url in database.
-     *
-     * @return the url of the articles from the given list that already exists in database.
-     */
-    private suspend fun getExistingUrls(articleList: List<Article>) = withContext(Dispatchers.IO){
-        val url = articleList.map { article -> article.url }
-        val listToUpdate = articleDao.getWhereUrlsIn(url)
-        listToUpdate.map { article -> article.url }
     }
 }

@@ -92,13 +92,13 @@ interface ArticleDao {
      * @param categories     the categories of the article.
      * @param description    the description of the article.
      * @param imageUrl       the image url of the article.
-     * @param css            the css style of the article.
+     * @param cssUrl         the css url of the article.
      * @param url            the url of the article
      */
-    @Query("UPDATE article SET title=:title, section=:section, theme=:theme, author=:author, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, css=:css WHERE url=:url")
+    @Query("UPDATE article SET title=:title, section=:section, theme=:theme, author=:author, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, cssUrl=:cssUrl WHERE url=:url")
     suspend fun update(title: String, section: String, theme: String, author: String,
                        publishedDate: Long, article: String, categories: String, description: String,
-                       imageUrl: String, css: String, url: String)
+                       imageUrl: String, cssUrl: String, url: String)
 
     /**
      * Update the given article in database.

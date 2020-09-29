@@ -14,7 +14,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
 // TODO to clean, comment and model or utils ??? set property when init class as in rss/category???
 
     // FOR DATA
-    override val source = BASTAMAG
+    override val sourceName = BASTAMAG
 
     // --- GETTERS ---
 
@@ -62,7 +62,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         return listOf(BASTAMAG_BASE_URL + element?.attr(SRC), element?.attr(WIDTH), element?.attr(HEIGHT))
     }
 
-    override fun getCss(): String? = BASTAMAG_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)//findData("style", "type", "'text/css'")?.ownText()
+    override fun getCssUrl(): String? = BASTAMAG_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)//findData("style", "type", "'text/css'")?.ownText()
 
     /**
      * Convert BastamagArticle to Article.
@@ -74,7 +74,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         val publishedDate = getPublishedDate()?.let { stringToDate(it)?.time }
         val description = getDescription()
         article.apply {
-            source = this@BastamagArticle.source
+            sourceName = this@BastamagArticle.sourceName
             if (getUrl().isNotBlank()) url = getUrl()
             title = getTitle().toString()
             section = getSection().toString()
@@ -84,7 +84,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
             this.article = getArticle().toString()
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].toString()
-            css = getCss().toString()
+            cssUrl = getCssUrl().toString()
         }
 
         return article

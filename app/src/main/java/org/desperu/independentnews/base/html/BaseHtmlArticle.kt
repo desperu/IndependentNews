@@ -11,7 +11,7 @@ import org.desperu.independentnews.base.html.BaseHtml
 abstract class BaseHtmlArticle(private val htmlPage: ResponseBody): BaseHtml(htmlPage) {
 
     // FOR DATA
-    protected abstract val source: String
+    protected abstract val sourceName: String
 
     // --- GETTERS ---
 
@@ -31,5 +31,5 @@ abstract class BaseHtmlArticle(private val htmlPage: ResponseBody): BaseHtml(htm
 
     internal abstract fun getImage(): List<String?>
 
-    internal abstract fun getCss(): String?
+    internal abstract fun getCssUrl(): String?
 }
