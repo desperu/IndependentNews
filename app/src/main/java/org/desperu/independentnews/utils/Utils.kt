@@ -1,7 +1,5 @@
 package org.desperu.independentnews.utils
 
-import android.content.Context
-import org.desperu.independentnews.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,10 +74,11 @@ internal object Utils {
         val tabDate = literalDate.split(" ")
         if (tabDate.size < 3) return null
         val month = monthNumber.indexOf(tabDate[1])
+        val dayOfMonth = tabDate[0].replace("([a-z])".toRegex(), "").toInt()
         val cal = Calendar.getInstance()
         cal.set(Calendar.YEAR, tabDate[2].toInt())
         cal.set(Calendar.MONTH, month)
-        cal.set(Calendar.DAY_OF_MONTH, tabDate[0].toInt())
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         cal.set(Calendar.HOUR_OF_DAY, 0)
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)

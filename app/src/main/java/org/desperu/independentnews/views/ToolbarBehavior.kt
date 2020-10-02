@@ -85,7 +85,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look
                 toolbarTitle.scaleX = if (scale < minScale) minScale else scale
                 toolbarTitle.scaleY = toolbarTitle.scaleX
             }
-        } else if (dyConsumed < 0) {
+        } else if (dyConsumed < -20) {
 
             // scroll down
             if (toolbar.layoutParams.height < toolbarOriginalHeight) {

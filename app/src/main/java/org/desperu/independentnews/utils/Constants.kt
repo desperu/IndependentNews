@@ -51,3 +51,19 @@ val monthNumber = arrayOf("Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
 const val SOURCE = "Source"
 const val PHOTO = "Photo"
 const val PHOTOS = "Photos"
+
+
+// --- FOR SERVICES ---
+
+// For Receiver
+const val UPDATE_DATA = 0
+const val NOTIFICATION = 1
+
+
+// --- FOR SHARED PREFERENCES ---
+
+
+// File name
+const val INDEPENDENT_NEWS_PREFS = "IndependentNewsPrefs"
+// For keys
+const val IS_FIRST_TIME = "isFirstTime"

@@ -23,6 +23,13 @@ interface IndependentNewsRepository {
     suspend fun getRssArticles(): List<Article>?
 
     /**
+     * Returns the top story list of articles from the Rss flux of Bastamag.
+     *
+     * @return the top story list of articles from the Rss flux of Bastamag.
+     */
+    suspend fun getTopStory(): List<Article>?
+
+    /**
      * Returns the category list of articles from the Rss flux of Reporterre.
      *
      * @return the category list of articles from the Rss flux of Reporterre.
@@ -47,6 +54,11 @@ interface IndependentNewsRepository {
      * Create all sources in database for first apk start.
      */
     suspend fun createSourcesForFirstStart()
+
+    /**
+     * Set enabled sources from the database.
+     */
+    suspend fun setSources()
 }
 
 /**
@@ -72,9 +84,9 @@ class IndependentNewsRepositoryImpl(
     // FOR DATA
     private var sources: List<Source>? = null
 
-    init {
-        runBlocking { setSources() }
-    }
+//    init {
+//        runBlocking(Dispatchers.IO) { setSources() } // TODO lock ui ??
+//    }
 
     /**
      * Returns the list of articles from the Rss flux of all sources.
@@ -82,6 +94,7 @@ class IndependentNewsRepositoryImpl(
      * @return the list of articles from the Rss flux of all sources.
      */
     override suspend fun getRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
+        setSources()
         val rssArticleList = mutableListOf<Article>()
         sources?.forEach { source ->
             if (source.name == BASTAMAG)
@@ -93,6 +106,24 @@ class IndependentNewsRepositoryImpl(
         persist(rssArticleList)
 
         return@withContext rssArticleList
+    }
+
+    /**
+     * Returns the top story list of articles from the Rss flux of Bastamag.
+     *
+     * @return the top story list of articles from the Rss flux of Bastamag.
+     */
+    override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
+        setSources()
+        val topStoryList = mutableListOf<Article>()
+        sources?.forEach { source ->
+            if (source.name == BASTAMAG)
+                bastamagRepository.getTopStory()?.let { topStoryList.addAll(it) }
+            if (source.name == REPORTERRE)
+                reporterreRepository.getTopStory()?.let { topStoryList.addAll(it) }
+        }
+
+        topStoryList
     }
 
     /**
@@ -110,6 +141,7 @@ class IndependentNewsRepositoryImpl(
      * @return the list of all articles from the database.
      */
     override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
+        setSources()
         val allArticles = mutableListOf<Article>()
         sources?.forEach { source ->
             if (source.name == BASTAMAG)
@@ -133,11 +165,12 @@ class IndependentNewsRepositoryImpl(
     /**
      * Create all sources in database for first apk start.
      */
-    override suspend fun createSourcesForFirstStart() {
+    override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
         val sources = mutableListOf<Source>()
         sources.add(Source(0, BASTAMAG, BASTAMAG_BASE_URL, BASTAMAG_EDITO_URL))
         sources.add(Source(0, REPORTERRE, REPORTERRE_BASE_URL, REPORTERRE_EDITO_URL))
         sourceRepository.createSources(*sources.toTypedArray())
+        setSources() // TODO mistake with vm call getTopStory before here runBlocking??
     }
 
     /**
@@ -191,7 +224,8 @@ class IndependentNewsRepositoryImpl(
     /**
      * Set enabled sources from the database.
      */
-    private suspend fun setSources() = withContext(Dispatchers.IO) {
-        sources = sourceRepository.getEnabledSources()
+    override suspend fun setSources() = withContext(Dispatchers.IO) {
+        if (sources.isNullOrEmpty())
+            sources = sourceRepository.getEnabledSources()
     }
 }

@@ -126,6 +126,20 @@ class UtilsTest {
     }
 
     @Test
+    fun given_specificLiteralDate_When_literalDateToMillis_Then_checkResult() {
+        val cal = Calendar.getInstance()
+        cal.set(2020, 9, 1, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val expected = cal.timeInMillis
+
+        val literalDate = "1er Octobre 2020"
+
+        val output = literalDateToMillis(literalDate)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
     fun given_mutableList_When_concatenateStringFromMutableList_Then_checkString() {
         val expected = "School, Shop, Park"
 

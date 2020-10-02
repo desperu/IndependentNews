@@ -2,29 +2,31 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import icepick.State
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.nav_drawer.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
-import org.desperu.independentnews.ui.main.filter.FiltersMotionLayout
+import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
-import org.desperu.independentnews.utils.FRAG_ALL_ARTICLES
-import org.desperu.independentnews.utils.FRAG_CATEGORY
-import org.desperu.independentnews.utils.FRAG_TOP_STORY
-import org.desperu.independentnews.utils.NO_FRAG
+import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
@@ -35,9 +37,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     // FOR UI
     @JvmField @State var fragmentKey: Int = NO_FRAG
-    private val recyclerView: RecyclerView by bindView(R.id.recycler_view)
     private val drawerIcon: View by bindView(R.id.drawer_icon)
-    private val filtersMotionLayout: FiltersMotionLayout by bindView(R.id.filters_motion_layout)
 
     // layout/nav_drawer views
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
@@ -46,14 +46,14 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private val fm by lazy { MainFragmentManager(this, this as MainInterface) }
     private lateinit var mainListAdapter: ArticleListAdapter
 
-//    /**
-//     * Used to open nav drawer when opening app for first time (to show options)
-//     */
-//    private val prefs: SharedPreferences
-//        get() = getSharedPreferences("FabFilter", Context.MODE_PRIVATE)
-//    private var isFirstTime: Boolean
-//        get() = prefs.getBoolean("isFirstTime", true)
-//        set(value) = prefs.edit { putBoolean("isFirstTime", value) }
+    /**
+     * Used to open nav drawer when opening app for first time (to show options)
+     */
+    private val prefs: SharedPreferences
+        get() = getSharedPreferences(INDEPENDENT_NEWS_PREFS, Context.MODE_PRIVATE)
+    private var isFirstTime: Boolean
+        get() = prefs.getBoolean(IS_FIRST_TIME, true)
+        set(value) = prefs.edit { putBoolean(IS_FIRST_TIME, value) }
     /**
      * Used by FiltersLayout since we don't want to expose mainListAdapter (why?)
      * (Option: Combine everything into one activity if & when necessary)
@@ -71,6 +71,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     override fun getActivityLayout(): Int = R.layout.activity_main
 
     override fun configureDesign() {
+        createSourcesAtFirstStart()
         configureKoinDependency()
         configureAppBar()
         showMainActivityIcon()
@@ -196,6 +197,21 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 //     */
 //    private fun openBrowser(@StringRes resId: Int): Unit =
 //            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(resId))))
+
+    // -----------------
+    // DATA
+    // -----------------
+
+    /**
+     * Create sources in database at first start only.
+     */
+    private fun createSourcesAtFirstStart() {
+        if (isFirstTime)
+            lifecycleScope.launch(Dispatchers.IO) {
+                get<IndependentNewsRepository>().createSourcesForFirstStart()
+                isFirstTime = false
+            }
+    }
 
     // --------------
     // UI
