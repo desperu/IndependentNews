@@ -22,4 +22,8 @@
     <!-- SCENE TRANSITION -->
     <string name="animation_main_to_show_article">ImageAnimationMainToShowArticle</string>
 
+
+    <!-- FONT ID -->
+    <string name="AnnieUseYourTelescope_Regular">AnnieUseYourTelescope-Regular</string>
+
 </resources>

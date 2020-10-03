@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FontTextView">
+        <attr name="fontName" format="enum">
+            <enum name="Annie_use_your_telescope" value="1" />
+        </attr>
+    </declare-styleable>
+
+</resources>
