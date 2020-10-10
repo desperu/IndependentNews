@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    android:padding="@dimen/filter_layout_padding"
+    tools:background="@color/colorPrimaryDark"
+    tools:layout_height="@dimen/sheet_peek_height">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/filter_first_linear_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/filter_ecology"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:tag="filter_ecology"
+            android:text="@string/filter_layout_theme_ecology"
+            style="@style/FilterPillTheme"/>
+
+        <TextView
+            android:id="@+id/filter_social"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/filter_pill_margin_start"
+            android:tag="filter_social"
+            android:text="@string/filter_layout_theme_social"
+            style="@style/FilterPillTheme"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/filter_linear_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/filter_economy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_layout_theme_economy"
+            style="@style/FilterPillTheme"/>
+
+        <TextView
+            android:id="@+id/filter_politic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/filter_pill_margin_start"
+            android:text="@string/filter_layout_theme_politic"
+            style="@style/FilterPillTheme"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/filter_linear_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/filter_international"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_layout_theme_international"
+            style="@style/FilterPillTheme"/>
+
+        <TextView
+            android:id="@+id/filter_energy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/filter_pill_margin_start"
+            android:text="@string/filter_layout_theme_energy"
+            style="@style/FilterPillTheme"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/filter_linear_margin_top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/filter_agriculture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_layout_theme_agriculture"
+            style="@style/FilterPillTheme"/>
+
+        <TextView
+            android:id="@+id/filter_health"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/filter_pill_margin_start"
+            android:text="@string/filter_layout_theme_health"
+            style="@style/FilterPillTheme"/>
+    </LinearLayout>
+</LinearLayout>

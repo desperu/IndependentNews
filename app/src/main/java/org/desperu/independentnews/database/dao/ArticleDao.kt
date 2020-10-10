@@ -10,9 +10,15 @@ import org.desperu.independentnews.models.Article
 @Dao
 interface ArticleDao {
 
+    // -----------------
+    // GETTERS
+    // -----------------
+
     /**
      * Returns the article from database ordered for given id.
+     *
      * @param id the id of the article to get from database.
+     *
      * @return the cursor access for the corresponding article.
      */
     @Query("SELECT * FROM article WHERE id = :id")
@@ -20,7 +26,9 @@ interface ArticleDao {
 
     /**
      * Returns the article from database ordered for given id.
+     *
      * @param id the id of the article to get from database.
+     *
      * @return the corresponding article.
      */
     @Query("SELECT * FROM article WHERE id = :id")
@@ -28,6 +36,7 @@ interface ArticleDao {
 
     /**
      * Returns the category article list from database ordered from the most recent to the oldest.
+     *
      * @return the category article list from database ordered from the most recent to the oldest.
      */
     @Transaction
@@ -36,6 +45,7 @@ interface ArticleDao {
 
     /**
      * Returns the article list from database ordered from the most recent to the oldest.
+     *
      * @return the article list from database ordered from the most recent to the oldest.
      */
     @Transaction
@@ -64,13 +74,107 @@ interface ArticleDao {
     @Query("SELECT * FROM article WHERE url IN (:urls) ORDER BY publishedDate DESC ")
     suspend fun getWhereUrlsInSorted(urls: List<String>): List<Article>
 
+    // -----------------
+    // FILTERS
+    // -----------------
+
+    /**
+     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     *
+     * @param sources       the sources list to search into database articles's data.
+     * @param sections      the sections of article to get.
+     * @param themes        the themes of article to get.
+     * @param startDate     the published start date of article to get.
+     * @param endDate       the published end date of article to get.
+     * @param urls          the list of urls to search into.
+     *
+     * @return the filtered article list from database ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND section IN (:sections) AND theme IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredList(sources: List<String>,
+                                sections: List<String>,
+                                themes: List<String>,
+                                startDate: Long,
+                                endDate: Long,
+                                urls: List<String>
+    ): List<Article>
+
+    /**
+     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     *
+     * @param sources       the sources list to search into database articles's data.
+     * @param themes        the themes of article to get.
+     * @param startDate     the published start date of article to get.
+     * @param endDate       the published end date of article to get.
+     * @param urls          the list of urls to search into.
+     *
+     * @return the filtered article list from database ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND theme IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithThemes(sources: List<String>,
+                                          themes: List<String>,
+                                          startDate: Long,
+                                          endDate: Long,
+                                          urls: List<String>
+    ): List<Article>
+
+    /**
+     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     *
+     * @param sources       the sources list to search into database articles's data.
+     * @param sections      the sections of article to get.
+     * @param startDate     the published start date of article to get.
+     * @param endDate       the published end date of article to get.
+     * @param urls          the list of urls to search into.
+     *
+     * @return the filtered article list from database ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND section IN (:sections) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithSections(sources: List<String>,
+                                            sections: List<String>,
+                                            startDate: Long,
+                                            endDate: Long,
+                                            urls: List<String>
+    ): List<Article>
+
+    /**
+     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     *
+     * @param sources       the sources list to search into database articles's data.
+     * @param startDate     the published start date of article to get.
+     * @param endDate       the published end date of article to get.
+     * @param urls          the list of urls to search into.
+     *
+     * @return the filtered article list from database ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredList(sources: List<String>,
+                                startDate: Long,
+                                endDate: Long,
+                                urls: List<String>
+    ): List<Article>
+
+    // -----------------
+    // INSERT
+    // -----------------
+
     /**
      * Inserts the given article in database.
+     *
      * @param articles the articles to insert in database.
+     *
      * @return the row id for the inserted article.
      */
     @Insert
     suspend fun insertArticles(vararg articles: Article)//: Long
+
+    // -----------------
+    // UPDATE
+    // -----------------
 
     /**
      * Mark the article with the given unique identifier as read in database.
@@ -96,21 +200,37 @@ interface ArticleDao {
      * @param url            the url of the article
      */
     @Query("UPDATE article SET title=:title, section=:section, theme=:theme, author=:author, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, cssUrl=:cssUrl WHERE url=:url")
-    suspend fun update(title: String, section: String, theme: String, author: String,
-                       publishedDate: Long, article: String, categories: String, description: String,
-                       imageUrl: String, cssUrl: String, url: String)
+    suspend fun update(title: String,
+                       section: String,
+                       theme: String,
+                       author: String,
+                       publishedDate: Long,
+                       article: String,
+                       categories: String,
+                       description: String,
+                       imageUrl: String,
+                       cssUrl: String,
+                       url: String)
 
     /**
      * Update the given article in database.
+     *
      * @param article the article to update in database.
+     *
      * @return the number of row affected.
      */
     @Update
     suspend fun updateArticle(article: Article): Int
 
+    // -----------------
+    // DELETE
+    // -----------------
+
     /**
      * Delete the article in database for the given id.
+     *
      * @param id the id of the article to delete in database.
+     *
      * @return the number of row affected.
      */
     @Query("DELETE FROM Article WHERE id = :id")

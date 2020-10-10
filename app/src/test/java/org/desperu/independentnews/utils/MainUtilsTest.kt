@@ -20,22 +20,6 @@ class MainUtilsTest {
         assertEquals(expected, output)
     }
 
-//    @Test
-//    fun given_fragMapKey_When_getFragClassFromKey_Then_checkResult() {
-//        val expected = MapsFragment::class.java
-//        val output: Class<Fragment> = getFragClassFromKey(FRAG_ESTATE_MAP)
-//
-//        assertEquals(expected, output)
-//    }
-//
-//    @Test
-//    fun given_fragDetailKey_When_getFragClassFromKey_Then_checkResult() {
-//        val expected = EstateDetailFragment::class.java
-//        val output: Class<Fragment> = getFragClassFromKey(FRAG_ESTATE_DETAIL)
-//
-//        assertEquals(expected, output)
-//    }
-
     @Test
     fun given_wrongKey_When_getFragClassFromKey_Then_checkError() {
         val fragmentKey = 100
@@ -55,22 +39,6 @@ class MainUtilsTest {
 
         assertEquals(expected, output)
     }
-
-//    @Test
-//    fun given_fragMap_When_retrievedFragKeyFromClass_Then_checkResult() {
-//        val expected = FRAG_ESTATE_MAP
-//        val output = retrievedFragKeyFromClass(MapsFragment::class.java)
-//
-//        assertEquals(expected, output)
-//    }
-//
-//    @Test
-//    fun given_fragDetail_When_retrievedFragKeyFromClass_Then_checkResult() {
-//        val expected = FRAG_ESTATE_DETAIL
-//        val output = retrievedFragKeyFromClass(EstateDetailFragment::class.java)
-//
-//        assertEquals(expected, output)
-//    }
 
     @Test
     fun given_wrongFragment_When_retrievedFragKeyFromClass_Then_checkError() {

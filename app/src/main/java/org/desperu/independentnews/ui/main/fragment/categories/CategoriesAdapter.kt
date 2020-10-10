@@ -12,7 +12,7 @@ class CategoriesAdapter(mContext: Context,
                         fm: FragmentManager?,
                         behavior: Int) : FragmentPagerAdapter(fm!!, behavior) {
 
-    private val tabTitles = mContext.resources.getStringArray(R.array.tab_titles)
+    private val tabTitles = mContext.resources.getStringArray(R.array.categories_tab_titles)
 
     override fun getCount(): Int = numberOfPage
 

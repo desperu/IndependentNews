@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
@@ -20,16 +21,19 @@ class FiltersTabsAdapter(context: Context, private val listener: (Int) -> Unit) 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var hasFilters = MutableList(FiltersMotionLayout.numTabs) { false }
 
+    private val tabTitle = context.resources.getStringArray(R.array.filter_tab_title)
+
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
 
-    override fun getItemCount(): Int = FiltersMotionLayout.numTabs
+    override fun getItemCount(): Int = tabTitle.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FiltersTabsViewHolder =
             FiltersTabsViewHolder(inflater.inflate(R.layout.item_filter_tab, parent, false))
 
     override fun onBindViewHolder(holder: FiltersTabsViewHolder, position: Int) {
+        holder.title.text = tabTitle[position]
         holder.itemView.setScale(defaultScale)
         holder.badge.setScale(if (hasFilters[position]) 1f else 0f)
 
@@ -67,6 +71,7 @@ class FiltersTabsAdapter(context: Context, private val listener: (Int) -> Unit) 
 
     class FiltersTabsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val badge: View by bindView(R.id.tab_badge)
+        val title: TextView by bindView(R.id.tab_title)
     }
 
     companion object {

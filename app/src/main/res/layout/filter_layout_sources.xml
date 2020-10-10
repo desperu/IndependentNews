@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:layout_height="@dimen/sheet_peek_height"
+              android:layout_gravity="bottom"
+              android:orientation="vertical"
+              android:padding="@dimen/filter_layout_padding"
+              tools:background="@color/colorPrimaryDark">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/filter_first_linear_margin_top">
+
+        <TextView
+            android:id="@+id/filter_bastamag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_layout_sources_bastamag"
+            style="@style/FilterPillTheme"/>
+
+        <TextView
+            android:id="@+id/filter_reporterre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_layout_sources_reporterre"
+            android:layout_alignParentEnd="true"
+            style="@style/FilterPillTheme"
+            tools:ignore="RelativeOverlap" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/filter_multinational"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_layout_sources_multinational"
+            style="@style/FilterPillTheme"/>
+
+    </LinearLayout>
+
+</LinearLayout>

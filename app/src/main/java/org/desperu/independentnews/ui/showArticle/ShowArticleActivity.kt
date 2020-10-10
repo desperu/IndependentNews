@@ -192,7 +192,7 @@ class ShowArticleActivity: BaseBindingActivity() {
      * @param sharedElement the shared element to animate for the transition.
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
-        sharedElement.viewTreeObserver.addOnPreDrawListener(
+        sharedElement.viewTreeObserver.addOnPreDrawListener( // TODO use callback from glide download... or share image from list to this activity (better perf and rapidity)
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     sharedElement.viewTreeObserver.removeOnPreDrawListener(this)

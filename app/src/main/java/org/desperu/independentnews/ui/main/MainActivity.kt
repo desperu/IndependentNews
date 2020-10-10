@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import icepick.State
@@ -23,14 +24,14 @@ import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
-
+// TODO to move and comment class
 var animationPlaybackSpeed: Double = 0.8
 
 class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSelectedListener {
@@ -44,25 +45,16 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     // FOR DATA
     private val fm by lazy { MainFragmentManager(this, this as MainInterface) }
-    private lateinit var mainListAdapter: ArticleListAdapter
+    override val mainLifecycleScope: LifecycleCoroutineScope = lifecycleScope
 
     /**
-     * Used to open nav drawer when opening app for first time (to show options)
+     * Used to create sources in database.
      */
     private val prefs: SharedPreferences
         get() = getSharedPreferences(INDEPENDENT_NEWS_PREFS, Context.MODE_PRIVATE)
     private var isFirstTime: Boolean
         get() = prefs.getBoolean(IS_FIRST_TIME, true)
         set(value) = prefs.edit { putBoolean(IS_FIRST_TIME, value) }
-    /**
-     * Used by FiltersLayout since we don't want to expose mainListAdapter (why?)
-     * (Option: Combine everything into one activity if & when necessary)
-     */
-    var isAdapterFiltered: Boolean
-        get() = mainListAdapter.isFiltered
-        set(value) {
-            mainListAdapter.isFiltered = value
-        }
 
     // --------------
     // BASE METHODS
@@ -209,9 +201,17 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         if (isFirstTime)
             lifecycleScope.launch(Dispatchers.IO) {
                 get<IndependentNewsRepository>().createSourcesForFirstStart()
+                // TODO fetch sources for first time with loading animation ?
                 isFirstTime = false
             }
     }
+
+    /**
+     * Apply selected filters to the current article list.
+     * @param selectedMap the map of selected filters to apply.
+     */
+    override fun filterList(selectedMap: Map<Int, MutableList<String>>) =
+        (getCurrentFrag() as ArticleListInterface).filterList(selectedMap)
 
     // --------------
     // UI
@@ -220,20 +220,29 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     /**
      * Show or hide tab layout, depends of fragment key value.
      */
-    private fun showTabLayout() {
+    private fun showTabLayout() { // TODO put in MainFM with setTitle ??
         val toShow = fragmentKey == FRAG_CATEGORY
         app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
     }
 
     /**
-     * Called from FiltersLayout to get adapter scale down animator
+     * Return the adapter scale down animator for the recycler view of article list.
+     * @return the adapter scale down animator for the recycler view of article list.
      */
-    fun getAdapterScaleDownAnimator(isScaledDown: Boolean): ValueAnimator? =
-        (fm.articleListFragment as ArticleListInterface).getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
+    override fun getAdapterScaleDownAnimator(isScaledDown: Boolean): ValueAnimator? =
+        (getCurrentFrag() as? ArticleListInterface)?.getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
+
+    // --------------
+    // UTILS
+    // --------------
 
     /**
-     * Return the main list adapter instance.
-     * @return the main list adapter instance.
+     * Return the current fragment instance.
+     * @return the current fragment instance.
      */
-//    override fun getRecyclerAdapter(): ArticleListAdapter? = if (::mainListAdapter.isInitialized) mainListAdapter else null
+    private fun getCurrentFrag(): ArticleListFragment? =
+        if (fragmentKey == FRAG_CATEGORY)
+            fm.categoryFragment?.getCurrentFrag()
+        else
+            fm.articleListFragment
 }

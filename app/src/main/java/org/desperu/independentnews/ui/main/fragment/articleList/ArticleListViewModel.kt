@@ -16,7 +16,7 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
  *
  * @constructor Instantiates a new ArticleListViewModel.
  *
- * @property ideNewsRepository the aoo repository interface witch provide database and network access to set.
+ * @property ideNewsRepository the app repository interface witch provide database and network access to set.
  * @property articleListInterface the article list interface witch provide fragment interface to set.
  * @property router the estate router interface witch provide user redirection to set.
  */
@@ -27,15 +27,16 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
 ): ViewModel() {
 
     // FOR DATA
-    private var itemListVM: List<ArticleItemViewModel>? = null
+    private var articleList: List<Article>? = null
+    private var filteredList: List<Article>? = null
 
     // -----------------
     // NETWORK
     // -----------------
 
     internal fun fetchRssArticles() = viewModelScope.launch(Dispatchers.IO) {
-        itemListVM = ideNewsRepository.getRssArticles()?.map { ArticleItemViewModel(it, router) }
-        updateRecyclerData()
+        ideNewsRepository.fetchRssArticles()
+//        updateRecyclerData()
     }
 
     // -----------------
@@ -43,20 +44,48 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
     // -----------------
 
     internal fun getTopStory() = viewModelScope.launch(Dispatchers.IO) {
-        itemListVM = ideNewsRepository.getTopStory()?.map { ArticleItemViewModel(it, router) }
+        articleList = ideNewsRepository.getTopStory()
         updateRecyclerData()
     }
 
     internal fun getCategory(category: String) = viewModelScope.launch(Dispatchers.IO) {
-        itemListVM = ideNewsRepository.getCategory(category)?.map {
-            ArticleItemViewModel(it, router)
-        }
+        articleList = ideNewsRepository.getCategory(category)
         updateRecyclerData()
     }
 
     internal fun getAllArticles() = viewModelScope.launch(Dispatchers.IO) {
-        itemListVM = ideNewsRepository.getAllArticles()?.map { ArticleItemViewModel(it, router) }
+        articleList = ideNewsRepository.getAllArticles()
         updateRecyclerData()
+    }
+
+    // -----------------
+    // FILTER
+    // -----------------
+
+    /**
+     * Apply selected filters to the current article list.
+     * @param selectedMap the map of selected filters to apply.
+     */
+    internal fun filterList(selectedMap: Map<Int, MutableList<String>>) = viewModelScope.launch(Dispatchers.IO) {
+        filteredList = if (selectedMap.isNotEmpty())
+                           articleList?.let { ideNewsRepository.getFilteredList(selectedMap, it) }
+                       else
+                           mutableListOf()
+        filteredList?.let { updateFilteredList(it) }
+    }
+
+    @Suppress("unchecked_cast")
+    internal fun updateFilteredList(filteredList: List<Article>) {
+        this.filteredList = filteredList
+        articleListInterface.getRecyclerAdapter()?.apply {
+
+            if (filteredList.isNotEmpty())
+                this.filteredList = filteredList.map { article ->
+                    ArticleItemViewModel(article, router)
+                }.toMutableList()
+
+            isFiltered = filteredList.isNotEmpty()
+        }
     }
 
     // -----------------
@@ -64,9 +93,9 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
     // -----------------
 
     private fun updateRecyclerData() = viewModelScope.launch(Dispatchers.Main) {
-        itemListVM?.let {
+        articleList?.let {
             articleListInterface.getRecyclerAdapter()?.apply {
-                updateList(it.toMutableList())
+                updateList(it.map { article -> ArticleItemViewModel(article, router) }.toMutableList())
                 notifyDataSetChanged()
             }
         }
@@ -74,5 +103,5 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
 
     // --- GETTERS ---
 
-    fun getArticleList(): List<Article>? = itemListVM?.map { it.article }
+    fun getArticleList(): List<Article>? = articleList
 }

@@ -10,4 +10,10 @@ interface ArticleListInterface {
      * @return the article list adapter instance.
      */
     fun getRecyclerAdapter(): ArticleListAdapter?
+
+    /**
+     * Apply selected filters to the current article list.
+     * @param selectedMap the map of selected filters to apply.
+     */
+    fun filterList(selectedMap: Map<Int, MutableList<String>>)
 }

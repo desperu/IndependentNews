@@ -24,7 +24,7 @@ import org.desperu.independentnews.extension.design.*
 import org.desperu.independentnews.ui.main.MainListDiffUtil
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 
-class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<ArticleListAdapter.ListViewHolder>() {
+class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<ArticleListAdapter.ArticleViewHolder>() {
 
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
@@ -36,22 +36,27 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     private var originalHeight = -1 // will be calculated dynamically
     private var expandedHeight = -1 // will be calculated dynamically
 
-    // filteredItems is a static field to simulate filtering of random items
-    private val filteredItems = intArrayOf(2, 5, 6, 8, 12)
-    private val modelList = (if (::list.isInitialized) list else mutableListOf<Any>(20)) as List<ArticleItemViewModel>
-    private val modelListFiltered = modelList.withIndex().filter { it.index !in filteredItems } as List<ArticleItemViewModel>
-//    private val adapterList: List<MainListModel> get() = if (isFiltered) modelListFiltered else modelList
-    private lateinit var list: MutableList<Any>
+    private var list: MutableList<Any> = mutableListOf()
+    internal var filteredList: MutableList<Any> = mutableListOf()
+        set(value) {
+            value.filter { list.contains(it) }
+            field = value
+        }
+    private val adapterList: MutableList<Any> get() = if (!isFiltered) list else filteredList
 
     /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
+    @Suppress("unchecked_cast")
     var isFiltered = false
         set(value) {
+            // TODO handle value is empty ...
             field = value
             val diff = MainListDiffUtil(
-                if (field) modelList else modelListFiltered,
-                if (field) modelListFiltered else modelList
+                (if (field) list else filteredList) as List<ArticleItemViewModel>,
+                (if (field) filteredList else list) as List<ArticleItemViewModel>
             )
             DiffUtil.calculateDiff(diff).dispatchUpdatesTo(this)
+            if (!field)
+                filteredList = mutableListOf()
         }
 
     private val listItemExpandDuration: Long get() = (300L / animationPlaybackSpeed).toLong()
@@ -65,12 +70,12 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     // Methods
     ///////////////////////////////////////////////////////////////////////////
 
-    override fun getItemCount(): Int = if (::list.isInitialized) list.size else 0
+    override fun getItemCount(): Int = adapterList.size
 
     override fun getItemViewType(position: Int): Int = layoutId
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
-        ListViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder =
+        ArticleViewHolder(
             DataBindingUtil.inflate(inflater, viewType, parent, false)
         )
 
@@ -79,8 +84,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         this.recyclerView = recyclerView
     }
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val model = list[position]
+    override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
+        val model = adapterList[position]
 
         expandItem(holder, model == expandedModel, animate = false)
         scaleDownItem(holder, position, isScaledDown)
@@ -99,9 +104,9 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
             } else {
 
                 // collapse previously expanded view
-                val expandedModelPosition = list.indexOf(expandedModel!!)
+                val expandedModelPosition = adapterList.indexOf(expandedModel!!)
                 val oldViewHolder =
-                        recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ListViewHolder
+                        recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ArticleViewHolder
                 if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
 
                 // expand clicked view
@@ -111,7 +116,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         }
 
         // set data in item
-        holder.bind(list[position])
+        holder.bind(adapterList[position])
     }
 
     /**
@@ -120,7 +125,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
      */
     internal fun updateList(newList: MutableList<Any>) { list = newList }
 
-    private fun expandItem(holder: ListViewHolder, expand: Boolean, animate: Boolean) {
+    private fun expandItem(holder: ArticleViewHolder, expand: Boolean, animate: Boolean) {
         if (animate) {
             val animator =
                 getValueAnimator(
@@ -139,7 +144,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         }
     }
 
-    override fun onViewAttachedToWindow(holder: ListViewHolder) {
+    override fun onViewAttachedToWindow(holder: ArticleViewHolder) {
         super.onViewAttachedToWindow(holder)
 
         // get originalHeight & expandedHeight if not gotten before
@@ -164,7 +169,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         }
     }
 
-    private fun setExpandProgress(holder: ListViewHolder, progress: Float) {
+    private fun setExpandProgress(holder: ArticleViewHolder, progress: Float) {
         if (expandedHeight > 0 && originalHeight > 0) {
             holder.cardContainer.layoutParams.height =
                     (originalHeight + (expandedHeight - originalHeight) * progress).toInt()
@@ -186,20 +191,16 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         // TODO animate text length with input filter ??
         holder.title.maxLines = if (progress > 0.4f) 5 else 2
         val originalLength = 56
-        val title = (list[holder.adapterPosition] as ArticleItemViewModel).article.title
+        val title = (adapterList[holder.adapterPosition] as ArticleItemViewModel).article.title
         val expandedLength = title.length
         holder.title.filters = arrayOf(InputFilter.LengthFilter((originalLength + (expandedLength - originalLength) * progress).toInt()))
         holder.title.text = title
 
-//        holder.cardContainer.layoutParams.height =
-//            if (progress >= 0.9f)
-//                RelativeLayout.LayoutParams.WRAP_CONTENT
-//            else
-//                (originalHeight + (expandedHeight - originalHeight) * progress).toInt()
-
         // TODO use dimens ...
-        holder.image.layoutParams.height = (75.dp + (90.dp - 75.dp) * progress).toInt()
-        holder.image.layoutParams.width = (75.dp + (90.dp - 75.dp) * progress).toInt()
+        holder.image.layoutParams.apply {
+            height = (75.dp + (90.dp - 75.dp) * progress).toInt()
+            width = (75.dp + (90.dp - 75.dp) * progress).toInt()
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -220,7 +221,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
                 // Get viewHolder for all visible items and animate attributes
                 for (i in lm.visibleItemsRange) {
-                    val holder = recyclerView.findViewHolderForLayoutPosition(i) as ListViewHolder
+                    val holder = recyclerView.findViewHolderForLayoutPosition(i) as ArticleViewHolder
                     setScaleDownProgress(holder, i, progress)
                 }
             }
@@ -237,8 +238,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         return animator
     }
 
-    private fun setScaleDownProgress(holder: ListViewHolder, position: Int, progress: Float) {
-        val itemExpanded = position >= 0 && list[position] == expandedModel
+    private fun setScaleDownProgress(holder: ArticleViewHolder, position: Int, progress: Float) {
+        val itemExpanded = position >= 0 && position < adapterList.size && adapterList[position] == expandedModel
         holder.cardContainer.layoutParams.apply {
             width = ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
             height = ((if (itemExpanded) expandedHeight else originalHeight) * (1 - 0.1f * progress)).toInt()
@@ -256,13 +257,25 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
                 (listItemVerticalPadding * (1 - 0.2f * progress)).toInt()
         )
 
-        // TODO animate image size !!
+        // TODO use dimens
+//        holder.image.layoutParams.apply {
+//            height = (75.dp + (70.dp - 75.dp) * progress).toInt()
+//            width = (75.dp + (70.dp - 75.dp) * progress).toInt()
+//
+//        }
+//        (holder.image.layoutParams  as RelativeLayout.LayoutParams).apply {
+//            marginStart = (20.dp * progress).toInt()
+//            alignWithParent = true
+//
+//        }
+        holder.image.scaleX = 1 - 0.05f * progress
+        holder.image.scaleY = 1 - 0.05f * progress
 
         holder.listItemFg.alpha = progress
     }
 
     /** Convenience method for calling from onBindViewHolder */
-    private fun scaleDownItem(holder: ListViewHolder, position: Int, isScaleDown: Boolean) {
+    private fun scaleDownItem(holder: ArticleViewHolder, position: Int, isScaleDown: Boolean) {
         setScaleDownProgress(holder, position, if (isScaleDown) 1f else 0f)
     }
 
@@ -270,7 +283,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     // ViewHolder
     ///////////////////////////////////////////////////////////////////////////
 
-    class ListViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ArticleViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
         val expandView: View by bindView(R.id.expand_view)
         val chevron: View by bindView(R.id.chevron)
         val cardContainer: View by bindView(R.id.card_container)

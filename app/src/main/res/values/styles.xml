@@ -36,4 +36,18 @@
     <style name="ProgressBarTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
+
+    <!-- Filter Pill Theme -->
+    <style name="FilterPillTheme">
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">@dimen/filter_pill_padding_horizontal</item>
+        <item name="android:paddingEnd">@dimen/filter_pill_padding_horizontal</item>
+        <item name="android:paddingTop">@dimen/filter_pill_padding_vertical</item>
+        <item name="android:paddingBottom">@dimen/filter_pill_padding_vertical</item>
+        <item name="android:background">@drawable/ic_filter_pill_unselected</item>
+        <item name="android:backgroundTint" tools:ignore="NewApi">@color/filter_pill_color</item>
+        <item name="android:textColor">@color/list_item_bg_collapsed</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

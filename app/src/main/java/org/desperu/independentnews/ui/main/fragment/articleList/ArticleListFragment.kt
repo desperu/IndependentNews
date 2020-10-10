@@ -32,8 +32,8 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     private val loadingDuration: Long
         get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
 
-    // FOR INTENT
-    private val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, 0)
+    // FOR BUNDLE
+    private val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
 
     /**
      * Companion object, used to create a new instance of this fragment.
@@ -107,14 +107,20 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     // UPDATE
     // -----------------
 
-    internal fun updateRecycler() = configureCorrespondingFragment()
-
     /**
      * Update RecyclerView Item Animation Durations
      */
     private fun updateRecyclerViewAnimDuration() = recycler_view.itemAnimator?.run {
         removeDuration = loadingDuration * 60 / 100
         addDuration = loadingDuration
+    }
+
+    /**
+     * Apply selected filters to the current article list.
+     * @param selectedMap the map of selected filters to apply.
+     */
+    override fun filterList(selectedMap: Map<Int, MutableList<String>>) {
+        viewModel.filterList(selectedMap)
     }
 
     // --- GETTERS ---

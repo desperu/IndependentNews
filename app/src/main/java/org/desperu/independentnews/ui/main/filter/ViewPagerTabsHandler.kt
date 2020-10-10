@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Build
-import android.os.Handler
 import android.view.View
 import androidx.cardview.widget.CardView
 import androidx.core.view.updatePadding
@@ -83,7 +82,7 @@ class ViewPagerTabsHandler(
                 nextTabView?.setScale(defaultScale + positionOffset * (maxScale - defaultScale))
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    currentTabView.findViewById<View>(R.id.tab_pill).backgroundTintList =
+                    currentTabView.findViewById<View>(R.id.tab_title).backgroundTintList =
                             ColorStateList.valueOf(
                                 blendColors(
                                     tabColor,
@@ -91,7 +90,7 @@ class ViewPagerTabsHandler(
                                     1 - positionOffset
                                 )
                             )
-                    nextTabView?.findViewById<View>(R.id.tab_pill)?.backgroundTintList =
+                    nextTabView?.findViewById<View>(R.id.tab_title)?.backgroundTintList =
                         ColorStateList.valueOf(
                             blendColors(
                                 tabColor,
@@ -101,9 +100,9 @@ class ViewPagerTabsHandler(
                         )
                 } else {
                     val previousTabView = tabsRecyclerView.layoutManager?.findViewByPosition(position - 1)
-                    previousTabView?.findViewById<View>(R.id.tab_pill)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
-                    currentTabView.findViewById<View>(R.id.tab_pill).setBackgroundResource(R.drawable.ic_tab_pill_selected)
-                    nextTabView?.findViewById<View>(R.id.tab_pill)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
+                    previousTabView?.findViewById<View>(R.id.tab_title)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
+                    currentTabView.findViewById<View>(R.id.tab_title).setBackgroundResource(R.drawable.ic_tab_pill_selected)
+                    nextTabView?.findViewById<View>(R.id.tab_title)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
                 }
             }
         })
@@ -137,7 +136,7 @@ class ViewPagerTabsHandler(
      * Callback method for [FiltersPagerAdapter]. When ever a filter is selected, adapter will call this function.
      * Animates the bottom bar to pink if there are any active filters and vice versa
      */
-    private fun onFilterSelected(updatedPosition: Int, selectedMap: Map<Int, List<Int>>) {
+    private fun onFilterSelected(updatedPosition: Int, selectedMap: Map<Int, List<String>>) {
         val hasActiveFilters = selectedMap.filterValues { it.isNotEmpty() }.isNotEmpty()
         val bottomBarAnimator =
             if (hasActiveFilters && !this.hasActiveFilters) ValueAnimator.ofFloat(0f, 1f)
@@ -164,10 +163,11 @@ class ViewPagerTabsHandler(
 
         // To correct Motion Layout reset color when change tab and select filter
         if (bottomBarAnimator == null) {
-            Handler().postDelayed({
-                this.bottomBarAnimator?.duration = 0
+            // Comment because duration set to 1 do the trick as post delayed with 5 millis. TODO so remove?
+//            Handler().postDelayed({
+                this.bottomBarAnimator?.duration = 1
                 this.bottomBarAnimator?.start()
-            }, 50)
+//            }, 5)
         }
     }
 }

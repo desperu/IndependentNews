@@ -34,7 +34,7 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
                 it.action.equals("android.intent.action.BOOT_COMPLETED")// TODO use settings value to disable
                 -> context?.let { it1 ->
                     AppAlarmManager().startAlarm(
-                        it1, AppAlarmManager().getAlarmTime(4),
+                        it1, AppAlarmManager().getAlarmTime(5),
                         UPDATE_DATA)
                 }
                 action == UPDATE_DATA -> updateData()
@@ -48,7 +48,7 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
      * Update data for all sources in database.
      */
     private fun updateData() = runBlocking(Dispatchers.IO) { // TODO other coroutines call ??
-        ideNewsRepository.value.getRssArticles()
+        ideNewsRepository.value.fetchRssArticles()
     }
 
     /**

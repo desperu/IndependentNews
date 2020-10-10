@@ -28,7 +28,7 @@
     <dimen name="item_article_expand_view_padding_top">36dp</dimen>
     <dimen name="item_article_description_padding">5dp</dimen>
     <dimen name="item_article_description_text_size">14sp</dimen>
-    <!-- Filter -->
+    <!-- Layout Filter Motion -->
     <dimen name="fab_size">72dp</dimen>
     <dimen name="fab_size_inset">56dp</dimen>
     <dimen name="fab_radius">36dp</dimen>
@@ -42,11 +42,25 @@
 
     <dimen name="list_item_vertical_padding">24dp</dimen>
     <dimen name="list_item_horizontal_padding">16dp</dimen>
-
+    <!-- Filter Layout -->
     <dimen name="filter_layout_padding">32dp</dimen>
     <dimen name="sheet_peek_height">340dp</dimen>
+    <dimen name="filter_first_linear_margin_top">8dp</dimen>
+    <dimen name="filter_linear_margin_top">24dp</dimen>
+    <dimen name="filter_pill_padding_horizontal">30dp</dimen>
+    <dimen name="filter_pill_padding_vertical">15dp</dimen>
+    <dimen name="filter_pill_margin_start">16dp</dimen>
+    <!-- Item Filter Tab -->
     <dimen name="tabs_height">64dp</dimen>
     <dimen name="tab_item_width">110dp</dimen>
+    <dimen name="tab_item_title_height">26dp</dimen>
+    <dimen name="tab_title_margin_end">16dp</dimen>
+    <dimen name="tab_item_title_text_size">20sp</dimen>
+    <dimen name="tab_badge_width">16dp</dimen>
+    <dimen name="tab_badge_height">@dimen/tab_badge_width</dimen>
+    <dimen name="tab_badge_margin_top">-6dp</dimen>
+    <dimen name="tab_badge_margin_end">-8dp</dimen>
+
     <dimen name="thumb_size">40dp</dimen>
 
     <dimen name="bottom_bar_icon_padding">24dp</dimen>

@@ -9,6 +9,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
+import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.utils.FRAG_CATEGORY
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
 import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
@@ -36,7 +37,7 @@ class MainFragmentManager(private val activity: AppCompatActivity,
 //    private val isFrame2Visible = communication.isFrame2Visible
 //    private var fabFilter = activity.activity_main_fab_filter
 //    private lateinit var bottomSheet: BottomSheetBehavior<View>
-
+// TODO to clean
     // --------------
     // FRAGMENT MANAGEMENT
     // --------------
@@ -288,9 +289,9 @@ class MainFragmentManager(private val activity: AppCompatActivity,
     internal val articleListFragment
         get() = (fm.findFragmentByTag(ArticleListFragment::class.java.simpleName) as ArticleListFragment?)
 
-//    internal val estateDetailFragment
-//        get() = (fm.findFragmentByTag(EstateDetailFragment::class.java.simpleName) as EstateDetailFragment?)
-//
+    internal val categoryFragment
+        get() = (fm.findFragmentByTag(CategoriesFragment::class.java.simpleName) as CategoriesFragment?)
+
 //    internal fun getMapsFragment() =
 //        (fm.findFragmentByTag(MapsFragment::class.java.simpleName) as MapsFragment?)
 //

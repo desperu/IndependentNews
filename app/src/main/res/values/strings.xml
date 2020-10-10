@@ -19,9 +19,23 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- FILTER LAYOUT -->
+    <!-- Filter Layout Sources -->
+    <string name="filter_layout_sources_bastamag">Bastamag</string>
+    <string name="filter_layout_sources_reporterre">Reporterre</string>
+    <string name="filter_layout_sources_multinational">Observatoire des Multinationales</string>
+    <!-- Filter Layout Themes -->
+    <string name="filter_layout_theme_ecology">Ecology</string>
+    <string name="filter_layout_theme_social">Social</string>
+    <string name="filter_layout_theme_economy">Economy</string>
+    <string name="filter_layout_theme_politic">Politic</string>
+    <string name="filter_layout_theme_international">International</string>
+    <string name="filter_layout_theme_energy">Energy</string>
+    <string name="filter_layout_theme_agriculture">Agriculture</string>
+    <string name="filter_layout_theme_health">Health</string>
+
     <!-- SCENE TRANSITION -->
     <string name="animation_main_to_show_article">ImageAnimationMainToShowArticle</string>
-
 
     <!-- FONT ID -->
     <string name="AnnieUseYourTelescope_Regular">AnnieUseYourTelescope-Regular</string>

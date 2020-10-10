@@ -7,6 +7,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_categories.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseFragment
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 
 /**
  * The argument name for bundle to received the category key to this Fragment.
@@ -70,4 +71,13 @@ class CategoriesFragment: BaseFragment() {
         tabLayout?.setupWithViewPager(viewPager)
         tabLayout?.tabMode = TabLayout.MODE_FIXED
     }
+
+    // --- GETTERS ---
+
+    /**
+     * Return the current fragment instance from the view pager.
+     * @return the current fragment instance from the view pager.
+     */
+    internal fun getCurrentFrag(): ArticleListFragment =
+        viewPager.adapter?.instantiateItem(viewPager, viewPager.currentItem) as ArticleListFragment
 }

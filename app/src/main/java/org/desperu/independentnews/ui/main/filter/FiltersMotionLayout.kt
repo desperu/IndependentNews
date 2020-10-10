@@ -5,16 +5,15 @@ import android.util.AttributeSet
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.motion.widget.MotionScene
-import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import org.desperu.independentnews.R
-import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListAdapter
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.views.MultiListenerMotionLayout
 import org.desperu.independentnews.views.NoScrollRecyclerView
 import kotlinx.coroutines.launch
+import org.desperu.independentnews.ui.main.MainInterface
 
 /**
  * All Transitions and ConstraintSets are defined in R.xml.scene_filter
@@ -35,6 +34,7 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
     private val tabsHandler: ViewPagerTabsHandler by lazy {
         ViewPagerTabsHandler(viewPager, tabsRecyclerView, bottomBarCardView)
     }
+    private val mainInterface = context as MainInterface
 
     init {
         inflate(context, R.layout.layout_filter_motion, this)
@@ -125,7 +125,7 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
 
         // 2) set5_filterCollapse -> set6_filterLoading
         // (Filter adapter items simultaneously)
-        (context as MainActivity).isAdapterFiltered = true
+        filterAdapter(true)
         awaitTransitionComplete(R.id.set6_filterLoading)
 
         // 3) set6_filterLoading -> set7_filterBase
@@ -153,7 +153,7 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
 
         // 2) set8_unfilterInset -> set9_unfilterLoading
         // (Un-filter adapter items simultaneously)
-        (context as MainActivity).isAdapterFiltered = false
+        filterAdapter(false)
         awaitTransitionComplete(R.id.set9_unfilterLoading)
 
         // 3) set9_unfilterLoading -> set10_unfilterOutset
@@ -202,7 +202,7 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
      * [block], otherwise [enableClicks] will be called at the wrong time for the wrong state.
      */
     private inline fun performAnimation(crossinline block: suspend () -> Unit) {
-        (context as MainActivity).lifecycleScope.launch {
+        mainInterface.mainLifecycleScope.launch {
             disableClicks()
             block()
             enableClicks()
@@ -217,16 +217,29 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
         it.duration = (durationsMap[it]!! / animationPlaybackSpeed).toInt()
     }
 
-
     /**
      * Convenience method to start ScaleDown animation in [ArticleListAdapter].
      * The duration of the scale down animation will match that of the current transition.
      */
     private fun startScaleDownAnimator(isScaledDown: Boolean): Unit? =
-        (context as MainActivity)
+        mainInterface
             .getAdapterScaleDownAnimator(isScaledDown)
             ?.apply { duration = transitionTimeMs }
             ?.start()
+
+    /**
+     * Filter or unfilter adapter list with filters.
+     * @param toFilter true to filter.
+     */
+    private fun filterAdapter(toFilter: Boolean) {
+        val filtersMap =
+            if (toFilter)
+                (viewPager.adapter as FiltersPagerAdapter).getSelectedMap()
+            else
+                mapOf<Int, MutableList<String>>()
+
+        mainInterface.filterList(filtersMap)
+    }
 
     companion object {
         const val numTabs = 5

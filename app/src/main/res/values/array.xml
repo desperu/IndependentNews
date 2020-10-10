@@ -2,10 +2,56 @@
 <resources>
 
     <!-- Fragment Categories -->
-    <string-array name="tab_titles">
+    <string-array name="categories_tab_titles">
         <item>Santé</item>
         <item>Social</item>
         <item>Climat</item>
+    </string-array>
+
+    <!-- Filter tab title -->
+    <string-array name="filter_tab_title">
+        <item>Sources</item>
+        <item>Themes</item>
+        <item>Sections</item>
+        <item>Dates</item>
+    </string-array>
+    
+    <!-- Themes Correspondences -->
+    <string-array name="filter_ecology">
+        <item>Ecologie</item>
+        <item>Climat</item>
+        <item>Nature</item>
+        <item>Pollutions</item>
+    </string-array>
+
+    <string-array name="filter_social">
+        <item>Social</item>
+        <item>Libertés</item>
+        <item>Luttes</item>
+    </string-array>
+
+    <string-array name="filter_economy">
+        <item>Economie</item>
+    </string-array>
+
+    <string-array name="filter_politic">
+        <item>Politique</item>
+    </string-array>
+
+    <string-array name="filter_international">
+        <item>International</item>
+    </string-array>
+
+    <string-array name="filter_energy">
+        <item>Énergie</item>
+    </string-array>
+
+    <string-array name="filter_agriculture">
+        <item>Agriculture</item>
+    </string-array>
+    
+    <string-array name="filter_health">
+        <item>Santé</item>
     </string-array>
 
 </resources>

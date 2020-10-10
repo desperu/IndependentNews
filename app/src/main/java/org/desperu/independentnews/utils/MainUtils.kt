@@ -5,6 +5,9 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragm
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 
+/**
+ * MainUtils object witch provide utils functions for main activity.
+ */
 object MainUtils {
 
     // -----------------
