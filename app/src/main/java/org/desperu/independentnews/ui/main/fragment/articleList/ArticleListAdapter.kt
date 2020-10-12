@@ -29,8 +29,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
 
-    private val listItemHorizontalPadding: Float by bindDimen(context, R.dimen.list_item_horizontal_padding)
-    private val listItemVerticalPadding: Float by bindDimen(context, R.dimen.list_item_vertical_padding)
+    private val articleItemPadding: Float by bindDimen(context, R.dimen.item_article_padding)
     private val originalWidth = context.screenWidth - 48.dp
     private val expandedWidth = context.screenWidth - 24.dp
     private var originalHeight = -1 // will be calculated dynamically
@@ -38,10 +37,10 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
     private var list: MutableList<Any> = mutableListOf()
     internal var filteredList: MutableList<Any> = mutableListOf()
-        set(value) {
-            value.filter { list.contains(it) }
-            field = value
-        }
+//        set(value) {
+//            value.filter { list.contains(it) }
+//            field = value
+//        }
     private val adapterList: MutableList<Any> get() = if (!isFiltered) list else filteredList
 
     /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
@@ -91,27 +90,31 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         scaleDownItem(holder, position, isScaledDown)
 
         holder.cardContainer.setOnClickListener {
-            if (expandedModel == null) {
+            when (expandedModel) {
 
-                // expand clicked view
-                expandItem(holder, expand = true, animate = true)
-                expandedModel = model
-            } else if (expandedModel == model) {
+                null -> {
+                    // expand clicked view
+                    expandItem(holder, expand = true, animate = true)
+                    expandedModel = model
+                }
 
-                // collapse clicked view
-                expandItem(holder, expand = false, animate = true)
-                expandedModel = null
-            } else {
+                model -> {
+                    // collapse clicked view
+                    expandItem(holder, expand = false, animate = true)
+                    expandedModel = null
+                }
 
-                // collapse previously expanded view
-                val expandedModelPosition = adapterList.indexOf(expandedModel!!)
-                val oldViewHolder =
+                else -> {
+                    // collapse previously expanded view
+                    val expandedModelPosition = adapterList.indexOf(expandedModel!!)
+                    val oldViewHolder =
                         recyclerView.findViewHolderForAdapterPosition(expandedModelPosition) as? ArticleViewHolder
-                if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
+                    if (oldViewHolder != null) expandItem(oldViewHolder, expand = false, animate = true)
 
-                // expand clicked view
-                expandItem(holder, expand = true, animate = true)
-                expandedModel = model
+                    // expand clicked view
+                    expandItem(holder, expand = true, animate = true)
+                    expandedModel = model
+                }
             }
         }
 
@@ -250,11 +253,12 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         holder.scaleContainer.scaleX = 1 - 0.05f * progress
         holder.scaleContainer.scaleY = 1 - 0.05f * progress
 
+        val animatedPadding = (articleItemPadding * (1 - 0.2f * progress)).toInt()
         holder.scaleContainer.setPadding(
-                (listItemHorizontalPadding * (1 - 0.2f * progress)).toInt(),
-                (listItemVerticalPadding * (1 - 0.2f * progress)).toInt(), // TODO to change for 10dp to allow show source
-                (listItemHorizontalPadding * (1 - 0.2f * progress)).toInt(),
-                (listItemVerticalPadding * (1 - 0.2f * progress)).toInt()
+                animatedPadding,
+                animatedPadding,
+                animatedPadding,
+                animatedPadding
         )
 
         // TODO use dimens

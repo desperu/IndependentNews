@@ -31,6 +31,17 @@ fun ImageView.setImage(imageUrl: String?){
 }
 
 /**
+ * Load the image with the url into the image view.
+ * @param imageId the unique identifier of the image to load.
+ */
+@BindingAdapter("setImage")
+fun ImageView.setImage(imageId: Int?){
+    Glide.with(this)
+        .load(if (imageId != null && imageId != 0) imageId else R.drawable.no_image)
+        .into(this)
+}
+
+/**
  * Set the article html code to load in the web view.
  * @param article the article html code to load.
  */

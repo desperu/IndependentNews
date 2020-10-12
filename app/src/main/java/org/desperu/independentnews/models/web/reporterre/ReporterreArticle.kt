@@ -36,7 +36,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         if (author.isNullOrBlank())
             author = article?.select(P).getAuthor()
 
-        return author
+        return author?.removePrefix(" ")
     }
 
     override fun getPublishedDate(): String? = findData(SPAN, CLASS, DATEPUBLICATION, null)?.text()

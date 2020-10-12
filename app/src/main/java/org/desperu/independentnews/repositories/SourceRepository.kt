@@ -4,6 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.utils.BASTAMAG_SOURCE
+import org.desperu.independentnews.utils.REPORTERRE_SOURCE
 
 /**
  * Source Repository interface to get data from Source database.
@@ -11,6 +13,15 @@ import org.desperu.independentnews.models.Source
  * @author Desperu
  */
 interface SourceRepository {
+
+    /**
+     * Return the source with it's unique identifier.
+     *
+     * @param id the unique identifier of the source.
+     *
+     * @return the source with it's unique identifier.
+     */
+    suspend fun getSource(id: Long): Source
 
     /**
      * Returns the list of enabled sources from the database.
@@ -35,11 +46,16 @@ interface SourceRepository {
     suspend fun setEnabled(name: String, isEnabled: Boolean)
 
     /**
-     * Create sources in database, used for first apk start.
+     * Insert the given sources in database.
      *
-     * @param sources the sources to create.
+     * @param sources the sources to insert.
      */
-    suspend fun createSources(vararg sources: Source)
+    suspend fun insertSources(vararg sources: Source)
+
+    /**
+     * Create all sources in database for first apk start.
+     */
+    suspend fun createSourcesForFirstStart()
 }
 
 /**
@@ -54,6 +70,13 @@ interface SourceRepository {
  * @param sourceDao         the database access for source to set.
  */
 class SourceNewsRepositoryImpl(private val sourceDao: SourceDao): SourceRepository {
+
+    /**
+     * Return the source with it's unique identifier.
+     *
+     * @return the source with it's unique identifier.
+     */
+    override suspend fun getSource(id: Long): Source = sourceDao.getSource(id)
 
     /**
      * Returns the list of enabled sources.
@@ -82,11 +105,18 @@ class SourceNewsRepositoryImpl(private val sourceDao: SourceDao): SourceReposito
     }
 
     /**
-     * Create sources in database, used for first apk start.
+     * Insert the given sources in database.
      *
-     * @param sources the sources to create.
+     * @param sources the sources to insert.
      */
-    override suspend fun createSources(vararg sources: Source) = withContext(Dispatchers.IO) {
+    override suspend fun insertSources(vararg sources: Source) = withContext(Dispatchers.IO) {
         sourceDao.insertSources(*sources)
+    }
+
+    /**
+     * Create all sources in database for first apk start.
+     */
+    override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
+        insertSources(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
     }
 }

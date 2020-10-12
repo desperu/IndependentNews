@@ -1,9 +1,7 @@
 package org.desperu.independentnews.models
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -21,8 +19,10 @@ import kotlinx.android.parcel.Parcelize
  * @param categories        the categories of the article.
  * @param description       the description of the article.
  * @param imageUrl          the image url of the article.
- * @param read              whether the article has been read or not.
  * @param cssUrl            the css url of the article.
+ * @param isTopStory        whether the article is top story.
+ * @param read              whether the article has been read or not.
+ * @param source            the source of the article.
  *
  * @constructor Sets all properties of the article.
  *
@@ -38,15 +38,18 @@ import kotlinx.android.parcel.Parcelize
  * @property categories     the categories of the article to set.
  * @property description    the description of the article to set.
  * @property imageUrl       the image url of the article to set.
- * @property read           whether the article has been read or not to set.
  * @property cssUrl         the css url of the article to set.
+ * @property isTopStory     whether the article is top story to set.
+ * @property read           whether the article has been read or not to set.
+ * @property source         the source of the article to set.
  */
 @Parcelize
 @Entity(foreignKeys = [ForeignKey(entity = Source::class,
     parentColumns = ["id"],
-    childColumns = ["sourceId"])])
+    childColumns = ["sourceId"])],
+    indices = [Index(name = "sourceId_index", value = ["sourceId"])])
 data class Article(@PrimaryKey(autoGenerate = true)
-                   val id: Long = 0L,
+                   var id: Long = 0L,
                    var sourceId: Long = 0L,
                    var sourceName: String = "",
                    var url: String = "",
@@ -59,6 +62,10 @@ data class Article(@PrimaryKey(autoGenerate = true)
                    var categories: String = "",
                    var description: String = "",
                    var imageUrl: String = "",
+                   var cssUrl: String = "",
+                   var isTopStory: Boolean = false,
                    var read: Boolean = false, // TODO check gahfy project NytMvvM viewedArticle
-                   var cssUrl: String = ""
+//                   var scrollPosition: Int = 0,
+                   @Ignore
+                   var source: Source = Source()
 ): Parcelable

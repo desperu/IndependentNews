@@ -10,12 +10,12 @@ import org.desperu.independentnews.models.Source
 interface SourceDao {
 
     /**
-     * Returns the source from database ordered for the given source name.
-     * @param name the name of the source to get from database.
+     * Returns the source from database ordered for the given source id.
+     * @param id the unique identifier of the source to get from database.
      * @return the corresponding source.
      */
-    @Query("SELECT * FROM source WHERE name=:name")
-    suspend fun getSource(name: Long): Source
+    @Query("SELECT * FROM source WHERE id=:id")
+    suspend fun getSource(id: Long): Source
 
     /**
      * Returns the source list from database.
@@ -36,7 +36,6 @@ interface SourceDao {
     /**
      * Inserts the given source in database.
      * @param sources the sources to insert in database.
-     * @return the row id for the inserted sources.
      */
     @Insert
     suspend fun insertSources(vararg sources: Source)
@@ -56,11 +55,11 @@ interface SourceDao {
      *
      * @param editorialUrl    the editorial url of the source.
      * @param editorial       the editorial of the source.
-     * @param imageUrl        the image url of the source.
+     * @param image           the unique identifier of the source image.
      * @param name            the name of the source.
      */
-    @Query("UPDATE source SET editorialUrl=:editorialUrl, editorial=:editorial, imageUrl=:imageUrl WHERE name=:name")
-    suspend fun update(editorialUrl: String, editorial: String, imageUrl: String, name: String)
+    @Query("UPDATE source SET editorialUrl=:editorialUrl, editorial=:editorial, imageId=:image WHERE name=:name")
+    suspend fun update(editorialUrl: String, editorial: String, image: Int, name: String)
 
     /**
      * Update the given source in database.

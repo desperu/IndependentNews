@@ -22,7 +22,8 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
-import org.desperu.independentnews.repositories.IndependentNewsRepository
+import org.desperu.independentnews.repositories.SourceRepository
+import org.desperu.independentnews.service.alarm.AppAlarmManager
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
@@ -63,7 +64,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     override fun getActivityLayout(): Int = R.layout.activity_main
 
     override fun configureDesign() {
-        createSourcesAtFirstStart()
+        firstStart()
         configureKoinDependency()
         configureAppBar()
         showMainActivityIcon()
@@ -195,15 +196,31 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // -----------------
 
     /**
+     * Set needed sources data, fetch data and alarm data at first start.
+     */
+    private fun firstStart() {
+        if (isFirstTime) {
+            createSourcesAtFirstStart()
+            setAlarmDataAtFirstStart()
+            // TODO fetch sources for first time with loading animation ?
+            isFirstTime = false
+        }
+    }
+
+    /**
      * Create sources in database at first start only.
      */
     private fun createSourcesAtFirstStart() {
-        if (isFirstTime)
-            lifecycleScope.launch(Dispatchers.IO) {
-                get<IndependentNewsRepository>().createSourcesForFirstStart()
-                // TODO fetch sources for first time with loading animation ?
-                isFirstTime = false
-            }
+        lifecycleScope.launch(Dispatchers.IO) {
+            get<SourceRepository>().createSourcesForFirstStart()
+        }
+    }
+
+    /**
+     * Set alarm data at first apk start.
+     */
+    private fun setAlarmDataAtFirstStart() {// TODO store app version in shared to detect update and re-set alarm
+        AppAlarmManager().startAlarm(this, AppAlarmManager().getAlarmTime(5), UPDATE_DATA)
     }
 
     /**

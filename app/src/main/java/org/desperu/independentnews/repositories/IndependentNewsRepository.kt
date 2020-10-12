@@ -60,11 +60,6 @@ interface IndependentNewsRepository {
      * @param article the article to mark as read.
      */
     suspend fun markArticleAsRead(article: Article)
-
-    /**
-     * Create all sources in database for first apk start.
-     */
-    suspend fun createSourcesForFirstStart()
 }
 
 /**
@@ -143,7 +138,7 @@ class IndependentNewsRepositoryImpl(
             Log.e("IdeRepo-getTopStory", "Error while fetching source web data.")
         }
 
-        articleDao.getWhereUrlsInSorted(topStoryList.map { it.url })
+        setSourceForEach(articleDao.getWhereUrlsInSorted(topStoryList.map { it.url }))
     }
 
     /**
@@ -152,7 +147,7 @@ class IndependentNewsRepositoryImpl(
      * @return the category list of articles from the database.
      */ // TODO rename to rssCategories??
     override suspend fun getCategory(category: String): List<Article>? = withContext(Dispatchers.IO) {
-        return@withContext articleDao.getCategory("%$category%")
+        setSourceForEach(articleDao.getCategory("%$category%"))
     }
 
     /**
@@ -161,7 +156,7 @@ class IndependentNewsRepositoryImpl(
      * @return the list of all articles from the database.
      */
     override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
-        articleDao.getAll()
+        setSourceForEach(articleDao.getAll())
     }
 
     /**
@@ -182,7 +177,7 @@ class IndependentNewsRepositoryImpl(
 
         filteredList.addAll(filterCategories(selectedMap, unMatchArticleList))
 
-        return@withContext articleDao.getWhereUrlsInSorted(filteredList.map { it.url })
+        return@withContext setSourceForEach(articleDao.getWhereUrlsInSorted(filteredList.map { it.url }))
     }
 
     /**
@@ -192,17 +187,6 @@ class IndependentNewsRepositoryImpl(
      */
     override suspend fun markArticleAsRead(article: Article) = withContext(Dispatchers.IO) {
         articleDao.markAsRead(article.id)
-    }
-
-    /**
-     * Create all sources in database for first apk start.
-     */
-    override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
-        val sources = mutableListOf<Source>()
-        sources.add(Source(0, BASTAMAG, BASTAMAG_BASE_URL, BASTAMAG_EDITO_URL))
-        sources.add(Source(0, REPORTERRE, REPORTERRE_BASE_URL, REPORTERRE_EDITO_URL))
-        sourceRepository.createSources(*sources.toTypedArray())
-        setSources() // TODO mistake with vm call getTopStory before here runBlocking??
     }
 
     // -----------------
@@ -264,6 +248,20 @@ class IndependentNewsRepositoryImpl(
         val url = articleList.map { article -> article.url }
         val listToUpdate = articleDao.getWhereUrlsIn(url)
         listToUpdate.map { article -> article.url }
+    }
+
+    /**
+     * Set the source for each article of the list.
+     *
+     * @param articleList the article list to set the source for each article.
+     *
+     * @return the article list with the source set.
+     */
+    private suspend fun setSourceForEach(articleList: List<Article>): List<Article> = withContext(Dispatchers.IO) {
+        articleList.forEach {
+            it.source = sourceRepository.getSource(it.sourceId)
+        }
+        return@withContext articleList
     }
 
     /**

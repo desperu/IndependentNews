@@ -47,29 +47,46 @@
                     android:id="@+id/scale_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingLeft="@dimen/list_item_horizontal_padding"
-                    android:paddingTop="@dimen/list_item_vertical_padding"
-                    android:paddingRight="@dimen/list_item_horizontal_padding"
-                    android:paddingBottom="@dimen/list_item_vertical_padding"
+                    android:paddingLeft="@dimen/item_article_padding"
+                    android:paddingTop="@dimen/item_article_padding"
+                    android:paddingRight="@dimen/item_article_padding"
+                    android:paddingBottom="@dimen/item_article_padding"
                     android:transformPivotX="0dp">
 
-<!--                    <ImageView-->
-<!--                        android:id="@+id/source_image"-->
-<!--                        android:layout_width="20dp"-->
-<!--                        android:layout_height="20dp"-->
-<!--                        android:layout_marginTop="-14dp"-->
-<!--                        android:scaleType="centerCrop"-->
-<!--                        android:src="@drawable/no_image" />-->
+                    <ImageView
+                        android:id="@+id/source_image"
+                        android:layout_width="@dimen/item_article_source_image_width_height"
+                        android:layout_height="@dimen/item_article_source_image_width_height"
+                        android:layout_alignStart="@id/title"
+                        android:layout_alignTop="@id/source_name"
+                        android:layout_alignBottom="@id/source_name"
+                        android:scaleType="fitCenter"
+                        setImage="@{viewModel.article.source.logoId}"/>
 
-<!--                    <TextView-->
-<!--                        android:id="@+id/source_name"-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_alignStart="@id/title"-->
-<!--                        android:layout_marginTop="-14dp"-->
-<!--                        android:textStyle="italic"-->
-<!--                        android:textSize="12sp"-->
-<!--                        android:text="@{viewModel.article.source}"/>-->
+                    <TextView
+                        android:id="@+id/source_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/source_image"
+                        android:layout_marginStart="@dimen/default_little_margin"
+                        android:textStyle="italic"
+                        android:textSize="@dimen/item_article_source_section_theme_text_size"
+                        android:text="@{viewModel.article.sourceName}"/>
+
+                    <TextView
+                        android:id="@+id/section_and_theme"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@+id/source_name"
+                        android:layout_toStartOf="@+id/image"
+                        android:gravity="end"
+                        android:layout_marginStart="@dimen/default_middle_margin"
+                        android:layout_marginEnd="@dimen/default_middle_margin"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textStyle="italic"
+                        android:textSize="@dimen/item_article_source_section_theme_text_size"
+                        android:text="@{viewModel.article.section + ' '  + '>' + ' ' + viewModel.article.theme}"/>
 
                     <ImageView
                         android:id="@+id/chevron"
@@ -85,8 +102,8 @@
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/image"
-                        android:layout_marginTop="2dp"
+                        android:layout_below="@id/source_name"
+                        android:layout_marginTop="@dimen/item_article_title_margin_top"
                         android:layout_marginEnd="@dimen/default_middle_margin"
                         android:layout_toEndOf="@id/chevron"
                         android:layout_toStartOf="@id/image"
@@ -101,13 +118,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/title"
-                        android:layout_marginTop="@dimen/item_article_text_view_margin_top"
+                        android:layout_marginTop="@dimen/item_article_author_and_date_margin_top"
                         android:layout_toEndOf="@id/chevron"
+                        android:layout_toStartOf="@id/published_date"
                         android:maxLines="1"
-                        android:maxLength="15"
                         android:ellipsize="end"
                         android:textStyle="italic"
-                        android:textColor="@color/colorLightDark"
                         android:text="@{viewModel.article.author}" />
 
                     <TextView
@@ -116,21 +132,21 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/title"
                         android:layout_marginStart="@dimen/default_middle_margin"
-                        android:layout_marginTop="@dimen/item_article_text_view_margin_top"
+                        android:layout_marginTop="@dimen/item_article_author_and_date_margin_top"
                         android:layout_marginEnd="@dimen/default_middle_margin"
-                        android:layout_toEndOf="@id/author"
                         android:layout_toStartOf="@id/image"
                         android:maxLines="1"
                         android:textStyle="italic"
-                        android:textColor="@color/colorLightDark"
                         app:setDate="@{viewModel.article.publishedDate}"/>
 
                     <ImageView
                         android:id="@+id/image"
-                        android:layout_width="@dimen/item_article_image_height_width"
-                        android:layout_height="@dimen/item_article_image_height_width"
+                        android:layout_width="@dimen/item_article_image_width_height"
+                        android:layout_height="@dimen/item_article_image_width_height"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
+                        android:layout_marginTop="@dimen/item_article_image_vertical_margin"
+                        android:layout_marginBottom="@dimen/item_article_image_vertical_margin"
                         android:scaleType="centerCrop"
                         android:onClick="@{viewModel.onClickImage}"
                         android:transitionName="@string/animation_main_to_show_article"
@@ -144,6 +160,7 @@
                         android:layout_below="@id/published_date"
                         android:layout_alignStart="@id/title"
                         android:layout_marginTop="@dimen/item_article_expand_view_padding_top"
+                        android:layout_marginEnd="@dimen/default_middle_margin"
                         android:visibility="gone"
                         android:onClick="@{viewModel.onClickDescriptionContainer}"
                         tools:visibility="gone">
@@ -152,11 +169,11 @@
                             android:id="@+id/description"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="#E7F7F7"
-                            android:padding="@dimen/item_article_description_padding"
                             android:ellipsize="end"
                             android:maxLines="5"
                             android:textSize="@dimen/item_article_description_text_size"
+                            android:textStyle="italic"
+                            android:textColor="@color/colorLightDark"
                             android:text="@{viewModel.article.description}" />
 
                     </RelativeLayout>

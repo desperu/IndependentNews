@@ -1,4 +1,4 @@
-package org.desperu.independentnews.service.receiver
+package org.desperu.independentnews.service.alarm
 
 import android.content.BroadcastReceiver
 import android.content.Context

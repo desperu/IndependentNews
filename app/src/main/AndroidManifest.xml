@@ -30,7 +30,7 @@
             android:theme="@style/ShowArticleTheme"/>
 
         <!-- ALARM RECEIVER -->
-        <receiver android:name=".service.receiver.AlarmReceiver">
+        <receiver android:name=".service.alarm.AlarmReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

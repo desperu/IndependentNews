@@ -1,5 +1,8 @@
 package org.desperu.independentnews.utils
 
+import org.desperu.independentnews.R
+import org.desperu.independentnews.models.Source
+
 // --- FOR MAIN ---
 
 // Fragment identifier
@@ -31,15 +34,35 @@ const val REPORTERRE_BASE_URL = "https://reporterre.net/"
 const val BASTAMAG_EDITO_URL = "Site-d-informations-independant-sur-les-enjeux-sociaux-et-environnementaux"
 const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
 
-// Source value
-const val BASTAMAG = "Bastamag"
-const val REPORTERRE = "Reporterre"
+
 
 // Section value
 const val SEC_DECRYPTER = "Approfondir"
 const val SEC_RESISTER = "Resister"
 const val SEC_INVENTER = "Inventer"
 
+
+// --- SOURCES ---
+
+// Source name
+const val BASTAMAG = "Bastamag"
+const val REPORTERRE = "Reporterre"
+
+// Source for database
+val BASTAMAG_SOURCE = Source(
+    name = BASTAMAG,
+    url = BASTAMAG_BASE_URL,
+    editorialUrl = BASTAMAG_EDITO_URL,
+    imageId = R.drawable.logo_bastamag,
+    logoId = R.drawable.logo_mini_bastamag
+)
+val REPORTERRE_SOURCE = Source(
+    name = REPORTERRE,
+    url = REPORTERRE_BASE_URL,
+    editorialUrl = REPORTERRE_EDITO_URL,
+    imageId = R.drawable.logo_reporterre,
+    logoId = R.drawable.logo_mini_reporterre
+)
 
 // --- FOR UTILS ---
 
