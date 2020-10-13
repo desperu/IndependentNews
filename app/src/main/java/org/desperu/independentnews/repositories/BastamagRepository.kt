@@ -9,7 +9,7 @@ import org.desperu.independentnews.network.bastamag.BastamagWebService
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 
 /**
- * Repository interface to get data from services.
+ * Repository interface to get Bastamag data from services.
  *
  * @author Desperu
  */

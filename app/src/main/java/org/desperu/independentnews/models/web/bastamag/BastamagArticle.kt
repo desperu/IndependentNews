@@ -2,67 +2,59 @@ package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
+import org.desperu.independentnews.extension.getChild
+import org.desperu.independentnews.extension.getIndex
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.jsoup.Jsoup
 
 /**
+ * Class which provides a model to parse bastamag article html page.
  *
+ * @property htmlPage the bastamag article html page.
+ *
+ * @constructor Instantiate a new BastamagArticle.
+ *
+ * @param htmlPage the bastamag article html page to set.
  */
 data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(htmlPage) {
-// TODO to clean, comment and model or utils ??? set property when init class as in rss/category???
 
     // FOR DATA
     override val sourceName = BASTAMAG
 
     // --- GETTERS ---
 
-    override fun getTitle(): String? {
-        // val elementTitle = document.select("title")
-        // title = elementTitle[0].ownText()
-        // if (!title.isNullOrBlank()) println("Title : $title")
-        val h1 = findData(H1, ITEMPROP, HEADLINE, null)
-        return if (h1 != null && !h1.allElements.isNullOrEmpty())
-                   h1.child(0).text()
-               else null
-    }
+    override fun getTitle(): String? =
+        findData(H1, ITEMPROP, HEADLINE, null)?.getChild(0)?.text()
 
-    // TODO mistake with rss categories and article subtitle or category??
-//    override fun getSubtitle(): String? =
-//        findData(HEADER, CLASS, CARTOUCHE)?.ownerDocument()?.select(P)?.get(0)?.ownText()
+    override fun getSection(): String? =
+        findData(SPAN, CLASS, DIVIDER, 1)?.parent()?.getChild(0)?.ownText()
 
-    override fun getSection(): String? =findData(P, CLASS, BASTA_THEME_CLASS, null)?.text()
+    override fun getTheme(): String? =
+        findData(HEADER, CLASS, CARTOUCHE, null)
+            ?.ownerDocument()?.select(P).getIndex(0)?.ownText()
 
-    override fun getTheme(): String? = findData(HEADER, CLASS, CARTOUCHE, null)?.ownerDocument()?.select(P)?.get(0)?.ownText()
+    override fun getAuthor() : String? =
+        findData(SPAN, ITEMPROP, AUTHOR, null)?.getChild(0)?.text()
 
-    override fun getAuthor() : String? {
-        val author = findData(SPAN, ITEMPROP, AUTHOR, null)
-        return if (author != null && !author.allElements.isNullOrEmpty())
-                   author.child(0).text()
-               else null
-    }
+    override fun getPublishedDate(): String? =
+        findData(TIME, PUBDATE, PUBDATE, null)?.attr(DATETIME)
 
-    override fun getPublishedDate(): String? = findData(TIME, PUBDATE, PUBDATE, null)?.attr(DATETIME)
+    override fun getArticle(): String? =
+        setMainCssId(correctImagesUrl(findData(DIV, CLASS, MAIN, null)?.outerHtml()))
 
-//    internal fun getArticle() = parseData("div", "itemprop", "articleBody")?.outerHtml()
-    override fun getArticle(): String? = setMainCssId(correctImagesUrl(findData(DIV, CLASS, MAIN, null)?.outerHtml()))
-
-    override fun getDescription(): String? {
-        val description = findData(DIV, ITEMPROP, DESCRIPTION, null)
-        return if (description != null && !description.allElements.isNullOrEmpty())
-                   description.child(0)?.text()
-               else
-                   null
-    }
+    override fun getDescription(): String? =
+        findData(DIV, ITEMPROP, DESCRIPTION, null)?.getChild(0)?.text()
 
     override fun getImage(): List<String?> {
-        // if (it.attr("class") == "adapt-img spip_logo spip_logos intrinsic" && it.attr("itemprop") == "image") {
         val element = findData(IMG, ITEMPROP, IMAGE, null)
-        return listOf(BASTAMAG_BASE_URL + element?.attr(SRC), element?.attr(WIDTH), element?.attr(HEIGHT))
+        return listOf(BASTAMAG_BASE_URL + element?.attr(SRC),
+                        element?.attr(WIDTH), element?.attr(HEIGHT))
     }
 
-    override fun getCssUrl(): String? = BASTAMAG_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)//findData("style", "type", "'text/css'")?.ownText()
+    override fun getCssUrl(): String? =
+        BASTAMAG_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
 
     /**
      * Convert BastamagArticle to Article.
@@ -90,7 +82,6 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         return article
     }
 
-    // TODO to put in utils?? or html utils with parse and find data.
     /**
      * Correct all images url's with their full url's in the given html code.
      * @param html the html code to correct.

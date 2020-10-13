@@ -5,13 +5,13 @@ import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 
 /**
- * Data class with provide an category.
+ * Model class which provides data for a category.
  *
- * @param category the category.
+ * @property category the category.
  *
- * @constructor Instantiates a new Subject.
+ * @constructor Instantiates a new Category.
  *
- * @property category the category to set.
+ * @param category the category to set.
  */
 @Xml
 data class Category(
@@ -28,6 +28,9 @@ data class Category(
      * Set category with the html escape string converter.
      */
     private fun setCategory() {
-        category = HtmlEscapeStringConverter().read(category)
+        category = HtmlEscapeStringConverter()
+            .read(category)
+            .removePrefix(" ")
+            .removeSuffix(" ")
     }
 }

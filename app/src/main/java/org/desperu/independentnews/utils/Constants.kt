@@ -67,8 +67,8 @@ val REPORTERRE_SOURCE = Source(
 // --- FOR UTILS ---
 
 // To Convert Date
-val monthNumber = arrayOf("Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-    "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre")
+val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre")
 
 // To parse author for Reporterre Html page
 const val SOURCE = "Source"

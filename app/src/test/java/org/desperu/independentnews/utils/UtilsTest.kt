@@ -109,7 +109,7 @@ class UtilsTest {
         cal.set(Calendar.MILLISECOND, 0)
         val expected = cal.timeInMillis
 
-        val literalDate = "25 Septembre 2020"
+        val literalDate = "25 septembre 2020"
 
         val output = literalDateToMillis(literalDate)
 
@@ -132,7 +132,7 @@ class UtilsTest {
         cal.set(Calendar.MILLISECOND, 0)
         val expected = cal.timeInMillis
 
-        val literalDate = "1er Octobre 2020"
+        val literalDate = "1er octobre 2020"
 
         val output = literalDateToMillis(literalDate)
 

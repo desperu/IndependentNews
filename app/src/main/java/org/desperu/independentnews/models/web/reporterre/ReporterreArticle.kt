@@ -8,8 +8,16 @@ import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.jsoup.Jsoup
 
+/**
+ * Class which provides a model to parse reporterre article html page.
+ *
+ * @property htmlPage the reporterre article html page.
+ *
+ * @constructor Instantiate a new ReporterreArticle.
+ *
+ * @param htmlPage the reporterre article html page to set.
+ */
 data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(htmlPage) {
-// TODO to clean, comment and model or utils ??? set property when init class as in rss/category???
 
     // FOR DATA
     override val sourceName = REPORTERRE
@@ -18,7 +26,8 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
 
     override fun getTitle(): String? = findData(H1, null, null, null)?.text()
 
-    override fun getSection(): String? = findData(A, CLASS, ARIANNE, 1)?.text()
+    override fun getSection(): String? =
+        findData(A, CLASS, ARIANNE, 1)?.text()?.removeSuffix(" >")
 
     override fun getTheme(): String? = findData(A, CLASS, LIENTHEME, null)?.text()
 
@@ -39,9 +48,11 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         return author?.removePrefix(" ")
     }
 
-    override fun getPublishedDate(): String? = findData(SPAN, CLASS, DATEPUBLICATION, null)?.text()
+    override fun getPublishedDate(): String? =
+        findData(SPAN, CLASS, DATEPUBLICATION, null)?.text()
 
-    override fun getArticle(): String? = correctImagesUrl(addDescription(findData(DIV, CLASS, TEXTE, null)?.outerHtml()))
+    override fun getArticle(): String? =
+        correctImagesUrl(addDescription(findData(DIV, CLASS, TEXTE, null)?.outerHtml()))
 
     override fun getDescription(): String? = findData(DIV, CLASS, CHAPO, null)?.text()
 
@@ -54,7 +65,8 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         )
     }
 
-    override fun getCssUrl(): String? = REPORTERRE_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
+    override fun getCssUrl(): String? =
+        REPORTERRE_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
 
     /**
      * Convert ReporterreArticle to Article.
@@ -82,7 +94,6 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         return article
     }
 
-    // TODO to put in utils?? or html utils with parse and find data.
     /**
      * Correct all images url's with their full url's in the given html code.
      * @param html the html code to correct.

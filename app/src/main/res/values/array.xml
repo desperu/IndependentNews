@@ -15,10 +15,11 @@
         <item>Sections</item>
         <item>Dates</item>
     </string-array>
-    
+
+    <!-- TODO put other folder ?? no need to translate -->
     <!-- Themes Correspondences -->
     <string-array name="filter_ecology">
-        <item>Ecologie</item>
+        <item>Écologie</item>
         <item>Climat</item>
         <item>Nature</item>
         <item>Pollutions</item>
@@ -31,7 +32,7 @@
     </string-array>
 
     <string-array name="filter_economy">
-        <item>Economie</item>
+        <item>Économie</item>
     </string-array>
 
     <string-array name="filter_politic">
@@ -44,6 +45,7 @@
 
     <string-array name="filter_energy">
         <item>Énergie</item>
+        <item>Nucléaire</item>
     </string-array>
 
     <string-array name="filter_agriculture">
@@ -52,6 +54,36 @@
     
     <string-array name="filter_health">
         <item>Santé</item>
+    </string-array>
+    <!-- TODO not all reporterre themes here !!! -->
+
+    <!-- Section correspondences -->
+    <string-array name="parent_section">
+        <!-- Bastamag section -->
+        <item>Décrypter</item>
+        <item>Résister</item>
+        <item>Inventer</item>
+        <item>Débattre</item>
+        <item>Chroniques</item>
+        <item>Dossiers</item>
+
+        <!-- Reporterre section -->
+        <!-- !!!! Be careful her a wrote sections links, not sections names !! -->
+        <item>A-decouvrir</item>
+        <item>Alternatives</item>
+        <item>Tribune-15</item>
+        <item>Edito</item>
+        <item>Reportage</item>
+        <item>Enquete</item>
+        <item>Entretien-19</item>
+        <item>BREVE</item>
+        <item>CHRONIQUES-22</item>
+        <item>Agenda-23</item>
+        <item>Hors-les-murs</item>
+        <item>Autres-infos</item>
+        <item>On-soutient</item>
+        <item>rubrique-de-plus</item>
+        <item>Une-minute-Une-question-21</item>
     </string-array>
 
 </resources>

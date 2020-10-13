@@ -173,7 +173,7 @@ class IndependentNewsRepositoryImpl(
 
         val filteredList = getFilteredListFromDB(selectedMap, actualList).toMutableList()
 
-        val unMatchArticleList = actualList.partition { filteredList.contains(it) }.second
+        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
 
         filteredList.addAll(filterCategories(selectedMap, unMatchArticleList))
 
@@ -314,16 +314,23 @@ class IndependentNewsRepositoryImpl(
 
         val filterCategories = mutableListOf<Article>()
 
-        val categoryList = mutableListOf<String>()
-        selectedMap[1]?.let { categoryList.addAll(it) }
-        selectedMap[2]?.let { categoryList.addAll(it) }
+        val themeList = selectedMap[1] ?: mutableListOf()
+        val sectionList = selectedMap[2] ?: mutableListOf()
 
-        unMatchArticleList.forEach { article ->
+        unMatchArticleList.forEach article@{ article ->
+            var themeMatch = false
+            var sectionMatch = false
             val catList = deConcatenateStringToMutableList(article.categories)
             catList.forEach {
-                if (categoryList.contains(it))
-                    filterCategories.add(article)
+                if (it.isBlank()) return@article
+                if (themeList.contains(it)) themeMatch = true
+                if (sectionList.contains(it)) sectionMatch = true
             }
+            if (themeList.isEmpty()) themeMatch = true
+            if (sectionList.isEmpty() && themeList.isNotEmpty()) sectionMatch = true
+
+            if (themeMatch && sectionMatch)
+                filterCategories.add(article)
         }
 
         return@withContext filterCategories

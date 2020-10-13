@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.utils.NOTIFICATION
 import org.desperu.independentnews.utils.UPDATE_DATA
@@ -47,7 +48,7 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
     /**
      * Update data for all sources in database.
      */
-    private fun updateData() = runBlocking(Dispatchers.IO) { // TODO other coroutines call ??
+    private fun updateData() = GlobalScope.launch(Dispatchers.IO) {
         ideNewsRepository.value.fetchRssArticles()
     }
 

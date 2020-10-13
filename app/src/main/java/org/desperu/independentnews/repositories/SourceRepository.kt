@@ -69,7 +69,7 @@ interface SourceRepository {
  *
  * @param sourceDao         the database access for source to set.
  */
-class SourceNewsRepositoryImpl(private val sourceDao: SourceDao): SourceRepository {
+class SourceRepositoryImpl(private val sourceDao: SourceDao): SourceRepository {
 
     /**
      * Return the source with it's unique identifier.

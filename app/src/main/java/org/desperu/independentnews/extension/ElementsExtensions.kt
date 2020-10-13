@@ -3,6 +3,7 @@ package org.desperu.independentnews.extension
 import org.desperu.independentnews.utils.PHOTO
 import org.desperu.independentnews.utils.PHOTOS
 import org.desperu.independentnews.utils.SOURCE
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 /**
@@ -19,3 +20,16 @@ internal fun Elements?.getAuthor(): String? {
     }
     return null
 }
+
+/**
+ * Safely return the element at the specified position in this list.
+ *
+ * @param index the index of the element to return.
+ *
+ * @return the element at the specified position in this list.
+ */
+internal fun Elements?.getIndex(index: Int): Element? =
+    if (!this.isNullOrEmpty() && size > index)
+        get(index)
+    else
+        null

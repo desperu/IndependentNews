@@ -21,7 +21,7 @@ val repositoryModule = module {
      * Provides an SourceRepository instance.
      */
     single<SourceRepository> {
-        SourceNewsRepositoryImpl(
+        SourceRepositoryImpl(
             get()
         )
     }
