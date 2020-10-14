@@ -3,19 +3,26 @@ package org.desperu.independentnews.models.web.bastamag
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlCategory
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
-import org.jsoup.nodes.Element
-
-// TODO to comment
+/**
+ * Class which provides a model to parse bastamag category html page.
+ *
+ * @property htmlPage the bastamag article html page.
+ * @property category the bastamag category.
+ *
+ * @constructor Instantiate a new BastamagArticle.
+ *
+ * @param htmlPage the bastamag article html page to set.
+ * @param category the bastamag category.
+ */
 data class BastamagCategory(private val htmlPage: ResponseBody,
-                            override val category: String
+                            override val category: String // TODO useless?
 ): BaseHtmlCategory(htmlPage) {
 
     override fun getUrlArticleList(): List<String>? {
         //        val articleList = findData(ARTICLE, CLASS, ARTICLE_ENTRY)
 
         val articleUrlList = mutableListOf<String>()
-        val articleList = mutableListOf<Element>()
+//        val articleList = mutableListOf<Element>()
         val elements = document.select(ARTICLE)
         elements.forEach { article ->
             if (article.attr(CLASS) == ARTICLE_ENTRY) {
@@ -26,11 +33,11 @@ data class BastamagCategory(private val htmlPage: ResponseBody,
             }
         }
 
-        val tedt = articleUrlList.toString()
-        val test = tedt.toList()
-        val toertoer = concatenateStringFromMutableList(articleUrlList)
-        println(">>>>>>>>>> $tedt")
-        println(">>>>>>>>>> concatenate : $toertoer")
+//        val tedt = articleUrlList.toString()
+//        val test = tedt.toList()
+//        val toertoer = concatenateStringFromMutableList(articleUrlList)
+//        println(">>>>>>>>>> $tedt")
+//        println(">>>>>>>>>> concatenate : $toertoer")
         return articleUrlList
     }
 

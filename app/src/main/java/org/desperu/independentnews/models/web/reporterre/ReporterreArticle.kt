@@ -7,6 +7,7 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 
 /**
  * Class which provides a model to parse reporterre article html page.
@@ -114,11 +115,16 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
      */
     private fun addDescription(article: String?): String? =
         if (!article.isNullOrBlank()) {
+            val container = Element(DIV).attr(CLASS, "container")
+            val zone = Element(DIV).attr(CLASS, "zone").attr(STYLE, "style=\"position:fixed;left:0;bottom:0;border-top:2px solid #8b9f1a;width:100%;padding:1% 2% 3% 2%;display:none;z-index:2000;background:green;font-family:arial;line-height:1.2;\"")
+
             val description = if (!getDescription().isNullOrBlank())
                                   findData(DIV, CLASS, CHAPO, null)?.outerHtml()
                               else
                                   ""
-            val document = Jsoup.parse(description + article)
+            zone.prepend(description + article)
+            container.prepend(zone.toString())
+            val document = Jsoup.parse(container.toString())
             document.toString()
         } else
             null

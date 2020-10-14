@@ -30,7 +30,6 @@ import org.jsoup.Jsoup
  * @property author the author of the article to set.
  * @property categoryList the category list of the article to set.
  * @property description the description of the article to set.
- * @property imageUrl the image url of the article to set.
  */
 @Xml
 data class RssArticle(
@@ -57,8 +56,6 @@ data class RssArticle(
     val description: String?
 ) {
 
-    internal lateinit var imageUrl: String
-
     /**
      * Convert RssArticle to Article.
      */
@@ -67,8 +64,8 @@ data class RssArticle(
             url = url.toString(),
             title = title.toString(),
             author = author.toString(),
-            description = Jsoup.parse(description.toString()).select(P)[0].ownText()
-//            imageUrl = imageUrl
+            description = Jsoup.parse(description.toString()).select(P)[0].ownText(),
+            isTopStory = true
         )
 
         if (!categoryList.isNullOrEmpty())

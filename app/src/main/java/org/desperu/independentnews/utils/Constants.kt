@@ -34,12 +34,14 @@ const val REPORTERRE_BASE_URL = "https://reporterre.net/"
 const val BASTAMAG_EDITO_URL = "Site-d-informations-independant-sur-les-enjeux-sociaux-et-environnementaux"
 const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
 
-
-
 // Section value
-const val SEC_DECRYPTER = "Approfondir"
-const val SEC_RESISTER = "Resister"
-const val SEC_INVENTER = "Inventer"
+const val BASTA_SEC_DECRYPTER = "Approfondir"
+const val BASTA_SEC_RESISTER = "Resister"
+const val BASTA_SEC_INVENTER = "Inventer"
+
+const val REPORT_SEC_DECRYPTER = ""
+const val REPORT_SEC_RESISTER = "Reportage"
+const val REPORT_SEC_INVENTER = ""
 
 
 // --- SOURCES ---

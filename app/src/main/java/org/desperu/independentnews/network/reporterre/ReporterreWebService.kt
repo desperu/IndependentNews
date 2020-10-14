@@ -24,9 +24,9 @@ interface ReporterreWebService {
      * @param number the number of the first article on the page.
      * @return the category from the Reporterre Web Site.
      */
-    @GET("{category}" + "#pagination_articles")
+    @GET("{category}" + "#pagination_autres_articles")
     suspend fun getCategory(
         @Path("category") category: String,
-        @Query("debut_articles") number: String
+        @Query("debut_autres_articles") number: String
     ): ResponseBody
 }

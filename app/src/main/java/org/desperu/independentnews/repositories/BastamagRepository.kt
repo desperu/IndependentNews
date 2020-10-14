@@ -4,8 +4,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
+import org.desperu.independentnews.models.web.bastamag.BastamagCategory
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
+import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
+import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
+import org.desperu.independentnews.utils.BASTA_SEC_INVENTER
+import org.desperu.independentnews.utils.BASTA_SEC_RESISTER
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 
 /**
@@ -20,14 +25,14 @@ interface BastamagRepository {
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    suspend fun getRssArticles(): List<Article>?
+    suspend fun fetchRssArticles(): List<Article>?
 
     /**
-     * Returns the top story list of articles from the Rss flux of Bastamag.
+     * Returns the categories list of articles from the Web site of Bastamag.
      *
-     * @return the top story list of articles from the Rss flux of Bastamag.
+     * @return the categories list of articles from the Web site of Bastamag.
      */
-    suspend fun getTopStory(): List<Article>?
+    suspend fun fetchCategories(): List<Article>?
 }
 
 /**
@@ -53,28 +58,52 @@ class BastamagRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    override suspend fun getRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun fetchRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
-        return@withContext if (!rssArticleList.isNullOrEmpty()) {
-            val articleList = rssArticleList.map { it.toArticle() }
-            articleList.forEach {
-                val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
-                bastamagArticle.toArticle(it)
-            }
 
-            articleList
-        } else
+        if (!rssArticleList.isNullOrEmpty())
+            fetchArticleList(rssArticleList.map { it.toArticle() })
+        else
             null
     }
 
     /**
-     * Returns the top story list of articles from the Rss flux of Bastamag.
+     * Returns the categories list of articles from the Web site of Bastamag.
      *
-     * @return the top story list of articles from the Rss flux of Bastamag.
+     * @return the categories list of articles from the Web site of Bastamag.
      */
-    override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
-        val topStory = rssService.getRssArticles().channel?.rssArticleList
-        return@withContext topStory?.map { it.toArticle() }
-// TODO Stop to use web, use isTopStory in Article in DB
+    override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
+        val categories = listOf(BASTA_SEC_DECRYPTER, BASTA_SEC_RESISTER, BASTA_SEC_INVENTER)
+        val number = listOf(0, 10, 20, 30, 40)
+        val urls = mutableListOf<String>()
+
+        categories.forEach {category ->
+            number.forEach {number ->
+                val bastamagCategory =
+                    BastamagCategory(webService.getCategory(category, number.toString()), category)
+                bastamagCategory.getUrlArticleList()?.let { urls.addAll(it) }
+            }
+        }
+
+        fetchArticleList(urls.map { Article(url = BASTAMAG_BASE_URL + it) })
+    }
+
+    /**
+     * Fetch article html page for each article in the given list.
+     *
+     * @param articleList the list of article to fetch html page.
+     *
+     * @return the article list with all fetched data.
+     */
+    private suspend fun fetchArticleList(
+        articleList: List<Article>
+    ): List<Article> = withContext(Dispatchers.IO) {
+
+        articleList.forEach {
+            val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
+            bastamagArticle.toArticle(it)
+        }
+
+        articleList
     }
 }

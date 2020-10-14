@@ -27,6 +27,14 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
         document = Jsoup.parse(htmlPage.string())
     }
 
+    /**
+     * Return the list of element that match the given tag.
+     *
+     * @param tag the tag value to search for.
+     *
+     * @return the list of element that match the given tag.
+     */
+    protected fun getTagList(tag: String): Elements = document.select(tag)
 
     /**
      * Find data from the Jsoup document.
@@ -40,7 +48,7 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
      */
     protected fun findData(tag: String, attr: String?, value: String?, index: Int?): Element? {
         var matches = 0
-        val elements = document.select(tag)
+        val elements = getTagList(tag)
         elements.withIndex().forEach {
 
             if (attr == null && value == null) {
@@ -57,29 +65,6 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
             }
         }
 
-        return null
-    }
-
-    // TODO getTag too
-    // TODO get attribute ??
-    protected fun getTagList(tag: String): Elements? = document.select(tag)
-
-    protected fun getAttribute(elements: Elements, attr: String, value: String): Element? {
-        elements.forEach { element ->
-            if (element.attr(attr) == value)
-                return element
-        }
-        return null
-    }
-
-    protected fun getMatchIndex(elements: Elements, attr: String, value: String, index: Int): Element? {
-        var matches = 0
-        elements.forEach {
-            if (it.attr(attr) == value) {
-                if (index == matches) return it // Get indexed match
-                else matches += 1
-            }
-        }
         return null
     }
 

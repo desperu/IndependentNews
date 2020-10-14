@@ -22,6 +22,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.mainModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.SourceRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
@@ -138,6 +139,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_all_articles -> fm.configureAndShowFragment(FRAG_ALL_ARTICLES)
 //            R.id.activity_main_drawer_search -> this.showSearchArticlesActivity()
 //            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
+            R.id.activity_main_menu_drawer_refresh_data -> refreshData()
 //            R.id.activity_main_drawer_about -> this.showAboutDialog()
 //            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
             else -> {}
@@ -224,6 +226,16 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     }
 
     /**
+     * Refresh data for the application, fetch data from Rss and Web, and persist them
+     * into the database.
+     */
+    private fun refreshData() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            get<IndependentNewsRepository>().refreshData()
+        }
+    }
+
+    /**
      * Apply selected filters to the current article list.
      * @param selectedMap the map of selected filters to apply.
      */
@@ -241,6 +253,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         val toShow = fragmentKey == FRAG_CATEGORY
         app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
     }
+
+    // TODO reset FilterMotion when switch frag with filter enabled, else create a bug because we switch list.
 
     /**
      * Return the adapter scale down animator for the recycler view of article list.

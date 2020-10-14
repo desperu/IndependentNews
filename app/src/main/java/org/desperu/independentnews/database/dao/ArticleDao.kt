@@ -35,6 +35,25 @@ interface ArticleDao {
     suspend fun getArticle(id: Long): Article
 
     /**
+     * Returns the article from database ordered for given url.
+     *
+     * @param url the url of the article to get from database.
+     *
+     * @return the corresponding article.
+     */
+    @Query("SELECT * FROM article WHERE url = :url")
+    suspend fun getArticle(url: String): Article
+
+    /**
+     * Returns the top story article list from database ordered from the most recent to the oldest.
+     *
+     * @return the top story article list from database ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE isTopStory = 1 ORDER BY publishedDate DESC")
+    suspend fun getTopStory(): List<Article>
+
+    /**
      * Returns the category article list from database ordered from the most recent to the oldest.
      *
      * @return the category article list from database ordered from the most recent to the oldest.
@@ -170,7 +189,7 @@ interface ArticleDao {
      * @return the row id for the inserted article.
      */
     @Insert
-    suspend fun insertArticles(vararg articles: Article)//: Long
+    suspend fun insertArticles(vararg articles: Article)//: List<Long>
 
     // -----------------
     // UPDATE
@@ -179,10 +198,18 @@ interface ArticleDao {
     /**
      * Mark the article with the given unique identifier as read in database.
      *
-     * @param id the unique identifier of the viewed article to mark as read.
+     * @param id the unique identifier of the article to mark as read.
      */
     @Query("UPDATE article SET read=1 WHERE id=:id")
     suspend fun markAsRead(id: Long)
+
+    /**
+     * Mark the article with the given unique identifier that is NOT top story in database.
+     *
+     * @param id the unique identifier of the article to mark that is NOT top story.
+     */
+    @Query("UPDATE article SET isTopStory = 0 WHERE id IN (:id)")
+    suspend fun markIsNotTopStory(vararg id: Long)
 
     /**
      * Update the title, the author line and the published date of the article with the given unique identifier.

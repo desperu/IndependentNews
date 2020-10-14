@@ -4,9 +4,11 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
+import org.desperu.independentnews.extension.setSourceForEach
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.BASTAMAG
+import org.desperu.independentnews.utils.REPORTERRE
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 
 /**
@@ -17,9 +19,20 @@ import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 interface IndependentNewsRepository {
 
     /**
-     * Fetch the list of articles from the Rss flux all sources.
+     * Fetch the list of articles from the Rss flux for all sources.
      */
     suspend fun fetchRssArticles()
+
+    /**
+     * Fetch the categories list of articles from the Web Site for all sources.
+     */
+    suspend fun fetchCategories()
+
+    /**
+     * Refresh data for the application, fetch data from Rss and Web, and persist them
+     * into the database.
+     */
+    suspend fun refreshData()
 
     /**
      * Returns the top story list of articles from the database.
@@ -94,9 +107,8 @@ class IndependentNewsRepositoryImpl(
     // -----------------
 
     /**
-     * Returns the list of articles from the Rss flux of all sources.
-     *
-     * @return the list of articles from the Rss flux of all sources.
+     * Fetch the list of articles from the Rss flux of all enabled sources,
+     * and persist them in database.
      */
     override suspend fun fetchRssArticles() = withContext(Dispatchers.IO) {
         setSources()
@@ -104,15 +116,47 @@ class IndependentNewsRepositoryImpl(
         try {
             sources?.forEach { source ->
                 if (source.name == BASTAMAG)
-                    bastamagRepository.getRssArticles()?.let { rssArticleList.addAll(it) }
+                    bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
                 if (source.name == REPORTERRE)
-                    reporterreRepository.getRssArticles()?.let { rssArticleList.addAll(it) }
+                    reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
             }
         } catch (e: Exception) {
           Log.e("IdeRepo-fetchRssArticle", "Error while fetching source web data.")
         }
 
+        updateTopStory(rssArticleList)
         persist(rssArticleList)
+    }
+
+    /**
+     * Fetch the categories list of articles from the Web Site for enabled all sources,
+     * and persist them in database.
+     */
+    override suspend fun fetchCategories() = withContext(Dispatchers.IO) {
+        setSources()
+        val articleList = mutableListOf<Article>()
+        try {
+            sources?.forEach { source ->
+                if (source.name == BASTAMAG)
+                    bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
+                if (source.name == REPORTERRE)
+                    reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
+            }
+        } catch (e: Exception) {
+            Log.e("IdeRepo-fetchCategories", "Error while fetching source web data.")
+        }
+
+        persist(articleList)
+    }
+
+
+    /**
+     * Refresh data for the application, fetch data from Rss and Web, and persist them
+     * into the database.
+     */
+    override suspend fun refreshData() = withContext(Dispatchers.IO) {
+        fetchRssArticles()
+        fetchCategories()
     }
 
     // -----------------
@@ -126,19 +170,7 @@ class IndependentNewsRepositoryImpl(
      */
     override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
         setSources()
-        val topStoryList = mutableListOf<Article>()
-        try {
-            sources?.forEach { source ->
-                if (source.name == BASTAMAG)
-                    bastamagRepository.getTopStory()?.let { topStoryList.addAll(it) }
-                if (source.name == REPORTERRE)
-                    reporterreRepository.getTopStory()?.let { topStoryList.addAll(it) }
-            }
-        } catch (e: Exception) {
-            Log.e("IdeRepo-getTopStory", "Error while fetching source web data.")
-        }
-
-        setSourceForEach(articleDao.getWhereUrlsInSorted(topStoryList.map { it.url }))
+        sources?.let { articleDao.getTopStory().setSourceForEach(it) }
     }
 
     /**
@@ -147,7 +179,8 @@ class IndependentNewsRepositoryImpl(
      * @return the category list of articles from the database.
      */ // TODO rename to rssCategories??
     override suspend fun getCategory(category: String): List<Article>? = withContext(Dispatchers.IO) {
-        setSourceForEach(articleDao.getCategory("%$category%"))
+        setSources()
+        sources?.let { articleDao.getCategory("%$category%").setSourceForEach(it) }
     }
 
     /**
@@ -156,7 +189,8 @@ class IndependentNewsRepositoryImpl(
      * @return the list of all articles from the database.
      */
     override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
-        setSourceForEach(articleDao.getAll())
+        setSources()
+        sources?.let { articleDao.getAll().setSourceForEach(it) }
     }
 
     /**
@@ -177,7 +211,10 @@ class IndependentNewsRepositoryImpl(
 
         filteredList.addAll(filterCategories(selectedMap, unMatchArticleList))
 
-        return@withContext setSourceForEach(articleDao.getWhereUrlsInSorted(filteredList.map { it.url }))
+        return@withContext sources?.let { list ->
+            articleDao.getWhereUrlsInSorted(filteredList.map { it.url })
+                .setSourceForEach(list)
+        }
     }
 
     /**
@@ -209,12 +246,13 @@ class IndependentNewsRepositoryImpl(
     private suspend fun persist(articleList: List<Article>) = withContext(Dispatchers.IO) {
         val urlsToUpdate = getExistingUrls(articleList)
 
-        // TODO use the too list to separate isTopStory value list, but need new function, and get all actual true in db to set to false if not in new list
         val articleListPair = articleList.partition { article -> urlsToUpdate.contains(article.url) }
         val articlesToUpdate = articleListPair.first
         val articlesToInsert = articleListPair.second
 
-        articlesToUpdate.forEach { article ->
+        articlesToUpdate.forEachIndexed { index, article ->
+            val categories = if (article.isTopStory) article.categories
+                             else articleDao.getArticle(urlsToUpdate[index]).categories
             articleDao.update(
                 article.title,
                 article.section,
@@ -222,7 +260,7 @@ class IndependentNewsRepositoryImpl(
                 article.author,
                 article.publishedDate,
                 article.article,
-                article.categories,
+                categories,
                 article.description,
                 article.imageUrl,
                 article.cssUrl,
@@ -238,6 +276,17 @@ class IndependentNewsRepositoryImpl(
     }
 
     /**
+     * Update top story values if needed in database
+     */
+    private suspend fun updateTopStory(articleList: List<Article>) = withContext(Dispatchers.IO) {
+        val topStoryDB = articleDao.getTopStory()
+        val notTopStory = topStoryDB.filterNot { articleList.contains(it) }
+
+        if (articleList.isNotEmpty() && !notTopStory.isNullOrEmpty())
+            articleDao.markIsNotTopStory(*notTopStory.map { it.id }.toLongArray())
+    }
+
+    /**
      * Returns the url of the articles from the given list that already exists in database.
      *
      * @param articleList the articles from which to get the list of existing url in database.
@@ -248,20 +297,6 @@ class IndependentNewsRepositoryImpl(
         val url = articleList.map { article -> article.url }
         val listToUpdate = articleDao.getWhereUrlsIn(url)
         listToUpdate.map { article -> article.url }
-    }
-
-    /**
-     * Set the source for each article of the list.
-     *
-     * @param articleList the article list to set the source for each article.
-     *
-     * @return the article list with the source set.
-     */
-    private suspend fun setSourceForEach(articleList: List<Article>): List<Article> = withContext(Dispatchers.IO) {
-        articleList.forEach {
-            it.source = sourceRepository.getSource(it.sourceId)
-        }
-        return@withContext articleList
     }
 
     /**
@@ -317,6 +352,9 @@ class IndependentNewsRepositoryImpl(
         val themeList = selectedMap[1] ?: mutableListOf()
         val sectionList = selectedMap[2] ?: mutableListOf()
 
+        if (themeList.isEmpty() && sectionList.isEmpty())
+            return@withContext filterCategories
+
         unMatchArticleList.forEach article@{ article ->
             var themeMatch = false
             var sectionMatch = false
@@ -327,7 +365,7 @@ class IndependentNewsRepositoryImpl(
                 if (sectionList.contains(it)) sectionMatch = true
             }
             if (themeList.isEmpty()) themeMatch = true
-            if (sectionList.isEmpty() && themeList.isNotEmpty()) sectionMatch = true
+            if (sectionList.isEmpty()) sectionMatch = true
 
             if (themeMatch && sectionMatch)
                 filterCategories.add(article)

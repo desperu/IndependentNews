@@ -4,8 +4,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
+import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
 import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
+import org.desperu.independentnews.utils.REPORT_SEC_RESISTER
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 
 /**
@@ -20,14 +22,14 @@ interface ReporterreRepository {
      *
      * @return the list of articles from the Rss flux of Reporterre.
      */
-    suspend fun getRssArticles(): List<Article>?
+    suspend fun fetchRssArticles(): List<Article>?
 
     /**
-     * Returns the top story list of articles from the Rss flux of Reporterre.
+     * Returns the categories list of articles from the Web site of Reporterre.
      *
-     * @return the top story list of articles from the Rss flux of Reporterre.
+     * @return the categories list of articles from the Web site flux of Reporterre.
      */
-    suspend fun getTopStory(): List<Article>?
+    suspend fun fetchCategories(): List<Article>?
 }
 
 /**
@@ -53,27 +55,51 @@ class ReporterreRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Reporterre.
      */
-    override suspend fun getRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun fetchRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
-        return@withContext if (!rssArticleList.isNullOrEmpty()) {
-            val articleList = rssArticleList.map { it.toArticle() }
-            articleList.forEach {
-                val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(it.url)))
-                reporterreArticle.toArticle(it)
-            }
 
-            articleList
-        } else
+        if (!rssArticleList.isNullOrEmpty())
+            fetchArticleList(rssArticleList.map { it.toArticle() })
+        else
             null
     }
 
     /**
-     * Returns the top story list of articles from the Rss flux of Reporterre.
+     * Returns the categories list of articles from the Web site of Reporterre.
      *
-     * @return the top story list of articles from the Rss flux of Reporterre.
+     * @return the categories list of articles from the Web site of Reporterre.
      */
-    override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
-        val topStory = rssService.getRssArticles().channel?.rssArticleList
-        return@withContext topStory?.map { it.toArticle() }
+    override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
+        val categories = listOf(REPORT_SEC_RESISTER)
+        val urls = mutableListOf<String>()
+
+        categories.forEach { category ->
+            val reporterreCategory =
+                ReporterreCategory(webService.getCategory(category, 0.toString()), category)
+            reporterreCategory.getUrlArticleList()?.let { urls.addAll(it) }
+        }
+
+        fetchArticleList(urls.map { Article(url = it) })
+    }
+
+    /**
+     * Fetch article html page for each article in the given list.
+     *
+     * @param articleList the list of article to fetch html page.
+     *
+     * @return the article list with all fetched data.
+     */
+    private suspend fun fetchArticleList(
+        articleList: List<Article>
+    ): List<Article> = withContext(Dispatchers.IO) {
+
+        // TODO : no fetch articles already in database, use url to know,
+        //  and use date to know if they are update, and so fetch it
+        articleList.forEach {
+            val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(it.url)))
+            reporterreArticle.toArticle(it)
+        }
+
+        articleList
     }
 }

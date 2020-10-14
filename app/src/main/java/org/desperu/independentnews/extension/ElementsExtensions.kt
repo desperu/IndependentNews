@@ -33,3 +33,20 @@ internal fun Elements?.getIndex(index: Int): Element? =
         get(index)
     else
         null
+
+/**
+ * Return the list of element that match the given attr/value couple.
+ *
+ * @param attr the attribute to find.
+ * @param value the value of the attribute to check.
+ *
+ * @return the list of element that match the given attr/value couple.
+ */
+internal fun Elements?.getMatchAttr(attr: String, value: String): Elements {
+    val elements = Elements()
+    this?.forEach { element ->
+        if (element.attr(attr) == value)
+            elements.add(element)
+    }
+    return elements
+}

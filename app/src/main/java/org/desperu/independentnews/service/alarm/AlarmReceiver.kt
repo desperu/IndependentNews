@@ -50,6 +50,7 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
      */
     private fun updateData() = GlobalScope.launch(Dispatchers.IO) {
         ideNewsRepository.value.fetchRssArticles()
+        ideNewsRepository.value.fetchCategories()
     }
 
     /**

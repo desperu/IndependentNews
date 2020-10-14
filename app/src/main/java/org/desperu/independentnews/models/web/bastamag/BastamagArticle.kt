@@ -49,8 +49,11 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
 
     override fun getImage(): List<String?> {
         val element = findData(IMG, ITEMPROP, IMAGE, null)
-        return listOf(BASTAMAG_BASE_URL + element?.attr(SRC),
-                        element?.attr(WIDTH), element?.attr(HEIGHT))
+        return listOf(
+            BASTAMAG_BASE_URL + element?.attr(SRC),
+            element?.attr(WIDTH),
+            element?.attr(HEIGHT)
+        )
     }
 
     override fun getCssUrl(): String? =
