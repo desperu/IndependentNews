@@ -13,7 +13,16 @@ val repositoryModule = module {
      */
     single<IndependentNewsRepository> {
         IndependentNewsRepositoryImpl(
-            get(), get(), get(), get()
+            get(), get(), get(), get(), get()
+        )
+    }
+
+    /**
+     * Provides an ArticleRepository instance.
+     */
+    single<ArticleRepository> {
+        ArticleRepositoryImpl(
+            get(), get()
         )
     }
 

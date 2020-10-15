@@ -204,6 +204,14 @@ interface ArticleDao {
     suspend fun markAsRead(id: Long)
 
     /**
+     * Mark the article with the given unique identifier that IS top story in database.
+     *
+     * @param url the url of the article to mark that IS top story.
+     */
+    @Query("UPDATE article SET isTopStory = 1 WHERE url IN (:url)")
+    suspend fun markIsTopStory(vararg url: String)
+
+    /**
      * Mark the article with the given unique identifier that is NOT top story in database.
      *
      * @param id the unique identifier of the article to mark that is NOT top story.

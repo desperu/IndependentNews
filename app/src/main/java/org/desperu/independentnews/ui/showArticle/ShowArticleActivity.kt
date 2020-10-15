@@ -7,13 +7,17 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.setMargins
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
+import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.utils.REPORTERRE
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -115,6 +119,10 @@ class ShowArticleActivity: BaseBindingActivity() {
                         " link.setAttribute('type','text/css');" +
                         " document.head.appendChild(link);"
                 view.evaluateJavascript(js, null)
+                if (article?.sourceName == REPORTERRE)
+                    (view.layoutParams as LinearLayout.LayoutParams).apply {
+                        setMargins(bindDimen(R.dimen.default_margin).value.toInt())
+                    }
                 super.onPageFinished(view, url)
             }
         }// TODO use retro for click on article Basta or Reporterre

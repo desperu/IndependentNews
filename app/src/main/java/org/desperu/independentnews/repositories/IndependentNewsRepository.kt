@@ -9,7 +9,6 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.REPORTERRE
-import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 
 /**
  * Independent News Repository interface to get data from others repositories.
@@ -80,19 +79,21 @@ interface IndependentNewsRepository {
  *
  * @author Desperu
  *
- * @property sourceRepository               the repository access for source services.
+ * @property articleRepository              the repository access for article database.
+ * @property sourceRepository               the repository access for source database.
  * @property reporterreRepository           the repository access for reporterre services.
  * @property bastamagRepository             the repository access for bastamag services.
  * @property articleDao                     the database access object for article.
  *
  * @constructor Instantiates a new IndependentNewsRepositoryImpl.
- *
- * @param sourceRepository                  the repository access for source services to set.
+ * @param articleRepository                 the repository access for article database to set.
+ * @param sourceRepository                  the repository access for source database to set.
  * @param reporterreRepository              the repository access for reporterre services to set.
  * @param bastamagRepository                the repository access for bastamag services to set.
  * @param articleDao                        the database access object for article to set.
  */
 class IndependentNewsRepositoryImpl(
+    private val articleRepository: ArticleRepository,
     private val sourceRepository: SourceRepository,
     private val reporterreRepository: ReporterreRepository,
     private val bastamagRepository: BastamagRepository,
@@ -124,8 +125,8 @@ class IndependentNewsRepositoryImpl(
           Log.e("IdeRepo-fetchRssArticle", "Error while fetching source web data.")
         }
 
-        updateTopStory(rssArticleList)
-        persist(rssArticleList)
+        articleRepository.updateTopStory(rssArticleList)
+        articleRepository.persist(rssArticleList)
     }
 
     /**
@@ -146,7 +147,7 @@ class IndependentNewsRepositoryImpl(
             Log.e("IdeRepo-fetchCategories", "Error while fetching source web data.")
         }
 
-        persist(articleList)
+        articleRepository.persist(articleList)
     }
 
 
@@ -205,11 +206,11 @@ class IndependentNewsRepositoryImpl(
                                          actualList: List<Article>
     ): List<Article>? = withContext(Dispatchers.IO) {
 
-        val filteredList = getFilteredListFromDB(selectedMap, actualList).toMutableList()
+        val filteredList = articleRepository.getFilteredListFromDB(selectedMap, actualList).toMutableList()
 
         val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
 
-        filteredList.addAll(filterCategories(selectedMap, unMatchArticleList))
+        filteredList.addAll(articleRepository.filterCategories(selectedMap, unMatchArticleList))
 
         return@withContext sources?.let { list ->
             articleDao.getWhereUrlsInSorted(filteredList.map { it.url })
@@ -236,141 +237,5 @@ class IndependentNewsRepositoryImpl(
     private suspend fun setSources() = withContext(Dispatchers.IO) {
         if (sources.isNullOrEmpty())
             sources = sourceRepository.getEnabledSources()
-    }
-
-    /**
-     * Persists (update the existing ones, and insert the non-existing ones) the articles in database.
-     *
-     * @param articleList the articles list to persist.
-     */
-    private suspend fun persist(articleList: List<Article>) = withContext(Dispatchers.IO) {
-        val urlsToUpdate = getExistingUrls(articleList)
-
-        val articleListPair = articleList.partition { article -> urlsToUpdate.contains(article.url) }
-        val articlesToUpdate = articleListPair.first
-        val articlesToInsert = articleListPair.second
-
-        articlesToUpdate.forEachIndexed { index, article ->
-            val categories = if (article.isTopStory) article.categories
-                             else articleDao.getArticle(urlsToUpdate[index]).categories
-            articleDao.update(
-                article.title,
-                article.section,
-                article.theme,
-                article.author,
-                article.publishedDate,
-                article.article,
-                categories,
-                article.description,
-                article.imageUrl,
-                article.cssUrl,
-                article.url
-            )
-        }
-
-        articlesToInsert.forEach { article ->
-            val sourceId = sources?.find { it.name == article.sourceName }?.id
-            sourceId?.let { article.sourceId = it }
-        }
-        articleDao.insertArticles(*articlesToInsert.toTypedArray())
-    }
-
-    /**
-     * Update top story values if needed in database
-     */
-    private suspend fun updateTopStory(articleList: List<Article>) = withContext(Dispatchers.IO) {
-        val topStoryDB = articleDao.getTopStory()
-        val notTopStory = topStoryDB.filterNot { articleList.contains(it) }
-
-        if (articleList.isNotEmpty() && !notTopStory.isNullOrEmpty())
-            articleDao.markIsNotTopStory(*notTopStory.map { it.id }.toLongArray())
-    }
-
-    /**
-     * Returns the url of the articles from the given list that already exists in database.
-     *
-     * @param articleList the articles from which to get the list of existing url in database.
-     *
-     * @return the url of the articles from the given list that already exists in database.
-     */
-    private suspend fun getExistingUrls(articleList: List<Article>) = withContext(Dispatchers.IO) {
-        val url = articleList.map { article -> article.url }
-        val listToUpdate = articleDao.getWhereUrlsIn(url)
-        listToUpdate.map { article -> article.url }
-    }
-
-    /**
-     * Returns the list of filtered articles from database.
-     *
-     * @param selectedMap the map of selected filters to apply.
-     * @param actualList the actual list of article shown in the recycler view.
-     *
-     * @return the list of filtered articles from the database.
-     */
-    private suspend fun getFilteredListFromDB(selectedMap: Map<Int, MutableList<String>>,
-                                              actualList: List<Article>
-    ): List<Article> = withContext(Dispatchers.IO) {
-
-        val sourcesList = selectedMap[0]
-        val sources = if (!sourcesList.isNullOrEmpty()) sourcesList else sources?.map { it.name }!!
-        val themes = selectedMap[1]
-        val sectionList = selectedMap[2]
-        val sections = if (!sectionList.isNullOrEmpty()) deConcatenateStringToMutableList(sectionList[0])
-                       else null
-        val dates = listOf(0L, 999999999999999999L)
-        val urls = actualList.map { it.url }
-
-        // TODO for test
-        println("$sources $sections $themes $dates")
-
-        return@withContext when {
-            !themes.isNullOrEmpty() && !sections.isNullOrEmpty() ->
-                articleDao.getFilteredList(sources, sections, themes, dates[0], dates[1], urls)
-            !themes.isNullOrEmpty() ->
-                articleDao.getFilteredListWithThemes(sources, themes, dates[0], dates[1], urls)
-            !sections.isNullOrEmpty() ->
-                articleDao.getFilteredListWithSections(sources, sections, dates[0], dates[1], urls)
-            else ->
-                articleDao.getFilteredList(sources, dates[0], dates[1], urls)
-        }
-    }
-
-    /**
-     * Returns the list of filtered articles with categories filter.
-     *
-     * @param selectedMap the map of selected filters to apply.
-     * @param unMatchArticleList the unmatched article list after db filter.
-     *
-     * @return the list of filtered articles with categories filter.
-     */
-    private suspend fun filterCategories(selectedMap: Map<Int, MutableList<String>>,
-                                         unMatchArticleList: List<Article>
-    ): List<Article> = withContext(Dispatchers.Default) {
-
-        val filterCategories = mutableListOf<Article>()
-
-        val themeList = selectedMap[1] ?: mutableListOf()
-        val sectionList = selectedMap[2] ?: mutableListOf()
-
-        if (themeList.isEmpty() && sectionList.isEmpty())
-            return@withContext filterCategories
-
-        unMatchArticleList.forEach article@{ article ->
-            var themeMatch = false
-            var sectionMatch = false
-            val catList = deConcatenateStringToMutableList(article.categories)
-            catList.forEach {
-                if (it.isBlank()) return@article
-                if (themeList.contains(it)) themeMatch = true
-                if (sectionList.contains(it)) sectionMatch = true
-            }
-            if (themeList.isEmpty()) themeMatch = true
-            if (sectionList.isEmpty()) sectionMatch = true
-
-            if (themeMatch && sectionMatch)
-                filterCategories.add(article)
-        }
-
-        return@withContext filterCategories
     }
 }

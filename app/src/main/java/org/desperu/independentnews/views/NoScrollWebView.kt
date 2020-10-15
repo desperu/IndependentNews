@@ -15,23 +15,36 @@ import android.webkit.WebView
 class NoScrollWebView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : WebView(context, attrs, defStyleAttr) {
+// TODO useless , needed for view pager show article
+//    override fun overScrollBy(
+//        deltaX: Int,
+//        deltaY: Int,
+//        scrollX: Int,
+//        scrollY: Int,
+//        scrollRangeX: Int,
+//        scrollRangeY: Int,
+//        maxOverScrollX: Int,
+//        maxOverScrollY: Int,
+//        isTouchEvent: Boolean
+//    ): Boolean {
 
-    override fun overScrollBy(
-        deltaX: Int,
-        deltaY: Int,
-        scrollX: Int,
-        scrollY: Int,
-        scrollRangeX: Int,
-        scrollRangeY: Int,
-        maxOverScrollX: Int,
-        maxOverScrollY: Int,
-        isTouchEvent: Boolean
-    ): Boolean {
+//        return if (scrollY == 0)
+//                   super.overScrollBy(
+//                       deltaX,
+//                       deltaY,
+//                       scrollX,
+//                       scrollY,
+//                       scrollRangeX,
+//                       scrollRangeY,
+//                       maxOverScrollX,
+//                       maxOverScrollY,
+//                       isTouchEvent
+//                   )
+//               else
+//                   false
+//    }
 
-        return false
-    }
-
-    override fun scrollTo(x: Int, y: Int) {}
-
-    override fun computeScroll() {}
+//    override fun scrollTo(x: Int, y: Int) {}
+//
+//    override fun computeScroll() {}
 }
