@@ -66,6 +66,17 @@ val REPORTERRE_SOURCE = Source(
     logoId = R.drawable.logo_mini_reporterre
 )
 
+
+// --- FOR FILTERS ---
+
+// Key for filter page
+const val SOURCES = 0
+const val THEMES = 1
+const val SECTIONS = 2
+const val DATES = 3
+const val CATEGORIES = 4 // only used to apply filters, not in UI.
+
+
 // --- FOR UTILS ---
 
 // To Convert Date
@@ -86,7 +97,6 @@ const val NOTIFICATION = 1
 
 
 // --- FOR SHARED PREFERENCES ---
-
 
 // File name
 const val INDEPENDENT_NEWS_PREFS = "IndependentNewsPrefs"

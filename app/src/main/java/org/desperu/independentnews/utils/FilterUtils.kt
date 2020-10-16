@@ -19,10 +19,12 @@ object FilterUtils {
         R.id.filter_ecology, R.id.filter_social,
         R.id.filter_economy, R.id.filter_politic,
         R.id.filter_international, R.id.filter_energy,
-        R.id.filter_agriculture, R.id.filter_health
+        R.id.filter_agriculture, R.id.filter_health,
 
         // Filter Sections
-
+        R.id.filter_alternatives, R.id.filter_decrypt,
+        R.id.filter_resist, R.id.filter_discuss,
+        R.id.filter_chronicle
 
         // Filter Dates
     )
@@ -44,6 +46,11 @@ object FilterUtils {
         R.id.filter_health -> getStringFromArray(context, R.array.filter_health)
 
         // Filter Sections
+        R.id.filter_alternatives -> getStringFromArray(context, R.array.filter_alternatives)
+        R.id.filter_decrypt -> getStringFromArray(context, R.array.filter_decrypt)
+        R.id.filter_resist -> getStringFromArray(context, R.array.filter_resist)
+        R.id.filter_discuss -> getStringFromArray(context, R.array.filter_discuss)
+        R.id.filter_chronicle -> getStringFromArray(context, R.array.filter_chronicle)
 
         // Filter Dates
 

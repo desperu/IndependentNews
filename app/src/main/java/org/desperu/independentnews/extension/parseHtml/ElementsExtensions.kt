@@ -1,4 +1,4 @@
-package org.desperu.independentnews.extension
+package org.desperu.independentnews.extension.parseHtml
 
 import org.desperu.independentnews.utils.PHOTO
 import org.desperu.independentnews.utils.PHOTOS

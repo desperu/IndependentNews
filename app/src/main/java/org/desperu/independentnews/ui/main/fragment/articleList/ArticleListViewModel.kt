@@ -20,7 +20,6 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
  * @property articleListInterface the article list interface witch provide fragment interface to set.
  * @property router the estate router interface witch provide user redirection to set.
  */
-// TODO to comment
 class ArticleListViewModel(private val ideNewsRepository: IndependentNewsRepository,
                            private val articleListInterface: ArticleListInterface,
                            private val router: ArticleRouter
@@ -31,28 +30,28 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
     private var filteredList: List<Article>? = null
 
     // -----------------
-    // NETWORK
-    // -----------------
-
-    internal fun fetchRssArticles() = viewModelScope.launch(Dispatchers.IO) {
-        ideNewsRepository.fetchRssArticles()
-//        updateRecyclerData()
-    }
-
-    // -----------------
     // DATABASE
     // -----------------
 
+    /**
+     * Get top story article list from database, and dispatch to recycler adapter.
+     */
     internal fun getTopStory() = viewModelScope.launch(Dispatchers.IO) {
         articleList = ideNewsRepository.getTopStory()
         updateRecyclerData()
     }
 
+    /**
+     * Get asked category article list from database, and dispatch to recycler adapter.
+     */
     internal fun getCategory(category: String) = viewModelScope.launch(Dispatchers.IO) {
         articleList = ideNewsRepository.getCategory(category)
         updateRecyclerData()
     }
 
+    /**
+     * Get all article list from database, and dispatch to recycler adapter.
+     */
     internal fun getAllArticles() = viewModelScope.launch(Dispatchers.IO) {
         articleList = ideNewsRepository.getAllArticles()
         updateRecyclerData()
@@ -65,33 +64,27 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
     /**
      * Apply selected filters to the current article list.
      * @param selectedMap the map of selected filters to apply.
+     * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    internal fun filterList(selectedMap: Map<Int, MutableList<String>>) = viewModelScope.launch(Dispatchers.IO) {
-        filteredList = if (selectedMap.isNotEmpty())
+    internal fun filterList(selectedMap: Map<Int,
+                            MutableList<String>>,
+                            isFiltered: Boolean
+    ) = viewModelScope.launch(Dispatchers.IO) {
+
+        filteredList = if (isFiltered)
                            articleList?.let { ideNewsRepository.getFilteredList(selectedMap, it) }
                        else
                            mutableListOf()
-        filteredList?.let { updateFilteredList(it) }
-    }
-
-    @Suppress("unchecked_cast")
-    internal fun updateFilteredList(filteredList: List<Article>) {
-        this.filteredList = filteredList
-        articleListInterface.getRecyclerAdapter()?.apply {
-
-            if (filteredList.isNotEmpty())
-                this.filteredList = filteredList.map { article ->
-                    ArticleItemViewModel(article, router)
-                }.toMutableList()
-
-            isFiltered = filteredList.isNotEmpty()
-        }
+        updateFilteredList(isFiltered)
     }
 
     // -----------------
     // UPDATE
     // -----------------
 
+    /**
+     * Update list into article list adapter.
+     */
     private fun updateRecyclerData() = viewModelScope.launch(Dispatchers.Main) {
         articleList?.let {
             articleListInterface.getRecyclerAdapter()?.apply {
@@ -101,7 +94,22 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
         }
     }
 
-    // --- GETTERS ---
+    /**
+     * Update filtered list into article list adapter.
+     * If the list is empty show no article find.
+     * @param isFiltered true if apply filters to the list, false otherwise.
+     */
+    private fun updateFilteredList(isFiltered: Boolean) = viewModelScope.launch(Dispatchers.Main) {
+        articleListInterface.getRecyclerAdapter()?.apply {
 
-    fun getArticleList(): List<Article>? = articleList
+            if (isFiltered)
+                this.filteredList = this@ArticleListViewModel.filteredList!!.map { article ->
+                    ArticleItemViewModel(article, router)
+                }.toMutableList()
+
+            this.isFiltered = isFiltered
+        }
+
+        articleListInterface.showNoArticle(isFiltered && filteredList.isNullOrEmpty())
+    }
 }

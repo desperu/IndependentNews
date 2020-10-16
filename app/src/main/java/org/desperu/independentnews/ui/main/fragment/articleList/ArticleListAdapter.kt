@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.*
-import org.desperu.independentnews.ui.main.MainListDiffUtil
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 
 class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<ArticleListAdapter.ArticleViewHolder>() {
@@ -37,25 +36,21 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
     private var list: MutableList<Any> = mutableListOf()
     internal var filteredList: MutableList<Any> = mutableListOf()
-//        set(value) {
-//            value.filter { list.contains(it) }
-//            field = value
-//        }
     private val adapterList: MutableList<Any> get() = if (!isFiltered) list else filteredList
 
     /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
     @Suppress("unchecked_cast")
     var isFiltered = false
         set(value) {
-            // TODO handle value is empty ...
             field = value
-            val diff = MainListDiffUtil(
-                (if (field) list else filteredList) as List<ArticleItemViewModel>,
-                (if (field) filteredList else list) as List<ArticleItemViewModel>
-            )
+            recyclerView.visibility = if (value && filteredList.isEmpty()) View.INVISIBLE else View.VISIBLE
+            if (filteredList.isEmpty()) return
+            val diff =
+                ArticleListDiffUtil(
+                    (if (field) list else filteredList) as List<ArticleItemViewModel>,
+                    (if (field) filteredList else list) as List<ArticleItemViewModel>
+                )
             DiffUtil.calculateDiff(diff).dispatchUpdatesTo(this)
-            if (!field)
-                filteredList = mutableListOf()
         }
 
     private val listItemExpandDuration: Long get() = (300L / animationPlaybackSpeed).toLong()
@@ -213,40 +208,43 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     private inline val LinearLayoutManager.visibleItemsRange: IntRange
         get() = findFirstVisibleItemPosition()..findLastVisibleItemPosition()
 
-    fun getScaleDownAnimator(isScaledDown: Boolean): ValueAnimator {
-        val lm = recyclerView.layoutManager as LinearLayoutManager
+    fun getScaleDownAnimator(isScaledDown: Boolean): ValueAnimator? =
+        if (recyclerView.visibility == View.VISIBLE) {
+            val lm = recyclerView.layoutManager as LinearLayoutManager
 
-        val animator =
-            getValueAnimator(
-                isScaledDown,
-                duration = 300L, interpolator = AccelerateDecelerateInterpolator()
-            ) { progress ->
+            val animator =
+                getValueAnimator(
+                    isScaledDown,
+                    duration = 300L, interpolator = AccelerateDecelerateInterpolator()
+                ) { progress ->
 
-                // Get viewHolder for all visible items and animate attributes
-                for (i in lm.visibleItemsRange) {
-                    val holder = recyclerView.findViewHolderForLayoutPosition(i) as ArticleViewHolder
-                    setScaleDownProgress(holder, i, progress)
+                    // Get viewHolder for all visible items and animate attributes
+                    for (i in lm.visibleItemsRange) {
+                        val holder =
+                            recyclerView.findViewHolderForLayoutPosition(i) as ArticleViewHolder
+                        setScaleDownProgress(holder, i, progress)
+                    }
                 }
+
+            // Set adapter variable when animation starts so that newly binded views in
+            // onBindViewHolder will respect the new size when they come into the screen
+            animator.doOnStart { this.isScaledDown = isScaledDown }
+
+            // For all the non visible items in the layout manager, notify them to adjust the
+            // view to the new size
+            animator.doOnEnd {
+                repeat(lm.itemCount) { if (it !in lm.visibleItemsRange) notifyItemChanged(it) }
             }
-
-        // Set adapter variable when animation starts so that newly binded views in
-        // onBindViewHolder will respect the new size when they come into the screen
-        animator.doOnStart { this.isScaledDown = isScaledDown }
-
-        // For all the non visible items in the layout manager, notify them to adjust the
-        // view to the new size
-        animator.doOnEnd {
-            repeat(lm.itemCount) { if (it !in lm.visibleItemsRange) notifyItemChanged(it) }
-        }
-        return animator
-    }
+            animator
+        } else
+            null
 
     private fun setScaleDownProgress(holder: ArticleViewHolder, position: Int, progress: Float) {
         val itemExpanded = position >= 0 && position < adapterList.size && adapterList[position] == expandedModel
         holder.cardContainer.layoutParams.apply {
             width = ((if (itemExpanded) expandedWidth else originalWidth) * (1 - 0.1f * progress)).toInt()
             height = ((if (itemExpanded) expandedHeight else originalHeight) * (1 - 0.1f * progress)).toInt()
-//            log("width=$width, height=$height [${"%.2f".format(progress)}]")
+//            Log.e("Filter/setScaleDown","width=$width, height=$height [${"%.2f".format(progress)}]")
         }
         holder.cardContainer.requestLayout()
 

@@ -6,6 +6,7 @@ import org.desperu.independentnews.utils.Utils.dateToString
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
+import org.desperu.independentnews.utils.Utils.intStringToDate
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.desperu.independentnews.utils.Utils.millisToString
 import org.desperu.independentnews.utils.Utils.stringToDate
@@ -71,6 +72,34 @@ class UtilsTest {
     fun given_wrongStringDate_When_stringToDate_Then_checkNull() {
         val givenDate = "592019"
         val output = stringToDate(givenDate)
+
+        assertNull(output)
+    }
+
+    @Test
+    @Throws(ParseException::class)
+    fun given_intStringDate_When_intStringToDate_Then_checkNewDateFormat() {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.MILLISECOND, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.DAY_OF_MONTH, 15)
+        cal.set(Calendar.MONTH, 9)
+        cal.set(Calendar.YEAR, 2020)
+        val expected = cal.time
+
+        val givenDate = "15/10/2020"
+        val output: Date? = intStringToDate(givenDate)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    @Throws(ParseException::class)
+    fun given_wrongIntStringDate_When_intStringToDate_Then_checkNull() {
+        val givenDate = "15-10-2020"
+        val output = intStringToDate(givenDate)
 
         assertNull(output)
     }

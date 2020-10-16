@@ -1,9 +1,8 @@
-package org.desperu.independentnews.ui.main
+package org.desperu.independentnews.ui.main.fragment.articleList
 
 import androidx.recyclerview.widget.DiffUtil
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleItemViewModel
 
-class MainListDiffUtil(
+class ArticleListDiffUtil(
     private val oldList: List<ArticleItemViewModel>,
     private val newList: List<ArticleItemViewModel>
 ) : DiffUtil.Callback() {

@@ -5,7 +5,10 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.utils.Utils
+import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
+import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
+import org.desperu.independentnews.utils.Utils.intStringToDate
 
 /**
  * Article  Repository interface to get data from others repositories.
@@ -46,7 +49,7 @@ interface ArticleRepository {
      *
      * @return the list of filtered articles with categories filter.
      */
-    suspend fun filterCategories(selectedMap: Map<Int, MutableList<String>>,
+    suspend fun filterCategories(selectedMap: Map<Int, List<String>>,
                                          unMatchArticleList: List<Article>
     ): List<Article>
 }
@@ -86,7 +89,7 @@ class ArticleRepositoryImpl(
 
         articlesToUpdate.forEachIndexed { index, article ->
             val categories = if (article.isTopStory) article.categories
-            else articleDao.getArticle(urlsToUpdate[index]).categories
+                             else articleDao.getArticle(urlsToUpdate[index]).categories
             articleDao.update(
                 article.title,
                 article.section,
@@ -139,21 +142,34 @@ class ArticleRepositoryImpl(
                                               actualList: List<Article>
     ): List<Article> = withContext(Dispatchers.IO) {
 
-        val sourcesList = selectedMap[0]
-        val sources = if (!sourcesList.isNullOrEmpty()) sourcesList else sources?.map { it.name }!!
-        val themes = selectedMap[1]
-        val sectionList = selectedMap[2]
-        val sections = if (!sectionList.isNullOrEmpty()) Utils.deConcatenateStringToMutableList(sectionList[0])
-        else null
-        val dates = listOf(0L, 999999999999999999L)
-        val urls = actualList.map { it.url }
+        val filteredList = mutableListOf<Article>()
+        val parsedMap = parseSelectedMap(selectedMap)
 
-        // TODO for test
-        println("$sources $sections $themes $dates")
+        filteredList.addAll(
+            applyFilters(
+                parsedMap.getValue(SOURCES),
+                parsedMap[THEMES],
+                parsedMap[SECTIONS],
+                parsedMap.getValue(DATES).map { it.toLong() },
+                actualList.map { it.url }
+            )
+        )
 
-        return@withContext when {
+        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
+        filteredList.addAll(filterCategories(parsedMap, unMatchArticleList))
+
+        filteredList
+    }
+
+    private suspend fun applyFilters(sources: List<String>,
+                                     themes: List<String>?,
+                                     sections: List<String>?,
+                                     dates: List<Long>,
+                                     urls: List<String>
+    ): List<Article> = withContext(Dispatchers.IO) {
+        when {
             !themes.isNullOrEmpty() && !sections.isNullOrEmpty() ->
-                articleDao.getFilteredList(sources, sections, themes, dates[0], dates[1], urls)
+                articleDao.getFilteredListWithAll(sources, sections, themes, dates[0], dates[1], urls)
             !themes.isNullOrEmpty() ->
                 articleDao.getFilteredListWithThemes(sources, themes, dates[0], dates[1], urls)
             !sections.isNullOrEmpty() ->
@@ -164,43 +180,80 @@ class ArticleRepositoryImpl(
     }
 
     /**
-     * Returns the list of filtered articles with categories filter.
+     * Returns the list of filtered articles with categories filter from database.
      *
-     * @param selectedMap the map of selected filters to apply.
+     * @param parsedMap the map of parsed filters to apply.
      * @param unMatchArticleList the unmatched article list after db filter.
      *
-     * @return the list of filtered articles with categories filter.
+     * @return the list of filtered articles with categories filter from database.
      */
-    override suspend fun filterCategories(selectedMap: Map<Int, MutableList<String>>,
-                                         unMatchArticleList: List<Article>
+    override suspend fun filterCategories(parsedMap: Map<Int, List<String>>,
+                                          unMatchArticleList: List<Article>
     ): List<Article> = withContext(Dispatchers.Default) {
 
         val filterCategories = mutableListOf<Article>()
+//        var toSearchList = selectedMap[THEMES] ?: mutableListOf()
+//        selectedMap[SECTIONS]?.let { toSearchList.addAll(it) }
+//        toSearchList = toSearchList.flatMap { deConcatenateStringToMutableList(it) }.toMutableList()
 
-        val themeList = selectedMap[1] ?: mutableListOf()
-        val sectionList = selectedMap[2] ?: mutableListOf()
+        val dates = parsedMap.getValue(DATES).map { it.toLong() }
 
-        if (themeList.isEmpty() && sectionList.isEmpty())
-            return@withContext filterCategories
-
-        unMatchArticleList.forEach article@{ article ->
-            var themeMatch = false
-            var sectionMatch = false
-            val catList = Utils.deConcatenateStringToMutableList(article.categories)
-            catList.forEach {
-                if (it.isBlank()) return@article
-                if (themeList.contains(it)) themeMatch = true
-                if (sectionList.contains(it)) sectionMatch = true
-            }
-            if (themeList.isEmpty()) themeMatch = true
-            if (sectionList.isEmpty()) sectionMatch = true
-
-            if (themeMatch && sectionMatch)
-                filterCategories.add(article)
+        parsedMap.getValue(CATEGORIES).forEach { category ->
+            filterCategories.addAll(
+                articleDao.getFilteredListWithCategory(
+                    parsedMap.getValue(SOURCES),
+                    "%$category%",
+                    dates[0],
+                    dates[1],
+                    unMatchArticleList.map { it.id }
+                )
+            )
         }
 
         return@withContext filterCategories
     }
+
+// TODO to remove
+
+//    /**
+//     * Returns the list of filtered articles with categories filter.
+//     *
+//     * @param selectedMap the map of selected filters to apply.
+//     * @param unMatchArticleList the unmatched article list after db filter.
+//     *
+//     * @return the list of filtered articles with categories filter.
+//     */
+//    override suspend fun filterCategories(selectedMap: Map<Int, MutableList<String>>,
+//                                         unMatchArticleList: List<Article>
+//    ): List<Article> = withContext(Dispatchers.Default) {
+//
+//        val filterCategories = mutableListOf<Article>()
+//        val themeList = selectedMap[1] ?: mutableListOf()
+//        val sectionList = selectedMap[2] ?: mutableListOf()
+//
+//        if (themeList.isEmpty() && sectionList.isEmpty()) return@withContext filterCategories
+//
+//        unMatchArticleList.forEach article@{ article ->
+//            var themeMatch = false
+//            var sectionMatch = false
+//            val catList =
+//                deConcatenateStringToMutableList(article.categories.toLowerCase(Locale.ROOT))
+//                    .map { it.split(" ") }
+//                    .flatten()
+//                    .map { it.removeSuffix(" ").removeSuffix("s") }
+//            catList.forEach {
+//                if (it.isBlank()) return@article
+//                if (themeList.contains(it)) themeMatch = true
+//                if (sectionList.contains(it)) sectionMatch = true
+//            }
+//            if (themeList.isEmpty()) themeMatch = true
+//            if (sectionList.isEmpty()) sectionMatch = true
+//
+//            if (themeMatch && sectionMatch) filterCategories.add(article)
+//        }
+//
+//        return@withContext filterCategories
+//    }
 
     // -----------------
     // UTILS
@@ -225,5 +278,48 @@ class ArticleRepositoryImpl(
     private suspend fun setSources() = withContext(Dispatchers.IO) {
         if (sources.isNullOrEmpty())
             sources = sourceRepository.getEnabledSources()
+    }
+
+    // TODO pu in FilterUtils ????
+    /**
+     * Return the parsed select map filters.
+     *
+     * @param selectedMap the selected map to parse.
+     *
+     * @return the parsed select map filters.
+     */
+    private suspend fun parseSelectedMap(
+        selectedMap: Map<Int, MutableList<String>>
+    ): Map<Int, List<String>> = withContext(Dispatchers.Default) {
+
+        val parsedMap = mutableMapOf<Int, List<String>>().withDefault { listOf() }
+
+        setSources()
+        val sourcesList = selectedMap[SOURCES]
+        parsedMap[SOURCES] = if (!sourcesList.isNullOrEmpty()) sourcesList else sources?.map { it.name }!!
+
+        parsedMap[THEMES] =
+            deConcatenateStringToMutableList(
+                concatenateStringFromMutableList(selectedMap.getValue(THEMES))).filterNot { it.isBlank() }
+
+        parsedMap[SECTIONS] =
+            deConcatenateStringToMutableList(
+                concatenateStringFromMutableList(selectedMap.getValue(SECTIONS))).filterNot { it.isBlank() }
+
+        val defaultDates = listOf(Long.MIN_VALUE.toString(), Long.MAX_VALUE.toString())
+        parsedMap[DATES] =
+            if (selectedMap.getValue(DATES).isNotEmpty())
+                selectedMap.getValue(DATES).mapIndexed { index, date ->
+                    (intStringToDate(date)?.time ?: defaultDates[index]).toString()
+                }
+            else
+                defaultDates
+
+        parsedMap[CATEGORIES] = listOf(parsedMap.getValue(THEMES), parsedMap.getValue(SECTIONS))
+            .flatten()
+            .map { it.removeSuffix("s") }
+            .filterNot { it.isBlank() }
+
+        parsedMap
     }
 }

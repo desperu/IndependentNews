@@ -3,6 +3,11 @@
     <!-- ACTIVITY AND FRAGMENT NAMES -->
     <string name="app_name">Independent News</string>
 
+    <!-- LAYOUT -->
+    <!-- Main Activity -->
+    <!-- Article List Fragment -->
+    <string name="fragment_article_list_no_article">No article find !</string>
+
     <!-- MENU -->
     <!-- Nav Drawer -->
     <string name="navigation_drawer_top_story">Top Story</string>
@@ -26,14 +31,23 @@
     <string name="filter_layout_sources_reporterre">Reporterre</string>
     <string name="filter_layout_sources_multinational">Observatoire des Multinationales</string>
     <!-- Filter Layout Themes -->
-    <string name="filter_layout_theme_ecology">Ecology</string>
-    <string name="filter_layout_theme_social">Social</string>
-    <string name="filter_layout_theme_economy">Economy</string>
-    <string name="filter_layout_theme_politic">Politic</string>
-    <string name="filter_layout_theme_international">International</string>
-    <string name="filter_layout_theme_energy">Energy</string>
-    <string name="filter_layout_theme_agriculture">Agriculture</string>
-    <string name="filter_layout_theme_health">Health</string>
+    <string name="filter_layout_themes_ecology">Ecology</string>
+    <string name="filter_layout_themes_social">Social</string>
+    <string name="filter_layout_themes_economy">Economy</string>
+    <string name="filter_layout_themes_politic">Politic</string>
+    <string name="filter_layout_themes_international">International</string>
+    <string name="filter_layout_themes_energy">Energy</string>
+    <string name="filter_layout_themes_agriculture">Agriculture</string>
+    <string name="filter_layout_themes_health">Health</string>
+    <!-- Filter Layout Sections -->
+    <string name="filter_layout_sections_alternatives">Alternatives</string>
+    <string name="filter_layout_sections_decrypt">Decrypt</string>
+    <string name="filter_layout_sections_resist">Resist</string>
+    <string name="filter_layout_sections_discuss">Discuss</string>
+    <string name="filter_layout_sections_chronicle">Chronicle</string>
+    <!-- Filter Layout Dates -->
+    <string name="filter_layout_dates_text_begin">Begin Date</string>
+    <string name="filter_layout_dates_text_end">End Date</string>
 
     <!-- SCENE TRANSITION -->
     <string name="animation_main_to_show_article">ImageAnimationMainToShowArticle</string>

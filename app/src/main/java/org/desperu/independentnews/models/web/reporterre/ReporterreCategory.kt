@@ -2,8 +2,7 @@ package org.desperu.independentnews.models.web.reporterre
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlCategory
-import org.desperu.independentnews.extension.getChild
-import org.desperu.independentnews.extension.getMatchAttr
+import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.utils.*
 
 /**
@@ -24,13 +23,16 @@ data class ReporterreCategory(private val htmlPage: ResponseBody,
     override fun getUrlArticleList(): List<String>? {
         val articleUrlList = mutableListOf<String>()
 
-        findData(A, CLASS, BLOC_ARTICLE, null)?.attr(HREF)?.let { articleUrlList.add(it) }
+        val topStory = findData(A, CLASS, BLOC_ARTICLE, null)?.attr(HREF)
 
         getTagList(A).getMatchAttr(CLASS, LIEN_ARTICLE).forEach {
             articleUrlList.add(it.attr(HREF))
             // for date
             //it.allElements.select(SPAN).getMatchAttr(CLASS, "petit_vert").ownText()
         }
+
+        if (articleUrlList.isNotEmpty() && topStory != articleUrlList[0])
+            topStory?.let { articleUrlList.add(it) }
 
         return articleUrlList
     }

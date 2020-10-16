@@ -2,7 +2,8 @@ package org.desperu.independentnews.models.web.reporterre
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
-import org.desperu.independentnews.extension.getAuthor
+import org.desperu.independentnews.extension.parseHtml.getAuthor
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
@@ -80,15 +81,15 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         article.apply {
             sourceName = this@ReporterreArticle.sourceName
             if (getUrl().isNotBlank()) url = getUrl()
-            title = getTitle().toString()
-            section = getSection().toString()
-            theme = getTheme().toString()
+            title = getTitle().mToString()
+            section = getSection().mToString()
+            theme = getTheme().mToString()
             if (!author.isNullOrBlank()) this.author = author
             if (publishedDate != null) this.publishedDate = publishedDate
-            this.article = getArticle().toString()
+            this.article = getArticle().mToString()
             if (!description.isNullOrBlank()) this.description = description
-            imageUrl = getImage()[0].toString()
-            cssUrl = getCssUrl().toString()
+            imageUrl = getImage()[0].mToString()
+            cssUrl = getCssUrl().mToString()
         }
 
         return article
@@ -102,7 +103,11 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     private fun correctImagesUrl(html: String?): String? =
         if (!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
-            document.select(IMG).forEach { it.attr(SRC, REPORTERRE_BASE_URL + it.attr(DATA_ORIGINAL)) }
+            document.select(IMG).forEach {
+                val dataOriginal = it.attr(DATA_ORIGINAL)
+                val urlLink = if (!dataOriginal.isNullOrBlank()) dataOriginal else it.attr(SRC)
+                it.attr(SRC, REPORTERRE_BASE_URL + urlLink)
+            }
             document.toString()
         } else
             null

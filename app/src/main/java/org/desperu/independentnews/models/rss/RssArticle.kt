@@ -4,6 +4,7 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.P
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
@@ -61,10 +62,10 @@ data class RssArticle(
      */
     internal fun toArticle(): Article {
         val article = Article(
-            url = url.toString(),
-            title = title.toString(),
-            author = author.toString(),
-            description = Jsoup.parse(description.toString()).select(P)[0].ownText(),
+            url = url.mToString(),
+            title = title.mToString(),
+            author = author.mToString(),
+            description = Jsoup.parse(description.mToString()).select(P)[0].ownText(),
             isTopStory = true
         )
 

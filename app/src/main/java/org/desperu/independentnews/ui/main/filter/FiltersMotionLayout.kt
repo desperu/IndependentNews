@@ -3,6 +3,7 @@ package org.desperu.independentnews.ui.main.filter
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.ImageView
+import androidx.annotation.IdRes
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.motion.widget.MotionScene
 import androidx.viewpager2.widget.ViewPager2
@@ -14,6 +15,8 @@ import org.desperu.independentnews.views.MultiListenerMotionLayout
 import org.desperu.independentnews.views.NoScrollRecyclerView
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.ui.main.MainInterface
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 /**
  * All Transitions and ConstraintSets are defined in R.xml.scene_filter
@@ -21,7 +24,7 @@ import org.desperu.independentnews.ui.main.MainInterface
  * Code in this class contains mostly only choreographing the transitions.
  */
 class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : MultiListenerMotionLayout(context, attrs, defStyleAttr) {
+    : MultiListenerMotionLayout(context, attrs, defStyleAttr), KoinComponent {
 
     private val tabsRecyclerView: NoScrollRecyclerView by bindView(R.id.tabs_recycler_view)
     private val viewPager: ViewPager2 by bindView(R.id.view_pager)
@@ -34,7 +37,7 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
     private val tabsHandler: ViewPagerTabsHandler by lazy {
         ViewPagerTabsHandler(viewPager, tabsRecyclerView, bottomBarCardView)
     }
-    private val mainInterface = context as MainInterface
+    private val mainInterface = inject<MainInterface>()
 
     init {
         inflate(context, R.layout.layout_filter_motion, this)
@@ -163,6 +166,20 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
     }
 
     /**
+     * Switch filters motion state to filter or unfilter state, direct transition to given state.
+     *
+     * Warning: this method must be called only from and to non intermediate state,
+     * when animations are finished.
+     * Allowed states : [R.id.set1_base], [R.id.set10_unfilterOutset] and [R.id.set7_filterBase].
+     */
+    private fun switchToState(@IdRes state: Int) = performAnimation {
+        // currentState -> givenState
+        // (Direct transition to given state)
+        transitionToState(state)
+        awaitTransitionComplete(state)
+    }
+
+    /**
      * Based on the currentState (ConstraintSet), we set the appropriate click listeners.
      * Do not call this method during an animation.
      */
@@ -202,7 +219,7 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
      * [block], otherwise [enableClicks] will be called at the wrong time for the wrong state.
      */
     private inline fun performAnimation(crossinline block: suspend () -> Unit) {
-        mainInterface.mainLifecycleScope.launch {
+        mainInterface.value.mainLifecycleScope.launch {
             disableClicks()
             block()
             enableClicks()
@@ -222,26 +239,37 @@ class FiltersMotionLayout @JvmOverloads constructor(context: Context, attrs: Att
      * The duration of the scale down animation will match that of the current transition.
      */
     private fun startScaleDownAnimator(isScaledDown: Boolean): Unit? =
-        mainInterface
+        mainInterface.value
             .getAdapterScaleDownAnimator(isScaledDown)
             ?.apply { duration = transitionTimeMs }
             ?.start()
 
     /**
      * Filter or unfilter adapter list with filters.
-     * @param toFilter true to filter.
+     * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    private fun filterAdapter(toFilter: Boolean) {
+    private fun filterAdapter(isFiltered: Boolean) {
         val filtersMap =
-            if (toFilter)
+            if (isFiltered)
                 (viewPager.adapter as FiltersPagerAdapter).getSelectedMap()
             else
                 mapOf<Int, MutableList<String>>()
 
-        mainInterface.filterList(filtersMap)
+        mainInterface.value.filterList(filtersMap, isFiltered)
     }
 
-    companion object {
-        const val numTabs = 5
+    /**
+     * Update filters motion state with current adapter state.
+     * Needed when switch article list fragment, and so, adapter state should change.
+     * @param isFiltered true if adapter is filtered, false otherwise.
+     */
+    internal fun updateFiltersMotionState(isFiltered: Boolean) {
+        // If adapter is not filtered and filters motion is in filter base state.
+        if (!isFiltered && currentState == R.id.set7_filterBase)
+            switchToState(R.id.set10_unfilterOutset)
+
+        // If adapter is filtered and filters motion is in base or unfilter state.
+        else if (isFiltered && currentState in listOf(R.id.set1_base, R.id.set10_unfilterOutset))
+            switchToState(R.id.set7_filterBase)
     }
 }

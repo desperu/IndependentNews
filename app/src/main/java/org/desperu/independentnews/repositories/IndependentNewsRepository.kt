@@ -208,9 +208,9 @@ class IndependentNewsRepositoryImpl(
 
         val filteredList = articleRepository.getFilteredListFromDB(selectedMap, actualList).toMutableList()
 
-        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
-
-        filteredList.addAll(articleRepository.filterCategories(selectedMap, unMatchArticleList))
+//        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
+//
+//        filteredList.addAll(articleRepository.filterCategories(selectedMap, unMatchArticleList))
 
         return@withContext sources?.let { list ->
             articleDao.getWhereUrlsInSorted(filteredList.map { it.url })

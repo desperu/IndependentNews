@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="Typos">
 
     <!-- Fragment Categories -->
     <string-array name="categories_tab_titles">
@@ -19,56 +21,263 @@
     <!-- TODO put other folder ?? no need to translate -->
     <!-- Themes Correspondences -->
     <string-array name="filter_ecology">
-        <item>Écologie</item>
-        <item>Climat</item>
-        <item>Nature</item>
-        <item>Pollutions</item>
+        <item>ecologie</item>
+        <item>écologie</item>
+        <item>climat</item>
+        <item>nature</item>
+        <item>pollutions</item>
     </string-array>
 
     <string-array name="filter_social">
-        <item>Social</item>
-        <item>Libertés</item>
-        <item>Luttes</item>
+        <item>discriminations</item>
+        <item>domination</item>
+        <item>grand projet inutile</item>
+        <item>libertés</item>
+        <item>luttes</item>
+        <item>social</item>
+        <item>populaire</item>
     </string-array>
 
     <string-array name="filter_economy">
-        <item>Économie</item>
+        <item>économie</item>
+        <item>economique</item>
+        <item>économique</item>
+        <item>finance</item>
+        <item>multinationales</item>
+        <item>travail</item>
     </string-array>
 
     <string-array name="filter_politic">
-        <item>Politique</item>
+        <item>citoyens</item>
+        <item>démocratie</item>
+        <item>droits</item>
+        <item>egalité</item>
+        <item>elections</item>
+        <item>élections</item>
+        <item>politique</item>
     </string-array>
 
     <string-array name="filter_international">
-        <item>International</item>
+        <item>international</item>
     </string-array>
 
     <string-array name="filter_energy">
-        <item>Énergie</item>
-        <item>Nucléaire</item>
+        <item>énergie</item>
+        <item>energie</item>
+        <item>nucléaire</item>
     </string-array>
 
     <string-array name="filter_agriculture">
-        <item>Agriculture</item>
+        <item>agriculture</item>
+        <item>vivant</item>
     </string-array>
     
     <string-array name="filter_health">
-        <item>Santé</item>
+        <item>covid</item>
+        <item>humains</item>
+        <item>santé</item>
     </string-array>
-    <!-- TODO not all reporterre themes here !!! -->
 
     <!-- Section correspondences -->
     <string-array name="parent_section">
-        <!-- Bastamag section -->
+        <item>Decrypter</item>
+        <item>Resister</item>
+        <item>Inventer</item>
+        <item>Discuss</item>
+        <item>Chroniques</item>
+    </string-array>
+
+    <string-array name="filter_alternatives">
+        <item>alternatives</item>
+        <item>inventer</item>
+    </string-array>
+
+    <string-array name="filter_decrypt">
+        <item>décrypter</item>
+        <item>enquête</item>
+        <item>tribune</item>
+    </string-array>
+
+    <string-array name="filter_resist">
+        <item>reportage</item>
+        <item>résister</item>
+    </string-array>
+
+    <string-array name="filter_discuss">
+        <item>entretient</item>
+        <item>débattre</item>
+    </string-array>
+
+    <string-array name="filter_chronicle">
+        <item>chronique</item>
+        <item>chroniques</item>
+    </string-array>
+
+
+<!-- TODO to remove for project ?? -->
+    <!-- //////////////////////////////////////////////////////////
+         ////////////   ***Data list from sources***   ////////////
+         //////////////////////////////////////////////////////////
+         -->
+    <!-- Themes -->
+    <string-array name="basta_theme">
+        <item>Accès à l\'université</item>
+        <item>Alternatives</item>
+        <item>Agribashing ?</item>
+        <item>Agriculture</item>
+        <item>Au service des citoyens ?</item>
+        <item>Brutalités policières</item>
+        <item>Conditions de travail</item>
+        <item>Danger</item>
+        <item>Démocratie</item>
+        <item>Démocratie alimentaire</item>
+        <item>Dépendance</item>
+        <item>Discriminations</item>
+        <item>Droits humains</item>
+        <item>En première ligne</item>
+        <item>Ecole</item>
+        <item>Écologie</item>
+        <item>Eduation</item>
+        <item>Egalité</item>
+        <item>Elections</item>
+        <item>Energie</item>
+        <item>Enseignement supérieur</item>
+        <item>Entretien</item>
+        <item>Etats-Unis</item>
+        <item>Exploitation</item>
+        <item>Enquête</item>
+        <item>Face à la domination</item>
+        <item>Finance</item>
+        <item>Gardiens de la paix ?</item>
+        <item>Grand âge</item>
+        <item>Grand projet inutile ?</item>
+        <item>Histoire</item>
+        <item>Impunité</item>
+        <item>Industrie pharmaceutique</item>
+        <item>Justice</item>
+        <item>La honte</item>
+        <item>Liberté de la presse</item>
+        <item>Multinationales</item>
+        <item>Nationalismes</item>
+        <item>Nucléaire</item>
+        <item>Pandémie</item>
+        <item>Pesticides</item>
+        <item>Politique économique</item>
+        <item>Précarité</item>
+        <item>Quartiers populaires</item>
+        <item>Réaction</item>
+        <item>Relocalisation</item>
+        <item>Réforme agraire</item>
+        <item>Remaniement</item>
+        <item>Répression</item>
+        <item>Rentrée scolaire</item>
+        <item>Santé</item>
+        <item>Service public</item>
+        <item>Services publics</item>
+        <item>Social</item>
+        <item>Solutions</item>
+        <item>Surveillance</item>
+        <item>Système alimentaire</item>
+        <item>Trasnformer le travail</item>
+        <item>Transport</item>
+        <item>Travailller autrement</item>
+        <item>Vivant</item>
+    </string-array>
+
+    <string-array name="basta_theme_not_classed">
+        <item>alimentaire</item>
+        <item>alternative</item>
+        <item>agribashing</item>
+        <item>agriculture</item>
+        <item>brutalité</item>
+        <item>danger</item>
+        <item>dépendance</item>
+        <item>ecole</item>
+        <item>education</item>
+        <item>éducation</item>
+        <item>enseignement</item>
+        <item>entretien</item>
+        <item>etats-unis</item>
+        <item>exploitation</item>
+        <item>enquête</item>
+        <item>histoire</item>
+        <item>impunité</item>
+        <item>industrie pharmaceutique</item>
+        <item>la honte</item>
+        <item>liberté de la presse</item>
+        <item>nationalisme</item>
+        <item>pandémie</item>
+        <item>pesticide</item>
+        <item>précarité</item>
+        <item>policière</item>
+        <item>populaire</item>
+        <item>public</item>
+        <item>réaction</item>
+        <item>réforme</item>
+        <item>relocalisation</item>
+        <item>remaniement</item>
+        <item>répression</item>
+        <item>scolaire</item>
+        <item>solution</item>
+        <item>surveillance</item>
+        <item>transport</item>
+        <item>université</item>
+    </string-array>
+
+    <string-array name="reporterre_theme">
+        <item>Agriculture</item>
+        <item>Climat</item>
+        <item>Culture et idées</item>
+        <item>Économie</item>
+        <item>Énergie</item>
+        <item>International</item>
+        <item>Libertés</item>
+        <item>Luttes</item>
+        <item>Nature</item>
+        <item>Pédagogie Éducation</item>
+        <item>Politique</item>
+        <item>Pollutions</item>
+        <item>Quotidien</item>
+        <item>Santé</item>
+
+    <!-- too add to filters -->
+        <item>Culture et idées</item>
+        <item>Pédagogie Éducation</item>
+        <item>Quotidien</item>
+    </string-array>
+
+    <!-- Sections -->
+    <string-array name="basta_section">
         <item>Décrypter</item>
         <item>Résister</item>
         <item>Inventer</item>
         <item>Débattre</item>
         <item>Chroniques</item>
         <item>Dossiers</item>
+    </string-array>
 
+    <string-array name="reporterre_section">
+        <item>À découvrir</item>
+        <item>Alternatives</item>   <item>== Inventer basta ??? check</item>
+        <item>Tribune</item>        <item>== Décrypter basta ??? check</item>
+        <item>Édito</item>
+        <item>Reportage</item>      <item>== Resister basta</item>
+        <item>Enquête</item>        <item>== Décrypter basta ??? check</item>
+        <item>Entretient</item>     <item>== Débattre basta ??? check</item>
+        <item>Brèves</item>
+        <item>Chronique</item>      <item>== Chroniques basta</item>
+        <item>Agenda</item>
+        <item>Hors les murs</item>
+        <item>Info</item>
+
+        <item>On en parle</item>
+        <item>Édito des lecteurs</item>
+        <item>1 minute, 1 question</item>
+    </string-array>
+
+    <string-array name="reporterre_section_link">
         <!-- Reporterre section -->
-        <!-- !!!! Be careful her a wrote sections links, not sections names !! -->
+        <!-- !!!! Be careful here i wrote sections links, not sections names !! -->
         <item>A-decouvrir</item>
         <item>Alternatives</item>
         <item>Tribune-15</item>
@@ -84,22 +293,6 @@
         <item>On-soutient</item>
         <item>rubrique-de-plus</item>
         <item>Une-minute-Une-question-21</item>
-
-        <item>À découvrir</item>
-        <item>Alternatives</item>
-        <item>Tribune</item> <item>== Décrypter basta ??? check</item>
-        <item>Édito</item>
-        <item>Reportage</item><item>==Resister basta</item>
-        <item>Enquête</item>
-        <item>Entretient</item>
-        <item>Brèves</item>
-        <item>Chronique</item>
-        <item>Agenda</item>
-        <item>Hors les murs</item>
-        <item>Info</item>
-        <item>On en parle</item>
-        <item>Édito des lecteurs</item>
-        <item>1 minute, 1 question</item>
     </string-array>
 
 </resources>

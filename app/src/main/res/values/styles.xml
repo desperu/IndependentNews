@@ -50,4 +50,9 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- Date Picker Dialog Theme -->
+    <style name="DatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/filter_seek_bar_color</item>
+    </style>
+
 </resources>

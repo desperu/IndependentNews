@@ -51,7 +51,7 @@ class ViewPagerTabsHandler(
 
     fun init() {
         // ViewPager & Tabs
-        viewPager.offscreenPageLimit = FiltersMotionLayout.numTabs
+        viewPager.offscreenPageLimit = context.resources.getStringArray(R.array.filter_tab_title).size
         tabsRecyclerView.updatePadding(right = (context.screenWidth - tabItemWidth - filterLayoutPadding).toInt())
         tabsRecyclerView.layoutManager = NoScrollHorizontalLayoutManager(context)
 

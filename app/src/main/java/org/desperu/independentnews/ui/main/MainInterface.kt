@@ -33,6 +33,13 @@ interface MainInterface {
     /**
      * Apply selected filters to the current article list.
      * @param selectedMap the map of selected filters to apply.
+     * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    fun filterList(selectedMap: Map<Int, MutableList<String>>)
+    fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean)
+
+    /**
+     * Update filters motion state adapter state, when switch fragment.
+     * @param isFiltered true if the adapter is filtered, false otherwise.
+     */
+    fun updateFiltersMotionState(isFiltered: Boolean)
 }

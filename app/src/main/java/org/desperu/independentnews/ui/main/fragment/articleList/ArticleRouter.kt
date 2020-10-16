@@ -27,8 +27,7 @@ interface ArticleRouter {
  *
  * @param activity the Activity that is used to perform redirection to set.
  */
-class ArticleRouterImpl(private val activity: AppCompatActivity):
-    ArticleRouter {
+class ArticleRouterImpl(private val activity: AppCompatActivity): ArticleRouter {
 
     /**
      * Redirects the user to the ManageEstate Activity to manage estate.

@@ -2,8 +2,9 @@ package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
-import org.desperu.independentnews.extension.getChild
-import org.desperu.independentnews.extension.getIndex
+import org.desperu.independentnews.extension.parseHtml.getChild
+import org.desperu.independentnews.extension.parseHtml.getIndex
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
@@ -71,15 +72,15 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         article.apply {
             sourceName = this@BastamagArticle.sourceName
             if (getUrl().isNotBlank()) url = getUrl()
-            title = getTitle().toString()
-            section = getSection().toString()
-            theme = getTheme().toString()
+            title = getTitle().mToString()
+            section = getSection().mToString()
+            theme = getTheme().mToString()
             if (!author.isNullOrBlank()) this.author = author
             if (publishedDate != null) this.publishedDate = publishedDate
-            this.article = getArticle().toString()
+            this.article = getArticle().mToString()
             if (!description.isNullOrBlank()) this.description = description
-            imageUrl = getImage()[0].toString()
-            cssUrl = getCssUrl().toString()
+            imageUrl = getImage()[0].mToString()
+            cssUrl = getCssUrl().mToString()
         }
 
         return article

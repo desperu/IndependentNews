@@ -7,14 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.TextView
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.createDatePickerDialog
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindOptionalViews
 import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.extension.design.getValueAnimator
+import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.ui.main.MainActivity
+import org.desperu.independentnews.utils.DATES
 import org.desperu.independentnews.utils.FilterUtils.filterViewsId
 import org.desperu.independentnews.utils.FilterUtils.getFilterValue
+import org.desperu.independentnews.utils.SECTIONS
+import org.desperu.independentnews.utils.SOURCES
+import org.desperu.independentnews.utils.THEMES
 import org.desperu.independentnews.views.FilterSeekbar
 
 /**
@@ -30,18 +40,23 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
 
     private val toggleAnimDuration = context.resources.getInteger(R.integer.toggleAnimDuration).toLong()
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var selectedMap = mutableMapOf<Int, MutableList<String>>()
+    private var selectedMap = mutableMapOf<Int, MutableList<String>>().withDefault { mutableListOf() }
+
+    private val beginDate = MutableLiveData<String>()
+    private val endDate = MutableLiveData<String>()
 
     ///////////////////////////////////////////////////////////////////////////
     // Methods
     ///////////////////////////////////////////////////////////////////////////
 
-    override fun getItemCount(): Int = FiltersMotionLayout.numTabs
+    override fun getItemCount(): Int = context.resources.getStringArray(R.array.filter_tab_title).size
 
-    override fun getItemViewType(position: Int): Int = when {
-        position == 2 -> R.layout.filter_layout_dates
-        position % 2 == 0 -> R.layout.filter_layout_sources
-        else -> R.layout.filter_layout_themes
+    override fun getItemViewType(position: Int): Int = when(position) {
+        SOURCES -> R.layout.filter_layout_sources
+        THEMES -> R.layout.filter_layout_themes
+        SECTIONS -> R.layout.filter_layout_sections
+        DATES -> R.layout.filter_layout_dates
+        else -> R.layout.filter_layout_sources
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FiltersPagerViewHolder =
@@ -54,7 +69,7 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
          * Bind all the filter buttons (if any). Clicking the filter button toggles state
          * which is shown by a short toggle animation
          */
-        holder.filterViews.forEachIndexed { _: Int, filterView: View ->
+        holder.filterViews.forEach { filterView: View ->
             filterView.setOnClickListener {
 
                 val filterValue = getFilterValue(context, filterView.id)
@@ -90,13 +105,14 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
             }
         }
 
+        // TODO to remove ???
         /**
          * Bind the Seekbars (if any). Sliding the seekbar between 1f..99f toggles it on.
          * 1f and 99f are chosen just to make the toggling seem more smooth
          */
         holder.seekBars.forEachIndexed { _: Int, seekBar: FilterSeekbar ->
             seekBar.setOnRangeSeekbarChangeListener { minValue, maxValue ->
-                if (!selectedList.contains("date") && !(minValue.toFloat() < 1f && maxValue.toFloat() > 99f)) {
+                if (!selectedList.contains("date") && !(minValue.toFloat() < 1f && maxValue.toFloat() > 29f)) {
                     selectedList += "$minValue, $maxValue"
                     listener(position, selectedMap)
                     seekBar.setLeftThumbHighlightColor(selectedColor)
@@ -104,7 +120,7 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
                     seekBar.setLeftThumbColor(selectedColor)
                     seekBar.setRightThumbColor(selectedColor)
                     seekBar.setBarHighlightColor(selectedBarColor)
-                } else if (selectedList.contains("date2") && minValue.toFloat() < 1f && maxValue.toFloat() > 99f) {
+                } else if (selectedList.contains("date") && minValue.toFloat() < 1f && maxValue.toFloat() > 29f) {
                     selectedList -= "$minValue, $maxValue"
                     listener(position, selectedMap)
                     seekBar.setLeftThumbHighlightColor(unselectedColor)
@@ -115,12 +131,36 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
                 }
             }
         }
+
+
+        holder.pickerViews.forEachIndexed { index, pickerView ->
+            val observer = Observer<String> {
+                selectedList.clear()
+                selectedList += beginDate.value.mToString()
+                selectedList += endDate.value.mToString()
+                listener(position, selectedMap)
+            }
+
+            pickerView.setOnClickListener {
+                createDatePickerDialog(context, pickerView, if (index == 0) beginDate else endDate)
+            }
+            beginDate.observe((context as MainActivity), observer)
+            endDate.observe(context, observer)
+        }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        beginDate.removeObservers(context as MainActivity)
+        endDate.removeObservers(context)
     }
 
     class FiltersPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val filterViews: List<View> by bindOptionalViews(*filterViewsId.toIntArray())
 
-        val seekBars: List<FilterSeekbar> by bindOptionalViews(R.id.rangeSeekbar1, R.id.rangeSeekbar2)
+        val pickerViews: List<TextView> by bindOptionalViews(R.id.filter_date_picker_begin, R.id.filter_date_picker_end)
+
+        val seekBars: List<FilterSeekbar> by bindOptionalViews(R.id.rangeSeekbar2)
     }
 
     // --- GETTERS ---

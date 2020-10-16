@@ -9,13 +9,32 @@
             type="org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel"/>
     </data>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/recycler_view_padding_top"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/item_article" />
+        android:layout_height="match_parent">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/recycler_view_padding_top"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/item_article" />
+
+        <org.desperu.independentnews.views.FontTextView
+            android:id="@+id/no_article_find"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_margin="@dimen/default_large_margin"
+            android:textColor="@color/list_item_bg_collapsed"
+            android:textSize="@dimen/no_article_find_text_size"
+            android:text="@string/fragment_article_list_no_article"
+            android:visibility="invisible"
+            app:fontName="Annie_use_your_telescope"/>
+
+    </RelativeLayout>
 
 </layout>

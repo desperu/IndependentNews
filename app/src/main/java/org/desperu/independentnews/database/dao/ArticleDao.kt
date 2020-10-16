@@ -56,11 +56,13 @@ interface ArticleDao {
     /**
      * Returns the category article list from database ordered from the most recent to the oldest.
      *
+     * @param category the category to search for.
+     *
      * @return the category article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE categories LIKE :categories OR section LIKE :categories OR theme LIKE :categories ORDER BY publishedDate DESC")
-    suspend fun getCategory(categories: String): List<Article>
+    @Query("SELECT * FROM article WHERE LOWER(categories) LIKE :category OR LOWER(section) LIKE :category OR LOWER(theme) LIKE :category ORDER BY publishedDate DESC")
+    suspend fun getCategory(category: String): List<Article>
 
     /**
      * Returns the article list from database ordered from the most recent to the oldest.
@@ -98,7 +100,8 @@ interface ArticleDao {
     // -----------------
 
     /**
-     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     * Returns the filtered article list, with all filters,
+     * from database ordered from the most recent to the oldest.
      *
      * @param sources       the sources list to search into database articles's data.
      * @param sections      the sections of article to get.
@@ -110,17 +113,18 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND section IN (:sections) AND theme IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
-    suspend fun getFilteredList(sources: List<String>,
-                                sections: List<String>,
-                                themes: List<String>,
-                                startDate: Long,
-                                endDate: Long,
-                                urls: List<String>
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(section) IN (:sections) AND LOWER(theme) IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithAll(sources: List<String>,
+                                       sections: List<String>,
+                                       themes: List<String>,
+                                       startDate: Long,
+                                       endDate: Long,
+                                       urls: List<String>
     ): List<Article>
 
     /**
-     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     * Returns the filtered article list, with themes,
+     * from database ordered from the most recent to the oldest.
      *
      * @param sources       the sources list to search into database articles's data.
      * @param themes        the themes of article to get.
@@ -131,7 +135,7 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND theme IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(theme) IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
     suspend fun getFilteredListWithThemes(sources: List<String>,
                                           themes: List<String>,
                                           startDate: Long,
@@ -140,7 +144,8 @@ interface ArticleDao {
     ): List<Article>
 
     /**
-     * Returns the filtered article list from database ordered from the most recent to the oldest.
+     * Returns the filtered article list, with sections,
+     * from database ordered from the most recent to the oldest.
      *
      * @param sources       the sources list to search into database articles's data.
      * @param sections      the sections of article to get.
@@ -151,12 +156,33 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND section IN (:sections) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(section) IN (:sections) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
     suspend fun getFilteredListWithSections(sources: List<String>,
                                             sections: List<String>,
                                             startDate: Long,
                                             endDate: Long,
                                             urls: List<String>
+    ): List<Article>
+
+    /**
+     * Returns the filtered article list, with categories,
+     * from database ordered from the most recent to the oldest.
+     *
+     * @param sources       the sources list to search into database articles's data.
+     * @param category      the category to search for.
+     * @param startDate     the published start date of article to get.
+     * @param endDate       the published end date of article to get.
+     * @param ids           the list of ids to search into.
+     *
+     * @return the category only article list from database ordered from the most recent to the oldest.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(categories) LIKE :category AND id IN (:ids) AND (publishedDate BETWEEN :startDate AND :endDate) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithCategory(sources: List<String>,
+                                            category: String,
+                                            startDate: Long,
+                                            endDate: Long,
+                                            ids: List<Long>
     ): List<Article>
 
     /**

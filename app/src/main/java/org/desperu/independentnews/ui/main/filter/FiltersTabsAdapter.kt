@@ -18,10 +18,10 @@ class FiltersTabsAdapter(context: Context, private val listener: (Int) -> Unit) 
     private val payloadUpdateBadge = "UPDATE_BADGE"
     private val toggleAnimDuration = context.resources.getInteger(R.integer.toggleAnimDuration).toLong()
 
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var hasFilters = MutableList(FiltersMotionLayout.numTabs) { false }
-
     private val tabTitle = context.resources.getStringArray(R.array.filter_tab_title)
+
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private var hasFilters = MutableList(tabTitle.size) { false }
 
     ///////////////////////////////////////////////////////////////////////////
     // Methods

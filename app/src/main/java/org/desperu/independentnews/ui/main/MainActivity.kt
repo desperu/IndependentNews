@@ -14,6 +14,7 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import icepick.State
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 import kotlinx.coroutines.Dispatchers
@@ -238,9 +239,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     /**
      * Apply selected filters to the current article list.
      * @param selectedMap the map of selected filters to apply.
+     * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    override fun filterList(selectedMap: Map<Int, MutableList<String>>) =
-        (getCurrentFrag() as ArticleListInterface).filterList(selectedMap)
+    override fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) =
+        (getCurrentFrag() as ArticleListInterface).filterList(selectedMap, isFiltered)
 
     // --------------
     // UI
@@ -254,14 +256,19 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
     }
 
-    // TODO reset FilterMotion when switch frag with filter enabled, else create a bug because we switch list.
-
     /**
      * Return the adapter scale down animator for the recycler view of article list.
      * @return the adapter scale down animator for the recycler view of article list.
      */
     override fun getAdapterScaleDownAnimator(isScaledDown: Boolean): ValueAnimator? =
         (getCurrentFrag() as? ArticleListInterface)?.getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
+
+    /**
+     * Update filters motion state adapter state, when switch fragment.
+     * @param isFiltered true if the adapter is filtered, false otherwise.
+     */
+    override fun updateFiltersMotionState(isFiltered: Boolean) =
+        filters_motion_layout.updateFiltersMotionState(isFiltered)
 
     // --------------
     // UTILS

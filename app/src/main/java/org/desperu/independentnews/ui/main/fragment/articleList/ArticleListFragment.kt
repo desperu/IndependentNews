@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.fragment_article_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentArticleListBinding
+import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
@@ -27,8 +28,9 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     // FOR DATA
     private lateinit var binding: FragmentArticleListBinding
-    private var viewModel = get<ArticleListViewModel> { parametersOf(this) }
+    private val viewModel = get<ArticleListViewModel> { parametersOf(this) }
     private var articleListAdapter: ArticleListAdapter? = null
+    private val mainInterface = get<MainInterface>()
     private val loadingDuration: Long
         get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
 
@@ -104,6 +106,15 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     }
 
     // -----------------
+    // METHODS OVERRIDE
+    // -----------------
+
+    override fun onResume() {
+        super.onResume()
+        updateFiltersMotionState()
+    }
+
+    // -----------------
     // UPDATE
     // -----------------
 
@@ -118,9 +129,28 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     /**
      * Apply selected filters to the current article list.
      * @param selectedMap the map of selected filters to apply.
+     * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    override fun filterList(selectedMap: Map<Int, MutableList<String>>) {
-        viewModel.filterList(selectedMap)
+    override fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) {
+        viewModel.filterList(selectedMap, isFiltered)
+    }
+
+    /**
+     * Sync filters motion state with adapter state, when resume to fragment.
+     */
+    private fun updateFiltersMotionState() =
+        articleListAdapter?.isFiltered?.let { mainInterface.updateFiltersMotionState(it) }
+
+    // -----------------
+    // UI
+    // -----------------
+
+    /**
+     * Show no article and hide recycler view, or invert, depends of toShow value.
+     * @param toShow true to show no article, false otherwise.
+     */
+    override fun showNoArticle(toShow: Boolean) {
+        no_article_find.visibility = if (toShow) View.VISIBLE else View.INVISIBLE
     }
 
     // --- GETTERS ---

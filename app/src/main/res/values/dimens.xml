@@ -19,7 +19,9 @@
     <!-- LAYOUTS -->
 
     <!-- Main Activity -->
+    <!-- Fragment Article List -->
     <dimen name="recycler_view_padding_top">20dp</dimen>
+    <dimen name="no_article_find_text_size">50sp</dimen>
     <!-- Item Article -->
     <dimen name="item_article_corner_radius">6dp</dimen>
     <dimen name="item_article_elevation">0dp</dimen>
@@ -53,6 +55,8 @@
     <dimen name="filter_pill_padding_horizontal">30dp</dimen>
     <dimen name="filter_pill_padding_vertical">15dp</dimen>
     <dimen name="filter_pill_margin_start">16dp</dimen>
+    <dimen name="filter_date_picker_width">130dp</dimen>
+    <dimen name="filter_date_picker_text_size">16sp</dimen>
     <!-- Item Filter Tab -->
     <dimen name="tabs_height">64dp</dimen>
     <dimen name="tab_item_width">110dp</dimen>
@@ -70,7 +74,6 @@
     <dimen name="bottom_bar_height">@dimen/fab_size</dimen>
 
     <!-- Show Article Activity -->
-    <!-- Fragment Article -->
     <dimen name="article_progress_bar_height">4dp</dimen>
     <dimen name="article_scroll_margin_top">3dp</dimen>
     <dimen name="article_image_source_width_height">15dp</dimen>

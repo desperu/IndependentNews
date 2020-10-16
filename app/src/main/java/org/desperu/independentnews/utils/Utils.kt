@@ -45,6 +45,22 @@ internal object Utils {
     }
 
     /**
+     * Convert int string date format from "dd/MM/yyyy" to Date, return null if an error happened.
+     * @param givenDate The given date.
+     * @return Date object, null if an error happened.
+     */
+    internal fun intStringToDate(givenDate: String): Date? {
+        val givenDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE)
+        var date: Date? = null
+        try {
+            date = givenDateFormat.parse(givenDate)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        return date
+    }
+
+    /**
      * Convert date object to string format "yyyy-MM-dd'T'HH:mm:ssZ".
      * @param givenDate Given date object.
      * @return String date with good format.
@@ -111,7 +127,7 @@ internal object Utils {
      * @return the mutable list of string.
      */
     internal fun deConcatenateStringToMutableList(string: String): MutableList<String> {
-        val list = string.split(", ").toTypedArray().toMutableList()
+        val list = string.split(", ").toMutableList()
         list.forEach { it.replace(", ", "") }
         return list
     }
