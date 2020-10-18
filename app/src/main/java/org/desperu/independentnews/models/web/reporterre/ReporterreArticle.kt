@@ -53,7 +53,13 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         findData(SPAN, CLASS, DATEPUBLICATION, null)?.text()
 
     override fun getArticle(): String? =
-        correctImagesUrl(addDescription(findData(DIV, CLASS, TEXTE, null)?.outerHtml()))
+        correctImagesUrl(
+            addDescription(
+                correctUrlLink(
+                    findData(DIV, CLASS, TEXTE, null)?.outerHtml()
+                )
+            )
+        )
 
     override fun getDescription(): String? = findData(DIV, CLASS, CHAPO, null)?.text()
 

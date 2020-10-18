@@ -397,5 +397,4 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      */
     private fun isDesignProperlySet(url: String) =
         (isSourceUrl(url) && article.sourceName == REPORTERRE && margins != 0) || (margins != 0)
-
 }

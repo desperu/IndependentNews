@@ -34,6 +34,8 @@ interface ShowArticleInterface {
      */
     fun setOrientation(flags: Int)
 
-    // TODO to comment
+    /**
+     * Update web view design, css style and margins.
+     */
     fun updateWebViewDesign()
 }
