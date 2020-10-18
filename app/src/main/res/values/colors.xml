@@ -39,4 +39,8 @@
     <color name="colorPassedWhite">#eeeeee</color>
     <color name="colorPurple">@color/design_default_color_primary</color>
 
+    <!-- Translucent Colors -->
+    <color name="colorTransGrey">#974D4D4D</color>
+    <color name="colorTransDark">#43000000</color>
+
 </resources>

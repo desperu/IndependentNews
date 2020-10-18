@@ -7,8 +7,7 @@ import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.extension.setSourceForEach
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.utils.BASTAMAG
-import org.desperu.independentnews.utils.REPORTERRE
+import org.desperu.independentnews.utils.*
 
 /**
  * Independent News Repository interface to get data from others repositories.
@@ -205,12 +204,19 @@ class IndependentNewsRepositoryImpl(
     override suspend fun getFilteredList(selectedMap: Map<Int, MutableList<String>>,
                                          actualList: List<Article>
     ): List<Article>? = withContext(Dispatchers.IO) {
+        setSources()
+        val parsedMap = FilterUtils.parseSelectedMap(selectedMap, sources!!)
 
-        val filteredList = articleRepository.getFilteredListFromDB(selectedMap, actualList).toMutableList()
+        val filteredList = articleRepository.getFilteredListFromDB(
+            parsedMap.getValue(SOURCES),
+            parsedMap[THEMES],
+            parsedMap[SECTIONS],
+            parsedMap.getValue(DATES).map { it.toLong() },
+            actualList.map { it.url }
+        ).toMutableList()
 
-//        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
-//
-//        filteredList.addAll(articleRepository.filterCategories(selectedMap, unMatchArticleList))
+        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
+        filteredList.addAll(articleRepository.filterCategories(parsedMap, unMatchArticleList))
 
         return@withContext sources?.let { list ->
             articleDao.getWhereUrlsInSorted(filteredList.map { it.url })

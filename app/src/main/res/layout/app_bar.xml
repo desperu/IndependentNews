@@ -23,7 +23,7 @@
             android:layout_gravity="center_vertical"
             android:padding="@dimen/default_middle_margin"
             android:visibility="gone"
-            app:tint="@color/title_color"
+            app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_drawer_icon" />
 
         <ImageView
@@ -34,7 +34,7 @@
             android:padding="@dimen/default_middle_margin"
             android:visibility="gone"
             android:onClick="onClickBackArrow"
-            app:tint="@color/title_color"
+            app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
 
         <org.desperu.independentnews.views.FontTextView
@@ -55,7 +55,7 @@
             android:layout_gravity="end|center_vertical"
             android:padding="@dimen/default_middle_margin"
             android:visibility="gone"
-            app:tint="@color/title_color"
+            app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_baseline_search_24" />
 
         <ImageView
@@ -65,7 +65,8 @@
             android:layout_gravity="end|center_vertical"
             android:padding="@dimen/default_middle_margin"
             android:visibility="gone"
-            app:tint="@color/title_color"
+            android:onClick="onClickShare"
+            app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_baseline_share_24" />
 
     </FrameLayout>
@@ -76,8 +77,8 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:visibility="gone"
-        app:tabTextColor="@color/toolbar_title_color"
+        app:tabTextColor="@color/title_color"
         app:tabIndicatorColor="@color/subtitle_color"
-        app:tabSelectedTextColor="@color/subtitle_color"/>
+        app:tabSelectedTextColor="@color/list_item_bg_collapsed"/>
 
 </com.google.android.material.appbar.AppBarLayout>

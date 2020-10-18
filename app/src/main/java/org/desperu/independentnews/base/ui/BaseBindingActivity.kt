@@ -84,7 +84,7 @@ abstract class BaseBindingActivity: AppCompatActivity() {
      */
     protected fun showChildActivityIcon() = showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
 
-    // --- MENU ACION ---
+    // --- MENU ACTION ---
 
     /**
      * Onc click on back arrow finish the child activity.

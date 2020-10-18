@@ -21,7 +21,7 @@ class AppAlarmManager {
      */
     private fun getPendingIntent(context: Context, action: Int): PendingIntent? {
         val alarmIntent = Intent(context, AlarmReceiver::class.java).putExtra(ACTION, action)
-        return PendingIntent.getBroadcast(context, action, alarmIntent, 0)
+        return PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
     }
 
     /**

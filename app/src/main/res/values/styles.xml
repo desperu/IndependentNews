@@ -24,7 +24,7 @@
     <!-- NAVIGATION VIEW THEME -->
     <style name="NavigationDrawerTheme">
         <item name="android:textSize">@dimen/nav_drawer_text_item_text_size_theme</item>
-        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="android:textColorSecondary">@color/filter_pill_color</item>
     </style>
 
     <!-- Show article Theme -->

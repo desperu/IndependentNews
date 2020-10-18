@@ -27,7 +27,9 @@
         <!-- SHOW ARTICLE ACTIVITY -->
         <activity android:name=".ui.showArticle.ShowArticleActivity"
             android:parentActivityName=".ui.main.MainActivity"
-            android:theme="@style/ShowArticleTheme"/>
+            android:theme="@style/ShowArticleTheme"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"/>
 
         <!-- ALARM RECEIVER -->
         <receiver android:name=".service.alarm.AlarmReceiver">

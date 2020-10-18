@@ -49,7 +49,7 @@
 
     <!-- Filter Layout -->
     <dimen name="filter_layout_padding">32dp</dimen>
-    <dimen name="sheet_peek_height">340dp</dimen>
+    <dimen name="sheet_peek_height">340dp</dimen> <!-- TODO landscape mistake... too large size, must update with screen rotation -->
     <dimen name="filter_first_linear_margin_top">8dp</dimen>
     <dimen name="filter_linear_margin_top">24dp</dimen>
     <dimen name="filter_pill_padding_horizontal">30dp</dimen>
@@ -75,9 +75,10 @@
 
     <!-- Show Article Activity -->
     <dimen name="article_progress_bar_height">4dp</dimen>
-    <dimen name="article_scroll_margin_top">3dp</dimen>
+    <dimen name="article_scroll_margin_top">2dp</dimen>
     <dimen name="article_image_source_width_height">15dp</dimen>
     <dimen name="article_title_text_size">24sp</dimen>
+    <dimen name="article_image_min_width_height">300dp</dimen>
 
     <!-- MENU -->
     <!-- Toolbar -->

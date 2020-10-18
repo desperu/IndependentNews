@@ -5,15 +5,15 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:background="@color/colorPrimary"
         android:visibility="visible"
         android:theme="@style/NavigationDrawerTheme"
-        app:itemTextColor="@color/subtitle_color"
-        app:itemIconTint="@color/subtitle_color"
+        app:itemTextColor="@color/list_item_bg_collapsed"
+        app:itemIconTint="@color/list_item_bg_collapsed"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/menu_drawer"
         tools:layout_gravity="start"

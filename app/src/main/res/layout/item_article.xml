@@ -149,6 +149,7 @@
                         android:layout_marginBottom="@dimen/item_article_image_vertical_margin"
                         android:scaleType="centerCrop"
                         android:onClick="@{viewModel.onClickImage}"
+                        android:tag="item_article"
                         android:transitionName="@string/animation_main_to_show_article"
                         app:setImage="@{viewModel.article.imageUrl}"
                         tools:ignore="UnusedAttribute" />

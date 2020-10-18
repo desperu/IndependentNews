@@ -1,6 +1,5 @@
 package org.desperu.independentnews.extension
 
-import android.os.Build
 import android.view.View
 import android.webkit.WebView
 import android.widget.ImageView
@@ -8,15 +7,16 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import org.desperu.independentnews.R
+import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
 
-/** TODO use text month ???
+/**
  * Set the published date in millis to string format.
  * @param millis the time in millis to set.
  */
 @BindingAdapter("setDate")
 fun TextView.setPublishedDate(millis: Long?) {
-    text = if (millis != null) millisToString(millis) else "error"
+    text = if (millis != null && millis != 0L) millisToString(millis) else ""
 }
 
 /**
@@ -24,10 +24,15 @@ fun TextView.setPublishedDate(millis: Long?) {
  * @param imageUrl the image url to load.
  */
 @BindingAdapter("setImage")
-fun ImageView.setImage(imageUrl: String?){
-    Glide.with(this)
-         .load(if (!imageUrl.isNullOrBlank()) imageUrl else R.drawable.no_image)
-         .into(this)
+fun ImageView.setImage(imageUrl: String?) {
+    val isItem = tag == "item_article"
+    val isNotNull = !imageUrl.isNullOrBlank() && getPageNameFromUrl(imageUrl) != "null"
+    val image: Any? = if (isNotNull) imageUrl else R.drawable.no_image
+
+    if (isItem || isNotNull)
+        Glide.with(this).load(image).into(this)
+    else
+        visibility = View.GONE
 }
 
 /**
@@ -35,7 +40,7 @@ fun ImageView.setImage(imageUrl: String?){
  * @param imageId the unique identifier of the image to load.
  */
 @BindingAdapter("setImage")
-fun ImageView.setImage(imageId: Int?){
+fun ImageView.setImage(imageId: Int?) {
     Glide.with(this)
         .load(if (imageId != null && imageId != 0) imageId else R.drawable.no_image)
         .into(this)
@@ -48,15 +53,4 @@ fun ImageView.setImage(imageId: Int?){
 @BindingAdapter("setArticle")
 fun WebView.setArticle(article: String?) {
     article?.let { loadData(it, "text/html; charset=UTF-8", null) }
-}
-
-/**
- * Update transition name with the given position of the item.
- */
-@BindingAdapter("updateTransitionName")
-fun View.updateTransitionName(position: Int?) { // TODO use string and set in view model with service/Ressources
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && position != null) {
-        val transitionName = context.getString(R.string.animation_main_to_show_article) + position
-        setTransitionName(transitionName)
-    }
 }

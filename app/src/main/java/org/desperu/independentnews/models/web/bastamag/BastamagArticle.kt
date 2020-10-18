@@ -98,7 +98,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
             document.toString()
         } else
             null
-
+// TODO correct url link with full url !!!
     /**
      * Set main css id to apply css style to the article body.
      * @param html the article body.

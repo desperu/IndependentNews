@@ -166,7 +166,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 //        // If map is expended in estate detail fragment, collapse it.
 //        fm.mapsFragmentChildDetail?.view?.findViewById<ImageButton>(R.id.fragment_maps_fullscreen_button)?.tag == FULL_SIZE ->
 //            MapMotionLayout(this, fm.mapsFragmentChildDetail?.view).switchMapSize()
-
+// TODO if filter expanded click on close icon
         // If current fragment is Top Story, remove it and call super to finish activity.
         fragmentKey == FRAG_TOP_STORY -> {
             fm.clearAllBackStack()
