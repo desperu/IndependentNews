@@ -41,7 +41,7 @@ abstract class BaseHtmlArticle(private val htmlPage: ResponseBody): BaseHtml(htm
      * @param html the html code to correct.
      * @return the html code with corrected url links.
      */
-    protected fun correctUrlLink(html: String?): String? =
+    protected fun correctUrlLink(html: String?): String? = // TODO create design mistake why ???? for bastamag, do it when click on link in web view
         if (!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
 

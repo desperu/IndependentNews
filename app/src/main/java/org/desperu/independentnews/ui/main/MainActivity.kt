@@ -3,6 +3,7 @@ package org.desperu.independentnews.ui.main
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.view.MenuItem
 import android.view.View
@@ -18,18 +19,21 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
-import org.desperu.independentnews.di.module.mainModule
+import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.SourceRepository
-import org.desperu.independentnews.service.alarm.AppAlarmManager
+import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
+import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
+import org.desperu.independentnews.ui.settings.SettingsActivity
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
@@ -69,7 +73,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         firstStart()
         configureKoinDependency()
         configureAppBar()
-        showMainActivityIcon()
+        showAppBarIcon(listOf(R.id.drawer_icon, R.id.search_icon))
         configureDrawerLayout()
 //        configureNavigationView()
 //        configureViewModel()
@@ -141,6 +145,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 //            R.id.activity_main_drawer_search -> this.showSearchArticlesActivity()
 //            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
+//            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
+            R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
 //            R.id.activity_main_drawer_about -> this.showAboutDialog()
 //            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
             else -> {}
@@ -188,6 +194,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // ACTIVITY
     // --------------
 
+    /**
+     * Start Settings activity.
+     */
+    private fun showSettingsActivity() =
+        startActivity(Intent(this, SettingsActivity::class.java))
+
 //    /**
 //     * Open browser for given string resId URL
 //     */
@@ -205,7 +217,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         if (isFirstTime) {
             createSourcesAtFirstStart()
             setAlarmDataAtFirstStart()
-            // TODO fetch sources for first time with loading animation ?
+            // TODO fetch sources for first time with loading animation ? only rss and for each day too ??
             isFirstTime = false
         }
     }
@@ -223,7 +235,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Set alarm data at first apk start.
      */
     private fun setAlarmDataAtFirstStart() {// TODO store app version in shared to detect update and re-set alarm
-        AppAlarmManager().startAlarm(this, AppAlarmManager().getAlarmTime(5), UPDATE_DATA)
+        startAlarm(this, getAlarmTime(5), UPDATE_DATA)
     }
 
     /**
@@ -231,7 +243,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * into the database.
      */
     private fun refreshData() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             get<IndependentNewsRepository>().refreshData()
         }
     }

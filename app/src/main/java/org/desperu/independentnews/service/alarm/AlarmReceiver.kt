@@ -7,6 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.repositories.IndependentNewsRepository
+import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
+import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.utils.NOTIFICATION
 import org.desperu.independentnews.utils.UPDATE_DATA
 import org.koin.core.KoinComponent
@@ -34,8 +36,8 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
             when {
                 it.action.equals("android.intent.action.BOOT_COMPLETED")// TODO use settings value to disable
                 -> context?.let { it1 ->
-                    AppAlarmManager().startAlarm(
-                        it1, AppAlarmManager().getAlarmTime(5),
+                    startAlarm(
+                        it1, getAlarmTime(5),
                         UPDATE_DATA)
                 }
                 action == UPDATE_DATA -> updateData()

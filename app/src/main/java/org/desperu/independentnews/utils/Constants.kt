@@ -77,6 +77,16 @@ const val DATES = 3
 const val CATEGORIES = 4 // only used to apply filters, not in UI.
 
 
+// --- FOR SETTINGS ACTIVITY ---
+
+// For alert dialog
+const val NOTIF_TIME_DIALOG = 0
+const val TEXT_SIZE_DIALOG = 1
+const val REFRESH_TIME_DIALOG = 2
+const val STORE_DELAY_DIALOG = 3
+const val RESET_DIALOG = 4
+
+
 // --- FOR UTILS ---
 
 // To Convert Date
@@ -100,5 +110,22 @@ const val NOTIFICATION = 1
 
 // File name
 const val INDEPENDENT_NEWS_PREFS = "IndependentNewsPrefs"
-// For keys
+
+// Shared preferences keys
 const val IS_FIRST_TIME = "isFirstTime"
+const val NOTIFICATION_ENABLED = "notificationEnabled"
+const val NOTIFICATION_TIME = "notificationTime"
+const val TEXT_SIZE = "textSize"
+const val REFRESH_ARTICLE_LIST = "refreshArticleList"
+const val REFRESH_TIME = "refreshTime"
+const val REFRESH_ONLY_WIFI = "refreshOnlyWifi"
+const val STORE_DELAY = "storeDelay"
+
+// Settings default value
+const val NOTIFICATION_DEFAULT = true
+const val NOTIFICATION_TIME_DEFAULT = 10
+const val TEXT_SIZE_DEFAULT = 100
+const val REFRESH_ARTICLE_LIST_DEFAULT = true
+const val REFRESH_TIME_DEFAULT = 5
+const val REFRESH_ONLY_WIFI_DEFAULT = false
+const val STORE_DELAY_DEFAULT = 12

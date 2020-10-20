@@ -1,4 +1,4 @@
-package org.desperu.independentnews.di.module
+package org.desperu.independentnews.di.module.ui
 
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment

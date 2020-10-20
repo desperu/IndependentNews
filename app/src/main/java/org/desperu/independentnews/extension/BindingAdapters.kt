@@ -19,6 +19,11 @@ fun TextView.setPublishedDate(millis: Long?) {
     text = if (millis != null && millis != 0L) millisToString(millis) else ""
 }
 
+@BindingAdapter("setInt")
+fun TextView.setInt(value: Int?) {
+    text = value?.toString() ?: ""
+}
+
 /**
  * Load the image with the url into the image view.
  * @param imageUrl the image url to load.

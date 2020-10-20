@@ -7,25 +7,28 @@ import android.content.Intent
 import java.util.*
 
 /**
- * Class to manage alarm for app.
+ * Object to manage alarm for app.
  *
  * @constructor Instantiate a new AppAlarmManager.
  */
-class AppAlarmManager {
+object AppAlarmManager {
 
     /**
      * Get pending intent for alarm manager, to call broadcast receiver at alarm time.
+     *
      * @param context the context from this method is called.
      * @param action the action for the receiver.
+     *
      * @return Created pending intent.
      */
     private fun getPendingIntent(context: Context, action: Int): PendingIntent? {
         val alarmIntent = Intent(context, AlarmReceiver::class.java).putExtra(ACTION, action)
         return PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
-    }
+    } // TODO look at manager.set() doc, need a new intent sender for new alarm.
 
     /**
      * Get alarm time in millis.
+     *
      * @param hour the hour of the alarm.
      * @return Alarm time in millis.
      */
@@ -39,6 +42,7 @@ class AppAlarmManager {
 
     /**
      * Enable alarm for app services, notification and update data.
+     *
      * @param context the context from this method is called.
      * @param alarmTime the time to set the alarm.
      * @param action the action for the receiver.
@@ -47,12 +51,15 @@ class AppAlarmManager {
         val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         manager.setRepeating(
             AlarmManager.RTC_WAKEUP,
-            alarmTime, AlarmManager.INTERVAL_DAY, getPendingIntent(context, action)
+            alarmTime,
+            AlarmManager.INTERVAL_DAY,
+            getPendingIntent(context, action)
         )
     }
 
     /**
      * Disable alarm for app services, notification and update data.
+     *
      * @param context the context from this method is called.
      * @param action the action for the receiver.
      */

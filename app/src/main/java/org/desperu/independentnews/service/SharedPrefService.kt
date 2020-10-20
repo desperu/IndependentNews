@@ -27,8 +27,7 @@ interface SharedPrefService {
  *
  * @param context The Context instance used to access the shared preferences of the application to set.
  */
-class SharedPrefServiceImpl(private val context: Context) : // TODO remove if unused
-    SharedPrefService {
+class SharedPrefServiceImpl(private val context: Context) : SharedPrefService {
 
     /**
      * Returns the shared preferences object of the application.

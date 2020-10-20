@@ -37,7 +37,9 @@ const val ARTICLE: String = "article"
 class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
     // FROM BUNDLE
-    private val article: Article get() = intent.getParcelableExtra(ARTICLE) ?: Article(title = getString(R.string.show_article_activity_article_error))
+    private val article: Article
+        get() = intent.getParcelableExtra(ARTICLE)
+            ?: Article(title = getString(R.string.show_article_activity_article_error))
 
     // FOR DATA
     private lateinit var binding: ViewDataBinding
@@ -91,7 +93,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     override fun configureDesign() {
         configureWebView()
         configureAppBar()
-        showChildActivityIcon()
+        showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
         postponeSceneTransition()
         scheduleStartPostponedTransition(article_image)
         setupProgressBarWithScrollView()
@@ -168,7 +170,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             url?.let { if (!isDesignProperlySet(it)) updateWebViewDesign() }
             article_loading_progress_bar.hide()
             article_scroll_view.visibility = View.VISIBLE
-//            web_view.settings.textZoom = web_view.settings.textZoom
+            web_view.settings.textZoom = web_view.settings.textZoom
             super.onPageFinished(view, url)
         }
     }
@@ -367,7 +369,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
         // Add data to the intent, the receiving app will decide
         // what to do with it.
-        if (actualUrl != article.url) {
+        if (isSourceUrl(actualUrl)) {
             share.putExtra(Intent.EXTRA_SUBJECT, web_view.title)
             share.putExtra(Intent.EXTRA_TEXT, actualUrl)
         } else {

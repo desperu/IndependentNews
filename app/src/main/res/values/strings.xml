@@ -36,6 +36,37 @@
     <string name="filter_layout_dates_text_begin">Begin Date</string>
     <string name="filter_layout_dates_text_end">End Date</string>
 
+    <!-- SETTINGS ACTIVITY -->
+    <string name="activity_settings_text_category_notification" translatable="false">Notifications</string>
+    <string name="activity_settings_text_notifications_state">Enable notifications</string>
+    <string name="activity_settings_text_notifications_description">Sent a notification every days, to show the new articles number, at the specified time.</string>
+    <string name="activity_settings_text_notifications_time">Notifications Time</string>
+    <string name="activity_settings_text_notifications_time_description">Set notification time (default is 10am).</string>
+    <string name="activity_settings_text_category_article">Article</string>
+    <string name="activity_settings_text_article_text_size">Article text size</string>
+    <string name="activity_settings_text_article_text_size_description">Set article text size, in percent, default 100, min 1, max 200.</string>
+    <string name="activity_settings_text_category_data_management">Data Management</string>
+    <string name="activity_settings_text_refresh_article_list">Refresh articles list every days</string>
+    <string name="activity_settings_text_refresh_article_list_description">Refresh article list every days, at the specified time.</string>
+    <string name="activity_settings_text_refresh_article_list_time">Refresh article list time</string>
+    <string name="activity_settings_text_refresh_article_list_time_description">Set refresh article list time (default is 5am).</string>
+    <string name="activity_settings_text_refresh_only_wifi">Refresh article list only on Wifi</string>
+    <string name="activity_settings_text_refresh_only_wifi_description">Refresh article list only on Wifi network connexion. If checked and there no Wifi connexion established at the refresh article list time, the application can\'t refresh article list data.</string>
+    <string name="activity_settings_text_article_store_delay">Article store delay</string>
+    <string name="activity_settings_text_article_store_delay_description">Set the delay to store article in the application, in month (default is 12).</string>
+    <string name="activity_settings_text_category_reset_settings">Reset Settings</string>
+    <string name="activity_settings_text_reset_settings">Reset Settings</string>
+    <string name="activity_settings_text_reset_settings_description">Reset settings to original state.</string>
+    <!-- Alert Dialog -->
+    <string name="activity_settings_dialog_reset_settings_message">Are you sure you want reset settings to default?</string>
+    <string name="activity_settings_dialog_positive_button" translatable="false">OK</string>
+    <string name="activity_settings_dialog_negative_button">Cancel</string>
+    <!-- Toast -->
+    <string name="activity_settings_toast_time_wrong_value">%1$s must be under 0 and 24 !</string>
+    <string name="activity_settings_toast_text_size_wrong_value">Text size must be under 1 and 200 !</string>
+    <string name="activity_settings_toast_store_delay_wrong_value">Store article delay must be under 1 and 24 !</string>
+    <string name="activity_settings_toast_reset_settings_default">Settings Reset to default !</string>
+
     <!-- MENU -->
     <!-- Nav Drawer -->
     <string name="navigation_drawer_top_story">Top Story</string>

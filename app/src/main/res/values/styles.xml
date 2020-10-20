@@ -32,6 +32,11 @@
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorPrimary</item>
     </style>
 
+    <!-- Settings Theme -->
+    <style name="SettingsTheme" parent="ShowArticleTheme">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+    </style>
+
     <!-- Progress Bar Theme -->
     <style name="ProgressBarTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/colorPrimaryDark</item>
@@ -53,6 +58,13 @@
     <!-- Date Picker Dialog Theme -->
     <style name="DatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/filter_seek_bar_color</item>
+    </style>
+
+    <!-- ALERT DIALOG -->
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
 </resources>

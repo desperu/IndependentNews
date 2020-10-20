@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.models.Article
 
 /**
- * View Model witch provide data for Article Fragment.
+ * View Model witch provide data for Show Article Activity.
  *
  * @param article the article object with contains data.
  *
