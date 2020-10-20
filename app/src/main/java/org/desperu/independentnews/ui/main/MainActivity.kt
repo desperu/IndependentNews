@@ -287,6 +287,18 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     }
 
     /**
+     * Show or hide filter motion, depends of toShow value.
+     * @param toShow true to show filter motion, false to hide.
+     */
+    override fun showFilterMotion(toShow: Boolean) {
+        filters_motion_layout.setOnShow(1f)
+        filters_motion_layout.setOnHide(0f)
+        filters_motion_layout.visibility =
+            if (toShow) View.VISIBLE
+            else View.INVISIBLE
+    }
+
+    /**
      * Return the adapter scale down animator for the recycler view of article list.
      * @return the adapter scale down animator for the recycler view of article list.
      */

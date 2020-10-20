@@ -92,6 +92,8 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
                 notifyDataSetChanged()
             }
         }
+        articleListInterface.showNoArticle(articleList.isNullOrEmpty())
+        articleListInterface.showFilterMotion(!articleList.isNullOrEmpty())
     }
 
     /**

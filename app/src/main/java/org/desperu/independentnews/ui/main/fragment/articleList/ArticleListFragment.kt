@@ -153,6 +153,12 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
         no_article_find.visibility = if (toShow) View.VISIBLE else View.INVISIBLE
     }
 
+    /**
+     * Show or hide filter motion, depends of toShow value.
+     * @param toShow true to show filter motion, false to hide.
+     */
+    override fun showFilterMotion(toShow: Boolean) = mainInterface.showFilterMotion(toShow)
+
     // --- GETTERS ---
 
     /**

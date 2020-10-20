@@ -23,4 +23,10 @@ interface ArticleListInterface {
      * @param toShow true to show no article, false otherwise.
      */
     fun showNoArticle(toShow: Boolean)
+
+    /**
+     * Show or hide filter motion, depends of toShow value.
+     * @param toShow true to show filter motion, false to hide.
+     */
+    fun showFilterMotion(toShow: Boolean)
 }

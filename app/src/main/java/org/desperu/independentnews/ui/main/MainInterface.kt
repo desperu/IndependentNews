@@ -25,6 +25,12 @@ interface MainInterface {
     val mainLifecycleScope: LifecycleCoroutineScope
 
     /**
+     * Show or hide filter motion, depends of toShow value.
+     * @param toShow true to show filter motion, false to hide.
+     */
+    fun showFilterMotion(toShow: Boolean)
+
+    /**
      * Return the scale down animator for the recycler view of article list.
      * @return the scale down animator for the recycler view of article list.
      */
