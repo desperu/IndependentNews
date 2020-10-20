@@ -30,6 +30,12 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <include layout="@layout/first_start_layout"
+        android:id="@+id/first_start_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+
     <include layout="@layout/nav_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

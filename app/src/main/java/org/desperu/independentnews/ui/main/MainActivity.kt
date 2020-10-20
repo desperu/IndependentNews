@@ -51,11 +51,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
 
     // FOR DATA
-    private val fm by lazy { MainFragmentManager(this, this as MainInterface) }
+    private val fm by lazy { MainFragmentManager(supportFragmentManager, this as MainInterface) }
     override val mainLifecycleScope: LifecycleCoroutineScope = lifecycleScope
+    private val ideNewsRepository = get<IndependentNewsRepository>()
 
     /**
-     * Used to create sources in database.
+     * Used to detect first apk start.
      */
     private val prefs: SharedPreferences
         get() = getSharedPreferences(INDEPENDENT_NEWS_PREFS, Context.MODE_PRIVATE)
@@ -128,13 +129,19 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     override fun setFragmentKey(fragmentKey: Int) { this.fragmentKey = fragmentKey }
 
+    /**
+     * Show the current fragment if set, else fragment top story.
+     */
+    private fun showFragment() =
+        fm.configureAndShowFragment(if (fragmentKey != NO_FRAG) fragmentKey else FRAG_TOP_STORY)
+
     // -----------------
     // METHODS OVERRIDE
     // -----------------
 
     override fun onResume() {
         super.onResume()
-        fm.configureAndShowFragment(if (fragmentKey != NO_FRAG) fragmentKey else FRAG_TOP_STORY)
+        showFragment()
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
@@ -213,29 +220,24 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     /**
      * Set needed sources data, fetch data and alarm data at first start.
      */
-    private fun firstStart() {
+    private fun firstStart() = lifecycleScope.launch(Dispatchers.Main) {
         if (isFirstTime) {
-            createSourcesAtFirstStart()
-            setAlarmDataAtFirstStart()
-            // TODO fetch sources for first time with loading animation ? only rss and for each day too ??
+            showFirstStart(true)
+            get<SourceRepository>().createSourcesForFirstStart()
+            ideNewsRepository.fetchRssArticles()
+            showFirstStart(false)
+            ideNewsRepository.fetchCategories()
+            setAlarmAtFirstStart()
             isFirstTime = false
         }
     }
 
     /**
-     * Create sources in database at first start only.
+     * Set alarm data and notification at first apk start.
      */
-    private fun createSourcesAtFirstStart() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            get<SourceRepository>().createSourcesForFirstStart()
-        }
-    }
-
-    /**
-     * Set alarm data at first apk start.
-     */
-    private fun setAlarmDataAtFirstStart() {// TODO store app version in shared to detect update and re-set alarm
-        startAlarm(this, getAlarmTime(prefs.getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)), UPDATE_DATA)
+    private fun setAlarmAtFirstStart() {// TODO store app version in shared to detect update and re-set alarm
+        startAlarm(this, getAlarmTime(prefs.getInt(REFRESH_TIME, REFRESH_TIME_DEFAULT)), UPDATE_DATA)
+        startAlarm(this, getAlarmTime(prefs.getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)), NOTIFICATION)
     }
 
     /**
@@ -244,7 +246,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     private fun refreshData() {
         GlobalScope.launch(Dispatchers.IO) {
-            get<IndependentNewsRepository>().refreshData()
+            ideNewsRepository.refreshData()
         }
     }
 
@@ -259,6 +261,22 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // --------------
     // UI
     // --------------
+
+    /**
+     * Show first start layout and hide coordinator container.
+     * Show article list fragment when hide.
+     * @param toShow if true show first start, else hide.
+     */
+    private fun showFirstStart(toShow: Boolean) =
+        if (toShow) {
+            first_start_container.visibility = View.VISIBLE
+            coordinator_layout.visibility = View.INVISIBLE
+        } else {
+            coordinator_layout.visibility = View.VISIBLE
+            first_start_container.visibility = View.INVISIBLE
+            fragmentKey = NO_FRAG
+            showFragment()
+        }
 
     /**
      * Show or hide tab layout, depends of fragment key value.

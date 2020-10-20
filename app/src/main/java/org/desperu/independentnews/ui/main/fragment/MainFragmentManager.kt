@@ -1,10 +1,9 @@
 package org.desperu.independentnews.ui.main.fragment
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import kotlinx.android.synthetic.main.activity_main.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
@@ -18,25 +17,20 @@ import org.koin.core.KoinComponent
 /**
  * Main Fragment Manager class witch manage all fragments for main activity.
  *
- * @param activity the activity instance from this class is called.
- * @param mainInterface the main interface that allow communication with activity.
+ * @property fm                 the FragmentManager of the ui part to manage.
+ * @property mainInterface      the main interface that allow communication with activity.
  *
  * @constructor Instantiates a new MainFragmentManager.
  *
- * @property activity the activity instance from this class is called to set.
- * @property mainInterface the main interface that allow communication with activity to set.
+ * @param fm                    the FragmentManager of the ui part to manage to set.
+ * @param mainInterface         the main interface that allow communication with activity to set.
  */
-class MainFragmentManager(private val activity: AppCompatActivity,
+class MainFragmentManager(private val fm: FragmentManager,
                           private val mainInterface: MainInterface
 ): KoinComponent {
 
     // FOR DATA
     private val fragmentKey get() = mainInterface.getFragmentKey()
-    private val fm = activity.supportFragmentManager
-    private val frameLayout by lazy { activity.main_frame_container }
-//    private val isFrame2Visible = communication.isFrame2Visible
-//    private var fabFilter = activity.activity_main_fab_filter
-//    private lateinit var bottomSheet: BottomSheetBehavior<View>
 // TODO to clean
     // --------------
     // FRAGMENT MANAGEMENT

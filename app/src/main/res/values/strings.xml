@@ -5,6 +5,9 @@
 
     <!-- LAYOUT -->
     <!-- Main Activity -->
+    <!-- First Start Fragment -->
+    <string name="fragment_first_start_text">First Start !</string>
+    <string name="fragment_first_start_loading">fetching\narticle list…</string>
     <!-- Article List Fragment -->
     <string name="fragment_article_list_no_article">No article find !</string>
 

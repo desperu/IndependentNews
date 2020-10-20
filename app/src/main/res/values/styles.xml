@@ -42,6 +42,11 @@
         <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
 
+    <!-- Progress Bar First Start Theme -->
+    <style name="ProgressBarFirstStartTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/list_item_bg_collapsed</item>
+    </style>
+
     <!-- Filter Pill Theme -->
     <style name="FilterPillTheme">
         <item name="android:gravity">center</item>
