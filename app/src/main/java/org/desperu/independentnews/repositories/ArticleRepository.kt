@@ -5,7 +5,10 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.storeDelayMillis
+import java.util.*
 
 /**
  * Article  Repository interface to get data from others repositories.
@@ -15,16 +18,21 @@ import org.desperu.independentnews.utils.*
 interface ArticleRepository {
 
     /**
-     * Update top story values if needed in database
-     */
-    suspend fun updateTopStory(rssArticleList: List<Article>)
-
-    /**
      * Persists (update the existing ones, and insert the non-existing ones) the articles in database.
      *
      * @param articleList the articles list to persist.
      */
     suspend fun persist(articleList: List<Article>)
+
+    /**
+     * Update top story values if needed in database
+     */
+    suspend fun updateTopStory(rssArticleList: List<Article>)
+
+    /**
+     * Delete the older articles than the limit millis, in the database.
+     */
+    suspend fun removeOldArticles()
 
     /**
      * Returns the list of filtered articles from database.
@@ -62,17 +70,23 @@ interface ArticleRepository {
  *
  * @author Desperu
  *
- * @property sourceRepository               the repository access for source services.
- * @property articleDao                     the database access object for article.
+ * @property sourceRepository       the repository access for source services.
+ * @property articleDao             the database access object for article.
+ * @property prefs                  the shared preferences service interface witch provide access
+ *                                  to the app shared preferences.
  *
  * @constructor Instantiates a new ArticleRepositoryImpl.
  *
- * @param sourceRepository                  the repository access for source services to set.
- * @param articleDao                        the database access object for article to set.
+ * @param sourceRepository          the repository access for source services to set.
+ * @param articleDao                the database access object for article to set.
+ * @param prefs                     the shared preferences service interface witch provide access
+ *                                  to the app shared preferences to set.
+ *
  */
 class ArticleRepositoryImpl(
     private val sourceRepository: SourceRepository,
-    private val articleDao: ArticleDao
+    private val articleDao: ArticleDao,
+    private val prefs: SharedPrefService
 ): ArticleRepository {
 
     // FOR DATA
@@ -131,6 +145,15 @@ class ArticleRepositoryImpl(
             if (!notTopStory.isNullOrEmpty())
                 articleDao.markIsNotTopStory(*notTopStory.map { it.id }.toLongArray())
         }
+    }
+
+    /**
+     * Delete the older articles than the limit millis, in the database.
+     */
+    override suspend fun removeOldArticles()= withContext(Dispatchers.IO) {
+        val nowMillis = Calendar.getInstance().timeInMillis
+        val storeDelay = prefs.getPrefs().getInt(STORE_DELAY, STORE_DELAY_DEFAULT)
+        articleDao.removeOldArticles(storeDelayMillis(nowMillis, storeDelay))
     }
 
     /**

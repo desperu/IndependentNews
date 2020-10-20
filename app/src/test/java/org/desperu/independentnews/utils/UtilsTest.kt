@@ -1,17 +1,23 @@
 package org.desperu.independentnews.utils
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.ParseException
+import io.mockk.every
+import io.mockk.mockk
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.dateToString
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
+import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.desperu.independentnews.utils.Utils.millisToString
+import org.desperu.independentnews.utils.Utils.storeDelayMillis
 import org.desperu.independentnews.utils.Utils.stringToDate
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.junit.Assert.*
 import org.junit.Test
 import java.util.*
 
@@ -20,7 +26,7 @@ import java.util.*
  */
 class UtilsTest {
 
-//    private var mockContext = mockk<Context>()
+    private var mockContext = mockk<Context>()
 
     private lateinit var output: String
 
@@ -169,6 +175,22 @@ class UtilsTest {
     }
 
     @Test
+    fun given_storeDelay_When_literalDateToMillis_Then_checkResult() {
+        val expected = 1585951200000
+
+        val cal = Calendar.getInstance()
+        cal.set(2020, 9, 1, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val givenMillis = cal.timeInMillis
+
+        val storeDelay = 6
+
+        val output = storeDelayMillis(givenMillis, storeDelay)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
     fun given_mutableList_When_concatenateStringFromMutableList_Then_checkString() {
         val expected = "School, Shop, Park"
 
@@ -206,5 +228,27 @@ class UtilsTest {
         output = getPageNameFromUrl(url)
 
         assertEquals(expected, output)
+    }
+
+    @Test
+    @Suppress("Deprecation")
+    fun given_enabledAndDisabledNetwork_When_isWifiAvailable_Then_checkResult() {
+        val mockConnectivityManager = mockk<ConnectivityManager>()
+        every { mockContext.getSystemService(Context.CONNECTIVITY_SERVICE) } returns mockConnectivityManager
+
+        val mockNetworkInfo = mockk<NetworkInfo>()
+        every { mockConnectivityManager.activeNetworkInfo } returns mockNetworkInfo
+
+        // Enabled Wifi Connexion
+        every { mockNetworkInfo.isConnected } returns true
+        every { mockNetworkInfo.type } returns ConnectivityManager.TYPE_WIFI
+        val enabledOutput = isWifiAvailable(mockContext)
+        assertTrue(enabledOutput)
+
+        // Disabled Wifi Connexion
+        every { mockNetworkInfo.isConnected } returns false
+        every { mockNetworkInfo.type } returns ConnectivityManager.TYPE_MOBILE
+        val disabledOutput = isWifiAvailable(mockContext)
+        assertFalse(disabledOutput)
     }
 }

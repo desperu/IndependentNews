@@ -7,10 +7,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.repositories.IndependentNewsRepository
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
-import org.desperu.independentnews.utils.NOTIFICATION
-import org.desperu.independentnews.utils.UPDATE_DATA
+import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -27,17 +28,23 @@ const val ACTION = "action"
 class AlarmReceiver: BroadcastReceiver(), KoinComponent {
 
     // FOR DATA
+    private var context: Context? = null
     private val ideNewsRepository = inject<IndependentNewsRepository>()
+    private val prefs = inject<SharedPrefService>()
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        this.context = context
         intent?.let<Intent, Unit> {
+            val isBootComplete = it.action.equals("android.intent.action.BOOT_COMPLETED")
+            val isNotifEnabled = prefs.value.getPrefs().getBoolean(NOTIFICATION_ENABLED, NOTIFICATION_DEFAULT)
+            val notifTime = prefs.value.getPrefs().getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)
             val action = it.extras?.getInt(ACTION)
 
+
             when {
-                it.action.equals("android.intent.action.BOOT_COMPLETED")// TODO use settings value to disable
-                -> context?.let { it1 ->
+                isBootComplete && isNotifEnabled -> context?.let { it1 ->
                     startAlarm(
-                        it1, getAlarmTime(5),
+                        it1, getAlarmTime(notifTime),
                         UPDATE_DATA)
                 }
                 action == UPDATE_DATA -> updateData()
@@ -51,7 +58,10 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
      * Update data for all sources in database.
      */
     private fun updateData() = GlobalScope.launch(Dispatchers.IO) {
-        ideNewsRepository.value.refreshData()
+        val isWifiOnly = prefs.value.getPrefs().getBoolean(REFRESH_ONLY_WIFI, REFRESH_ONLY_WIFI_DEFAULT)
+        val isWifiAvailable = isWifiAvailable(context!!)
+        if (!isWifiOnly || isWifiOnly && isWifiAvailable)
+            ideNewsRepository.value.refreshData()
     }
 
     /**

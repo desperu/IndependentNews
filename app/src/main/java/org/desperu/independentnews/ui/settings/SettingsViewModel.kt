@@ -16,15 +16,17 @@ import org.desperu.independentnews.utils.*
  *
  * @property prefs                  the shared preferences service interface witch provide access
  *                                  to the app shared preferences.
- * @property resourceService        the resource service interface witch provide access to the app resources.
+ * @property resourceService        the resource service interface witch provide access to the app
+ *                                  resources.
  * @property settingsInterface      the settings interface witch provide activity interface.
  *
  * @constructor Instantiates a new SettingsViewModel.
  *
  * @param prefs                     the shared preferences service interface witch provide access
- *                                  to the app shared preferences.
- * @param resourceService           the resource service interface witch provide access to the app resources.
- * @param settingsInterface         the settings interface witch provide activity interface.
+ *                                  to the app shared preferences to set.
+ * @param resourceService           the resource service interface witch provide access to the app
+ *                                  resources to set.
+ * @param settingsInterface         the settings interface witch provide activity interface to set.
  */
 class SettingsViewModel(
     private val prefs: SharedPrefService,

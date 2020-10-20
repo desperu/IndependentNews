@@ -1,5 +1,7 @@
 package org.desperu.independentnews.utils
 
+import android.content.Context
+import android.net.ConnectivityManager
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -103,6 +105,18 @@ internal object Utils {
         return cal.timeInMillis
     }
 
+    /**
+     * Returns the store delay day in millis, from today.
+     * @param nowMillis the millis value of now.
+     * @param storeDelay the store delay value in month.
+     * @return the store delay day in millis.
+     */
+    internal fun storeDelayMillis(nowMillis: Long, storeDelay: Int): Long {
+        val monthMillis = 2592000000 // 30 * 24 * 60 * 60 * 1000
+        val storeDelayMillis = storeDelay * monthMillis
+        return nowMillis - storeDelayMillis
+    }
+
     // -----------------
     // CONVERT STRING
     // -----------------
@@ -144,5 +158,21 @@ internal object Utils {
     internal fun getPageNameFromUrl(url: String): String {
         val list = url.split("/").toTypedArray()
         return list[list.size - 1]
+    }
+
+    // -----------------
+    // WEB CONNECTION
+    // -----------------
+
+    /**
+     * Returns if the wifi connexion is available.
+     * @param context the context from this function is called.
+     * @return true if the wifi is connected.
+     */
+    @Suppress("DEPRECATION")
+    internal fun isWifiAvailable(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        return netInfo != null && netInfo.isConnected && netInfo.type == ConnectivityManager.TYPE_WIFI
     }
 }

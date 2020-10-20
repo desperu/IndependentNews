@@ -19,8 +19,12 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.REPORTERRE
+import org.desperu.independentnews.utils.TEXT_SIZE
+import org.desperu.independentnews.utils.TEXT_SIZE_DEFAULT
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -44,13 +48,14 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     // FOR DATA
     private lateinit var binding: ViewDataBinding
     private val viewModel: ArticleViewModel by viewModel { parametersOf(article) }
+    private val prefs = get<SharedPrefService>()
     private var mWebChromeClient: WebChromeClient? = null
     override var inCustomView: Boolean = false
     private lateinit var actualUrl: String
-    private var margins = 0
 
     // FOR UI
     private val sv: NestedScrollView by bindView(R.id.article_scroll_view)
+    private var margins = 0
     private var scrollPosition = -1
     private var navigationCount = 0
 
@@ -127,7 +132,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             setNeedInitialFocus(false)
             setAppCacheEnabled(true)
             saveFormData = true
-//            textZoom = 100 // TODO use settings
+            textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
             // Needed to correct Bastamag article text size.
             if (article.sourceName == BASTAMAG)
                 web_view.settings.textZoom += 20

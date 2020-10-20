@@ -17,6 +17,11 @@ import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.service.alarm.AppAlarmManager.stopAlarm
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.SettingsUtils.getDialogMessage
+import org.desperu.independentnews.utils.SettingsUtils.getDialogTitle
+import org.desperu.independentnews.utils.SettingsUtils.getDialogValue
+import org.desperu.independentnews.utils.SettingsUtils.getMinAndMaxValues
+import org.desperu.independentnews.utils.SettingsUtils.getToastMessage
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -77,15 +82,15 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
     override fun alertDialog(dialogKey: Int) {
         val dialog: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
         // Create dialog for zoom level
-        dialog.setTitle(getDialogTitle(dialogKey))
-        dialog.setMessage(getDialogMessage(dialogKey))
+        dialog.setTitle(getDialogTitle(baseContext, dialogKey))
+        dialog.setMessage(getDialogMessage(baseContext, dialogKey))
 
         if (dialogKey in listOf(NOTIF_TIME_DIALOG, TEXT_SIZE_DIALOG, REFRESH_TIME_DIALOG, STORE_DELAY_DIALOG)) {
 
             // Add edit text to dialog
             val editView: View = LayoutInflater.from(this).inflate(R.layout.alert_dialog, alert_dialog_linear_root)
             val editText: EditText = editView.findViewById(R.id.alert_dialog_edit_text)
-            editText.setText(getDialogValue(dialogKey))
+            editText.setText(getDialogValue(viewModel, dialogKey))
             editText.setSelection(editText.text.length)
             dialog.setView(editView)
 
@@ -97,7 +102,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
                     && value.toInt() >= rangeValue[0] && value.toInt() <= rangeValue[1])
                     activity_settings_text_size_value.text = value
                 else
-                    showToast(getToastMessage(dialogKey), Toast.LENGTH_LONG)
+                    showToast(getToastMessage(baseContext, dialogKey), Toast.LENGTH_LONG)
             }
         } else if (dialogKey == RESET_DIALOG) {
 
@@ -134,84 +139,5 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
     override fun manageAppAlarm(isAlarmEnabled: Boolean, alarmTime: Int, action: Int) {
         if (isAlarmEnabled) startAlarm(baseContext, getAlarmTime(alarmTime), action)
         else stopAlarm(baseContext, action)
-    }
-
-    // TODO put in settings utils
-
-    /**
-     * Returns the corresponding title for given dialog key.
-     *
-     * @param dialogKey the key to show the corresponding title.
-     *
-     * @return the corresponding title for the given dialog key.
-     */
-    private fun getDialogTitle(dialogKey: Int) = when(dialogKey) {
-        NOTIF_TIME_DIALOG -> getString(R.string.activity_settings_text_notifications_time)
-        TEXT_SIZE_DIALOG -> getString(R.string.activity_settings_text_article_text_size)
-        REFRESH_TIME_DIALOG -> getString(R.string.activity_settings_text_refresh_article_list_time)
-        STORE_DELAY_DIALOG -> getString(R.string.activity_settings_text_article_store_delay)
-        RESET_DIALOG -> getString(R.string.activity_settings_text_category_reset_settings)
-        else -> error("Error while retrieving the Dialog Key : $dialogKey")
-    }
-
-    /**
-     * Returns the corresponding message for given dialog key.
-     *
-     * @param dialogKey the key to show the corresponding message.
-     *
-     * @return the corresponding message for the given dialog key.
-     */
-    private fun getDialogMessage(dialogKey: Int) = when(dialogKey) {
-        NOTIF_TIME_DIALOG -> getString(R.string.activity_settings_text_notifications_time_description)
-        TEXT_SIZE_DIALOG -> getString(R.string.activity_settings_text_article_text_size_description)
-        REFRESH_TIME_DIALOG -> getString(R.string.activity_settings_text_refresh_article_list_time_description)
-        STORE_DELAY_DIALOG -> getString(R.string.activity_settings_text_article_store_delay_description)
-        RESET_DIALOG -> getString(R.string.activity_settings_dialog_reset_settings_message)
-        else -> error("Error while retrieving the Dialog Key : $dialogKey")
-    }
-
-    /**
-     * Returns the corresponding value for given dialog key.
-     *
-     * @param dialogKey the key to show the corresponding value.
-     *
-     * @return the corresponding value for the given dialog key.
-     */
-    private fun getDialogValue(dialogKey: Int) = when(dialogKey) {
-        NOTIF_TIME_DIALOG -> viewModel.notificationTime.get().toString()
-        TEXT_SIZE_DIALOG -> viewModel.textSize.get().toString()
-        REFRESH_TIME_DIALOG -> viewModel.refreshTime.get().toString()
-        STORE_DELAY_DIALOG -> viewModel.storeDelay.get().toString()
-        else -> error("Error while retrieving the Dialog Key : $dialogKey")
-    }
-
-    /**
-     * Returns the corresponding dialog message for given dialog key.
-     *
-     * @param dialogKey the key to show the corresponding message.
-     *
-     * @return the corresponding dialog message for the given dialog key.
-     */
-    private fun getMinAndMaxValues(dialogKey: Int) = when(dialogKey) {
-        NOTIF_TIME_DIALOG -> listOf(0, 24)
-        TEXT_SIZE_DIALOG -> listOf(1, 200)
-        REFRESH_TIME_DIALOG -> listOf(0, 24)
-        STORE_DELAY_DIALOG -> listOf(1, 24)
-        else -> error("Error while retrieving the Dialog Key : $dialogKey")
-    }
-
-    /**
-     * Returns the corresponding toast message for given dialog key.
-     *
-     * @param dialogKey the key to show the corresponding message.
-     *
-     * @return the corresponding toast message for the given dialog key.
-     */
-    private fun getToastMessage(dialogKey: Int) = when(dialogKey) {
-        NOTIF_TIME_DIALOG -> getString(R.string.activity_settings_toast_time_wrong_value, getString(R.string.activity_settings_text_notifications_time))
-        TEXT_SIZE_DIALOG -> getString(R.string.activity_settings_toast_text_size_wrong_value)
-        REFRESH_TIME_DIALOG -> getString(R.string.activity_settings_toast_time_wrong_value, getString(R.string.activity_settings_text_refresh_article_list_time))
-        STORE_DELAY_DIALOG -> getString(R.string.activity_settings_toast_store_delay_wrong_value)
-        else -> error("Error while retrieving the Dialog Key : $dialogKey")
     }
 }

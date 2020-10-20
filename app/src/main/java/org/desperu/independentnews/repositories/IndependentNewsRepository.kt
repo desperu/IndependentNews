@@ -157,6 +157,7 @@ class IndependentNewsRepositoryImpl(
     override suspend fun refreshData() = withContext(Dispatchers.IO) {
         fetchRssArticles()
         fetchCategories()
+        articleRepository.removeOldArticles()
     }
 
     // -----------------

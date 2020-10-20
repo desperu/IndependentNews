@@ -235,7 +235,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Set alarm data at first apk start.
      */
     private fun setAlarmDataAtFirstStart() {// TODO store app version in shared to detect update and re-set alarm
-        startAlarm(this, getAlarmTime(5), UPDATE_DATA)
+        startAlarm(this, getAlarmTime(prefs.getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)), UPDATE_DATA)
     }
 
     /**

@@ -53,7 +53,7 @@
     <string name="activity_settings_text_refresh_only_wifi">Refresh article list only on Wifi</string>
     <string name="activity_settings_text_refresh_only_wifi_description">Refresh article list only on Wifi network connexion. If checked and there no Wifi connexion established at the refresh article list time, the application can\'t refresh article list data.</string>
     <string name="activity_settings_text_article_store_delay">Article store delay</string>
-    <string name="activity_settings_text_article_store_delay_description">Set the delay to store article in the application, in month (default is 12).</string>
+    <string name="activity_settings_text_article_store_delay_description">Set the delay to store article in the application, in month (default is 6).</string>
     <string name="activity_settings_text_category_reset_settings">Reset Settings</string>
     <string name="activity_settings_text_reset_settings">Reset Settings</string>
     <string name="activity_settings_text_reset_settings_description">Reset settings to original state.</string>

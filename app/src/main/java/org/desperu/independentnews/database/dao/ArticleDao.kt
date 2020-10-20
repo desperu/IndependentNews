@@ -296,4 +296,12 @@ interface ArticleDao {
      */
     @Query("DELETE FROM Article WHERE id = :id")
     suspend fun deleteArticle(id: Long): Int
+
+    /**
+     * Delete the older articles than the limit millis in database.
+     *
+     * @param limitMillis the limit millis for which older articles are deleted in database.
+     */
+    @Query("DELETE FROM Article WHERE publishedDate < :limitMillis")
+    suspend fun removeOldArticles(limitMillis: Long)
 }
