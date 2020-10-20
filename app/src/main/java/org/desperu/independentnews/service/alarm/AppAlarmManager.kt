@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import org.desperu.independentnews.utils.UPDATE_DATA
 import java.util.*
 
 /**
@@ -22,14 +23,18 @@ object AppAlarmManager {
      * @return Created pending intent.
      */
     private fun getPendingIntent(context: Context, action: Int): PendingIntent? {
-        val alarmIntent = Intent(context, AlarmReceiver::class.java).putExtra(ACTION, action)
+        val receiver =
+            if (action == UPDATE_DATA) UpdateDataReceiver::class.java
+            else NotificationReceiver::class.java
+        val alarmIntent = Intent(context, receiver)
         return PendingIntent.getBroadcast(context, 0, alarmIntent, 0)
-    } // TODO look at manager.set() doc, need a new intent sender for new alarm.
+    }
 
     /**
      * Get alarm time in millis.
      *
      * @param hour the hour of the alarm.
+     *
      * @return Alarm time in millis.
      */
     internal fun getAlarmTime(hour: Int): Long {

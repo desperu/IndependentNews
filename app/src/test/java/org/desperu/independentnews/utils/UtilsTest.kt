@@ -18,17 +18,29 @@ import org.desperu.independentnews.utils.Utils.millisToString
 import org.desperu.independentnews.utils.Utils.storeDelayMillis
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import java.util.*
 
 /**
  * Utils class test, to check that all utils functions work as needed.
  */
+@Suppress("Deprecation")
 class UtilsTest {
 
+    // FOR DATA
     private var mockContext = mockk<Context>()
+    private val mockConnectivityManager = mockk<ConnectivityManager>()
+    private val mockNetworkInfo = mockk<NetworkInfo>()
 
     private lateinit var output: String
+
+
+    @Before
+    fun before() {
+        every { mockContext.getSystemService(Context.CONNECTIVITY_SERVICE) } returns mockConnectivityManager
+        every { mockConnectivityManager.activeNetworkInfo } returns mockNetworkInfo
+    }
 
     @Test
     fun given_intDateMonthSeptember_When_intDateToString_Then_checkStringDate() {
@@ -175,7 +187,7 @@ class UtilsTest {
     }
 
     @Test
-    fun given_storeDelay_When_literalDateToMillis_Then_checkResult() {
+    fun given_storeDelay_When_storeDelayMillis_Then_checkResult() {
         val expected = 1585951200000
 
         val cal = Calendar.getInstance()
@@ -231,21 +243,31 @@ class UtilsTest {
     }
 
     @Test
-    @Suppress("Deprecation")
-    fun given_enabledAndDisabledNetwork_When_isWifiAvailable_Then_checkResult() {
-        val mockConnectivityManager = mockk<ConnectivityManager>()
-        every { mockContext.getSystemService(Context.CONNECTIVITY_SERVICE) } returns mockConnectivityManager
-
-        val mockNetworkInfo = mockk<NetworkInfo>()
-        every { mockConnectivityManager.activeNetworkInfo } returns mockNetworkInfo
-
-        // Enabled Wifi Connexion
+    fun given_connectedNetworkAndWifi_When_isWifiAvailable_Then_checkResult() {
         every { mockNetworkInfo.isConnected } returns true
         every { mockNetworkInfo.type } returns ConnectivityManager.TYPE_WIFI
-        val enabledOutput = isWifiAvailable(mockContext)
-        assertTrue(enabledOutput)
+        val output = isWifiAvailable(mockContext)
+        assertTrue(output)
+    }
 
-        // Disabled Wifi Connexion
+    @Test
+    fun given_connectedNetworkAndDisabledWifi_When_isWifiAvailable_Then_checkResult() {
+        every { mockNetworkInfo.isConnected } returns true
+        every { mockNetworkInfo.type } returns ConnectivityManager.TYPE_MOBILE
+        val output = isWifiAvailable(mockContext)
+        assertFalse(output)
+    }
+
+    @Test
+    fun given_connectedNetworkAndEnabledWifi_When_isWifiAvailable_Then_checkResult() {
+        every { mockNetworkInfo.isConnected } returns false
+        every { mockNetworkInfo.type } returns ConnectivityManager.TYPE_WIFI
+        val disabledOutput = isWifiAvailable(mockContext)
+        assertFalse(disabledOutput)
+    }
+
+    @Test
+    fun given_disabledNetworkAndWifi_When_isWifiAvailable_Then_checkResult() {
         every { mockNetworkInfo.isConnected } returns false
         every { mockNetworkInfo.type } returns ConnectivityManager.TYPE_MOBILE
         val disabledOutput = isWifiAvailable(mockContext)

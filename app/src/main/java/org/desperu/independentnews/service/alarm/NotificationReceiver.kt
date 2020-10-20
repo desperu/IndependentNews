@@ -3,72 +3,41 @@ package org.desperu.independentnews.service.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 /**
- * The argument name for intent extra to received the action to this receiver.
- */
-const val ACTION = "action"
-
-/**
- * Broadcast Receiver to handle broadcast call (alarm or system).
+ * Broadcast Receiver to handle broadcast call for notification (alarm or system).
  *
- * @constructor Instantiate a new AlarmReceiver.
+ * @constructor Instantiate a new NotificationReceiver.
  */
-class AlarmReceiver: BroadcastReceiver(), KoinComponent {
+class NotificationReceiver: BroadcastReceiver(), KoinComponent {
 
     // FOR DATA
-    private var context: Context? = null
-    private val ideNewsRepository = inject<IndependentNewsRepository>()
     private val prefs = inject<SharedPrefService>()
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        this.context = context
-        intent?.let<Intent, Unit> {
-            val isBootComplete = it.action.equals("android.intent.action.BOOT_COMPLETED")
-            val isNotifEnabled = prefs.value.getPrefs().getBoolean(NOTIFICATION_ENABLED, NOTIFICATION_DEFAULT)
-            val notifTime = prefs.value.getPrefs().getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)
-            val action = it.extras?.getInt(ACTION)
+        val isBootComplete = intent?.action.equals("android.intent.action.BOOT_COMPLETED")
+        val isNotifEnabled =
+            prefs.value.getPrefs().getBoolean(NOTIFICATION_ENABLED, NOTIFICATION_DEFAULT)
+        val notifTime =
+            prefs.value.getPrefs().getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)
 
-
-            when {
-                isBootComplete && isNotifEnabled -> context?.let { it1 ->
-                    startAlarm(
-                        it1, getAlarmTime(notifTime),
-                        UPDATE_DATA)
-                }
-                action == UPDATE_DATA -> updateData()
-                action == NOTIFICATION -> createNotification()
-                else -> {}
-            }
-        }
-    }
-
-    /**
-     * Update data for all sources in database.
-     */
-    private fun updateData() = GlobalScope.launch(Dispatchers.IO) {
-        val isWifiOnly = prefs.value.getPrefs().getBoolean(REFRESH_ONLY_WIFI, REFRESH_ONLY_WIFI_DEFAULT)
-        val isWifiAvailable = isWifiAvailable(context!!)
-        if (!isWifiOnly || isWifiOnly && isWifiAvailable)
-            ideNewsRepository.value.refreshData()
+        if (isBootComplete && isNotifEnabled)
+            context?.let { it1 -> startAlarm(it1, getAlarmTime(notifTime), NOTIFICATION) }
+        else
+            createNotification()
     }
 
     /**
      * Create notification, and set on click.
      * @param bookedUserNameList Booked user name list.
      */
-    private fun createNotification(){//bookedUserNameList: List<String>) {
+    private fun createNotification() {//bookedUserNameList: List<String>) {
         // Create notification.
 //        val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, CHANNEL_ID)
 //            .setSmallIcon(R.drawable.ic_base_logo_black)
