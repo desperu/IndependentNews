@@ -1,6 +1,5 @@
 package org.desperu.independentnews.database.dao
 
-import android.database.Cursor
 import androidx.room.*
 import org.desperu.independentnews.models.Article
 
@@ -13,16 +12,6 @@ interface ArticleDao {
     // -----------------
     // GETTERS
     // -----------------
-
-    /**
-     * Returns the article from database ordered for given id.
-     *
-     * @param id the id of the article to get from database.
-     *
-     * @return the cursor access for the corresponding article.
-     */
-    @Query("SELECT * FROM article WHERE id = :id")
-    fun getArticleWithCursor(id: Long): Cursor?
 
     /**
      * Returns the article from database ordered for given id.
@@ -215,7 +204,7 @@ interface ArticleDao {
      * @return the row id for the inserted article.
      */
     @Insert
-    suspend fun insertArticles(vararg articles: Article)//: List<Long>
+    suspend fun insertArticles(vararg articles: Article): List<Long>
 
     // -----------------
     // UPDATE
@@ -301,7 +290,9 @@ interface ArticleDao {
      * Delete the older articles than the limit millis in database.
      *
      * @param limitMillis the limit millis for which older articles are deleted in database.
+     *
+     * @return the number of row affected.
      */
     @Query("DELETE FROM Article WHERE publishedDate < :limitMillis")
-    suspend fun removeOldArticles(limitMillis: Long)
+    suspend fun removeOldArticles(limitMillis: Long): Int
 }

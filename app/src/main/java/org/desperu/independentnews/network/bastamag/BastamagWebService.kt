@@ -28,44 +28,4 @@ interface BastamagWebService {
     suspend fun getCategory(@Path("category") category: String,
                             @Query("debut_articles") number: String
     ): ResponseBody
-
-//    /**
-//     * Request get for Top Stories.
-//     * @param section Section name.
-//     * @param apiKey Api key of this application.
-//     * @return An Observable object of NyTimesAPI model.
-//     */
-//    @GET("topstories/v2/{section}.json")
-//    fun getNyTimesTopStories(
-//        @Path("section") section: String?,
-//        @Query("api-key") apiKey: String?
-//    ): Observable<NyTimesAPI?>?
-//
-//    /**
-//     * Request get for Most Popular.
-//     * @param apiKey Api key of this application.
-//     * @return An Observable object of NyTimesAPI model.
-//     */
-//    @GET("mostpopular/v2/viewed/1.json")
-//    fun getNyTimesMostPopular(@Query("api-key") apiKey: String?): Observable<NyTimesAPI?>?
-//
-//    /**
-//     * Request get for New York Times Search.
-//     * @param queryTerms Search query terms.
-//     * @param beginDate Begin date to search.
-//     * @param endDate End date to search.
-//     * @param sections Sections into search.
-//     * @param sort Order to sort.
-//     * @param apiKey Api key of this application.
-//     * @return An Observable object of NyTimesAPI model.
-//     */
-//    @GET("search/v2/articlesearch.json")
-//    fun getNyTimesSearch(
-//        @Query(value = "q", encoded = true) queryTerms: String?,
-//        @Query("begin_date") beginDate: String?,
-//        @Query("end_date") endDate: String?,
-//        @Query("fq") sections: String?,
-//        @Query("sort") sort: String?,
-//        @Query("api-key") apiKey: String?
-//    ): Observable<NyTimesAPI?>?
 }

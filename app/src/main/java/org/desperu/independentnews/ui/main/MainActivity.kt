@@ -10,6 +10,7 @@ import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.google.android.material.navigation.NavigationView.OnNavigationItemSel
 import icepick.State
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.layout_filter_motion.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -176,10 +178,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 //        toolbar_search_view != null && toolbar_search_view.isShown ->
 //            switchSearchView(false, isReload = false)
 //
-//        // If map is expended in estate detail fragment, collapse it.
-//        fm.mapsFragmentChildDetail?.view?.findViewById<ImageButton>(R.id.fragment_maps_fullscreen_button)?.tag == FULL_SIZE ->
-//            MapMotionLayout(this, fm.mapsFragmentChildDetail?.view).switchMapSize()
-// TODO if filter expanded click on close icon
+        // If filter motion is expended, collapse it.
+        view_pager.isVisible ->
+        { close_icon.performClick(); Unit }
+
         // If current fragment is Top Story, remove it and call super to finish activity.
         fragmentKey == FRAG_TOP_STORY -> {
             fm.clearAllBackStack()

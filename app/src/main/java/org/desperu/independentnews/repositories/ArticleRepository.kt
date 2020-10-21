@@ -21,8 +21,10 @@ interface ArticleRepository {
      * Persists (update the existing ones, and insert the non-existing ones) the articles in database.
      *
      * @param articleList the articles list to persist.
+     *
+     * @return the id list of persisted articles.
      */
-    suspend fun persist(articleList: List<Article>)
+    suspend fun persist(articleList: List<Article>): List<Long>
 
     /**
      * Update top story values if needed in database
@@ -31,8 +33,10 @@ interface ArticleRepository {
 
     /**
      * Delete the older articles than the limit millis, in the database.
+     *
+     * @return the number of row affected.
      */
-    suspend fun removeOldArticles()
+    suspend fun removeOldArticles(): Int
 
     /**
      * Returns the list of filtered articles from database.
@@ -96,8 +100,10 @@ class ArticleRepositoryImpl(
      * Persists (update the existing ones, and insert the non-existing ones) the articles in database.
      *
      * @param articleList the articles list to persist.
+     *
+     * @return the id list of inserted sources.
      */
-    override suspend fun persist(articleList: List<Article>) = withContext(Dispatchers.IO) {
+    override suspend fun persist(articleList: List<Article>): List<Long> = withContext(Dispatchers.IO) {
         val urlsToUpdate = getExistingUrls(articleList)
 
         val articleListPair = articleList.partition { article -> urlsToUpdate.contains(article.url) }
@@ -149,8 +155,10 @@ class ArticleRepositoryImpl(
 
     /**
      * Delete the older articles than the limit millis, in the database.
+     *
+     * @return the number of row affected.
      */
-    override suspend fun removeOldArticles()= withContext(Dispatchers.IO) {
+    override suspend fun removeOldArticles(): Int = withContext(Dispatchers.IO) {
         val nowMillis = Calendar.getInstance().timeInMillis
         val storeDelay = prefs.getPrefs().getInt(STORE_DELAY, STORE_DELAY_DEFAULT)
         articleDao.removeOldArticles(storeDelayMillis(nowMillis, storeDelay))

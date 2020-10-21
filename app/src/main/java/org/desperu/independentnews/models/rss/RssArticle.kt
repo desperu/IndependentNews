@@ -4,6 +4,7 @@ import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
 import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
+import org.desperu.independentnews.extension.parseHtml.getIndex
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.P
@@ -65,7 +66,7 @@ data class RssArticle(
             url = url.mToString(),
             title = title.mToString(),
             author = author.mToString(),
-            description = Jsoup.parse(description.mToString()).select(P)[0].ownText(),
+            description = Jsoup.parse(description.mToString()).select(P).getIndex(0)?.ownText().mToString(),
             isTopStory = true
         )
 

@@ -49,13 +49,15 @@ interface SourceRepository {
      * Insert the given sources in database.
      *
      * @param sources the sources to insert.
+     *
+     * @return the id list of inserted sources.
      */
-    suspend fun insertSources(vararg sources: Source)
+    suspend fun insertSources(vararg sources: Source): List<Long>
 
     /**
      * Create all sources in database for first apk start.
      */
-    suspend fun createSourcesForFirstStart()
+    suspend fun createSourcesForFirstStart(): List<Long>
 }
 
 /**
@@ -108,8 +110,10 @@ class SourceRepositoryImpl(private val sourceDao: SourceDao): SourceRepository {
      * Insert the given sources in database.
      *
      * @param sources the sources to insert.
+     *
+     * @return the id list of inserted sources.
      */
-    override suspend fun insertSources(vararg sources: Source) = withContext(Dispatchers.IO) {
+    override suspend fun insertSources(vararg sources: Source): List<Long> = withContext(Dispatchers.IO) {
         sourceDao.insertSources(*sources)
     }
 

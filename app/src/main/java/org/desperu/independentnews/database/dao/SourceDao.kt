@@ -36,9 +36,10 @@ interface SourceDao {
     /**
      * Inserts the given source in database.
      * @param sources the sources to insert in database.
+     * @return the id list of inserted sources.
      */
     @Insert
-    suspend fun insertSources(vararg sources: Source)
+    suspend fun insertSources(vararg sources: Source): List<Long>
 
     /**
      * Set the source with the given name as enabled in database.
@@ -59,7 +60,7 @@ interface SourceDao {
      * @param name            the name of the source.
      */
     @Query("UPDATE source SET editorialUrl=:editorialUrl, editorial=:editorial, imageId=:image WHERE name=:name")
-    suspend fun update(editorialUrl: String, editorial: String, image: Int, name: String)
+    suspend fun update(editorialUrl: String, editorial: String, image: Int, name: String): Int
 
     /**
      * Update the given source in database.

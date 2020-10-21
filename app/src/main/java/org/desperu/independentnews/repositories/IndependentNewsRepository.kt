@@ -18,19 +18,25 @@ interface IndependentNewsRepository {
 
     /**
      * Fetch the list of articles from the Rss flux for all sources.
+     *
+     * @return the id list of persisted articles.
      */
-    suspend fun fetchRssArticles()
+    suspend fun fetchRssArticles(): List<Long>
 
     /**
      * Fetch the categories list of articles from the Web Site for all sources.
+     *
+     * @return the id list of persisted articles.
      */
-    suspend fun fetchCategories()
+    suspend fun fetchCategories(): List<Long>
 
     /**
-     * Refresh data for the application, fetch data from Rss and Web, and persist them
-     * into the database.
+     * Refresh data for the application, fetch data from Rss and Web, persist them
+     * into the database, and remove old articles.
+     *
+     * @return the number of row affected for removed articles.
      */
-    suspend fun refreshData()
+    suspend fun refreshData(): Int
 
     /**
      * Returns the top story list of articles from the database.
@@ -109,8 +115,10 @@ class IndependentNewsRepositoryImpl(
     /**
      * Fetch the list of articles from the Rss flux of all enabled sources,
      * and persist them in database.
+     *
+     * @return the id list of persisted articles.
      */
-    override suspend fun fetchRssArticles() = withContext(Dispatchers.IO) {
+    override suspend fun fetchRssArticles(): List<Long> = withContext(Dispatchers.IO) {
         setSources()
         val rssArticleList = mutableListOf<Article>()
         try {
@@ -131,8 +139,10 @@ class IndependentNewsRepositoryImpl(
     /**
      * Fetch the categories list of articles from the Web Site for enabled all sources,
      * and persist them in database.
+     *
+     * @return the id list of persisted articles.
      */
-    override suspend fun fetchCategories() = withContext(Dispatchers.IO) {
+    override suspend fun fetchCategories(): List<Long> = withContext(Dispatchers.IO) {
         setSources()
         val articleList = mutableListOf<Article>()
         try {
@@ -153,8 +163,10 @@ class IndependentNewsRepositoryImpl(
     /**
      * Refresh data for the application, fetch data from Rss and Web, and persist them
      * into the database.
+     *
+     * @return the number of row affected for removed articles.
      */
-    override suspend fun refreshData() = withContext(Dispatchers.IO) {
+    override suspend fun refreshData(): Int = withContext(Dispatchers.IO) {
         fetchRssArticles()
         fetchCategories()
         articleRepository.removeOldArticles()

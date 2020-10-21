@@ -31,7 +31,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 @Entity
 data class Source(@PrimaryKey(autoGenerate = true)
-                  val id: Long = 0L,
+                  var id: Long = 0L,
                   var name: String = "",
                   var url: String = "",
                   var editorialUrl: String = "",
