@@ -1,7 +1,7 @@
 package org.desperu.independentnews.base.html
 
 import okhttp3.ResponseBody
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
+import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
 import org.desperu.independentnews.utils.HREF
 import org.desperu.independentnews.utils.a
 import org.jsoup.Jsoup
@@ -38,19 +38,16 @@ abstract class BaseHtmlArticle(private val htmlPage: ResponseBody): BaseHtml(htm
 
     /**
      * Correct all url links with their full url in the given html code.
+     *
      * @param html the html code to correct.
+     * @param baseUrl the base url of the link.
+     *
      * @return the html code with corrected url links.
      */
-    protected fun correctUrlLink(html: String?): String? = // TODO create design mistake why ???? for bastamag, do it when click on link in web view
+    protected fun correctUrlLink(html: String?, baseUrl: String): String? =
         if (!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
-
-            document.select(a).forEach {
-                val urlLink = it.attr(HREF)
-                if (!urlLink.contains("http"))
-                    it.attr(HREF, BASTAMAG_BASE_URL + urlLink)
-            }
-
+            document.select(a).forEach { it.attrToFullUrl(HREF, baseUrl) }
             document.toString()
         } else
             null

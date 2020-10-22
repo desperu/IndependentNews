@@ -31,7 +31,7 @@ data class ReporterreCategory(private val htmlPage: ResponseBody,
             //it.allElements.select(SPAN).getMatchAttr(CLASS, "petit_vert").ownText()
         }
 
-        if (articleUrlList.isNotEmpty() && topStory != articleUrlList[0])
+        if (articleUrlList.isNotEmpty() && !articleUrlList.contains(topStory))
             topStory?.let { articleUrlList.add(it) }
 
         return articleUrlList

@@ -2,13 +2,18 @@ package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
+import org.desperu.independentnews.extension.parseHtml.*
+import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
 import org.desperu.independentnews.extension.parseHtml.getChild
 import org.desperu.independentnews.extension.parseHtml.getIndex
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
+import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Element
 
 /**
  * Class which provides a model to parse bastamag article html page.
@@ -27,44 +32,45 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     // --- GETTERS ---
 
     override fun getTitle(): String? =
-        findData(H1, ITEMPROP, HEADLINE, null)?.getChild(0)?.text()
+        findData(H1, ITEMPROP, HEADLINE, null).getChild(0)?.text()
 
     override fun getSection(): String? =
-        findData(SPAN, CLASS, DIVIDER, 1)?.parent()?.getChild(0)?.ownText()
+        findData(SPAN, CLASS, DIVIDER, 1)?.parent().getChild(0)?.ownText()
 
     override fun getTheme(): String? =
         findData(HEADER, CLASS, CARTOUCHE, null)
             ?.ownerDocument()?.select(P).getIndex(0)?.ownText()
 
     override fun getAuthor() : String? =
-        findData(SPAN, ITEMPROP, AUTHOR, null)?.getChild(0)?.text()
+        findData(SPAN, ITEMPROP, AUTHOR, null).getChild(0)?.text()
 
     override fun getPublishedDate(): String? =
         findData(TIME, PUBDATE, PUBDATE, null)?.attr(DATETIME)
 
     override fun getArticle(): String? =
         setMainCssId(
-            correctImagesUrl(
+            correctMediaUrl(
                 correctUrlLink(
-                    findData(DIV, CLASS, MAIN, null)?.outerHtml()
+                    findData(DIV, CLASS, MAIN, null)?.outerHtml(),
+                    BASTAMAG_BASE_URL
                 )
             )
         )
 
     override fun getDescription(): String? =
-        findData(DIV, ITEMPROP, DESCRIPTION, null)?.getChild(0)?.text()
+        findData(DIV, ITEMPROP, DESCRIPTION, null).getChild(0)?.text()
 
     override fun getImage(): List<String?> {
         val element = findData(IMG, ITEMPROP, IMAGE, null)
         return listOf(
-            BASTAMAG_BASE_URL + element?.attr(SRC),
+            element?.attr(SRC).toFullUrl(BASTAMAG_BASE_URL),
             element?.attr(WIDTH),
             element?.attr(HEIGHT)
         )
     }
 
     override fun getCssUrl(): String? =
-        BASTAMAG_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
+        findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
     /**
      * Convert BastamagArticle to Article.
@@ -93,17 +99,34 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     }
 
     /**
-     * Correct all images url's with their full url's in the given html code.
+     * Correct all media url's with their full url's in the given html code.
      * @param html the html code to correct.
-     * @return the html code with corrected images url's.
+     * @return the html code with corrected media url's.
      */
-    private fun correctImagesUrl(html: String?): String? =
+    private fun correctMediaUrl(html: String?): String? =
         if (!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
-            document.select(IMG).forEach { it.attr(SRC, BASTAMAG_BASE_URL + it.attr(SRC)) }
+
+            document.select(IMG).forEach {
+                it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
+                correctSrcSetUrls(it)
+            }
+
+            document.select(SOURCE_TAG).forEach { correctSrcSetUrls(it) }
+            document.select(AUDIO).forEach { it.attrToFullUrl(SRC, BASTAMAG_BASE_URL) }
             document.toString()
         } else
             null
+
+    /**
+     * Correct the srcset url value of the given element with their full url.
+     * @param element the element for which correct url's.
+     */
+    private fun correctSrcSetUrls(element: Element) {
+        val srcSetList = deConcatenateStringToMutableList(element.attr(SRCSET))
+        val correctedList = srcSetList.map { it.toFullUrl(BASTAMAG_BASE_URL) }
+        element.attr(SRCSET, concatenateStringFromMutableList(correctedList.toMutableList()))
+    }
 
     /**
      * Set main css id to apply css style to the article body.

@@ -20,10 +20,7 @@ import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.utils.BASTAMAG
-import org.desperu.independentnews.utils.REPORTERRE
-import org.desperu.independentnews.utils.TEXT_SIZE
-import org.desperu.independentnews.utils.TEXT_SIZE_DEFAULT
+import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -128,14 +125,9 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             javaScriptCanOpenWindowsAutomatically = true
             setSupportZoom(true)
             builtInZoomControls = true
-            displayZoomControls = true
-            setNeedInitialFocus(false)
-            setAppCacheEnabled(true)
-            saveFormData = true
-            textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
-            // Needed to correct Bastamag article text size.
-            if (article.sourceName == BASTAMAG)
-                web_view.settings.textZoom += 20
+//            setNeedInitialFocus(false)
+//            setAppCacheEnabled(true)
+//            saveFormData = true
         }
 
         // Set css style for the web view.
@@ -146,7 +138,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     }
 
     /**
-     * Web view client for the web view, with some things ...
+     * Web view client for the web view.
      */
     private val webViewClient = object : WebViewClient() {
 
@@ -155,17 +147,17 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             super.onPageStarted(view, url, favicon)
             url?.let {
                 actualUrl = url
+                updateTextSize()
+
+                // Handle web view navigation
                 hideArticleDataContainer(!isSourceUrl(url))
-
-
                 if (!isSourceUrl(url)) {
                     sv.scrollY = 0
                     article_loading_progress_bar.apply { show(); visibility = View.VISIBLE }
 
                     navigationCount += 1
-                    if (navigationCount == 1) {
+                    if (navigationCount == 1)
                         article_scroll_view.visibility = View.INVISIBLE
-                    }
                 } else
                     navigationCount = 0
             }
@@ -176,7 +168,16 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             article_loading_progress_bar.hide()
             article_scroll_view.visibility = View.VISIBLE
             web_view.settings.textZoom = web_view.settings.textZoom
+            url?.let { if (isSourceUrl(it) && scrollPosition > -1) restoreScrollPosition() }
             super.onPageFinished(view, url)
+        }
+
+        override fun shouldOverrideUrlLoading(
+            view: WebView?,
+            request: WebResourceRequest?
+        ): Boolean {
+            saveScrollPosition()
+            return super.shouldOverrideUrlLoading(view, request)
         }
     }
 
@@ -201,7 +202,10 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
     override fun onBackPressed() = when {
         inCustomView -> hideCustomView()
-        web_view.canGoBack() -> web_view.goBack()
+        web_view.canGoBack() -> {
+            article_scroll_view.visibility = View.INVISIBLE
+            web_view.goBack()
+        }
         else -> super.onBackPressed()
     }
 
@@ -292,9 +296,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     /**
      * Save the scroll position of the scroll view.
      */
-    override fun saveScrollPosition() {
-        scrollPosition = sv.scrollY
-    }
+    override fun saveScrollPosition() { scrollPosition = sv.scrollY }
 
     /**
      * Restore the saved scroll position of the scroll view.
@@ -355,6 +357,19 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
         (web_view.layoutParams as LinearLayout.LayoutParams).setMargins(margins)
     }
 
+    /**
+     * Update web view text size with the selected value in settings.
+     * Special text size correction for Bastamag.
+     */
+    private fun updateTextSize() {
+        web_view.settings.apply {
+            textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
+            // Needed to correct Bastamag article text size.
+            if (isSourceUrl(actualUrl) && article.sourceName == BASTAMAG)
+                textZoom += 20
+        }
+    }
+
     // --------------
     // UTILS
     // --------------
@@ -375,11 +390,12 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
         // Add data to the intent, the receiving app will decide
         // what to do with it.
         if (isSourceUrl(actualUrl)) {
-            share.putExtra(Intent.EXTRA_SUBJECT, web_view.title)
-            share.putExtra(Intent.EXTRA_TEXT, actualUrl)
-        } else {
             share.putExtra(Intent.EXTRA_SUBJECT, article.title)
             share.putExtra(Intent.EXTRA_TEXT, article.url)
+
+        } else {
+            share.putExtra(Intent.EXTRA_SUBJECT, web_view.title)
+            share.putExtra(Intent.EXTRA_TEXT, actualUrl)
         }
 
         startActivity(Intent.createChooser(share, getString(R.string.show_article_activity_share_chooser_title)))

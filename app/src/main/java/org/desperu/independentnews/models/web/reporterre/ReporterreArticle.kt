@@ -2,8 +2,10 @@ package org.desperu.independentnews.models.web.reporterre
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
+import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
 import org.desperu.independentnews.extension.parseHtml.getAuthor
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
@@ -53,10 +55,11 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         findData(SPAN, CLASS, DATEPUBLICATION, null)?.text()
 
     override fun getArticle(): String? =
-        correctImagesUrl(
+        correctMediaUrl(
             addDescription(
                 correctUrlLink(
-                    findData(DIV, CLASS, TEXTE, null)?.outerHtml()
+                    findData(DIV, CLASS, TEXTE, null)?.outerHtml(),
+                    REPORTERRE_BASE_URL
                 )
             )
         )
@@ -66,14 +69,14 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     override fun getImage(): List<String?> {
         val element = findData(IMG, CLASS, REPO_IMAGE_CLASS, null)
         return listOf(
-            REPORTERRE_BASE_URL + element?.attr(SRC),
+            element?.attr(SRC).toFullUrl(REPORTERRE_BASE_URL),
             element?.attr(WIDTH),
             element?.attr(HEIGHT)
         )
     }
 
     override fun getCssUrl(): String? =
-        REPORTERRE_BASE_URL + findData(LINK, REL, STYLESHEET, null)?.attr(HREF)
+        findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
     /**
      * Convert ReporterreArticle to Article.
@@ -102,18 +105,20 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     }
 
     /**
-     * Correct all images url's with their full url's in the given html code.
+     * Correct all media url's with their full url's in the given html code.
      * @param html the html code to correct.
-     * @return the html code with corrected images url's.
+     * @return the html code with corrected media url's.
      */
-    private fun correctImagesUrl(html: String?): String? =
+    private fun correctMediaUrl(html: String?): String? =
         if (!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
+
             document.select(IMG).forEach {
                 val dataOriginal = it.attr(DATA_ORIGINAL)
                 val urlLink = if (!dataOriginal.isNullOrBlank()) dataOriginal else it.attr(SRC)
-                it.attr(SRC, REPORTERRE_BASE_URL + urlLink)
-            }
+                it.attr(SRC, urlLink.toFullUrl(REPORTERRE_BASE_URL)) }
+
+            document.select(AUDIO).forEach { it.attrToFullUrl(SRC, REPORTERRE_BASE_URL) }
             document.toString()
         } else
             null
