@@ -28,11 +28,17 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
 
-    private val articleItemPadding: Float by bindDimen(context, R.dimen.item_article_padding)
-    private val originalWidth = context.screenWidth - 48.dp
-    private val expandedWidth = context.screenWidth - 24.dp
+    private val itemPadding: Float by bindDimen(context, R.dimen.item_article_padding)
+    private val minusOriginalWidth: Float by bindDimen(context, R.dimen.item_article_minus_screen_width_original)
+    private val minusExpandedWidth: Float by bindDimen(context, R.dimen.item_article_minus_screen_width_expanded)
+    private val originalWidth = context.screenWidth - minusOriginalWidth
+    private val expandedWidth = context.screenWidth - minusExpandedWidth
     private var originalHeight = -1 // will be calculated dynamically
     private var expandedHeight = -1 // will be calculated dynamically
+    private val expandHeightAdd: Float by bindDimen(context, R.dimen.item_article_expand_view_height_add)
+    private val originalImageSize: Float by bindDimen(context, R.dimen.item_article_image_width_height)
+    private val expandedImageSize: Float by bindDimen(context, R.dimen.item_article_image_width_height_expanded)
+    private val originalLength = context.resources.getInteger(R.integer.item_article_title_text_length_collapsed)
 
     private var list: MutableList<Any> = mutableListOf()
     internal var filteredList: MutableList<Any> = mutableListOf()
@@ -79,6 +85,9 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     }
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
+        // set data in item
+        holder.bind(adapterList[position])
+
         val model = adapterList[position]
 
         expandItem(holder, model == expandedModel, animate = false)
@@ -112,9 +121,6 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
                 }
             }
         }
-
-        // set data in item
-        holder.bind(adapterList[position])
     }
 
     /**
@@ -158,8 +164,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
                 // layout phase which causes issues with hiding expandView.
                 holder.expandView.isVisible = true
                 holder.title.maxLines = 5
-                view.doOnPreDraw {// TODO use dimens
-                    expandedHeight = view.height + 20.dp// + if (length > 200) 100.dp else 50.dp
+                view.doOnPreDraw {
+                    expandedHeight = view.height + expandHeightAdd.toInt()
                     holder.title.maxLines = 2
                     holder.expandView.isVisible = false
                 }
@@ -186,18 +192,15 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
         holder.chevron.rotation = 90 * progress
 
-        // TODO animate text length with input filter ??
-        holder.title.maxLines = if (progress > 0.4f) 5 else 2
-        val originalLength = 56
+        holder.title.maxLines = if (progress > 0.1f) 5 else 2
         val title = (adapterList[holder.adapterPosition] as ArticleItemViewModel).article.title
         val expandedLength = title.length
         holder.title.filters = arrayOf(InputFilter.LengthFilter((originalLength + (expandedLength - originalLength) * progress).toInt()))
         holder.title.text = title
 
-        // TODO use dimens ...
         holder.image.layoutParams.apply {
-            height = (75.dp + (90.dp - 75.dp) * progress).toInt()
-            width = (75.dp + (90.dp - 75.dp) * progress).toInt()
+            height = (originalImageSize + (expandedImageSize - originalImageSize) * progress).toInt()
+            width = (originalImageSize + (expandedImageSize - originalImageSize) * progress).toInt()
         }
     }
 
@@ -251,7 +254,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         holder.scaleContainer.scaleX = 1 - 0.05f * progress
         holder.scaleContainer.scaleY = 1 - 0.05f * progress
 
-        val animatedPadding = (articleItemPadding * (1 - 0.2f * progress)).toInt()
+        val animatedPadding = (itemPadding * (1 - 0.2f * progress)).toInt()
         holder.scaleContainer.setPadding(
                 animatedPadding,
                 animatedPadding,
@@ -259,17 +262,6 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
                 animatedPadding
         )
 
-        // TODO use dimens
-//        holder.image.layoutParams.apply {
-//            height = (75.dp + (70.dp - 75.dp) * progress).toInt()
-//            width = (75.dp + (70.dp - 75.dp) * progress).toInt()
-//
-//        }
-//        (holder.image.layoutParams  as RelativeLayout.LayoutParams).apply {
-//            marginStart = (20.dp * progress).toInt()
-//            alignWithParent = true
-//
-//        }
         holder.image.scaleX = 1 - 0.05f * progress
         holder.image.scaleY = 1 - 0.05f * progress
 

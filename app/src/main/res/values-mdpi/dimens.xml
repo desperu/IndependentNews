@@ -10,10 +10,10 @@
     <dimen name="default_middle_margin">16dp</dimen>
     <dimen name="default_margin">10dip</dimen>
     <dimen name="default_little_margin">4dp</dimen>
-    <dimen name="default_title_size">20sp</dimen>
-    <dimen name="default_text_size">14sp</dimen>
-    <dimen name="default_text_size_mini">10sp</dimen>
-    <dimen name="default_edit_text_size">18sp</dimen>
+    <dimen name="default_title_size">22sp</dimen>
+    <dimen name="default_text_size">18sp</dimen>
+    <dimen name="default_text_size_mini">11sp</dimen>
+    <dimen name="default_edit_text_size">20sp</dimen>
     <dimen name="default_elevation">10dp</dimen>
 
     <!-- LAYOUTS -->
@@ -29,17 +29,17 @@
     <dimen name="item_article_minus_screen_width_original">40dp</dimen>
     <dimen name="item_article_minus_screen_width_expanded">20dp</dimen>
     <dimen name="item_article_source_image_width_height">10dp</dimen>
-    <dimen name="item_article_source_section_theme_text_size">12sp</dimen>
+    <dimen name="item_article_source_section_theme_text_size">14sp</dimen>
     <dimen name="item_article_title_margin_top">4dp</dimen>
     <dimen name="item_article_author_and_date_margin_top">6dp</dimen>
-    <dimen name="item_article_title_text_size">16sp</dimen>
-    <item name="item_article_title_text_length_collapsed" type="integer">58</item>
-    <dimen name="item_article_image_width_height">76dp</dimen>
-    <dimen name="item_article_image_width_height_expanded">90dp</dimen>
-    <dimen name="item_article_image_vertical_margin">6dp</dimen>
+    <dimen name="item_article_title_text_size">18sp</dimen>
+    <item name="item_article_title_text_length_collapsed" type="integer">70</item>
+    <dimen name="item_article_image_width_height">80dp</dimen>
+    <dimen name="item_article_image_width_height_expanded">96dp</dimen>
+    <dimen name="item_article_image_vertical_margin">8dp</dimen>
     <dimen name="item_article_expand_view_padding_top">36dp</dimen>
-    <dimen name="item_article_expand_view_height_add">22dp</dimen>
-    <dimen name="item_article_description_text_size">14sp</dimen>
+    <dimen name="item_article_expand_view_height_add">40dp</dimen>
+    <dimen name="item_article_description_text_size">16sp</dimen>
 
     <!-- Layout Filter Motion -->
     <dimen name="fab_size">72dp</dimen>
@@ -55,20 +55,20 @@
 
     <!-- Filter Layout -->
     <dimen name="filter_layout_padding">32dp</dimen>
-    <dimen name="sheet_peek_height">340dp</dimen>
+    <dimen name="sheet_peek_height">340dp</dimen> <!-- TODO landscape mistake... too large size, must update with screen rotation -->
     <dimen name="filter_first_linear_margin_top">8dp</dimen>
     <dimen name="filter_linear_margin_top">24dp</dimen>
     <dimen name="filter_pill_padding_horizontal">30dp</dimen>
     <dimen name="filter_pill_padding_vertical">16dp</dimen>
     <dimen name="filter_pill_margin_start">16dp</dimen>
     <dimen name="filter_date_picker_width">130dp</dimen>
-    <dimen name="filter_date_picker_text_size">16sp</dimen>
+    <dimen name="filter_date_picker_text_size">18sp</dimen>
     <!-- Item Filter Tab -->
     <dimen name="tabs_height">64dp</dimen>
     <dimen name="tab_item_width">110dp</dimen>
     <dimen name="tab_item_title_height">26dp</dimen>
     <dimen name="tab_title_margin_end">16dp</dimen>
-    <dimen name="tab_item_title_text_size">20sp</dimen>
+    <dimen name="tab_item_title_text_size">22sp</dimen>
     <dimen name="tab_badge_width">16dp</dimen>
     <dimen name="tab_badge_height">@dimen/tab_badge_width</dimen>
     <dimen name="tab_badge_margin_top">-6dp</dimen>
@@ -84,31 +84,31 @@
     <dimen name="article_loading_progress_bar_width_height">150dp</dimen>
     <dimen name="article_scroll_margin_top">2dp</dimen>
     <dimen name="article_image_source_width_height">16dp</dimen>
-    <dimen name="article_title_text_size">24sp</dimen>
+    <dimen name="article_title_text_size">26sp</dimen>
     <dimen name="article_image_min_width_height">300dp</dimen>
 
     <!-- Settings Activity -->
     <dimen name="activity_settings_linear_container_padding_top">10dp</dimen>
     <dimen name="activity_settings_text_category_and_divider_margin">10dp</dimen>
-    <dimen name="activity_settings_text_category_text_size">18sp</dimen>
+    <dimen name="activity_settings_text_category_text_size">22sp</dimen>
     <dimen name="activity_settings_text_category_padding_start_and_end">6dp</dimen>
     <dimen name="activity_settings_divider_height">0.4dp</dimen>
     <dimen name="activity_settings_constraint_container_padding">10dp</dimen>
     <dimen name="activity_settings_constraint_container_padding_start_and_end">16dp</dimen>
-    <dimen name="activity_settings_text_setting_title_text_size">16sp</dimen>
+    <dimen name="activity_settings_text_setting_title_text_size">20sp</dimen>
     <dimen name="activity_settings_text_setting_description_margin_top_and_end">10dp</dimen>
-    <dimen name="activity_settings_text_settings_description_text_size">14sp</dimen>
+    <dimen name="activity_settings_text_settings_description_text_size">18sp</dimen>
     <dimen name="activity_settings_text_zoom_value_margin_end">16dp</dimen>
-    <dimen name="activity_settings_text_zoom_value_text_size">18sp</dimen>
+    <dimen name="activity_settings_text_zoom_value_text_size">22sp</dimen>
 
     <!-- MENU -->
     <!-- Toolbar -->
-    <dimen name="toolbar_title_text_size">28sp</dimen>
+    <dimen name="toolbar_title_text_size">30sp</dimen>
 
     <!-- Menu Drawer -->
     <dimen name="nav_header_height">250dp</dimen>
     <dimen name="nav_header_padding_top">24dp</dimen>
-    <dimen name="nav_header_text_app_size">30sp</dimen>
-    <dimen name="nav_drawer_text_item_text_size_theme">14sp</dimen>
+    <dimen name="nav_header_text_app_size">32sp</dimen>
+    <dimen name="nav_drawer_text_item_text_size_theme">16sp</dimen>
 
 </resources>

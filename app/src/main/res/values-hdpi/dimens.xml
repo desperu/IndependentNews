@@ -6,40 +6,40 @@
     <item name="wrap_content" format="integer" type="dimen">-2</item>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="default_large_margin">20dip</dimen>
-    <dimen name="default_middle_margin">16dp</dimen>
-    <dimen name="default_margin">10dip</dimen>
+    <dimen name="default_large_margin">16dip</dimen>
+    <dimen name="default_middle_margin">12dp</dimen>
+    <dimen name="default_margin">8dip</dimen>
     <dimen name="default_little_margin">4dp</dimen>
     <dimen name="default_title_size">20sp</dimen>
-    <dimen name="default_text_size">14sp</dimen>
-    <dimen name="default_text_size_mini">10sp</dimen>
-    <dimen name="default_edit_text_size">18sp</dimen>
+    <dimen name="default_text_size">6sp</dimen>
+    <dimen name="default_text_size_mini">9sp</dimen>
+    <dimen name="default_edit_text_size">17sp</dimen>
     <dimen name="default_elevation">10dp</dimen>
 
     <!-- LAYOUTS -->
 
     <!-- Main Activity -->
     <!-- Fragment Article List -->
-    <dimen name="recycler_view_padding_top">20dp</dimen>
+    <dimen name="recycler_view_padding_top">16dp</dimen>
     <dimen name="no_article_find_text_size">50sp</dimen>
     <!-- Item Article -->
     <dimen name="item_article_corner_radius">6dp</dimen>
     <dimen name="item_article_elevation">0dp</dimen>
-    <dimen name="item_article_padding">16dp</dimen>
-    <dimen name="item_article_minus_screen_width_original">40dp</dimen>
-    <dimen name="item_article_minus_screen_width_expanded">20dp</dimen>
+    <dimen name="item_article_padding">12dp</dimen>
+    <dimen name="item_article_minus_screen_width_original">32dp</dimen>
+    <dimen name="item_article_minus_screen_width_expanded">16dp</dimen>
     <dimen name="item_article_source_image_width_height">10dp</dimen>
-    <dimen name="item_article_source_section_theme_text_size">12sp</dimen>
+    <dimen name="item_article_source_section_theme_text_size">11sp</dimen>
     <dimen name="item_article_title_margin_top">4dp</dimen>
     <dimen name="item_article_author_and_date_margin_top">6dp</dimen>
-    <dimen name="item_article_title_text_size">16sp</dimen>
-    <item name="item_article_title_text_length_collapsed" type="integer">58</item>
-    <dimen name="item_article_image_width_height">76dp</dimen>
-    <dimen name="item_article_image_width_height_expanded">90dp</dimen>
+    <dimen name="item_article_title_text_size">15sp</dimen>
+    <item name="item_article_title_text_length_collapsed" type="integer">50</item>
+    <dimen name="item_article_image_width_height">70dp</dimen>
+    <dimen name="item_article_image_width_height_expanded">80dp</dimen>
     <dimen name="item_article_image_vertical_margin">6dp</dimen>
     <dimen name="item_article_expand_view_padding_top">36dp</dimen>
     <dimen name="item_article_expand_view_height_add">22dp</dimen>
-    <dimen name="item_article_description_text_size">14sp</dimen>
+    <dimen name="item_article_description_text_size">13sp</dimen>
 
     <!-- Layout Filter Motion -->
     <dimen name="fab_size">72dp</dimen>
@@ -54,7 +54,7 @@
     <dimen name="fab_pressed_elevation">8dp</dimen>
 
     <!-- Filter Layout -->
-    <dimen name="filter_layout_padding">32dp</dimen>
+    <dimen name="filter_layout_padding">24dp</dimen>
     <dimen name="sheet_peek_height">340dp</dimen>
     <dimen name="filter_first_linear_margin_top">8dp</dimen>
     <dimen name="filter_linear_margin_top">24dp</dimen>
@@ -88,27 +88,27 @@
     <dimen name="article_image_min_width_height">300dp</dimen>
 
     <!-- Settings Activity -->
-    <dimen name="activity_settings_linear_container_padding_top">10dp</dimen>
-    <dimen name="activity_settings_text_category_and_divider_margin">10dp</dimen>
-    <dimen name="activity_settings_text_category_text_size">18sp</dimen>
-    <dimen name="activity_settings_text_category_padding_start_and_end">6dp</dimen>
-    <dimen name="activity_settings_divider_height">0.4dp</dimen>
-    <dimen name="activity_settings_constraint_container_padding">10dp</dimen>
-    <dimen name="activity_settings_constraint_container_padding_start_and_end">16dp</dimen>
-    <dimen name="activity_settings_text_setting_title_text_size">16sp</dimen>
-    <dimen name="activity_settings_text_setting_description_margin_top_and_end">10dp</dimen>
-    <dimen name="activity_settings_text_settings_description_text_size">14sp</dimen>
-    <dimen name="activity_settings_text_zoom_value_margin_end">16dp</dimen>
-    <dimen name="activity_settings_text_zoom_value_text_size">18sp</dimen>
+    <dimen name="activity_settings_linear_container_padding_top">7dp</dimen>
+    <dimen name="activity_settings_text_category_and_divider_margin">7dp</dimen>
+    <dimen name="activity_settings_text_category_text_size">17sp</dimen>
+    <dimen name="activity_settings_text_category_padding_start_and_end">5dp</dimen>
+    <dimen name="activity_settings_divider_height">0.3dp</dimen>
+    <dimen name="activity_settings_constraint_container_padding">7dp</dimen>
+    <dimen name="activity_settings_constraint_container_padding_start_and_end">10dp</dimen>
+    <dimen name="activity_settings_text_setting_title_text_size">15sp</dimen>
+    <dimen name="activity_settings_text_setting_description_margin_top_and_end">7dp</dimen>
+    <dimen name="activity_settings_text_settings_description_text_size">13sp</dimen>
+    <dimen name="activity_settings_text_zoom_value_margin_end">10dp</dimen>
+    <dimen name="activity_settings_text_zoom_value_text_size">17sp</dimen>
 
     <!-- MENU -->
     <!-- Toolbar -->
-    <dimen name="toolbar_title_text_size">28sp</dimen>
+    <dimen name="toolbar_title_text_size">26sp</dimen>
 
     <!-- Menu Drawer -->
     <dimen name="nav_header_height">250dp</dimen>
     <dimen name="nav_header_padding_top">24dp</dimen>
-    <dimen name="nav_header_text_app_size">30sp</dimen>
-    <dimen name="nav_drawer_text_item_text_size_theme">14sp</dimen>
+    <dimen name="nav_header_text_app_size">38sp</dimen>
+    <dimen name="nav_drawer_text_item_text_size_theme">13sp</dimen>
 
 </resources>

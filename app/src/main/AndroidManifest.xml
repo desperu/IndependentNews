@@ -17,7 +17,8 @@
         android:fullBackupContent="@xml/backup_descriptor">
 
         <!-- MAIN ACTIVITY -->
-        <activity android:name=".ui.main.MainActivity">
+        <activity android:name=".ui.main.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

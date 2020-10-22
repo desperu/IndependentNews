@@ -58,6 +58,7 @@
         <item name="android:backgroundTint" tools:ignore="NewApi">@color/filter_pill_color</item>
         <item name="android:textColor">@color/list_item_bg_collapsed</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
     <!-- Date Picker Dialog Theme -->

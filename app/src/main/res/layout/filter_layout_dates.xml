@@ -1,111 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_gravity="bottom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="bottom"
-    android:orientation="vertical"
-    android:padding="@dimen/filter_layout_padding"
     tools:background="@color/colorPrimaryDark"
     tools:layout_height="@dimen/sheet_peek_height">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/filter_begin_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/filter_first_linear_margin_top"
-            android:layout_alignStart="@id/filter_date_picker_begin"
-            android:layout_alignEnd="@id/filter_date_picker_begin"
-            android:textColor="@color/list_item_bg_collapsed"
-            android:textStyle="bold"
-            android:text="@string/filter_layout_dates_text_begin"/>
-
-        <TextView
-            android:id="@+id/filter_date_picker_begin"
-            android:layout_width="@dimen/filter_date_picker_width"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_below="@+id/filter_begin_date"
-            android:layout_marginTop="@dimen/default_margin"
-            android:textColor="@color/list_item_bg_collapsed"
-            android:textStyle="bold"
-            android:textSize="@dimen/filter_date_picker_text_size" />
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:layout_below="@+id/filter_date_picker_begin"
-            android:layout_alignStart="@+id/filter_date_picker_begin"
-            android:layout_alignEnd="@+id/filter_date_picker_begin"
-            android:layout_marginBottom="@dimen/default_margin"
-            android:background="@color/filter_seek_bar_selected_color" />
-
-        <TextView
-            android:id="@+id/filter_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="@dimen/filter_first_linear_margin_top"
-            android:layout_alignParentEnd="true"
-            android:layout_alignStart="@id/filter_date_picker_end"
-            android:layout_alignEnd="@id/filter_date_picker_end"
-            android:textColor="@color/list_item_bg_collapsed"
-            android:textStyle="bold"
-            android:text="@string/filter_layout_dates_text_end"/>
-
-        <TextView
-            android:id="@+id/filter_date_picker_end"
-            android:layout_width="@dimen/filter_date_picker_width"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/filter_end_date"
-            android:layout_marginTop="@dimen/default_margin"
-            android:textColor="@color/list_item_bg_collapsed"
-            android:textStyle="bold"
-            android:textSize="@dimen/filter_date_picker_text_size" />
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:layout_below="@+id/filter_date_picker_end"
-            android:layout_alignStart="@+id/filter_date_picker_end"
-            android:layout_alignEnd="@+id/filter_date_picker_end"
-            android:layout_marginBottom="@dimen/default_margin"
-            android:background="@color/filter_seek_bar_selected_color" />
-
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/filter_pill_2"
-        android:layout_width="140dp"
-        android:layout_height="14dp"
-        android:layout_marginTop="48dp"
-        app:srcCompat="@drawable/ic_pill"
-        app:tint="@color/filter_pill_color" />
-
-    <org.desperu.independentnews.views.FilterSeekbar
-        android:id="@+id/rangeSeekbar2"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:bar_color="@color/filter_seek_bar_color"
-        app:bar_highlight_color="@android:color/transparent"
-        app:corner_radius="10"
-        app:data_type="_float"
-        app:gap="20"
-        app:left_thumb_color="@color/filter_pill_color"
-        app:left_thumb_color_pressed="@color/filter_pill_color"
-        app:max_value="100"
-        app:min_value="0"
-        app:right_thumb_color="@color/filter_pill_color"
-        app:right_thumb_color_pressed="@color/filter_pill_color" />
+        android:orientation="vertical"
+        android:padding="@dimen/filter_layout_padding">
 
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/filter_begin_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/filter_first_linear_margin_top"
+                android:layout_alignStart="@id/filter_date_picker_begin"
+                android:layout_alignEnd="@id/filter_date_picker_begin"
+                android:textColor="@color/list_item_bg_collapsed"
+                android:textStyle="bold"
+                android:textSize="@dimen/default_text_size"
+                android:text="@string/filter_layout_dates_text_begin"/>
+
+            <TextView
+                android:id="@+id/filter_date_picker_begin"
+                android:layout_width="@dimen/filter_date_picker_width"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_below="@+id/filter_begin_date"
+                android:layout_marginTop="@dimen/default_margin"
+                android:textColor="@color/list_item_bg_collapsed"
+                android:textStyle="bold"
+                android:textSize="@dimen/filter_date_picker_text_size" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_below="@+id/filter_date_picker_begin"
+                android:layout_alignStart="@+id/filter_date_picker_begin"
+                android:layout_alignEnd="@+id/filter_date_picker_begin"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:background="@color/filter_seek_bar_selected_color" />
+
+            <TextView
+                android:id="@+id/filter_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/filter_first_linear_margin_top"
+                android:layout_alignParentEnd="true"
+                android:layout_alignStart="@id/filter_date_picker_end"
+                android:layout_alignEnd="@id/filter_date_picker_end"
+                android:textColor="@color/list_item_bg_collapsed"
+                android:textStyle="bold"
+                android:textSize="@dimen/default_text_size"
+                android:text="@string/filter_layout_dates_text_end"/>
+
+            <TextView
+                android:id="@+id/filter_date_picker_end"
+                android:layout_width="@dimen/filter_date_picker_width"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/filter_end_date"
+                android:layout_marginTop="@dimen/default_margin"
+                android:textColor="@color/list_item_bg_collapsed"
+                android:textStyle="bold"
+                android:textSize="@dimen/filter_date_picker_text_size" />
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_below="@+id/filter_date_picker_end"
+                android:layout_alignStart="@+id/filter_date_picker_end"
+                android:layout_alignEnd="@+id/filter_date_picker_end"
+                android:layout_marginBottom="@dimen/default_margin"
+                android:background="@color/filter_seek_bar_selected_color" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/filter_pill_2"
+            android:layout_width="140dp"
+            android:layout_height="14dp"
+            android:layout_marginTop="48dp"
+            app:srcCompat="@drawable/ic_pill"
+            app:tint="@color/filter_pill_color" />
+
+        <org.desperu.independentnews.views.FilterSeekbar
+            android:id="@+id/rangeSeekbar2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:bar_color="@color/filter_seek_bar_color"
+            app:bar_highlight_color="@android:color/transparent"
+            app:corner_radius="10"
+            app:data_type="_float"
+            app:gap="20"
+            app:left_thumb_color="@color/filter_pill_color"
+            app:left_thumb_color_pressed="@color/filter_pill_color"
+            app:max_value="100"
+            app:min_value="0"
+            app:right_thumb_color="@color/filter_pill_color"
+            app:right_thumb_color_pressed="@color/filter_pill_color" />
+
+    </LinearLayout>
+
+</ScrollView>
