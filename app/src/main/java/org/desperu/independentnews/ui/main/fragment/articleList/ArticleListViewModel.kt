@@ -43,9 +43,11 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
 
     /**
      * Get asked category article list from database, and dispatch to recycler adapter.
+     *
+     * @param categories the category list to search for in database.
      */
-    internal fun getCategory(category: String) = viewModelScope.launch(Dispatchers.IO) {
-        articleList = ideNewsRepository.getCategory(category)
+    internal fun getCategory(categories: List<String>) = viewModelScope.launch(Dispatchers.IO) {
+        articleList = ideNewsRepository.getCategory(categories)
         updateRecyclerData()
     }
 
@@ -63,6 +65,7 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
 
     /**
      * Apply selected filters to the current article list.
+     *
      * @param selectedMap the map of selected filters to apply.
      * @param isFiltered true if apply filters to the list, false otherwise.
      */
@@ -113,7 +116,9 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
 
     /**
      * Update filtered list into article list adapter.
+     *
      * If the list is empty show no article find.
+     *
      * @param isFiltered true if apply filters to the list, false otherwise.
      */
     private fun updateFilteredList(isFiltered: Boolean) = viewModelScope.launch(Dispatchers.Main) {

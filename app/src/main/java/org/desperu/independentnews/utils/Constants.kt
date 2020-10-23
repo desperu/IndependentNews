@@ -10,16 +10,17 @@ const val NO_FRAG = -1
 const val FRAG_TOP_STORY = 0
 const val FRAG_CATEGORY = 1
 const val FRAG_ALL_ARTICLES = 2
-const val FRAG_SANTE = 3
+const val FRAG_ECOLOGY = 3
 const val FRAG_SOCIAL = 4
-const val FRAG_CLIMAT = 5
-const val FRAG_TODAY_ARTICLES = 6
+const val FRAG_ENERGY = 5
+const val FRAG_HEALTH = 6
+const val FRAG_TODAY_ARTICLES = 7
 
-// Categories View Pager
-const val numberOfPage = 3
-const val CAT_SANTE = "santé" // TODO use index???
-const val CAT_SOCIAL = "social"
-const val CAT_CLIMAT = "climat"
+// View Pager
+const val numberOfPage = 4
+
+// Documentation url
+const val DOCUMENTATION_URL = "https://github.com/desperu/RealEstateManager/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
 
 // --- FOR RETROFIT REQUEST ---

@@ -105,9 +105,10 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      */
     private fun configureCorrespondingFragment() = when(fragKey) {
         FRAG_TOP_STORY -> viewModel.getTopStory()
-        FRAG_SANTE -> viewModel.getCategory(CAT_SANTE)
-        FRAG_SOCIAL -> viewModel.getCategory(CAT_SOCIAL)
-        FRAG_CLIMAT -> viewModel.getCategory(CAT_CLIMAT)
+        FRAG_ECOLOGY -> viewModel.getCategory(resources.getStringArray(R.array.filter_ecology).asList())
+        FRAG_SOCIAL -> viewModel.getCategory(resources.getStringArray(R.array.filter_social).asList())
+        FRAG_ENERGY -> viewModel.getCategory(resources.getStringArray(R.array.filter_energy).asList())
+        FRAG_HEALTH -> viewModel.getCategory(resources.getStringArray(R.array.filter_health).asList())
         FRAG_ALL_ARTICLES -> viewModel.getAllArticles()
         FRAG_TODAY_ARTICLES -> viewModel.updateList(todayArticles)
         else -> viewModel.getTopStory()

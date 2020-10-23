@@ -5,9 +5,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -179,8 +183,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
 //            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
             R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
-//            R.id.activity_main_drawer_about -> this.showAboutDialog()
-//            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
+            R.id.activity_main_drawer_about -> this.showAboutDialog()
+            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
             else -> {}
         }
         showTabLayout()
@@ -220,6 +224,31 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             fm.fragmentBack { super.onBackPressed() }
             showTabLayout()
         }
+    }
+
+    // --------------
+    // ACTION
+    // --------------
+
+    /**
+     * Show about dialog.
+     */
+    private fun showAboutDialog() {
+        val dialog: AlertDialog = AlertDialog.Builder(this)
+            .setTitle("${getString(R.string.activity_main_dialog_about_title)} ${getString(R.string.app_name)}")
+            .setMessage(R.string.activity_main_dialog_about_message)
+            .setPositiveButton(R.string.activity_main_dialog_about_positive_button, null)
+            .show()
+        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    /**
+     * Show help documentation.
+     */
+    private fun showHelpDocumentation() {
+        val browserIntent = Intent(Intent.ACTION_VIEW)
+        browserIntent.setDataAndType(Uri.parse(DOCUMENTATION_URL), "text/html")
+        startActivity(browserIntent)
     }
 
     // --------------

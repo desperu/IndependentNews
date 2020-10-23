@@ -50,11 +50,11 @@ interface IndependentNewsRepository {
     /**
      * Returns the category list of articles from the database.
      *
-     * @param category the category to search for.
+     * @param categories the category list to search for in database.
      *
      * @return the category list of articles from the database.
      */
-    suspend fun getCategory(category: String): List<Article>?
+    suspend fun getCategory(categories: List<String>): List<Article>?
 
     /**
      * Returns the list of all articles from the database.
@@ -197,11 +197,21 @@ class IndependentNewsRepositoryImpl(
     /**
      * Returns the category list of articles from the database.
      *
+     * @param categories the category list to search for in database.
+     *
      * @return the category list of articles from the database.
      */ // TODO rename to rssCategories??
-    override suspend fun getCategory(category: String): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun getCategory(categories: List<String>): List<Article>? = withContext(Dispatchers.IO) {
         setSources()
-        sources?.let { articleDao.getCategory("%$category%").setSourceForEach(it) }
+        val articleList = mutableListOf<Article>()
+
+        sources?.let {
+            categories.forEach { category ->
+                articleList.addAll(articleDao.getCategory("%$category%"))
+            }
+
+            articleList.setSourceForEach(it)
+        }
     }
 
     /**

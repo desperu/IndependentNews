@@ -5,9 +5,10 @@
 
     <!-- Fragment Categories -->
     <string-array name="categories_tab_titles">
-        <item>Santé</item>
+        <item>Ecology</item>
         <item>Social</item>
-        <item>Climat</item>
+        <item>Energy</item>
+        <item>Health</item>
     </string-array>
 
     <!-- Filter tab title -->
@@ -79,14 +80,6 @@
     </string-array>
 
     <!-- Section correspondences -->
-    <string-array name="parent_section">
-        <item>Decrypter</item>
-        <item>Resister</item>
-        <item>Inventer</item>
-        <item>Discuss</item>
-        <item>Chroniques</item>
-    </string-array>
-
     <string-array name="filter_alternatives">
         <item>alternatives</item>
         <item>inventer</item>
