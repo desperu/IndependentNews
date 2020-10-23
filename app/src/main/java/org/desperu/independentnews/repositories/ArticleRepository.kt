@@ -7,6 +7,7 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.desperu.independentnews.utils.Utils.storeDelayMillis
 import java.util.*
 
@@ -28,6 +29,8 @@ interface ArticleRepository {
 
     /**
      * Update top story values if needed in database
+     *
+     * @param rssArticleList    the rss article list.
      */
     suspend fun updateTopStory(rssArticleList: List<Article>)
 
@@ -67,6 +70,15 @@ interface ArticleRepository {
     suspend fun filterCategories(parsedMap: Map<Int, List<String>>,
                                  unMatchArticleList: List<Article>
     ): List<Article>
+
+    /**
+     * Returns the new articles list, for which we need to fetch the full article page.
+     *
+     * @param articleList the article list from rss or categories to compare.
+     *
+     * @return the new articles list, for which we need to fetch the full article page.
+     */
+    suspend fun getNewArticles(articleList: List<Article>): List<Article>
 }
 
 /**
@@ -139,14 +151,17 @@ class ArticleRepositoryImpl(
     /**
      * Update top story values if needed in database.
      *
-     * @param rssArticleList the rss article list.
+     * @param rssArticleList    the rss article list.
      */
     override suspend fun updateTopStory(rssArticleList: List<Article>) = withContext(Dispatchers.IO) {
-        if (rssArticleList.isNotEmpty()) {
-            articleDao.markIsTopStory(*rssArticleList.map { it.url }.toTypedArray())
 
-            val topStoryDB = articleDao.getTopStory()
-            val notTopStory = topStoryDB.filterNot { !rssArticleList.contains(it) }
+        if (rssArticleList.isNotEmpty()) {
+            val rssUrls = rssArticleList.map { it.url }
+            articleDao.markIsTopStory(*rssUrls.toTypedArray())
+
+            val sourceName = rssArticleList[0].sourceName
+            val topStoryDB = articleDao.getTopStory().filter { it.sourceName == sourceName }
+            val notTopStory = topStoryDB.filter { !rssUrls.contains(it.url) }
 
             if (!notTopStory.isNullOrEmpty())
                 articleDao.markIsNotTopStory(*notTopStory.map { it.id }.toLongArray())
@@ -224,6 +239,34 @@ class ArticleRepositoryImpl(
         return@withContext filterCategories
     }
 
+    /**
+     * Returns the new articles list, for which we need to fetch the full article page.
+     *
+     * @param articleList the article list from rss or categories to compare.
+     *
+     * @return the new articles list, for which we need to fetch the full article page.
+     */
+    override suspend fun getNewArticles(articleList: List<Article>): List<Article> = withContext(Dispatchers.IO) {
+        val newArticles = mutableListOf<Article>()
+        val urls = getExistingUrls(articleList)
+
+        val articleListPair = articleList.partition { article -> urls.contains(article.url) }
+        val inDb = articleListPair.first
+        newArticles.addAll(articleListPair.second)
+
+        inDb.forEach { article ->
+            val dBDate = articleDao.getArticle(article.url).publishedDate
+            // To correct date differences between rss (at the second) and web site (at the day)
+            if (article.isTopStory)
+                article.publishedDate = millisToStartOfDay(article.publishedDate)
+
+            if (article.publishedDate > dBDate)
+                newArticles.add(article)
+        }
+
+        return@withContext newArticles
+    }
+
     // -----------------
     // UTILS
     // -----------------
@@ -235,7 +278,7 @@ class ArticleRepositoryImpl(
      *
      * @return the url of the articles from the given list that already exists in database.
      */
-    private suspend fun getExistingUrls(articleList: List<Article>) = withContext(Dispatchers.IO) {
+    private suspend fun getExistingUrls(articleList: List<Article>): List<String> = withContext(Dispatchers.IO) {
         val url = articleList.map { article -> article.url }
         val listToUpdate = articleDao.getWhereUrlsIn(url)
         listToUpdate.map { article -> article.url }

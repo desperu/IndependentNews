@@ -3,43 +3,51 @@ package org.desperu.independentnews.models.web.reporterre
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlCategory
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
+import org.desperu.independentnews.extension.parseHtml.toFullUrl
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.literalDateToMillis
 
 /**
  * Class which provides a model to parse reporterre category html page.
  *
  * @property htmlPage the reporterre article html page.
- * @property category the reporterre category.
  *
  * @constructor Instantiate a new ReporterreArticle.
  *
  * @param htmlPage the reporterre article html page to set.
- * @param category the reporterre category.
  */
-data class ReporterreCategory(private val htmlPage: ResponseBody,
-                              override val category: String // TODO useless?
-): BaseHtmlCategory(htmlPage) {
+data class ReporterreCategory(private val htmlPage: ResponseBody): BaseHtmlCategory(htmlPage) {
 
-    override fun getUrlArticleList(): List<String>? {
-        val articleUrlList = mutableListOf<String>()
+    override fun getArticleList(): List<Article> {
+        val articleList = mutableListOf<Article>()
 
-        val topStory = findData(A, CLASS, BLOC_ARTICLE, null)?.attr(HREF)
+        // Get top story article.
+        val topStory = Article(sourceName = REPORTERRE)
+        topStory.url =
+            getTagList(A)
+                .getMatchAttr(CLASS, BLOC_ARTICLE)
+                .attr(HREF).
+                toFullUrl(REPORTERRE_BASE_URL)
+        articleList.add(topStory)
 
-        getTagList(A).getMatchAttr(CLASS, LIEN_ARTICLE).forEach {
-            articleUrlList.add(it.attr(HREF))
-            // for date
-            //it.allElements.select(SPAN).getMatchAttr(CLASS, "petit_vert").ownText()
+        // Get all articles.
+        getTagList(A).getMatchAttr(CLASS, LIEN_ARTICLE).forEach { element ->
+            val article = Article(sourceName = REPORTERRE)
+
+            article.url = element.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
+
+            element.select(SPAN).getMatchAttr(CLASS, PETIT_VERT).forEach {
+                literalDateToMillis(it.ownText())?.let { millis -> article.publishedDate = millis }
+            }
+
+            if (article.url != topStory.url)
+                articleList.add(article)
+
+            if (articleList.size == 51) // Fifty-one for the top story from category page
+                return articleList
         }
 
-        if (articleUrlList.isNotEmpty() && !articleUrlList.contains(topStory))
-            topStory?.let { articleUrlList.add(it) }
-
-        return articleUrlList
+        return articleList
     }
-
-    /**
-     * Return next 10 articles url for this category.
-     * @return next 10 articles url for this category.
-     */
-    override fun getNext10ArticlesUrl(): String? = findData(a, CLASS, LIEN_PAGINATION, null)?.attr(HREF)
 }

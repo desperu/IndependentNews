@@ -5,7 +5,6 @@ import okhttp3.ResponseBody
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
 import org.desperu.independentnews.models.web.bastamag.BastamagCategory
-import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals
@@ -69,7 +68,7 @@ class BastamagWebServiceTest : KoinTest {
      * @param responseBody the response body of the category request.
      */
     private fun checkParsingCategory(responseBody: ResponseBody) {
-        val bastaCategory = BastamagCategory(responseBody, BASTAMAG)
-        assertEquals(10, bastaCategory.getUrlArticleList()?.size)
+        val bastaCategory = BastamagCategory(responseBody)
+        assertEquals(10, bastaCategory.getArticleList()?.size)
     }
 }

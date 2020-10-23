@@ -7,6 +7,7 @@ import android.net.ParseException
 import io.mockk.every
 import io.mockk.mockk
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
+import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.desperu.independentnews.utils.Utils.dateToString
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
@@ -120,6 +121,30 @@ class UtilsTest {
         val output = intStringToDate(givenDate)
 
         assertNull(output)
+    }
+
+    @Test
+    fun given_millis_When_millisToStartOfDay_Then_checkResult() {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val expected = cal.timeInMillis
+
+        val output = millisToStartOfDay(Calendar.getInstance().timeInMillis)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_millis_When_millisToStartOfDay_Then_checkNotEquals() {
+        val cal = Calendar.getInstance()
+        val expected = cal.time // Not set to first millis of the day
+
+        val output = millisToStartOfDay(Calendar.getInstance().timeInMillis)
+
+        assertNotEquals(expected, output)
     }
 
     @Test

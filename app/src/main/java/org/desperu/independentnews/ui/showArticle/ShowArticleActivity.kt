@@ -365,7 +365,8 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
         web_view.settings.apply {
             textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
             // Needed to correct Bastamag article text size.
-            if (isSourceUrl(actualUrl) && article.sourceName == BASTAMAG)
+            if (isSourceUrl(actualUrl) && article.sourceName == BASTAMAG ||
+                    actualUrl.contains(BASTAMAG_BASE_URL))
                 textZoom += 20
         }
     }

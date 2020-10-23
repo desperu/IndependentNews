@@ -2,49 +2,45 @@ package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlCategory
+import org.desperu.independentnews.extension.parseHtml.getMatchAttr
+import org.desperu.independentnews.extension.parseHtml.toFullUrl
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.stringToDate
+
 /**
  * Class which provides a model to parse bastamag category html page.
  *
  * @property htmlPage the bastamag article html page.
- * @property category the bastamag category.
  *
  * @constructor Instantiate a new BastamagArticle.
  *
  * @param htmlPage the bastamag article html page to set.
- * @param category the bastamag category.
  */
-data class BastamagCategory(private val htmlPage: ResponseBody,
-                            override val category: String // TODO useless?
-): BaseHtmlCategory(htmlPage) {
+data class BastamagCategory(private val htmlPage: ResponseBody): BaseHtmlCategory(htmlPage) {
 
-    override fun getUrlArticleList(): List<String>? {
-        //        val articleList = findData(ARTICLE, CLASS, ARTICLE_ENTRY)
+    override fun getArticleList(): List<Article> {
+        val articleList = mutableListOf<Article>()
 
-        val articleUrlList = mutableListOf<String>()
-//        val articleList = mutableListOf<Element>()
-        val elements = document.select(ARTICLE)
-        elements.forEach { article ->
-            if (article.attr(CLASS) == ARTICLE_ENTRY) {
-                article.select(H3).forEach {
-                    if (it.attr(CLASS) == ENTRY_TITLE)
-                        articleUrlList.add(it.select(a).attr(HREF))
+        getTagList(ARTICLE).getMatchAttr(CLASS, ARTICLE_ENTRY).forEach { element ->
+            val article = Article(sourceName = BASTAMAG)
+
+            // Set the published date of the article
+            element.select(TIME).getMatchAttr(PUBDATE, PUBDATE).forEach {
+                stringToDate(it.attr(DATETIME))?.time?.let { millis ->
+                    article.publishedDate = millis
                 }
             }
+
+            // Set the url of the article
+            element.select(H3).forEach {
+                if (it.attr(CLASS) == ENTRY_TITLE)
+                    article.url = it.select(a).attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
+            }
+
+            articleList.add(article)
         }
 
-//        val tedt = articleUrlList.toString()
-//        val test = tedt.toList()
-//        val toertoer = concatenateStringFromMutableList(articleUrlList)
-//        println(">>>>>>>>>> $tedt")
-//        println(">>>>>>>>>> concatenate : $toertoer")
-        return articleUrlList
+        return articleList
     }
-
-    /**
-     * Return next 10 articles url for this category.
-     * @return next 10 articles url for this category.
-     */
-    override fun getNext10ArticlesUrl(): String? = findData(a, CLASS, LIEN_PAGINATION, null)?.attr(HREF) // TODO get more than 20 articles ...
-//    override fun getNextArticlesUrl(page: String): String? = "Approfondir?debut_articles=$page#pagination_articles"
 }

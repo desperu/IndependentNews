@@ -7,7 +7,6 @@ import org.desperu.independentnews.models.web.bastamag.BastamagArticle
 import org.desperu.independentnews.models.web.bastamag.BastamagCategory
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
 import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
 import org.desperu.independentnews.utils.BASTA_SEC_INVENTER
 import org.desperu.independentnews.utils.BASTA_SEC_RESISTER
@@ -42,15 +41,18 @@ interface BastamagRepository {
  *
  * @property rssService                     the service to request the Bastamag Rss Service.
  * @property webService                     the service to request the Bastamag Web Site.
+ * @property articleRepository              the repository access for article database.
  *
  * @constructor Instantiates a new BastamagRepositoryImpl.
  *
  * @param rssService                        the service to request the Bastamag Rss Service to set.
  * @param webService                        the service to request the Bastamag Web Site to set.
+ * @param articleRepository                 the repository access for article database to set.
  */
 class BastamagRepositoryImpl(
     private val rssService: BastamagRssService,
-    private val webService: BastamagWebService
+    private val webService: BastamagWebService,
+    private val articleRepository: ArticleRepository
 ): BastamagRepository {
 
     /**
@@ -61,8 +63,11 @@ class BastamagRepositoryImpl(
     override suspend fun fetchRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
-        if (!rssArticleList.isNullOrEmpty())
-            fetchArticleList(rssArticleList.map { it.toArticle() })
+        if (!rssArticleList.isNullOrEmpty()) {
+            val articleList = rssArticleList.map { it.toArticle() }
+            articleRepository.updateTopStory(articleList)
+            fetchArticleList(articleRepository.getNewArticles(articleList))
+        }
         else
             null
     }
@@ -75,17 +80,16 @@ class BastamagRepositoryImpl(
     override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
         val categories = listOf(BASTA_SEC_DECRYPTER, BASTA_SEC_RESISTER, BASTA_SEC_INVENTER)
         val number = listOf(0, 10, 20, 30, 40)
-        val urls = mutableListOf<String>()
+        val articleList = mutableListOf<Article>()
 
         categories.forEach {category ->
             number.forEach {number ->
-                val bastamagCategory =
-                    BastamagCategory(webService.getCategory(category, number.toString()), category)
-                bastamagCategory.getUrlArticleList()?.let { urls.addAll(it) }
+                val categoryList = webService.getCategory(category, number.toString())
+                articleList.addAll(BastamagCategory(categoryList).getArticleList())
             }
         }
 
-        fetchArticleList(urls.map { Article(url = BASTAMAG_BASE_URL + it) })
+        fetchArticleList(articleRepository.getNewArticles(articleList))
     }
 
     /**

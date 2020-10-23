@@ -1,6 +1,7 @@
 package org.desperu.independentnews.base.html
 
 import okhttp3.ResponseBody
+import org.desperu.independentnews.models.Article
 
 /**
  * Abstract base html category class witch provide standard functions to parse data from category's html page.
@@ -9,12 +10,7 @@ import okhttp3.ResponseBody
  */
 abstract class BaseHtmlCategory(private val htmlPage: ResponseBody): BaseHtml(htmlPage) {
 
-    // FOR DATA
-    protected abstract val category: String
-
     // --- GETTERS ---
 
-    internal abstract fun getUrlArticleList(): List<String>?
-
-    internal abstract fun getNext10ArticlesUrl(): String?
+    internal abstract fun getArticleList(): List<Article>
 }

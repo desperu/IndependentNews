@@ -60,6 +60,8 @@ data class RssArticle(
 
     /**
      * Convert RssArticle to Article.
+     *
+     * @return the article object from the rss article.
      */
     internal fun toArticle(): Article {
         val article = Article(

@@ -39,15 +39,18 @@ interface ReporterreRepository {
  *
  * @property rssService                     the service to request the Reporterre Rss Service.
  * @property webService                     the service to request the Reporterre Web Site.
+ * @property articleRepository              the repository access for article database.
  *
  * @constructor Instantiates a new ReporterreRepositoryImpl.
  *
  * @param rssService                        the service to request the Reporterre Rss Service to set.
  * @param webService                        the service to request the Reporterre Web Site to set.
+ * @param articleRepository                 the repository access for article database to set.
  */
 class ReporterreRepositoryImpl(
     private val rssService: ReporterreRssService,
-    private val webService: ReporterreWebService
+    private val webService: ReporterreWebService,
+    private val articleRepository: ArticleRepository
 ): ReporterreRepository {
 
     /**
@@ -58,8 +61,11 @@ class ReporterreRepositoryImpl(
     override suspend fun fetchRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
-        if (!rssArticleList.isNullOrEmpty())
-            fetchArticleList(rssArticleList.map { it.toArticle() })
+        if (!rssArticleList.isNullOrEmpty()) {
+            val articleList = rssArticleList.map { it.toArticle() }
+            articleRepository.updateTopStory(articleList)
+            fetchArticleList(articleRepository.getNewArticles(articleList))
+        }
         else
             null
     }
@@ -71,15 +77,14 @@ class ReporterreRepositoryImpl(
      */
     override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
         val categories = listOf(REPORT_SEC_RESISTER)
-        val urls = mutableListOf<String>()
+        val articleList = mutableListOf<Article>()
 
         categories.forEach { category ->
-            val reporterreCategory =
-                ReporterreCategory(webService.getCategory(category, 0.toString()), category)
-            reporterreCategory.getUrlArticleList()?.let { urls.addAll(it) }
+            val categoryList = webService.getCategory(category, 0.toString())
+            articleList.addAll(ReporterreCategory(categoryList).getArticleList())
         }
 
-        fetchArticleList(urls.map { Article(url = it) })
+        fetchArticleList(articleRepository.getNewArticles(articleList))
     }
 
     /**
@@ -93,8 +98,6 @@ class ReporterreRepositoryImpl(
         articleList: List<Article>
     ): List<Article> = withContext(Dispatchers.IO) {
 
-        // TODO : no fetch articles already in database, use url to know,
-        //  and use date to know if they are update, and so fetch it
         articleList.forEach {
             val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(it.url)))
             reporterreArticle.toArticle(it)

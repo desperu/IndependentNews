@@ -5,12 +5,9 @@ import okhttp3.ResponseBody
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
 import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
-import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
-import org.desperu.independentnews.utils.REPORTERRE
-import org.desperu.independentnews.utils.REPORT_SEC_INVENTER
 import org.desperu.independentnews.utils.REPORT_SEC_RESISTER
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Assert.*
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.koin.test.KoinTest
 import org.koin.test.get
@@ -70,8 +67,8 @@ class ReporterreWebServiceTest : KoinTest {
      * @param responseBody the response body of the category request.
      */
     private fun checkParsingCategory(responseBody: ResponseBody) {
-        val reporterreCategory = ReporterreCategory(responseBody, REPORTERRE)
-        val reportCatSize = reporterreCategory.getUrlArticleList()?.size
+        val reporterreCategory = ReporterreCategory(responseBody)
+        val reportCatSize = reporterreCategory.getArticleList()?.size
         assertTrue((reportCatSize ?: 0) >= 100)
     }
 }

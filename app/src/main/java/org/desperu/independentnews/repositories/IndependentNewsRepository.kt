@@ -132,7 +132,6 @@ class IndependentNewsRepositoryImpl(
           Log.e("IdeRepo-fetchRssArticle", "Error while fetching source web data.")
         }
 
-        articleRepository.updateTopStory(rssArticleList)
         articleRepository.persist(rssArticleList)
     }
 

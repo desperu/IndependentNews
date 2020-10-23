@@ -63,6 +63,22 @@ internal object Utils {
     }
 
     /**
+     * Convert a time in millis to another time in millis for the start of the day, 00h:00M:00s:000S.
+     * @param millis the time in millis to convert to the start of the day.
+     * @return the time in millie for the start of the day.
+     */
+    internal fun millisToStartOfDay(millis: Long): Long {
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = millis
+        cal.set(Calendar.HOUR, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+
+        return cal.timeInMillis
+    }
+
+    /**
      * Convert date object to string format "yyyy-MM-dd'T'HH:mm:ssZ".
      * @param givenDate Given date object.
      * @return String date with good format.
@@ -73,7 +89,7 @@ internal object Utils {
     }
 
     /**
-     * Convert time in millis to string date with pattern "yyyy/mm/dd".
+     * Convert time in millis to string date with pattern "dd/MM/yyyy".
      * @param millis the time in millis to convert.
      * @return the time converted to string format.
      */
