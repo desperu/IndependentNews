@@ -44,7 +44,7 @@ class MainUtilsTest {
     fun given_wrongFragment_When_retrievedFragKeyFromClass_Then_checkError() {
         val fragment = Fragment()
 
-        val expected = "Fragment class not found : ${fragment.tag}"
+        val expected = "Fragment class not found : ${fragment.javaClass.simpleName}"
         val output = try { retrievedKeyFromFrag(fragment) }
         catch (e: IllegalArgumentException) { e.message }
 

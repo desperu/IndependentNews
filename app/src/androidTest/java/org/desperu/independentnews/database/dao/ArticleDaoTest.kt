@@ -8,11 +8,13 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.REPORTERRE
+import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.util.*
 
 /**
  * Simple dao class test, for Article Dao Interface, that CRUD functions.
@@ -101,8 +103,8 @@ class ArticleDaoTest {
 
     @Test
     fun getWhereUrlsIn() = articleListTest {
-        // Try to get All Articles in the database and the given url list
-        val urlsIn = mDatabase.articleDao().getWhereUrlsIn(listOf(article.url))
+        // Try to get All Articles in the database in the given url list
+        val urlsIn = mDatabase.articleDao().getWhereUrlsIn(articleList.map { it.url })
 
         // Then check that the list isn't empty
         assertTrue(urlsIn.isNotEmpty())
@@ -110,16 +112,33 @@ class ArticleDaoTest {
 
     @Test
     fun getWhereUrlsInSorted() = articleListTest {
-        // Try to get All Articles in the database and the given url list
-        val urlsInSorted = mDatabase.articleDao().getWhereUrlsInSorted(listOf(article.url))
+        // Try to get All Articles in the database in the given url list
+        val urlsInSorted = mDatabase.articleDao().getWhereUrlsInSorted(articleList.map { it.url })
 
         // Then check that the list isn't empty
         assertTrue(urlsInSorted.isNotEmpty())
     }
 
     @Test
+    fun getTodayArticles() = articleListTest {
+        // Get the today start in millis
+        val todayStartMillis = millisToStartOfDay(Calendar.getInstance().timeInMillis)
+
+        // Update the published dates of the articles for the test
+        articleList[0].publishedDate = todayStartMillis
+        articleList[1].publishedDate = todayStartMillis + 1000
+        mDatabase.articleDao().updateArticle(*articleList.toTypedArray())
+
+        // Try to get Today Articles from the database
+        val todayArticles = mDatabase.articleDao().getTodayArticle(todayStartMillis)
+
+        // Then check that the list size match the today articles in database
+        assertEquals(articleList.size, todayArticles.size)
+    }
+
+    @Test
     fun getFilteredListWithAll() = articleListTest {
-        // Try to get filtered Articles list from the database and the given url list
+        // Try to get filtered Articles list from the database in the given url list
         val withAllFilters = mDatabase.articleDao().getFilteredListWithAll(
             listOf(BASTAMAG, REPORTERRE),
             listOf(article.section),
@@ -134,7 +153,7 @@ class ArticleDaoTest {
 
     @Test
     fun getFilteredListWithThemes() = articleListTest {
-        // Try to get filtered Articles list from the database and the given url list
+        // Try to get filtered Articles list from the database in the given url list
         val withThemeFilters = mDatabase.articleDao().getFilteredListWithThemes(
             listOf(BASTAMAG, REPORTERRE),
             listOf(article.theme),
@@ -148,7 +167,7 @@ class ArticleDaoTest {
 
     @Test
     fun getFilteredListWithSections() = articleListTest {
-        // Try to get filtered Articles list from the database and the given url list
+        // Try to get filtered Articles list from the database in the given url list
         val withSectionFilters = mDatabase.articleDao().getFilteredListWithSections(
             listOf(BASTAMAG, REPORTERRE),
             listOf(article.section),
@@ -162,7 +181,7 @@ class ArticleDaoTest {
 
     @Test
     fun getFilteredListWithCategory() = articleListTest {
-        // Try to get filtered Articles list from the database and the given url list
+        // Try to get filtered Articles list from the database in the given url list
         val withCategoryFilters = mDatabase.articleDao().getFilteredListWithCategory(
             listOf(BASTAMAG, REPORTERRE),
             article.categories,
@@ -176,7 +195,7 @@ class ArticleDaoTest {
 
     @Test
     fun getFilteredList() = articleListTest {
-        // Try to get filtered Articles list from the database and the given url list
+        // Try to get filtered Articles list from the database in the given url list
         val withFilters = mDatabase.articleDao().getFilteredList(
             listOf(BASTAMAG, REPORTERRE),
             Long.MIN_VALUE,
@@ -361,9 +380,7 @@ class ArticleDaoTest {
         block()
 
         // Delete inserted article list for test
-        ids.forEach {
-            mDatabase.articleDao().deleteArticle(it)
-        }
+        ids.forEach { mDatabase.articleDao().deleteArticle(it) }
 
         // Remove Source inserted for foreign keys matches, after test
         mDatabase.sourceDao().deleteSource(source.name)

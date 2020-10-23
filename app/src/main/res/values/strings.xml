@@ -87,6 +87,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- NOTIFICATION -->
+    <string name="notification_title">Today Articles !</string>
+    <string name="notification_text">%1$s articles published today !</string>
+    <string name="notification_text_no_today_articles">No article published today…</string>
+
     <!-- SCENE TRANSITION -->
     <string name="animation_main_to_show_article">ImageAnimationMainToShowArticle</string>
 

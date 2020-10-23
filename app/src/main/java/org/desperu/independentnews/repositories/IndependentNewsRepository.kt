@@ -8,6 +8,8 @@ import org.desperu.independentnews.extension.setSourceForEach
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.millisToStartOfDay
+import java.util.*
 
 /**
  * Independent News Repository interface to get data from others repositories.
@@ -77,6 +79,13 @@ interface IndependentNewsRepository {
      * @param article the article to mark as read.
      */
     suspend fun markArticleAsRead(article: Article)
+
+    /**
+     * Returns the today article list, articles published today.
+     *
+     * @return the today article list, articles published today.
+     */
+    suspend fun getTodayArticles(): List<Article>
 }
 
 /**
@@ -243,6 +252,16 @@ class IndependentNewsRepositoryImpl(
      */
     override suspend fun markArticleAsRead(article: Article) = withContext(Dispatchers.IO) {
         articleDao.markAsRead(article.id)
+    }
+
+    /**
+     * Returns the today article list, articles published today.
+     *
+     * @return the today article list, articles published today.
+     */
+    override suspend fun getTodayArticles(): List<Article> = withContext(Dispatchers.IO) {
+        val todayStartMillis = millisToStartOfDay(Calendar.getInstance().timeInMillis)
+        articleDao.getTodayArticle(todayStartMillis)
     }
 
     // -----------------

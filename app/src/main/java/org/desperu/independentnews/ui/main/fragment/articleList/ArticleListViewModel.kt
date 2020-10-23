@@ -83,6 +83,21 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
     // -----------------
 
     /**
+     * Update recycler adapter list.
+     *
+     * @param articleList the new article list to populate.
+     */
+    internal fun updateList(
+        articleList: List<Article>?
+    ) = viewModelScope.launch(Dispatchers.Main) {
+
+        articleList?.let {
+            this@ArticleListViewModel.articleList = articleList
+            updateRecyclerData()
+        }
+    }
+
+    /**
      * Update list into article list adapter.
      */
     private fun updateRecyclerData() = viewModelScope.launch(Dispatchers.Main) {

@@ -70,7 +70,7 @@ internal object Utils {
     internal fun millisToStartOfDay(millis: Long): Long {
         val cal = Calendar.getInstance()
         cal.timeInMillis = millis
-        cal.set(Calendar.HOUR, 0)
+        cal.set(Calendar.HOUR_OF_DAY, 0)
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)

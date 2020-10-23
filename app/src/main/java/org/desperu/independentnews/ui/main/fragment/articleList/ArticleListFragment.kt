@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.fragment_article_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentArticleListBinding
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.utils.*
@@ -18,6 +19,11 @@ import org.koin.core.parameter.parametersOf
  * The argument name for bundle to received the fragment key to this Fragment.
  */
 const val FRAG_KEY: String = "fragKey"
+
+/**
+ * The argument name for bundle to received the today articles in this Fragment.
+ */
+const val TODAY_ARTICLES_FRAG: String = "todayArticlesFrag"
 
 /**
  * Fragment to show article list.
@@ -36,6 +42,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     // FOR BUNDLE
     private val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
+    private val todayArticles: List<Article>? get() = arguments?.getParcelableArrayList(TODAY_ARTICLES_FRAG)
 
     /**
      * Companion object, used to create a new instance of this fragment.
@@ -102,6 +109,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
         FRAG_SOCIAL -> viewModel.getCategory(CAT_SOCIAL)
         FRAG_CLIMAT -> viewModel.getCategory(CAT_CLIMAT)
         FRAG_ALL_ARTICLES -> viewModel.getAllArticles()
+        FRAG_TODAY_ARTICLES -> viewModel.updateList(todayArticles)
         else -> viewModel.getTopStory()
     }
 

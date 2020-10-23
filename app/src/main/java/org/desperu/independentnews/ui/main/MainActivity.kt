@@ -27,6 +27,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.SourceRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
@@ -42,13 +43,26 @@ import org.koin.core.parameter.parametersOf
 
 // TODO to move and comment class
 var animationPlaybackSpeed: Double = 0.8
+/**
+ * The name of the argument to received today article list in this Activity.
+ */
+const val TODAY_ARTICLES: String = "todayArticles"
 
+/**
+ * Main Activity root activity of the application.
+ *
+ * @property mainModule the koin of the activity to load at start.
+ *
+ * @constructor Instantiates a new MainActivity.
+ */
 class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSelectedListener {
+
+    // FROM INTENT
+    private val todayArticles: List<Article>? get() = intent?.getParcelableArrayListExtra(TODAY_ARTICLES)
 
     // FOR UI
     @JvmField @State var fragmentKey: Int = NO_FRAG
     private val drawerIcon: View by bindView(R.id.drawer_icon)
-
     // layout/nav_drawer views
     private val drawerLayout: DrawerLayout by bindView(R.id.drawer_layout)
 
@@ -89,7 +103,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // -----------------
 
     /**
-     * Configure koin dependency for main interfaces.
+     * Configure koin dependency for main activity.
      */
     private fun configureKoinDependency() {
         get<MainInterface> { parametersOf(this@MainActivity) }
@@ -133,9 +147,18 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     /**
      * Show the current fragment if set, else fragment top story.
+     * @param fragmentKey the asked fragment key.
+     * @param articleList the article list to show in fragment.
      */
-    private fun showFragment() =
-        fm.configureAndShowFragment(if (fragmentKey != NO_FRAG) fragmentKey else FRAG_TOP_STORY)
+    private fun showFragment(fragmentKey: Int, articleList: List<Article>?) =
+        fm.configureAndShowFragment(
+            when {
+                articleList != null -> FRAG_TODAY_ARTICLES
+                fragmentKey != NO_FRAG -> fragmentKey
+                else -> FRAG_TOP_STORY
+            },
+            articleList
+        )
 
     // -----------------
     // METHODS OVERRIDE
@@ -143,14 +166,14 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     override fun onResume() {
         super.onResume()
-        showFragment()
+        showFragment(fragmentKey, todayArticles)
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
-            R.id.activity_main_menu_drawer_top_story -> fm.configureAndShowFragment(FRAG_TOP_STORY)
-            R.id.activity_main_menu_drawer_categories -> fm.configureAndShowFragment(FRAG_CATEGORY)
-            R.id.activity_main_menu_drawer_all_articles -> fm.configureAndShowFragment(FRAG_ALL_ARTICLES)
+            R.id.activity_main_menu_drawer_top_story -> showFragment(FRAG_TOP_STORY, null)
+            R.id.activity_main_menu_drawer_categories -> showFragment(FRAG_CATEGORY, null)
+            R.id.activity_main_menu_drawer_all_articles -> showFragment(FRAG_ALL_ARTICLES, null)
 //            R.id.activity_main_drawer_search -> this.showSearchArticlesActivity()
 //            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
@@ -277,7 +300,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             coordinator_layout.visibility = View.VISIBLE
             first_start_container.visibility = View.INVISIBLE
             fragmentKey = NO_FRAG
-            showFragment()
+            showFragment(fragmentKey, todayArticles)
         }
 
     /**

@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import org.desperu.independentnews.R
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
+import org.desperu.independentnews.ui.main.fragment.articleList.TODAY_ARTICLES_FRAG
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.utils.FRAG_CATEGORY
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
@@ -31,6 +33,7 @@ class MainFragmentManager(private val fm: FragmentManager,
 
     // FOR DATA
     private val fragmentKey get() = mainInterface.getFragmentKey()
+    private var backCount = 0
 // TODO to clean
     // --------------
     // FRAGMENT MANAGEMENT
@@ -38,18 +41,19 @@ class MainFragmentManager(private val fm: FragmentManager,
 
     /**
      * Configure and show fragments, with back stack management to restore instance.
+     *
      * @param fragmentKey the fragment key to show corresponding fragment.
-     * @param estate the estate to show in estate detail or maps.
+     * @param articleList the article list to show in the article list fragment.
      */
-    internal fun configureAndShowFragment(fragmentKey: Int) {
-        if (this.fragmentKey != fragmentKey) {// || estate != null) {
+    internal fun configureAndShowFragment(fragmentKey: Int, articleList: List<Article>?) {
+        if (this.fragmentKey != fragmentKey || articleList != null) {
             mainInterface.setFragmentKey(fragmentKey)
 
             // Get the fragment instance from the fragment key
             val fragment = getFragFromKey(fragmentKey)
 
             // Populate data to fragment with bundle.
-            populateDataToFragment(fragment, fragmentKey)
+            populateDataToFragment(fragment, articleList)
 
             // Clear all back stack when recall Estate List Fragment,
             // because it's the root fragment of this activity.
@@ -72,16 +76,13 @@ class MainFragmentManager(private val fm: FragmentManager,
 
     /**
      * Populate data to fragment with bundle.
-     * @param fragment the fragment instance to send data.
-     * @param fragmentKey the fragment key to send to fragment, fro it's configuration.
+     * @param fragment      the fragment instance to send data.
+     * @param articleList   the article list to send to the fragment, to show it.
      */
-    private fun populateDataToFragment(fragment: Fragment, fragmentKey: Int) {
-        // Populate estate to fragment with bundle if there's one.
-//        if (estate != null) {
-            // Try to update estate detail data if there is an instance of fragment.
-//            estateDetailFragment?.updateEstate(estate)
-//            populateEstateToFragment(fragment, estate)
-//        }
+    private fun populateDataToFragment(fragment: Fragment, articleList: List<Article>?) {
+        // Populate article lit to fragment with bundle if there's one.
+        articleList?.let { populateArticleListToFragment(fragment, it) }
+
         // Populate estate list to maps fragment with bundle, and set map mode.
 //        if (fragmentKey == FRAG_ESTATE_MAP) setMapsFragmentBundle(fragment)
         populateKeyToFragment(fragment, fragmentKey)
@@ -162,7 +163,14 @@ class MainFragmentManager(private val fm: FragmentManager,
 //        setTitleActivity(activity, fragmentKey, isFrame2Visible)
 //        switchFrameSizeForTablet(frameLayout, fragmentKey, isFrame2Visible)
 //        fabFilter.adaptFabFilter(fragmentKey, isFrame2Visible)
-        if (tempFragmentKey == fragmentKey) fragmentBack(block)
+
+        if (backCount == 3) {
+            backCount = 0
+            return
+        } else if (tempFragmentKey == fragmentKey) {
+            backCount += 1
+            fragmentBack(block)
+        }
     }
 
     // --------------
@@ -186,20 +194,16 @@ class MainFragmentManager(private val fm: FragmentManager,
 //            if (fragment is EstateDetailFragment) ESTATE_DETAIL else ESTATE_NOTIFICATION_FOR_LIST
 //        fragment.arguments?.putParcelable(bundleKey, estate)
 //    }
-//
-//    /**
-//     * Populate estate list to fragment with bundle.
-//     * @param fragment the fragment instance to send estate.
-//     */
-//    private fun populateEstateListToFragment(fragment: Fragment) {
-//        fragment.arguments = setBundle(fragment.arguments)
-//        fragment.arguments?.putParcelableArrayList(
-//            ESTATE_LIST_MAP,
-//            (get<ManageFiltersHelper>().getFilteredEstateList
-//                ?: get<ManageFiltersHelper>().getFullEstateList) as ArrayList?
-//        )
-//    }
-//
+
+    /**
+     * Populate article list to fragment with bundle.
+     * @param fragment the fragment instance to send article list.
+     */
+    private fun populateArticleListToFragment(fragment: Fragment, articleList: List<Article>) {
+        fragment.arguments = setBundle(fragment.arguments)
+        fragment.arguments?.putParcelableArrayList(TODAY_ARTICLES_FRAG, ArrayList(articleList))
+    }
+
 //    /**
 //     * Set Maps Fragment Bundle to send data, populate estate list and set the map mode.
 //     * @param fragment the fragment instance to send data.

@@ -13,6 +13,7 @@ const val FRAG_ALL_ARTICLES = 2
 const val FRAG_SANTE = 3
 const val FRAG_SOCIAL = 4
 const val FRAG_CLIMAT = 5
+const val FRAG_TODAY_ARTICLES = 6
 
 // Categories View Pager
 const val numberOfPage = 3
@@ -123,9 +124,9 @@ const val STORE_DELAY = "storeDelay"
 
 // Settings default value
 const val NOTIFICATION_DEFAULT = true
-const val NOTIFICATION_TIME_DEFAULT = 10
+const val NOTIFICATION_TIME_DEFAULT = 12
 const val TEXT_SIZE_DEFAULT = 100
 const val REFRESH_ARTICLE_LIST_DEFAULT = true
-const val REFRESH_TIME_DEFAULT = 9
+const val REFRESH_TIME_DEFAULT = 11
 const val REFRESH_ONLY_WIFI_DEFAULT = false
 const val STORE_DELAY_DEFAULT = 6

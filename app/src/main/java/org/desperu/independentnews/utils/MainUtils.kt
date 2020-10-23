@@ -23,6 +23,7 @@ object MainUtils {
         FRAG_TOP_STORY -> ArticleListFragment()
         FRAG_CATEGORY -> CategoriesFragment()
         FRAG_ALL_ARTICLES -> ArticleListFragment()
+        FRAG_TODAY_ARTICLES -> ArticleListFragment()
         else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }
 
@@ -32,9 +33,8 @@ object MainUtils {
      * @return the corresponding fragment key.
      */
     internal fun retrievedKeyFromFrag(fragment: Fragment): Int = when(fragment) {
-        is ArticleListFragment -> if (fragment.arguments?.getInt(FRAG_KEY) == FRAG_TOP_STORY) FRAG_TOP_STORY
-                                  else FRAG_ALL_ARTICLES
         is CategoriesFragment -> FRAG_CATEGORY
-        else -> throw IllegalArgumentException("Fragment class not found : ${fragment.tag}")
+        else -> fragment.arguments?.getInt(FRAG_KEY)
+            ?: throw IllegalArgumentException("Fragment class not found : ${fragment.javaClass.simpleName}")
     }
 }

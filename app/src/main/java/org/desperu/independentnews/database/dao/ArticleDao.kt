@@ -84,6 +84,17 @@ interface ArticleDao {
     @Query("SELECT * FROM article WHERE url IN (:urls) ORDER BY publishedDate DESC ")
     suspend fun getWhereUrlsInSorted(urls: List<String>): List<Article>
 
+    /**
+     * Returns the article list for which the published date is equal or upper than
+     * the given today start in millis.
+     *
+     * @param todayStartMillis the first millisecond of today.
+     *
+     * @return the today article list.
+     */
+    @Query("SELECT * FROM article WHERE publishedDate >= :todayStartMillis")
+    suspend fun getTodayArticle(todayStartMillis: Long): List<Article>
+
     // -----------------
     // FILTERS
     // -----------------
@@ -270,7 +281,7 @@ interface ArticleDao {
      * @return the number of row affected.
      */
     @Update
-    suspend fun updateArticle(article: Article): Int
+    suspend fun updateArticle(vararg article: Article): Int
 
     // -----------------
     // DELETE
