@@ -11,7 +11,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/white">
 
         <include
             layout="@layout/app_bar"
@@ -44,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_notification_state"
@@ -61,7 +62,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_notifications_state"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -73,7 +74,6 @@
                         android:text="@string/activity_settings_text_notifications_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_notification_switch"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_text_notification_state"/>
@@ -93,7 +93,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_notification_time"
@@ -110,7 +110,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_notifications_time"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -122,7 +122,6 @@
                         android:text="@string/activity_settings_text_notifications_time_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_notification_time_value"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_text_notification_time"/>
@@ -133,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/activity_settings_text_zoom_value_margin_end"
                         android:textSize="@dimen/activity_settings_text_zoom_value_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -145,7 +144,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -162,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_text_size"
@@ -179,7 +178,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_article_text_size"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -191,7 +190,6 @@
                         android:text="@string/activity_settings_text_article_text_size_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_text_size_value"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_text_size"/>
@@ -202,7 +200,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/activity_settings_text_zoom_value_margin_end"
                         android:textSize="@dimen/activity_settings_text_zoom_value_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -214,7 +212,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -231,7 +229,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_refresh_article_list"
@@ -248,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_refresh_article_list"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -260,7 +258,6 @@
                         android:text="@string/activity_settings_text_refresh_article_list_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_refresh_article_list_switch"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_refresh_article_list"/>
@@ -280,7 +277,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_refresh_list_time"
@@ -297,7 +294,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_refresh_article_list_time"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -309,7 +306,6 @@
                         android:text="@string/activity_settings_text_refresh_article_list_time_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_refresh_list_time_value"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_refresh_list_time"/>
@@ -320,7 +316,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/activity_settings_text_zoom_value_margin_end"
                         android:textSize="@dimen/activity_settings_text_zoom_value_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -332,7 +328,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_only_wifi"
@@ -349,7 +345,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_refresh_only_wifi"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -361,7 +357,6 @@
                         android:text="@string/activity_settings_text_refresh_only_wifi_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_only_wifi_switch"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_text_only_wifi"/>
@@ -381,7 +376,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_article_store_delay"
@@ -398,7 +393,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_article_store_delay"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -410,7 +405,6 @@
                         android:text="@string/activity_settings_text_article_store_delay_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/activity_settings_article_store_delay_value"
                         app:layout_constraintTop_toBottomOf="@+id/activity_settings_article_store_delay"/>
@@ -421,7 +415,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/activity_settings_text_zoom_value_margin_end"
                         android:textSize="@dimen/activity_settings_text_zoom_value_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -433,7 +427,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -450,7 +444,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/activity_settings_divider_height"
                     android:layout_margin="@dimen/activity_settings_text_category_and_divider_margin"
-                    android:background="@color/colorPassedWhite"/>
+                    android:background="@color/colorTransGrey"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/activity_settings_container_reset_settings"
@@ -467,7 +461,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/activity_settings_text_category_reset_settings"
                         android:textSize="@dimen/activity_settings_text_setting_title_text_size"
-                        android:textColor="@android:color/white"
+                        android:textColor="@color/colorLightDark"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -479,7 +473,6 @@
                         android:text="@string/activity_settings_text_reset_settings_description"
                         android:textStyle="italic"
                         android:textSize="@dimen/activity_settings_text_settings_description_text_size"
-                        android:textColor="@color/list_item_bg_collapsed"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/activity_settings_text_reset_settings"/>

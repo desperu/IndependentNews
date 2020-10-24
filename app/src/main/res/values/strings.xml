@@ -60,7 +60,7 @@
     <string name="activity_settings_text_refresh_only_wifi">Refresh article list only on Wifi</string>
     <string name="activity_settings_text_refresh_only_wifi_description">Refresh article list only on Wifi network connexion. If checked and there no Wifi connexion established at the refresh article list time, the application can\'t refresh article list data.</string>
     <string name="activity_settings_text_article_store_delay">Article store delay</string>
-    <string name="activity_settings_text_article_store_delay_description">Set the delay to store article in the application, in month (default is 6).</string>
+    <string name="activity_settings_text_article_store_delay_description">Set the delay to store article in the application, in month, default is 6, min 1, max 24.</string>
     <string name="activity_settings_text_category_reset_settings">Reset Settings</string>
     <string name="activity_settings_text_reset_settings">Reset Settings</string>
     <string name="activity_settings_text_reset_settings_description">Reset settings to original state.</string>
@@ -90,6 +90,8 @@
     <string name="navigation_drawer_help">Help</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <!-- Search View -->
+    <string name="activity_main_search_view_hint">Search article</string>
 
     <!-- NOTIFICATION -->
     <string name="notification_title">Today Articles !</string>
