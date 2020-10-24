@@ -10,7 +10,7 @@ import org.desperu.independentnews.R
  * This behavior animates the toolbar elements (toolbarTitle and drawerIcon) as
  * the recyclerView in MainActivity scrolls
  */
-class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look to AppBarLayout javadoc's source code
+class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
 
     private lateinit var toolbar: View
     private lateinit var toolbarTitle: View
@@ -85,7 +85,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {// TODO look
                 toolbarTitle.scaleX = if (scale < minScale) minScale else scale
                 toolbarTitle.scaleY = toolbarTitle.scaleX
             }
-        } else if (dyConsumed < -20) {// TODO not good, jump to 20 directly
+        } else if (dyConsumed < -15) {
 
             // scroll down
             if (toolbar.layoutParams.height < toolbarOriginalHeight) {

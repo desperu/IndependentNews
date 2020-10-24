@@ -15,7 +15,7 @@ import android.webkit.WebView
 class NoScrollWebView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : WebView(context, attrs, defStyleAttr) {
-// TODO to remove??
+
 //    override fun overScrollBy(
 //        deltaX: Int,
 //        deltaY: Int,

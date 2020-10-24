@@ -64,7 +64,7 @@ data class Article(@PrimaryKey(autoGenerate = true)
                    var imageUrl: String = "",
                    var cssUrl: String = "",
                    var isTopStory: Boolean = false,
-                   var read: Boolean = false, // TODO check gahfy project NytMvvM viewedArticle
+                   var read: Boolean = false,
 //                   var scrollPosition: Int = 0,
                    @Ignore
                    var source: Source = Source()

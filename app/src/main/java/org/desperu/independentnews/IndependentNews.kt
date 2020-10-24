@@ -15,7 +15,7 @@ class IndependentNews : Application() {
      */
     override fun onCreate() {
         super.onCreate()
-        if (KoinContextHandler.getOrNull() == null) { // For Robolectric in unit test. // TODO remove??
+        if (KoinContextHandler.getOrNull() == null) { // For Robolectric in unit test.
             startKoin {
                 androidLogger()
                 androidContext(this@IndependentNews)

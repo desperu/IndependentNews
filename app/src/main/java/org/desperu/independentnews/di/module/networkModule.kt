@@ -41,26 +41,10 @@ val networkModule = module {
         builder.build()
     }
 
-//    /**
-//     * Provides the Retrofit instance.
-//     */
-//    single<Retrofit> {
-//        Retrofit.Builder()
-//            .baseUrl(BASE_URL)
-//            .client(get() as OkHttpClient)
-//            .addConverterFactory(TikXmlConverterFactory.create(
-//                TikXml.Builder()
-//                    .exceptionOnUnreadXml(false)
-//                    .addTypeConverter(String::class.java, HtmlEscapeStringConverter())
-//                    .build()
-//            ))
-//            .build()
-//    }
-
     /**
      * Provides the Retrofit instance.
      */
-    factory<Retrofit> { (baseUrl: String, type: Int) -> // TODO test HTML with converter, should rocks
+    factory<Retrofit> { (baseUrl: String, type: Int) ->
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(get() as OkHttpClient)
@@ -75,7 +59,7 @@ val networkModule = module {
                 )
             )
 
-        retrofit.build() // TODO java.net.SocketTimeoutException: SSL handshake timed out from OkkHttp ??
+        retrofit.build()
     }
 
     /**

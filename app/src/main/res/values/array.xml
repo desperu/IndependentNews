@@ -19,7 +19,6 @@
         <item>Dates</item>
     </string-array>
 
-    <!-- TODO put other folder ?? no need to translate -->
     <!-- Themes Correspondences -->
     <string-array name="filter_ecology">
         <item>ecologie</item>
@@ -107,7 +106,6 @@
     </string-array>
 
 
-<!-- TODO to remove for project ?? -->
     <!-- //////////////////////////////////////////////////////////
          ////////////   ***Data list from sources***   ////////////
          //////////////////////////////////////////////////////////

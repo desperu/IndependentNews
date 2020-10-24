@@ -163,11 +163,8 @@ class ViewPagerTabsHandler(
 
         // To correct Motion Layout reset color when change tab and select filter
         if (bottomBarAnimator == null) {
-            // Comment because duration set to 1 do the trick as post delayed with 5 millis. TODO so remove?
-//            Handler().postDelayed({
-                this.bottomBarAnimator?.duration = 1
-                this.bottomBarAnimator?.start()
-//            }, 5)
+            this.bottomBarAnimator?.duration = 1
+            this.bottomBarAnimator?.start()
         }
     }
 }

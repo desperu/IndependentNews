@@ -25,7 +25,6 @@ import org.desperu.independentnews.utils.FilterUtils.getFilterValue
 import org.desperu.independentnews.utils.SECTIONS
 import org.desperu.independentnews.utils.SOURCES
 import org.desperu.independentnews.utils.THEMES
-import org.desperu.independentnews.views.FilterSeekbar
 
 /**
  * ViewPager adapter to display all the filters
@@ -35,8 +34,6 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
 
     private val unselectedColor: Int by bindColor(context, R.color.filter_pill_color)
     private val selectedColor: Int by bindColor(context, R.color.filter_pill_selected_color)
-    private val unselectedBarColor: Int by bindColor(context, R.color.filter_seek_bar_color)
-    private val selectedBarColor: Int by bindColor(context, R.color.filter_seek_bar_selected_color)
 
     private val toggleAnimDuration = context.resources.getInteger(R.integer.toggleAnimDuration).toLong()
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -105,34 +102,6 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
             }
         }
 
-        // TODO to remove ???
-        /**
-         * Bind the Seekbars (if any). Sliding the seekbar between 1f..99f toggles it on.
-         * 1f and 99f are chosen just to make the toggling seem more smooth
-         */
-        holder.seekBars.forEachIndexed { _: Int, seekBar: FilterSeekbar ->
-            seekBar.setOnRangeSeekbarChangeListener { minValue, maxValue ->
-                if (!selectedList.contains("date") && !(minValue.toFloat() < 1f && maxValue.toFloat() > 29f)) {
-                    selectedList += "$minValue, $maxValue"
-                    listener(position, selectedMap)
-                    seekBar.setLeftThumbHighlightColor(selectedColor)
-                    seekBar.setRightThumbHighlightColor(selectedColor)
-                    seekBar.setLeftThumbColor(selectedColor)
-                    seekBar.setRightThumbColor(selectedColor)
-                    seekBar.setBarHighlightColor(selectedBarColor)
-                } else if (selectedList.contains("date") && minValue.toFloat() < 1f && maxValue.toFloat() > 29f) {
-                    selectedList -= "$minValue, $maxValue"
-                    listener(position, selectedMap)
-                    seekBar.setLeftThumbHighlightColor(unselectedColor)
-                    seekBar.setRightThumbHighlightColor(unselectedColor)
-                    seekBar.setLeftThumbColor(unselectedColor)
-                    seekBar.setRightThumbColor(unselectedColor)
-                    seekBar.setBarHighlightColor(unselectedBarColor)
-                }
-            }
-        }
-
-
         holder.pickerViews.forEachIndexed { index, pickerView ->
             val observer = Observer<String> {
                 selectedList.clear()
@@ -159,8 +128,6 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
         val filterViews: List<View> by bindOptionalViews(*filterViewsId.toIntArray())
 
         val pickerViews: List<TextView> by bindOptionalViews(R.id.filter_date_picker_begin, R.id.filter_date_picker_end)
-
-        val seekBars: List<FilterSeekbar> by bindOptionalViews(R.id.rangeSeekbar2)
     }
 
     // --- GETTERS ---

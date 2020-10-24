@@ -200,7 +200,7 @@ class IndependentNewsRepositoryImpl(
      * @param categories the category list to search for in database.
      *
      * @return the category list of articles from the database.
-     */ // TODO rename to rssCategories??
+     */
     override suspend fun getCategory(categories: List<String>): List<Article>? = withContext(Dispatchers.IO) {
         setSources()
         val articleList = mutableListOf<Article>()

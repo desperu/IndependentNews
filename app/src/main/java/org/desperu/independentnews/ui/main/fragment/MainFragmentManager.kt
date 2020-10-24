@@ -34,7 +34,7 @@ class MainFragmentManager(private val fm: FragmentManager,
     // FOR DATA
     private val fragmentKey get() = mainInterface.getFragmentKey()
     private var backCount = 0
-// TODO to clean
+
     // --------------
     // FRAGMENT MANAGEMENT
     // --------------
@@ -55,20 +55,6 @@ class MainFragmentManager(private val fm: FragmentManager,
             // Populate data to fragment with bundle.
             populateDataToFragment(fragment, articleList)
 
-            // Clear all back stack when recall Estate List Fragment,
-            // because it's the root fragment of this activity.
-//            if (fragmentKey == FRAG_ESTATE_LIST) clearAllBackStack()
-
-            // Set the corresponding activity title.
-//            setTitleActivity(activity, fragmentKey, isFrame2Visible)
-
-            // If the device is a tablet and asked fragment is maps, collapse list frame,
-            // else set the list frame to original size.
-//            switchFrameSizeForTablet(frameLayout, fragmentKey, isFrame2Visible)
-
-            // Adapt fab filter position or hide, depend of the asked fragment.
-//            fabFilter.adaptFabFilter(fragmentKey, isFrame2Visible)
-
             // Apply the fragment transaction in the corresponding frame.
             fragmentTransaction(fragment, R.id.main_frame_container)//getFrame(fragmentKey, isFrame2Visible))
         }
@@ -83,8 +69,6 @@ class MainFragmentManager(private val fm: FragmentManager,
         // Populate article lit to fragment with bundle if there's one.
         articleList?.let { populateArticleListToFragment(fragment, it) }
 
-        // Populate estate list to maps fragment with bundle, and set map mode.
-//        if (fragmentKey == FRAG_ESTATE_MAP) setMapsFragmentBundle(fragment)
         populateKeyToFragment(fragment, fragmentKey)
     }
 
@@ -114,44 +98,6 @@ class MainFragmentManager(private val fm: FragmentManager,
     // SHOW FRAGMENT
     // --------------
 
-//    /**
-//     * Show EstateDetailFragment for the given estate, with tablet mode support.
-//     * @param estate the estate to show details.
-//     * @param isUpdate true if is call for an update, false for first launching data.
-//     */
-//    internal fun showEstateDetail(estate: Estate, isUpdate: Boolean) {
-//        if (isFrame2Visible) {
-//            if (getCurrentFragment() is EstateDetailFragment)
-//                estateDetailFragment?.updateEstate(estate)
-//            else if (!isUpdate)
-//                configureAndShowFragment(FRAG_ESTATE_DETAIL, estate)
-//            estateListFragment?.scrollToNewItem(null, estate)
-//        } else
-//            configureAndShowFragment(FRAG_ESTATE_DETAIL, estate)
-//    }
-//
-//    /**
-//     * Resume fragment, when resume activity or when start application.
-//     * @param estateNotification the estate notification to show, null is there isn't.
-//     */
-//    internal fun resumeFragment(estateNotification: Estate?) {
-//        // Show estate notification if there's one.
-//        if (estateNotification != null) {
-//            if (isFrame2Visible) configureAndShowFragment(FRAG_ESTATE_LIST, estateNotification)
-//            else configureAndShowFragment(FRAG_ESTATE_DETAIL, estateNotification)
-//            activity.intent.removeExtra(ESTATE_NOTIFICATION)
-//            // Resume last visible fragment if there's one, else launch estate list frag.
-//        } else {
-//            val tempFragmentKey = fragmentKey
-//            mainInterface.setFragmentKey(NO_FRAG)
-//            configureAndShowFragment(
-//                if (tempFragmentKey != NO_FRAG) tempFragmentKey
-//                else FRAG_ESTATE_LIST,
-//                null
-//            )
-//        }
-//    }
-
     /**
      * Show previous fragment in back stack, with onBackPressed support and set fragmentKey with restored fragment.
      * @param block the super onBackPressed() call.
@@ -160,9 +106,6 @@ class MainFragmentManager(private val fm: FragmentManager,
         val tempFragmentKey = fragmentKey
         block()
         getCurrentFragment()?.let { mainInterface.setFragmentKey(retrievedKeyFromFrag(it)) }
-//        setTitleActivity(activity, fragmentKey, isFrame2Visible)
-//        switchFrameSizeForTablet(frameLayout, fragmentKey, isFrame2Visible)
-//        fabFilter.adaptFabFilter(fragmentKey, isFrame2Visible)
 
         if (backCount == 3) {
             backCount = 0
@@ -183,18 +126,6 @@ class MainFragmentManager(private val fm: FragmentManager,
      */
     private fun setBundle(bundle: Bundle?): Bundle = bundle ?: Bundle()
 
-//    /**
-//     * Populate estate to fragment with bundle.
-//     * @param fragment the fragment instance to send estate.
-//     * @param estate the estate to populate.
-//     */
-//    private fun populateEstateToFragment(fragment: Fragment, estate: Estate) {
-//        fragment.arguments = setBundle(fragment.arguments)
-//        val bundleKey =
-//            if (fragment is EstateDetailFragment) ESTATE_DETAIL else ESTATE_NOTIFICATION_FOR_LIST
-//        fragment.arguments?.putParcelable(bundleKey, estate)
-//    }
-
     /**
      * Populate article list to fragment with bundle.
      * @param fragment the fragment instance to send article list.
@@ -203,16 +134,6 @@ class MainFragmentManager(private val fm: FragmentManager,
         fragment.arguments = setBundle(fragment.arguments)
         fragment.arguments?.putParcelableArrayList(TODAY_ARTICLES_FRAG, ArrayList(articleList))
     }
-
-//    /**
-//     * Set Maps Fragment Bundle to send data, populate estate list and set the map mode.
-//     * @param fragment the fragment instance to send data.
-//     */
-//    private fun setMapsFragmentBundle(fragment: Fragment) {
-//        fragment.arguments = setBundle(fragment.arguments)
-//        populateEstateListToFragment(fragment)
-//        fragment.arguments?.putInt(MAP_MODE, FULL_MODE)
-//    }
 
     /**
      * Populate fragment key to the fragment instance with bundle.
@@ -227,58 +148,6 @@ class MainFragmentManager(private val fm: FragmentManager,
         }
     }
 
-    // ----------------------------
-    // BOTTOM SHEET FILTER FRAGMENT
-    // ----------------------------
-
-//    /**
-//     * Configure and show bottom sheet filter fragment.
-//     * @param state the state to open the bottom sheet.
-//     */
-//    internal fun configureAndShowBottomSheetFilterFragment(state: Int) {
-//        fabFilter.fabFilterVisibility(true)
-//        configureAndShowFilterFragment()
-//        bottomSheet = BottomSheetBehavior.from(activity.activity_main_bottom_sheet)
-//        bottomSheet.state = state
-//        bottomSheet.addBottomSheetCallback(bottomSheetCallback)
-//    }
-//
-//    /**
-//     * Configure and show filter fragment.
-//     */
-//    private fun configureAndShowFilterFragment() {
-//        var fragment = getFilterFragment()
-//        if (fragment == null) {
-//            fragment = FilterFragment()
-//            fm.beginTransaction()
-//                .replace(R.id.activity_main_bottom_sheet, fragment, fragment.javaClass.simpleName)
-//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-//                .commit()
-//        }
-//        fragment.scrollToTop()
-//    }
-//
-//    /**
-//     * Close bottom sheet filter fragment (hide).
-//     * @param toRemove true if remove fragment.
-//     */
-//    internal fun closeFilterFragment(toRemove: Boolean) {
-//        if (toRemove)
-//            fm.findFragmentById(R.id.activity_main_bottom_sheet)
-//                ?.let { fm.beginTransaction().remove(it).commit() }
-//
-//        bottomSheet.state = BottomSheetBehavior.STATE_HIDDEN
-//        fabFilter.fabFilterVisibility(false)
-//    }
-//
-//    // Return true if the bottom sheet is initialized
-//    internal val isBottomSheetInitialized get() = ::bottomSheet.isInitialized
-//
-//    // Return true if the bottom sheet fragment is state expanded or half expanded
-//    internal val isExpanded
-//        get() =
-//            (bottomSheet.state == BottomSheetBehavior.STATE_HALF_EXPANDED || bottomSheet.state == BottomSheetBehavior.STATE_EXPANDED)
-
     // --------------
     // GETTERS
     // --------------
@@ -290,38 +159,10 @@ class MainFragmentManager(private val fm: FragmentManager,
     internal val categoryFragment
         get() = (fm.findFragmentByTag(CategoriesFragment::class.java.simpleName) as CategoriesFragment?)
 
-//    internal fun getMapsFragment() =
-//        (fm.findFragmentByTag(MapsFragment::class.java.simpleName) as MapsFragment?)
-//
-//    // Try to get MapsFragment instance child of EstateDetailFragment.
-//    internal val mapsFragmentChildDetail
-//        get() = (getCurrentFragment()?.childFragmentManager
-//            ?.findFragmentById(R.id.fragment_estate_detail_frame_map) as MapsFragment?)
-
     /**
      * Return the current fragment instance attached to frame layout 1.
      * @return the current fragment instance attached to frame layout 1.
      */
     private fun getCurrentFragment(): Fragment? =
         fm.findFragmentById(R.id.main_frame_container)
-//        fm.findFragmentById(getFrame(fragmentKey, isFrame2Visible))
-
-//    /**
-//     * Get Filter Fragment instance.
-//     * @return the current filter fragment instance.
-//     */
-//    internal fun getFilterFragment(): FilterFragment? =
-//        fm.findFragmentById(R.id.activity_main_bottom_sheet) as FilterFragment?
-//
-//    /**
-//     * Listener for bottom sheet, callback when state changed.
-//     */
-//    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
-//        override fun onSlide(bottomSheet: View, slideOffset: Float) {}
-//
-//        override fun onStateChanged(bottomSheet: View, newState: Int) {
-//            if (newState == BottomSheetBehavior.STATE_HIDDEN)
-//                fabFilter.fabFilterVisibility(false)
-//        }
-//    }
 }

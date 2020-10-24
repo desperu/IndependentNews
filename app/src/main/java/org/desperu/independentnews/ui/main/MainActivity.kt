@@ -45,7 +45,6 @@ import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
-// TODO to move and comment class
 var animationPlaybackSpeed: Double = 0.8
 /**
  * The name of the argument to received today article list in this Activity.
@@ -94,7 +93,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         firstStart()
         configureKoinDependency()
         configureAppBar()
-        showAppBarIcon(listOf(R.id.drawer_icon, R.id.search_icon))
+        showAppBarIcon(listOf(R.id.drawer_icon))
         configureDrawerLayout()
 //        configureNavigationView()
 //        configureViewModel()
@@ -289,7 +288,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     /**
      * Set alarm data and notification at first apk start.
      */
-    private fun setAlarmAtFirstStart() {// TODO store app version in shared to detect update and re-set alarm
+    private fun setAlarmAtFirstStart() {
         startAlarm(this, getAlarmTime(prefs.getInt(REFRESH_TIME, REFRESH_TIME_DEFAULT)), UPDATE_DATA)
         startAlarm(this, getAlarmTime(prefs.getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)), NOTIFICATION)
     }
@@ -335,7 +334,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     /**
      * Show or hide tab layout, depends of fragment key value.
      */
-    private fun showTabLayout() { // TODO put in MainFM with setTitle ??
+    private fun showTabLayout() {
         val toShow = fragmentKey == FRAG_CATEGORY
         app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
     }

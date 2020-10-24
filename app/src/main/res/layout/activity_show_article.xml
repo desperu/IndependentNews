@@ -80,7 +80,6 @@
                             android:textStyle="italic"
                             android:text="@{viewModel.article.sourceName}"/>
 
-                        <!-- TODO add 1st category and pattern category : subtitle -->
                         <TextView
                             android:id="@+id/article_subtitle"
                             android:layout_width="wrap_content"
@@ -90,7 +89,7 @@
                             android:layout_marginStart="@dimen/default_margin"
                             android:gravity="end"
                             android:textStyle="italic"
-                            android:text="@{viewModel.article.categories}"/>
+                            android:text="@{viewModel.article.section + ' '  + '>' + ' ' + viewModel.article.theme}"/>
 
                     </RelativeLayout>
 
