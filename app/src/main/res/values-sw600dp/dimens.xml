@@ -33,7 +33,7 @@
     <dimen name="item_article_title_margin_top">4dp</dimen>
     <dimen name="item_article_author_and_date_margin_top">6dp</dimen>
     <dimen name="item_article_title_text_size">18sp</dimen>
-    <item name="item_article_title_text_length_collapsed" type="integer">70</item>
+    <item name="item_article_title_text_length_collapsed" type="integer">140</item>
     <dimen name="item_article_image_width_height">86dp</dimen>
     <dimen name="item_article_image_width_height_expanded">100dp</dimen>
     <dimen name="item_article_image_vertical_margin">6dp</dimen>

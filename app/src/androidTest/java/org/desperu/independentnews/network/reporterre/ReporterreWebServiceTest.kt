@@ -68,7 +68,7 @@ class ReporterreWebServiceTest : KoinTest {
      */
     private fun checkParsingCategory(responseBody: ResponseBody) {
         val reporterreCategory = ReporterreCategory(responseBody)
-        val reportCatSize = reporterreCategory.getArticleList()?.size
-        assertTrue((reportCatSize ?: 0) >= 100)
+        val reportCatSize = reporterreCategory.getArticleList().size
+        assertTrue((reportCatSize) >= 50)
     }
 }
