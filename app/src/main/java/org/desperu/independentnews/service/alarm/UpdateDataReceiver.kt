@@ -33,10 +33,11 @@ class UpdateDataReceiver: BroadcastReceiver(), KoinComponent {
         val isUpdateDataEnabled =
             prefs.value.getPrefs().getBoolean(REFRESH_ARTICLE_LIST, REFRESH_ARTICLE_LIST_DEFAULT)
         val updateDataTime = prefs.value.getPrefs().getInt(REFRESH_TIME, REFRESH_TIME_DEFAULT)
+        val isFirstStart = prefs.value.getPrefs().getBoolean(IS_FIRST_TIME, true)
 
         if (isBootComplete && isUpdateDataEnabled)
             context?.let { startAlarm(it, getAlarmTime(updateDataTime), UPDATE_DATA) }
-        else
+        else if (!isFirstStart)
             updateData()
     }
 

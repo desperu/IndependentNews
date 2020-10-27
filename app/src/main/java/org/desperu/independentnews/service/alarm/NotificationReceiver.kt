@@ -53,10 +53,11 @@ class NotificationReceiver: BroadcastReceiver(), KoinComponent {
             prefs.value.getPrefs().getBoolean(NOTIFICATION_ENABLED, NOTIFICATION_DEFAULT)
         val notifTime =
             prefs.value.getPrefs().getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)
+        val isFirstStart = prefs.value.getPrefs().getBoolean(IS_FIRST_TIME, true)
 
         if (isBootComplete && isNotifEnabled)
             context?.let { it1 -> startAlarm(it1, getAlarmTime(notifTime), NOTIFICATION) }
-        else
+        else if (!isFirstStart)
             createNotification()
     }
 

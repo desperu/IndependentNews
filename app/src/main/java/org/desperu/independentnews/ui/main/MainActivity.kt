@@ -95,10 +95,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         configureAppBar()
         showAppBarIcon(listOf(R.id.drawer_icon))
         configureDrawerLayout()
-//        configureNavigationView()
-//        configureViewModel()
-//        configureRecyclerView()
-//        testRequest()
     }
 
     // -----------------
@@ -123,12 +119,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         nav_view.setNavigationItemSelectedListener(this)
-//        animationSpeedSeekbar.setOnSeekbarChangeListener { value ->
-//            animationPlaybackSpeed = value as Double
-//            animationSpeedText.text = "${"%.1f".format(animationPlaybackSpeed)}x"
-//            filtersMotionLayout.updateDurations()
-//            updateRecyclerViewAnimDuration()
-//        }
         drawerIcon.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
     }
 
@@ -177,10 +167,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_top_story -> showFragment(FRAG_TOP_STORY, null)
             R.id.activity_main_menu_drawer_categories -> showFragment(FRAG_CATEGORY, null)
             R.id.activity_main_menu_drawer_all_articles -> showFragment(FRAG_ALL_ARTICLES, null)
-//            R.id.activity_main_drawer_search -> this.showSearchArticlesActivity()
-//            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
-//            R.id.activity_main_drawer_notifications -> this.showNotificationsActivity()
             R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
             R.id.activity_main_drawer_about -> this.showAboutDialog()
             R.id.activity_main_drawer_help -> this.showHelpDocumentation()
@@ -196,14 +183,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         drawerLayout.isDrawerOpen(GravityCompat.START) ->
             drawerLayout.closeDrawer(GravityCompat.START)
 
-//        // If bottom sheet is state expanded , hide it.
-//        fm.isBottomSheetInitialized && fm.isExpanded ->
-//            closeFilterFragment(false)
-//
-//        // If search view is shown, hide it.
-//        toolbar_search_view != null && toolbar_search_view.isShown ->
-//            switchSearchView(false, isReload = false)
-//
         // If filter motion is expended, collapse it.
         view_pager.isVisible ->
         { close_icon.performClick(); Unit }
@@ -213,11 +192,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             fm.clearAllBackStack()
             super.onBackPressed()
         }
-//        // If device is tablet and frag is not map frag, remove the two frags and call super to finish activity.
-//        isFrame2Visible && fragmentKey != FRAG_ESTATE_MAP -> {
-//            fm.clearAllBackStack()
-//            super.onBackPressed()
-//        }
         // Else show previous fragment in back stack.
         else -> {
             fm.fragmentBack { super.onBackPressed() }
@@ -260,12 +234,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private fun showSettingsActivity() =
         startActivity(Intent(this, SettingsActivity::class.java))
 
-//    /**
-//     * Open browser for given string resId URL
-//     */
-//    private fun openBrowser(@StringRes resId: Int): Unit =
-//            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(resId))))
-
     // -----------------
     // DATA
     // -----------------
@@ -278,10 +246,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             showFirstStart(true)
             get<SourceRepository>().createSourcesForFirstStart()
             ideNewsRepository.fetchRssArticles()
-            showFirstStart(false)
-            ideNewsRepository.fetchCategories()
             setAlarmAtFirstStart()
             isFirstTime = false
+            showFirstStart(false)
+            ideNewsRepository.fetchCategories()
         }
     }
 
@@ -320,7 +288,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Show article list fragment when hide.
      * @param toShow if true show first start, else hide.
      */
-    private fun showFirstStart(toShow: Boolean) =
+    private fun showFirstStart(toShow: Boolean) {
         if (toShow) {
             first_start_container.visibility = View.VISIBLE
             coordinator_layout.visibility = View.INVISIBLE
@@ -328,8 +296,9 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             coordinator_layout.visibility = View.VISIBLE
             first_start_container.visibility = View.INVISIBLE
             fragmentKey = NO_FRAG
-            showFragment(fragmentKey, todayArticles)
+            if (coordinator_layout.isShown) showFragment(fragmentKey, todayArticles)
         }
+    }
 
     /**
      * Show or hide tab layout, depends of fragment key value.

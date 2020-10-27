@@ -39,10 +39,14 @@ object AppAlarmManager {
      */
     internal fun getAlarmTime(hour: Int): Long {
         val cal: Calendar = Calendar.getInstance()
+        val isInPast = cal.get(Calendar.HOUR_OF_DAY) >= hour
+        val dayMillis = 86400000 // 24 * 60 * 60 * 1000
+
         cal.set(Calendar.HOUR_OF_DAY, hour)
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)
-        return cal.timeInMillis
+
+        return cal.timeInMillis + if (isInPast) dayMillis else 0
     }
 
     /**

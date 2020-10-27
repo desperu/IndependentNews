@@ -28,11 +28,4 @@ val mainModule = module {
             activity
         ) as ArticleRouter
     }
-
-    /**
-     * Provides a ArticleListInterface interface from the instance of ArticleListFragment.
-     */
-    factory { (fragment: BaseBindingFragment) ->
-        fragment as ArticleListInterface
-    }
 }

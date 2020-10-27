@@ -3,8 +3,8 @@ package org.desperu.independentnews.di.module
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
-import org.desperu.independentnews.ui.settings.SettingsInterface
 import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -22,7 +22,7 @@ val viewModelModule = module {
     viewModel { (fragment: BaseBindingFragment) ->
         ArticleListViewModel(
             get(),
-            get { parametersOf(fragment) },
+            fragment as ArticleListInterface,
             get()
         )
     }
