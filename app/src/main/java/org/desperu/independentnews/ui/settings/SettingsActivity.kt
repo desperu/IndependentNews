@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.text.isDigitsOnly
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ObservableInt
 import androidx.databinding.ViewDataBinding
-import kotlinx.android.synthetic.main.activity_settings.*
 import kotlinx.android.synthetic.main.alert_dialog.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
@@ -19,7 +19,6 @@ import org.desperu.independentnews.service.alarm.AppAlarmManager.stopAlarm
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.SettingsUtils.getDialogMessage
 import org.desperu.independentnews.utils.SettingsUtils.getDialogTitle
-import org.desperu.independentnews.utils.SettingsUtils.getDialogValue
 import org.desperu.independentnews.utils.SettingsUtils.getMinAndMaxValues
 import org.desperu.independentnews.utils.SettingsUtils.getToastMessage
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -78,8 +77,9 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
      * Create alert dialog to set zoom value or confirm reset settings.
      *
      * @param dialogKey Key to show corresponding dialog.
+     * @param observable the observable value to get and set.
      */
-    override fun alertDialog(dialogKey: Int) {
+    override fun alertDialog(dialogKey: Int, observable: ObservableInt?) {
         val dialog: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
         // Create dialog for zoom level
         dialog.setTitle(getDialogTitle(baseContext, dialogKey))
@@ -90,7 +90,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
             // Add edit text to dialog
             val editView: View = LayoutInflater.from(this).inflate(R.layout.alert_dialog, alert_dialog_linear_root)
             val editText: EditText = editView.findViewById(R.id.alert_dialog_edit_text)
-            editText.setText(getDialogValue(viewModel, dialogKey))
+            editText.setText(observable?.get().toString())
             editText.setSelection(editText.text.length)
             dialog.setView(editView)
 
@@ -100,7 +100,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
                 val rangeValue = getMinAndMaxValues(dialogKey)
                 if (value.isNotEmpty() && value.isDigitsOnly()
                     && value.toInt() >= rangeValue[0] && value.toInt() <= rangeValue[1])
-                    activity_settings_text_size_value.text = value
+                    observable?.set(value.toInt())
                 else
                     showToast(getToastMessage(baseContext, dialogKey), Toast.LENGTH_LONG)
             }

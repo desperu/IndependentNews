@@ -71,25 +71,25 @@ class SettingsViewModel(
                 inverseBoolean(isNotificationsEnabled)
 
             R.id.activity_settings_container_notification_time ->
-                settingsInterface.alertDialog(NOTIF_TIME_DIALOG)
+                settingsInterface.alertDialog(NOTIF_TIME_DIALOG, notificationTime)
 
             R.id.activity_settings_container_text_size ->
-                settingsInterface.alertDialog(TEXT_SIZE_DIALOG)
+                settingsInterface.alertDialog(TEXT_SIZE_DIALOG, textSize)
 
             R.id.activity_settings_container_refresh_article_list ->
                 inverseBoolean(isRefreshArticleList)
 
             R.id.activity_settings_container_refresh_list_time ->
-                settingsInterface.alertDialog(REFRESH_TIME_DIALOG)
+                settingsInterface.alertDialog(REFRESH_TIME_DIALOG, refreshTime)
 
             R.id.activity_settings_container_only_wifi ->
                 inverseBoolean(isRefreshOnlyWifi)
 
             R.id.activity_settings_container_article_store_delay ->
-                settingsInterface.alertDialog(STORE_DELAY_DIALOG)
+                settingsInterface.alertDialog(STORE_DELAY_DIALOG, storeDelay)
 
             R.id.activity_settings_container_reset_settings ->
-                settingsInterface.alertDialog(RESET_DIALOG)
+                settingsInterface.alertDialog(RESET_DIALOG, null)
         }
     }
 

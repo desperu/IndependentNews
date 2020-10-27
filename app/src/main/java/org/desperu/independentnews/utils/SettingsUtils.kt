@@ -2,7 +2,6 @@ package org.desperu.independentnews.utils
 
 import android.content.Context
 import org.desperu.independentnews.R
-import org.desperu.independentnews.ui.settings.SettingsViewModel
 
 /**
  * SettingsUtils object witch provide utils functions for settings activity.
@@ -40,22 +39,6 @@ object SettingsUtils {
         REFRESH_TIME_DIALOG -> context.getString(R.string.activity_settings_text_refresh_article_list_time_description)
         STORE_DELAY_DIALOG -> context.getString(R.string.activity_settings_text_article_store_delay_description)
         RESET_DIALOG -> context.getString(R.string.activity_settings_dialog_reset_settings_message)
-        else -> error("Error while retrieving the Dialog Key : $dialogKey")
-    }
-
-    /**
-     * Returns the corresponding value for given dialog key.
-     *
-     * @param viewModel the viewModel of the parent activity.
-     * @param dialogKey the key to show the corresponding value.
-     *
-     * @return the corresponding value for the given dialog key.
-     */
-    internal fun getDialogValue(viewModel: SettingsViewModel, dialogKey: Int) = when(dialogKey) {
-        NOTIF_TIME_DIALOG -> viewModel.notificationTime.get().toString()
-        TEXT_SIZE_DIALOG -> viewModel.textSize.get().toString()
-        REFRESH_TIME_DIALOG -> viewModel.refreshTime.get().toString()
-        STORE_DELAY_DIALOG -> viewModel.storeDelay.get().toString()
         else -> error("Error while retrieving the Dialog Key : $dialogKey")
     }
 
