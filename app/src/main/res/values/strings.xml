@@ -21,7 +21,7 @@
 
     <!-- FILTER LAYOUT -->
     <!-- Filter Layout Sources -->
-    <string name="filter_layout_sources_bastamag">Bastamag</string>
+    <string name="filter_layout_sources_bastamag">Basta !</string>
     <string name="filter_layout_sources_reporterre">Reporterre</string>
     <string name="filter_layout_sources_multinational">Observatoire des Multinationales</string>
     <!-- Filter Layout Themes -->

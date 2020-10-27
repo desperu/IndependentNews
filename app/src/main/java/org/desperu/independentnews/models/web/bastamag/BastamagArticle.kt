@@ -50,9 +50,11 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     override fun getArticle(): String? =
         setMainCssId(
             correctMediaUrl(
-                correctUrlLink(
-                    findData(DIV, CLASS, MAIN, null)?.outerHtml(),
-                    BASTAMAG_BASE_URL
+                escapeHashtag(
+                    correctUrlLink(
+                        findData(DIV, CLASS, MAIN, null)?.outerHtml(),
+                        BASTAMAG_BASE_URL
+                    )
                 )
             )
         )

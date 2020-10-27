@@ -14,7 +14,7 @@ import org.jsoup.select.Elements
 abstract class BaseHtml(private val htmlPage: ResponseBody) {
 
     // FOR DATA
-    protected lateinit var document: Document
+    private lateinit var document: Document
 
     init {
         parseHtml()
@@ -70,7 +70,7 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
 
     // --- GETTERS ---
 
-    internal fun getUrl(): String = document.location()
+    internal fun getUrl(): String = document.baseUri()
 
     internal fun getHtmlPage(): String = htmlPage.string()
 }

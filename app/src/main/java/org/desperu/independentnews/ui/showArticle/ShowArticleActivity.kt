@@ -125,9 +125,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             javaScriptCanOpenWindowsAutomatically = true
             setSupportZoom(true)
             builtInZoomControls = true
-//            setNeedInitialFocus(false)
-//            setAppCacheEnabled(true)
-//            saveFormData = true
+            displayZoomControls = false
         }
 
         // Set css style for the web view.

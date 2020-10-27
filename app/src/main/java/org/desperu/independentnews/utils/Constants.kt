@@ -49,7 +49,7 @@ const val REPORT_SEC_INVENTER = ""
 // --- SOURCES ---
 
 // Source name
-const val BASTAMAG = "Bastamag"
+const val BASTAMAG = "Basta !"
 const val REPORTERRE = "Reporterre"
 
 // Source for database

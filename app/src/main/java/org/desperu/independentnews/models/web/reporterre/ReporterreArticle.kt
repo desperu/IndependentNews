@@ -56,10 +56,12 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
 
     override fun getArticle(): String? =
         correctMediaUrl(
-            addDescription(
-                correctUrlLink(
-                    findData(DIV, CLASS, TEXTE, null)?.outerHtml(),
-                    REPORTERRE_BASE_URL
+            escapeHashtag(
+                addDescription(
+                    correctUrlLink(
+                        findData(DIV, CLASS, TEXTE, null)?.outerHtml(),
+                        REPORTERRE_BASE_URL
+                    )
                 )
             )
         )
