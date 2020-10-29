@@ -96,7 +96,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
             section = getSection().mToString()
             theme = getTheme().mToString()
             if (!author.isNullOrBlank()) this.author = author
-            if (publishedDate != null) this.publishedDate = publishedDate
+            if (this.publishedDate == 0L && publishedDate != null) this.publishedDate = publishedDate
             this.article = getArticle().mToString()
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].mToString()

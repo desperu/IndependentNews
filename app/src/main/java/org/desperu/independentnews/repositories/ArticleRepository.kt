@@ -7,7 +7,6 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.desperu.independentnews.utils.Utils.storeDelayMillis
 import java.util.*
 
@@ -107,6 +106,8 @@ class ArticleRepositoryImpl(
 
     // FOR DATA
     private var sources: List<Source>? = null
+    private val nowMillis = Calendar.getInstance().timeInMillis
+    private val storeDelay = prefs.getPrefs().getInt(STORE_DELAY, STORE_DELAY_DEFAULT)
 
     /**
      * Persists (update the existing ones, and insert the non-existing ones) the articles in database.
@@ -174,8 +175,6 @@ class ArticleRepositoryImpl(
      * @return the number of row affected.
      */
     override suspend fun removeOldArticles(): Int = withContext(Dispatchers.IO) {
-        val nowMillis = Calendar.getInstance().timeInMillis
-        val storeDelay = prefs.getPrefs().getInt(STORE_DELAY, STORE_DELAY_DEFAULT)
         articleDao.removeOldArticles(storeDelayMillis(nowMillis, storeDelay))
     }
 
@@ -252,17 +251,16 @@ class ArticleRepositoryImpl(
 
         val articleListPair = articleList.partition { article -> urls.contains(article.url) }
         val inDb = articleListPair.first
-        newArticles.addAll(articleListPair.second)
+        val notInDb = articleListPair.second
 
         inDb.forEach { article ->
             val dBDate = articleDao.getArticle(article.url).publishedDate
-            // To correct date differences between rss (at the second) and web site (at the day)
-            if (article.isTopStory)
-                article.publishedDate = millisToStartOfDay(article.publishedDate)
 
             if (article.publishedDate > dBDate)
                 newArticles.add(article)
         }
+
+        newArticles.addAll(notInDb.filter { it.publishedDate > storeDelayMillis(nowMillis, storeDelay) })
 
         return@withContext newArticles
     }
