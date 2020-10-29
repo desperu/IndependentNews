@@ -7,6 +7,8 @@ import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
 import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
 import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
+import org.desperu.independentnews.utils.REPORT_SEC_DECRYPTER
+import org.desperu.independentnews.utils.REPORT_SEC_INVENTER
 import org.desperu.independentnews.utils.REPORT_SEC_RESISTER
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 
@@ -65,8 +67,7 @@ class ReporterreRepositoryImpl(
             val articleList = rssArticleList.map { it.toArticle() }
             articleRepository.updateTopStory(articleList)
             fetchArticleList(articleRepository.getNewArticles(articleList))
-        }
-        else
+        } else
             null
     }
 
@@ -76,7 +77,7 @@ class ReporterreRepositoryImpl(
      * @return the categories list of articles from the Web site of Reporterre.
      */
     override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
-        val categories = listOf(REPORT_SEC_RESISTER)
+        val categories = listOf(REPORT_SEC_DECRYPTER, REPORT_SEC_RESISTER, REPORT_SEC_INVENTER)
         val articleList = mutableListOf<Article>()
 
         categories.forEach { category ->

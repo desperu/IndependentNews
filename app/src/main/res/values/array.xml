@@ -19,7 +19,9 @@
         <item>Dates</item>
     </string-array>
 
-    <!-- Themes Correspondences -->
+    <!-- //////////////////////////////////////////////////////////
+        ////////////   ***Themes Correspondences***   ////////////
+       ////////////////////////////////////////////////////////// -->
     <string-array name="filter_ecology">
         <item>ecologie</item>
         <item>écologie</item>
@@ -78,7 +80,9 @@
         <item>santé</item>
     </string-array>
 
-    <!-- Section correspondences -->
+    <!-- //////////////////////////////////////////////////////////
+        ////////////   ***Section correspondences***   ///////////
+       ////////////////////////////////////////////////////////// -->
     <string-array name="filter_alternatives">
         <item>alternatives</item>
         <item>inventer</item>
@@ -107,9 +111,9 @@
 
 
     <!-- //////////////////////////////////////////////////////////
-         ////////////   ***Data list from sources***   ////////////
-         //////////////////////////////////////////////////////////
-         -->
+        ////////////   ***Data list from sources***   ////////////
+       ////////////////////////////////////////////////////////// -->
+
     <!-- Themes -->
     <string-array name="basta_theme">
         <item>Accès à l\'université</item>

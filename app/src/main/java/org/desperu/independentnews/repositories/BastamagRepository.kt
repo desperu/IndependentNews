@@ -67,8 +67,7 @@ class BastamagRepositoryImpl(
             val articleList = rssArticleList.map { it.toArticle() }
             articleRepository.updateTopStory(articleList)
             fetchArticleList(articleRepository.getNewArticles(articleList))
-        }
-        else
+        } else
             null
     }
 

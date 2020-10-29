@@ -85,7 +85,7 @@ interface IndependentNewsRepository {
      *
      * @return the today article list, articles published today.
      */
-    suspend fun getTodayArticles(): List<Article>
+    suspend fun getTodayArticles(): List<Article>?
 }
 
 /**
@@ -205,12 +205,12 @@ class IndependentNewsRepositoryImpl(
         setSources()
         val articleList = mutableListOf<Article>()
 
-        sources?.let {
-            categories.forEach { category ->
-                articleList.addAll(articleDao.getCategory("%$category%"))
-            }
+        categories.forEach { category ->
+            articleList.addAll(articleDao.getCategory("%$category%"))
+        }
 
-            articleList.setSourceForEach(it)
+        sources?.let { sources ->
+            articleDao.getWhereUrlsInSorted(articleList.map { it.url }).setSourceForEach(sources)
         }
     }
 
@@ -269,9 +269,10 @@ class IndependentNewsRepositoryImpl(
      *
      * @return the today article list, articles published today.
      */
-    override suspend fun getTodayArticles(): List<Article> = withContext(Dispatchers.IO) {
+    override suspend fun getTodayArticles(): List<Article>? = withContext(Dispatchers.IO) {
+        setSources()
         val todayStartMillis = millisToStartOfDay(Calendar.getInstance().timeInMillis)
-        articleDao.getTodayArticle(todayStartMillis)
+        sources?.let { articleDao.getTodayArticle(todayStartMillis).setSourceForEach(it) }
     }
 
     // -----------------

@@ -75,7 +75,7 @@ class NotificationReceiver: BroadcastReceiver(), KoinComponent {
             .setLargeIcon(context.resources.getDrawable(R.drawable.app_logo).toBitmap())
             .setContentTitle(context.getString(R.string.notification_title))
             .setContentText(
-                if (todayArticles.isEmpty()) context.getString(R.string.notification_text_no_today_articles)
+                if (todayArticles.isNullOrEmpty()) context.getString(R.string.notification_text_no_today_articles)
                 else context.getString(R.string.notification_text, todayArticles.size.toString())
             )
             .setDefaults(Notification.DEFAULT_LIGHTS or Notification.DEFAULT_SOUND)
@@ -83,7 +83,7 @@ class NotificationReceiver: BroadcastReceiver(), KoinComponent {
 
         // Create intent for notification click.
         val clickIntent: Intent = Intent(context, MainActivity::class.java)
-            .putParcelableArrayListExtra(TODAY_ARTICLES, ArrayList(todayArticles))
+            .putParcelableArrayListExtra(TODAY_ARTICLES, ArrayList(todayArticles ?: emptyList()))
 
         // Adds the intent that starts the activity.
         val resultPendingIntent = PendingIntent.getActivities(

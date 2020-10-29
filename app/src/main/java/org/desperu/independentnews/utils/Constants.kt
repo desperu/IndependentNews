@@ -41,9 +41,9 @@ const val BASTA_SEC_DECRYPTER = "Approfondir"
 const val BASTA_SEC_RESISTER = "Resister"
 const val BASTA_SEC_INVENTER = "Inventer"
 
-const val REPORT_SEC_DECRYPTER = ""
+const val REPORT_SEC_DECRYPTER = "Enquete"
 const val REPORT_SEC_RESISTER = "Reportage"
-const val REPORT_SEC_INVENTER = ""
+const val REPORT_SEC_INVENTER = "Alternatives"
 
 
 // --- SOURCES ---
