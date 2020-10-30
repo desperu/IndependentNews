@@ -10,15 +10,16 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
 /**
  * View Model witch provide data for article list.
  *
- * @param ideNewsRepository the app repository interface witch provide database and network access.
- * @param articleListInterface articleListInterface the article list interface witch provide fragment interface.
- * @param router the estate router interface witch provide user redirection.
+ * @property ideNewsRepository      the app repository interface witch provide database and network access.
+ * @property articleListInterface   the article list interface witch provide fragment interface.
+ * @property router                 the article router interface witch provide user redirection.
  *
  * @constructor Instantiates a new ArticleListViewModel.
  *
- * @property ideNewsRepository the app repository interface witch provide database and network access to set.
- * @property articleListInterface the article list interface witch provide fragment interface to set.
- * @property router the estate router interface witch provide user redirection to set.
+ * @param ideNewsRepository         the app repository interface witch provide database and network
+ *                                  access to set.
+ * @param articleListInterface      the article list interface witch provide fragment interface to set.
+ * @param router                    the article router interface witch provide user redirection to set.
  */
 class ArticleListViewModel(private val ideNewsRepository: IndependentNewsRepository,
                            private val articleListInterface: ArticleListInterface,

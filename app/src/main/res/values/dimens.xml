@@ -87,6 +87,9 @@
     <dimen name="article_title_text_size">24sp</dimen>
     <dimen name="article_image_min_width_height">300dp</dimen>
 
+    <!-- Sources Activity -->
+    <dimen name="item_source_image_height">170dp</dimen>
+
     <!-- Settings Activity -->
     <dimen name="activity_settings_linear_container_padding_top">10dp</dimen>
     <dimen name="activity_settings_text_category_and_divider_margin">10dp</dimen>

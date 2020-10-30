@@ -3,6 +3,7 @@ package org.desperu.independentnews.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
 import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
 import org.desperu.independentnews.network.reporterre.ReporterreRssService
@@ -32,6 +33,13 @@ interface ReporterreRepository {
      * @return the categories list of articles from the Web site flux of Reporterre.
      */
     suspend fun fetchCategories(): List<Article>?
+
+    /**
+     * Returns the editorial of Reporterre from it's Web site.
+     *
+     * @return the editorial of Reporterre from it's Web site.
+     */
+    suspend fun fetchSourceEditorial(source: Source): String
 }
 
 /**
@@ -81,11 +89,21 @@ class ReporterreRepositoryImpl(
         val articleList = mutableListOf<Article>()
 
         categories.forEach { category ->
-            val categoryList = webService.getCategory(category, 0.toString())
-            articleList.addAll(ReporterreCategory(categoryList).getArticleList())
+            val responseBody = webService.getCategory(category, 0.toString())
+            articleList.addAll(ReporterreCategory(responseBody).getArticleList())
         }
 
         fetchArticleList(articleRepository.getNewArticles(articleList))
+    }
+
+    /**
+     * Returns the editorial of Basta ! from it's Web site.
+     *
+     * @return the editorial of Basta ! from it's Web site.
+     */
+    override suspend fun fetchSourceEditorial(source: Source): String = withContext(Dispatchers.IO) {
+        val responseBody = webService.getArticle(source.editorialUrl)
+        ReporterreArticle(responseBody).getArticle() ?: ""
     }
 
     /**

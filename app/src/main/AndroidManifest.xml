@@ -38,6 +38,11 @@
             android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/SettingsTheme" />
 
+        <!-- SOURCES ACTIVITY -->
+        <activity android:name=".ui.sources.SourcesActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/SettingsTheme" />
+
         <!-- UPDATE DATA RECEIVER -->
         <receiver android:name=".service.alarm.UpdateDataReceiver">
             <intent-filter>

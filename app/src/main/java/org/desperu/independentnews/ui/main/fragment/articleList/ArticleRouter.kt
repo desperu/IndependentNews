@@ -12,6 +12,7 @@ interface ArticleRouter {
 
     /**
      * Redirects the user to the ShowArticle Activity to show articles.
+     *
      * @param article the article to show in the Activity.
      * @param imageView the image view to animate.
      */
@@ -30,7 +31,7 @@ interface ArticleRouter {
 class ArticleRouterImpl(private val activity: AppCompatActivity): ArticleRouter {
 
     /**
-     * Redirects the user to the ManageEstate Activity to manage estate.
+     * Redirects the user to the Show Article Activity to show article.
      * @param article the article to show in the Activity.
      * @param imageView the image view to animate.
      */

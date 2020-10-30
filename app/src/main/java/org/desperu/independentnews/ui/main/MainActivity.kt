@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.layout_filter_motion.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
@@ -33,7 +32,6 @@ import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
-import org.desperu.independentnews.repositories.SourceRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
@@ -41,6 +39,7 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragm
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.settings.SettingsActivity
+import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
@@ -167,6 +166,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_top_story -> showFragment(FRAG_TOP_STORY, null)
             R.id.activity_main_menu_drawer_categories -> showFragment(FRAG_CATEGORY, null)
             R.id.activity_main_menu_drawer_all_articles -> showFragment(FRAG_ALL_ARTICLES, null)
+            R.id.activity_main_menu_drawer_sources -> showSourcesActivity()
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
             R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
             R.id.activity_main_drawer_about -> this.showAboutDialog()
@@ -234,6 +234,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private fun showSettingsActivity() =
         startActivity(Intent(this, SettingsActivity::class.java))
 
+    /**
+     * Start Sources activity.
+     */
+    private fun showSourcesActivity() =
+        startActivity(Intent(this, SourcesActivity::class.java))
+
     // -----------------
     // DATA
     // -----------------
@@ -244,7 +250,9 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private fun firstStart() = lifecycleScope.launch(Dispatchers.Main) {
         if (isFirstTime) {
             showFirstStart(true)
-            get<SourceRepository>().createSourcesForFirstStart()
+            // TODO check internet state, if no connexion don't set first start to false,
+            //  disable menu drawer motion event detection ??
+            ideNewsRepository.createSourcesForFirstStart()
             ideNewsRepository.fetchRssArticles()
             setAlarmAtFirstStart()
             isFirstTime = false
@@ -265,10 +273,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Refresh data for the application, fetch data from Rss and Web, and persist them
      * into the database.
      */
-    private fun refreshData() {
-        GlobalScope.launch(Dispatchers.IO) {
-            ideNewsRepository.refreshData()
-        }
+    private fun refreshData() = lifecycleScope.launch(Dispatchers.IO) {
+        ideNewsRepository.refreshData()
     }
 
     /**

@@ -4,9 +4,12 @@ import android.view.View
 import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import org.desperu.independentnews.R
+import org.desperu.independentnews.ui.sources.RecyclerViewAdapter
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
 
@@ -58,4 +61,25 @@ fun ImageView.setImage(imageId: Int?) {
 @BindingAdapter("setArticle")
 fun WebView.setArticle(article: String?) {
     article?.let { loadData(it, "text/html; charset=UTF-8", null) }
+}
+
+/**
+ * Set the adapter of the recycler view.
+ * @param adapter the adapter to set for the recycler view.
+ */
+@BindingAdapter("adapter")
+fun RecyclerView.myAdapter(adapter: RecyclerViewAdapter?) {
+    this.adapter = adapter
+}
+
+/**
+ * Set the background color depends of the source.
+ * @param color the color to set for the background.
+ */
+@Suppress("Deprecation")
+@BindingAdapter("myBackgroundColor")
+fun CardView.myBackgroundColor(color: Int?) {
+    if (color != null && color != 0) {
+        setCardBackgroundColor(resources.getColor(color))
+    }
 }

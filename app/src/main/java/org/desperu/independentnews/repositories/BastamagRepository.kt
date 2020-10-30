@@ -3,6 +3,7 @@ package org.desperu.independentnews.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
 import org.desperu.independentnews.models.web.bastamag.BastamagCategory
 import org.desperu.independentnews.network.bastamag.BastamagRssService
@@ -32,6 +33,13 @@ interface BastamagRepository {
      * @return the categories list of articles from the Web site of Bastamag.
      */
     suspend fun fetchCategories(): List<Article>?
+
+    /**
+     * Returns the editorial of Basta ! from it's Web site.
+     *
+     * @return the editorial of Basta ! from it's Web site.
+     */
+    suspend fun fetchSourceEditorial(source: Source): String
 }
 
 /**
@@ -83,12 +91,23 @@ class BastamagRepositoryImpl(
 
         categories.forEach {category ->
             number.forEach {number ->
-                val categoryList = webService.getCategory(category, number.toString())
-                articleList.addAll(BastamagCategory(categoryList).getArticleList())
+                val responseBody = webService.getCategory(category, number.toString())
+                articleList.addAll(BastamagCategory(responseBody).getArticleList())
             }
         }
 
         fetchArticleList(articleRepository.getNewArticles(articleList))
+    }
+
+
+    /**
+     * Returns the editorial of Basta ! from it's Web site.
+     *
+     * @return the editorial of Basta ! from it's Web site.
+     */
+    override suspend fun fetchSourceEditorial(source: Source): String = withContext(Dispatchers.IO) {
+        val responseBody = webService.getArticle(source.editorialUrl)
+        BastamagArticle(responseBody).getArticle() ?: ""
     }
 
     /**

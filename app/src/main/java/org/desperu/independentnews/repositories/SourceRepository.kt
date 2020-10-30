@@ -4,8 +4,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.utils.BASTAMAG_SOURCE
-import org.desperu.independentnews.utils.REPORTERRE_SOURCE
 
 /**
  * Source Repository interface to get data from Source database.
@@ -53,11 +51,6 @@ interface SourceRepository {
      * @return the id list of inserted sources.
      */
     suspend fun insertSources(vararg sources: Source): List<Long>
-
-    /**
-     * Create all sources in database for first apk start.
-     */
-    suspend fun createSourcesForFirstStart(): List<Long>
 }
 
 /**
@@ -115,12 +108,5 @@ class SourceRepositoryImpl(private val sourceDao: SourceDao): SourceRepository {
      */
     override suspend fun insertSources(vararg sources: Source): List<Long> = withContext(Dispatchers.IO) {
         sourceDao.insertSources(*sources)
-    }
-
-    /**
-     * Create all sources in database for first apk start.
-     */
-    override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
-        insertSources(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
     }
 }

@@ -7,6 +7,7 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInter
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
+import org.desperu.independentnews.ui.sources.SourcesListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.parameter.parametersOf
 import org.koin.dsl.module
@@ -32,6 +33,17 @@ val viewModelModule = module {
      */
     viewModel { (article: Article) ->
         ArticleViewModel(article)
+    }
+
+    /**
+     * Provides the SourceListViewModel instance.
+     */
+    viewModel { (activity: BaseBindingActivity) ->
+        SourcesListViewModel(
+            get(),
+            get { parametersOf(activity) },
+            get { parametersOf(activity) }
+        )
     }
 
     /**

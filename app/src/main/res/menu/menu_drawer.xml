@@ -37,8 +37,7 @@
                 <item
                     android:id="@+id/activity_main_menu_drawer_sources"
                     android:icon="@drawable/ic_baseline_menu_book_white_24"
-                    android:title="@string/navigation_drawer_sources"
-                    android:visible="false"/>
+                    android:title="@string/navigation_drawer_sources"/>
 
                 <item
                     android:id="@+id/activity_main_menu_drawer_refresh_data"

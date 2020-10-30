@@ -19,6 +19,7 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
@@ -29,6 +30,10 @@ import org.koin.core.parameter.parametersOf
  * The name of the argument to received article for this Activity.
  */
 const val ARTICLE: String = "article"
+/**
+ * The name of the argument to received source for this Activity.
+ */
+const val SOURCE: String = "source"
 
 /**
  * Activity to show articles list.
@@ -40,7 +45,8 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     // FROM BUNDLE
     private val article: Article
         get() = intent.getParcelableExtra(ARTICLE)
-            ?: Article(title = getString(R.string.show_article_activity_article_error))
+            ?: Article(title = getString(R.string.show_article_activity_article_error), url = source.editorialUrl, article = source.editorial) // TODO for test
+    private val source: Source get() = intent.getParcelableExtra(SOURCE) ?: Source()
 
     // FOR DATA
     private lateinit var binding: ViewDataBinding
@@ -62,6 +68,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     companion object {
         /**
          * Redirects from an Activity to this Activity with transition animation.
+         *
          * @param activity the activity use to perform redirection.
          * @param article the article to show in this activity.
          * @param imageView the image view to animate.
@@ -83,6 +90,18 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             } else {
                 activity.startActivity(intent)
             }
+        }
+
+        /**
+         * Redirects from an Activity to this Activity with transition animation.
+         *
+         * @param activity the activity use to perform redirection.
+         * @param source the source to show in this activity.
+         */
+        fun routeFromActivity(activity: AppCompatActivity,
+                              source: Source) {
+            activity.startActivity(Intent(activity, ShowArticleActivity::class.java)
+                .putExtra(SOURCE, source))
         }
     }
 

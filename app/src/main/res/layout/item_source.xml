@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.sources.SourceViewModel"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        app:cardCornerRadius="@dimen/item_article_corner_radius"
+        app:myBackgroundColor="@{viewModel.source.backgroundColorId}">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_source_image_height"
+            android:layout_margin="@dimen/default_margin"
+            android:scaleType="center"
+            android:onClick="@{viewModel.onClickImage}"
+            app:setImage="@{viewModel.source.imageId}"/>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

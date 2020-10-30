@@ -86,6 +86,13 @@ interface IndependentNewsRepository {
      * @return the today article list, articles published today.
      */
     suspend fun getTodayArticles(): List<Article>?
+
+    /**
+     * Create all sources in database for first apk start.
+     *
+     * @return the id list of inserted sources.
+     */
+    suspend fun createSourcesForFirstStart(): List<Long>
 }
 
 /**
@@ -276,7 +283,7 @@ class IndependentNewsRepositoryImpl(
     }
 
     // -----------------
-    // UTILS
+    // SOURCES
     // -----------------
 
     /**
@@ -285,5 +292,30 @@ class IndependentNewsRepositoryImpl(
     private suspend fun setSources() = withContext(Dispatchers.IO) {
         if (sources.isNullOrEmpty())
             sources = sourceRepository.getEnabledSources()
+    }
+
+    /**
+     * Create all sources in database for first apk start.
+     *
+     * @return the id list of inserted sources.
+     */
+    override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
+        val sourceList = listOf(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
+        sourceList.forEach { it.editorial = fetchSourceEditorial(it) }
+
+        sourceRepository.insertSources(*sourceList.toTypedArray())
+    }
+
+    /**
+     * Returns the editorial of the given source.
+     *
+     * @return the editorial of the given source.
+     */
+    private suspend fun fetchSourceEditorial(source: Source): String = withContext(Dispatchers.IO) {
+        when (source.name) {
+            BASTAMAG -> bastamagRepository.fetchSourceEditorial(source)
+            REPORTERRE -> reporterreRepository.fetchSourceEditorial(source)
+            else -> ""
+        }
     }
 }

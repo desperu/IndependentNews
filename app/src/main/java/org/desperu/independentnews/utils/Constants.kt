@@ -58,14 +58,16 @@ val BASTAMAG_SOURCE = Source(
     url = BASTAMAG_BASE_URL,
     editorialUrl = BASTAMAG_EDITO_URL,
     imageId = R.drawable.logo_bastamag,
-    logoId = R.drawable.logo_mini_bastamag
+    logoId = R.drawable.logo_mini_bastamag,
+    backgroundColorId = R.color.bastamag_background
 )
 val REPORTERRE_SOURCE = Source(
     name = REPORTERRE,
     url = REPORTERRE_BASE_URL,
     editorialUrl = REPORTERRE_EDITO_URL,
     imageId = R.drawable.logo_reporterre,
-    logoId = R.drawable.logo_mini_reporterre
+    logoId = R.drawable.logo_mini_reporterre,
+    backgroundColorId = R.color.reporterre_background
 )
 
 
