@@ -1,15 +1,20 @@
 package org.desperu.independentnews.extension
 
+import android.os.Build
 import android.view.View
 import android.webkit.WebView
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
+import androidx.core.view.setPadding
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import org.desperu.independentnews.R
-import org.desperu.independentnews.ui.sources.RecyclerViewAdapter
+import org.desperu.independentnews.extension.design.bindDimen
+import org.desperu.independentnews.ui.sources.SourcesActivity
+import org.desperu.independentnews.ui.sources.fragment.sourceList.RecyclerViewAdapter
+import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
 
@@ -73,13 +78,66 @@ fun RecyclerView.myAdapter(adapter: RecyclerViewAdapter?) {
 }
 
 /**
+ * Update transition name with the given position of the item.
+ */
+@BindingAdapter("updateTransitionName")
+fun View.updateTransitionName(position: Int?) { // TODO use string and set in view model with service/Ressources
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && position != null) {
+        val transitionName = context.getString(R.string.animation_source_list_to_detail) + position
+        setTransitionName(transitionName)
+    }
+//    (context as SourcesActivity)
+}
+
+/**
  * Set the background color depends of the source.
  * @param color the color to set for the background.
  */
 @Suppress("Deprecation")
 @BindingAdapter("myBackgroundColor")
-fun CardView.myBackgroundColor(color: Int?) {
+fun ImageView.myBackgroundColor(color: Int?) {
     if (color != null && color != 0) {
-        setCardBackgroundColor(resources.getColor(color))
+        setBackgroundColor(resources.getColor(color))
+    }
+}
+
+/**
+ * Set the background resource of the view, depends of the enabled value.
+ * @param enabled true if the source is enabled.
+ */
+@BindingAdapter("myBackground")
+fun View.myBackground(enabled: Boolean?) {
+    setBackgroundResource(
+        if (enabled != null && !enabled) R.drawable.source_border_disabled
+        else R.drawable.source_border_enabled
+    )
+}
+
+/**
+ * Set the padding of the view, depends of the source.
+ * @param sourceName the name of the source.
+ */
+@BindingAdapter("myPadding")
+fun View.myPadding(sourceName: String?) {
+    setPadding(
+        bindDimen(
+            if (sourceName == BASTAMAG) R.dimen.default_margin
+            else R.dimen.default_little_margin
+        ).value.toInt()
+    )
+}
+
+/**
+ * Set the text and the background resource of the button, depends of the enabled value.
+ * @param enabled true if the source is enabled.
+ */
+@BindingAdapter("myButton")
+fun Button.myButton(enabled: Boolean?) {
+    if (enabled != null && enabled) {
+        text = resources.getString(R.string.fragment_source_detail_button_disable)
+        setBackgroundResource(R.drawable.source_button_disabled)
+    } else {
+        text = resources.getString(R.string.fragment_source_detail_button_enable)
+        setBackgroundResource(R.drawable.source_button_enabled)
     }
 }

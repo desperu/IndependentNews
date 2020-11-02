@@ -36,6 +36,6 @@ class ArticleItemViewModel(val article: Article,
      * On click description container listener.
      */
     val onClickDescriptionContainer = OnClickListener {
-        router.openShowArticle(article, (it.parent as View).findViewById<View>(R.id.image))
+        router.openShowArticle(article, (it.parent as View).findViewById(R.id.image))
     }
 }

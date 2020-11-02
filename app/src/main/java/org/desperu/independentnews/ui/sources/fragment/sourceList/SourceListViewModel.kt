@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.sources
+package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,7 +23,7 @@ import org.desperu.independentnews.repositories.SourceRepository
  * @param router                    the source router interface witch provide user redirection to set.
  */
 class SourcesListViewModel(private val sourceRepository: SourceRepository,
-                           private val sourcesInterface: SourcesInterface,
+                           private val sourcesInterface: SourceListInterface,
                            private val router: SourceRouter
 ) : ViewModel() {
 
@@ -31,18 +31,14 @@ class SourcesListViewModel(private val sourceRepository: SourceRepository,
     val recyclerAdapter get() = sourcesInterface.getRecyclerAdapter()
     private var sourceList: List<Source>? = null
 
-    init {
-        getSourceList()
-    }
-
     // -----------------
     // DATABASE
     // -----------------
 
     /**
-     * Get top source list from database, and dispatch to recycler adapter.
+     * Get all source list from database, and dispatch to recycler adapter.
      */
-    private fun getSourceList() = viewModelScope.launch(Dispatchers.IO) {
+    internal fun getSourceList() = viewModelScope.launch(Dispatchers.IO) {
         sourceList = sourceRepository.getAll()
         updateRecyclerData()
     }
@@ -57,7 +53,10 @@ class SourcesListViewModel(private val sourceRepository: SourceRepository,
     private fun updateRecyclerData() = viewModelScope.launch(Dispatchers.Main) {
         sourceList?.let {
             recyclerAdapter?.apply {
-                updateList(it.map { source -> SourceViewModel(source, router) }.toMutableList())
+                updateList(it.mapIndexed { index, source ->
+                    SourceViewModel(source, index, router)
+                }.toMutableList())
+
                 notifyDataSetChanged()
             }
         }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.sources.fragment.sourceList.SourceViewModel"/>
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/source_detail_image"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:minWidth="@dimen/article_image_min_width_height"
+                android:minHeight="@dimen/article_image_min_width_height"
+                android:transitionName="@string/animation_source_list_to_detail"
+                app:setImage="@{viewModel.source.imageId}"
+                app:myBackgroundColor="@{viewModel.source.backgroundColorId}"
+                tools:ignore="UnusedAttribute" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppButton"
+                app:myButton="@{viewModel.source.enabled}"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

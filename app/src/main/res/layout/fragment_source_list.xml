@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.sources.fragment.sourceList.SourcesListViewModel"/>
+    </data>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sources_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/default_margin"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:adapter="@{viewModel.recyclerAdapter}"
+        tools:listitem="@layout/item_source" />
+
+</layout>

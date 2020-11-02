@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Filter Motion Animation Duration -->
     <integer name="pathAnimDuration">300</integer>
     <integer name="revealAnimDuration">300</integer>
     <integer name="settleAnimDuration">300</integer>
@@ -9,4 +11,8 @@
     <integer name="loadingAnimDuration">600</integer>
 
     <integer name="toggleAnimDuration">100</integer>
+
+    <!-- Source Activity Animation Duration -->
+    <integer name="item_anim_duration">300</integer>
+
 </resources>

@@ -1,39 +1,50 @@
 package org.desperu.independentnews.ui.sources
 
+import android.os.Build
 import android.view.View
-import android.view.animation.AnimationUtils
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_sources.*
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.transition.Fade
+import androidx.transition.TransitionInflater
+import androidx.transition.TransitionSet
+import icepick.State
 import org.desperu.independentnews.R
-import org.desperu.independentnews.base.ui.BaseBindingActivity
+import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.ui.sources.fragment.sourceDetail.ITEM_POSITION
+import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
+import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListFragment
+import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
+import org.desperu.independentnews.utils.*
+import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
+private const val FADE_DEFAULT_TIME: Long = 300L
+
 /**
- * Activity to manages and present the medias, informations, sources of the application.
+ * Activity to manages and present the sources medias of the application.
  *
  * @constructor Instantiates a new SourcesActivity.
  */
-class SourcesActivity : BaseBindingActivity(sourcesModule), SourcesInterface {
+class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
 
     // FOR DATA
-    private lateinit var binding: ViewDataBinding
-    private val viewModel: SourcesListViewModel by viewModel { parametersOf(this) }
-    private lateinit var sourcesAdapter: RecyclerViewAdapter
+    @JvmField @State var fragmentKey: Int = NO_FRAG
+    private val fm = supportFragmentManager
+    private var itemPosition = -1
 
     // --------------
     // BASE METHODS
     // --------------
 
-    override fun getBindingView(): View = configureDataBinding()
+    override fun getActivityLayout(): Int = R.layout.activity_sources
 
     override fun configureDesign() {
+        configureKoinDependency()
         configureAppBar()
         showAppBarIcon(listOf(R.id.back_arrow_icon))
-        configureRecyclerView()
+        configureAndShowFragment(FRAG_SOURCES_LIST, null, null, -1)
     }
 
     // --------------
@@ -41,27 +52,102 @@ class SourcesActivity : BaseBindingActivity(sourcesModule), SourcesInterface {
     // --------------
 
     /**
-     * Configure data binding and return the root view.
-     * @return the binding root view.
+     * Configure koin dependency for this activity.
      */
-    private fun configureDataBinding(): View {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_sources)
-        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
-        return binding.root
+    private fun configureKoinDependency() {
+        get<SourcesInterface> { parametersOf(this) }
+        get<SourceRouter> { parametersOf(this) }
     }
 
     /**
-     * Configure recycler view, support large screen size and use specific user interface.
-     * Set fall down animation for recycler view items.
+     * Configure and show corresponding fragment.
+     *
+     * @param fragmentKey Key for fragment.
+     * @param source the source detail to show.
+     * @param sharedElement the shared element to animate during the transition.
+     * @param itemPosition the position of the source item in the recycler view.
      */
-    private fun configureRecyclerView() {
-        sourcesAdapter = RecyclerViewAdapter(R.layout.item_source)
-        sources_recycler.layoutManager = LinearLayoutManager(this)
+    private fun configureAndShowFragment(fragmentKey: Int, source: Source?,
+                                         sharedElement: View?, itemPosition: Int) {
+        if (this.fragmentKey != fragmentKey) {
+            this.fragmentKey = fragmentKey
+            this.itemPosition = itemPosition
 
-        val controller = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_anim_fall_down)
-        sources_recycler.layoutAnimation = controller
-        sources_recycler.layoutAnimation.animation.startOffset = 100
-        sources_recycler.scheduleLayoutAnimation()
+            // Try to restore fragment instance from back stack.
+            val fragment = fm.findFragmentByTag(getFragFromKey(fragmentKey).javaClass.simpleName)
+
+                // If null, instantiate a new fragment.
+                ?: when (fragmentKey) {
+                    FRAG_SOURCES_LIST -> SourceListFragment()
+                    FRAG_SOURCES_DETAIL -> SourceDetailFragment.newInstance(source!!, itemPosition)
+                    else -> Fragment()
+                }
+
+            fragmentTransaction(fragment, sharedElement)
+        }
+    }
+
+    // --------------
+    // METHODS OVERRIDE
+    // --------------
+
+    override fun onBackPressed() {
+        if (fragmentKey == FRAG_SOURCES_LIST) {
+            while (fm.backStackEntryCount > 0) fm.popBackStackImmediate()
+            super.onBackPressed()
+        } else {
+            sourceListFrag?.let { it.arguments?.putInt(ITEM_POSITION, itemPosition) }
+            super.onBackPressed()
+            fragmentKey = FRAG_SOURCES_LIST
+        }
+    }
+
+    // --------------
+    // FRAGMENT
+    // --------------
+
+    /**
+     * Apply fragment transaction, add to back stack and set animation transition
+     * for API > Lollipop.
+     *
+     * @param fragment the fragment to show in the frame layout.
+     * @param sharedElement the shared element to animate.
+     */
+    private fun fragmentTransaction(fragment: Fragment, sharedElement: View?) {
+        val fragTransaction = fm.beginTransaction()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && sharedElement != null) {
+            performTransition(fragment)
+            sharedElement.transitionName = getString(R.string.animation_source_list_to_detail) + itemPosition
+            fragTransaction.addSharedElement(sharedElement, sharedElement.transitionName)
+        }
+
+        fragTransaction
+            .setReorderingAllowed(true)
+            .replace(R.id.source_frame_container, fragment, fragment.javaClass.simpleName)
+            .addToBackStack(fragment.javaClass.simpleName)
+            .commit()
+    }
+
+    /**
+     * Redirects the user to the SourcesDetailFragment to show sources detail.
+     *
+     * @param source the source to show in the fragment.
+     * @param imageView the image view to animate.
+     * @param itemPosition the position of the source item in the recycler view.
+     */
+    override fun showSourceDetail(source: Source, imageView: View, itemPosition: Int) =
+        configureAndShowFragment(FRAG_SOURCES_DETAIL, source, imageView, itemPosition)
+
+    /**
+     * Get the associated fragment with the given fragment key.
+     * @param fragmentKey the given fragment key from witch get the key.
+     * @return the corresponding fragment instance.
+     */
+    private fun getFragFromKey(fragmentKey: Int): Fragment = when(fragmentKey) {
+        FRAG_SOURCES_LIST -> SourceListFragment()
+        FRAG_SOURCES_DETAIL -> SourceDetailFragment()
+        else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }
 
     // --------------
@@ -74,11 +160,47 @@ class SourcesActivity : BaseBindingActivity(sourcesModule), SourcesInterface {
     @Suppress("unused_parameter")
     fun onClickBackArrow(v: View) = onClickBackArrow()
 
+    // --------------
+    // ANIMATION
+    // --------------
+
+    /**
+     * Perform the fragment transition animation (fade and shared element) for the given fragment.
+     *
+     * @param fragment the fragment for which perform transition animation.
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun performTransition(fragment: Fragment) {
+        if (isDestroyed) return
+
+        // 1. Exit for Previous Fragment
+        val exitFade = Fade()
+        exitFade.duration = FADE_DEFAULT_TIME
+        currentFragment?.exitTransition = exitFade
+
+        // 2. Shared Elements Transition
+        val transitionSet = TransitionSet()
+        transitionSet.addTransition(
+            TransitionInflater.from(this).inflateTransition(android.R.transition.move)
+        )
+        fragment.sharedElementEnterTransition = transitionSet
+
+        // 3. Enter Transition for New Fragment
+        val enterFade = Fade()
+        enterFade.duration = FADE_DEFAULT_TIME
+        fragment.enterTransition = enterFade
+    }
+
     // --- GETTERS ---
 
     /**
-     * Return the source list adapter instance.
-     * @return the source list adapter instance.
+     * Get the current fragment in the frame container.
      */
-    override fun getRecyclerAdapter(): RecyclerViewAdapter? = sourcesAdapter
+    private val currentFragment get() = fm.findFragmentById(R.id.source_frame_container)
+
+    /**
+     * Get the source list fragment instance from fragment manager (frame or back stack).
+     */
+    private val sourceListFrag get() =
+        fm.findFragmentByTag(SourceListFragment().javaClass.simpleName) as SourceListFragment?
 }

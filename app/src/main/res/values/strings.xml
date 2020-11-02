@@ -43,6 +43,11 @@
     <string name="filter_layout_dates_text_begin">Begin Date</string>
     <string name="filter_layout_dates_text_end">End Date</string>
 
+    <!-- SOURCES ACTIVITY -->
+    <!-- Source Detail Fragment -->
+    <string name="fragment_source_detail_button_enable">Enable</string>
+    <string name="fragment_source_detail_button_disable">Disable</string>
+
     <!-- SETTINGS ACTIVITY -->
     <string name="activity_settings_text_category_notification" translatable="false">Notifications</string>
     <string name="activity_settings_text_notifications_state">Enable notifications</string>
@@ -100,6 +105,7 @@
 
     <!-- SCENE TRANSITION -->
     <string name="animation_main_to_show_article">ImageAnimationMainToShowArticle</string>
+    <string name="animation_source_list_to_detail">ImageAnimationSourceListToDetail</string>
 
     <!-- FONT ID -->
     <string name="AnnieUseYourTelescope_Regular">AnnieUseYourTelescope-Regular</string>

@@ -64,4 +64,11 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
     protected fun showAppBarIcon(iconList: List<Int>) {
         iconList.forEach { findViewById<View>(it).visibility = View.VISIBLE }
     }
+
+    // --- MENU ACTION ---
+
+    /**
+     * Onc click on back arrow finish the child activity.
+     */
+    protected fun onClickBackArrow() = supportFinishAfterTransition()
 }

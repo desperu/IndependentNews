@@ -6,6 +6,7 @@ import org.desperu.independentnews.models.Source
 // --- FOR MAIN ---
 
 // Fragment identifier
+// Main
 const val NO_FRAG = -1
 const val FRAG_TOP_STORY = 0
 const val FRAG_CATEGORY = 1
@@ -15,12 +16,15 @@ const val FRAG_SOCIAL = 4
 const val FRAG_ENERGY = 5
 const val FRAG_HEALTH = 6
 const val FRAG_TODAY_ARTICLES = 7
+// Sources
+const val FRAG_SOURCES_LIST = 102
+const val FRAG_SOURCES_DETAIL = 101
 
 // View Pager
 const val numberOfPage = 4
 
 // Documentation url
-const val DOCUMENTATION_URL = "https://github.com/desperu/RealEstateManager/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
+const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
 
 // --- FOR RETROFIT REQUEST ---

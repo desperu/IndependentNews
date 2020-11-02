@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="viewModel"
-            type="org.desperu.independentnews.ui.sources.SourceViewModel"/>
+            type="org.desperu.independentnews.ui.sources.fragment.sourceList.SourceViewModel"/>
     </data>
 
     <androidx.cardview.widget.CardView
@@ -14,15 +15,23 @@
         android:layout_marginHorizontal="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_margin"
         app:cardCornerRadius="@dimen/item_article_corner_radius"
-        app:myBackgroundColor="@{viewModel.source.backgroundColorId}">
+        app:cardElevation="@dimen/default_elevation"
+        app:myBackground="@{viewModel.source.enabled}">
 
         <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/item_source_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_source_image_height"
-            android:layout_margin="@dimen/default_margin"
-            android:scaleType="center"
+            android:minWidth="@dimen/article_image_min_width_height"
+            android:minHeight="@dimen/item_source_image_height"
+            android:layout_margin="@dimen/default_little_margin"
+            android:padding="@dimen/default_little_margin"
+            android:transitionName="@string/animation_source_list_to_detail"
             android:onClick="@{viewModel.onClickImage}"
-            app:setImage="@{viewModel.source.imageId}"/>
+            app:setImage="@{viewModel.source.imageId}"
+            app:myBackgroundColor="@{viewModel.source.backgroundColorId}"
+            app:myPadding="@{viewModel.source.name}"
+            tools:ignore="UnusedAttribute" />
 
     </androidx.cardview.widget.CardView>
 
