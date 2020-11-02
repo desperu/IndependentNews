@@ -18,7 +18,11 @@
         app:cardElevation="@dimen/default_elevation"
         app:myBackground="@{viewModel.source.enabled}">
 
-        <com.google.android.material.imageview.ShapeableImageView
+        <!-- TODO for perfect anim, need to use fitCenter
+              with height wrap content and no min size set
+              but there's a big difference between logo size ... -->
+
+        <ImageView
             android:id="@+id/item_source_image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_source_image_height"
@@ -26,6 +30,7 @@
             android:minHeight="@dimen/item_source_image_height"
             android:layout_margin="@dimen/default_little_margin"
             android:padding="@dimen/default_little_margin"
+            android:scaleType="fitCenter"
             android:transitionName="@string/animation_source_list_to_detail"
             android:onClick="@{viewModel.onClickImage}"
             app:setImage="@{viewModel.source.imageId}"

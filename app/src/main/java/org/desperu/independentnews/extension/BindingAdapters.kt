@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
-import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.ui.sources.fragment.sourceList.RecyclerViewAdapter
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl

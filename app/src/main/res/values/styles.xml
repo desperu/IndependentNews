@@ -73,9 +73,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- BUTTON TODO useless ???-->
+    <!-- BUTTON -->
     <style name="AppButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/default_edit_text_size</item>
         <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 

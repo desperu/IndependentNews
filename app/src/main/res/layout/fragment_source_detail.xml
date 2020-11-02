@@ -23,17 +23,20 @@
             <ImageView
                 android:id="@+id/source_detail_image"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:minWidth="@dimen/article_image_min_width_height"
-                android:minHeight="@dimen/article_image_min_width_height"
+                android:layout_height="@dimen/fragment_source_detail_image_height"
+                android:minWidth="@dimen/fragment_source_detail_image_height"
+                android:minHeight="@dimen/fragment_source_detail_image_height"
+                android:scaleType="fitCenter"
                 android:transitionName="@string/animation_source_list_to_detail"
                 app:setImage="@{viewModel.source.imageId}"
                 app:myBackgroundColor="@{viewModel.source.backgroundColorId}"
+                app:myPadding="@{viewModel.source.name}"
                 tools:ignore="UnusedAttribute" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
                 android:theme="@style/AppButton"
                 app:myButton="@{viewModel.source.enabled}"/>
 

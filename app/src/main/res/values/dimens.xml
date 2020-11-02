@@ -88,7 +88,8 @@
     <dimen name="article_image_min_width_height">300dp</dimen>
 
     <!-- Sources Activity -->
-    <dimen name="item_source_image_height">150dp</dimen> <!-- TODO to support all size screen and perfect height ...-->
+    <dimen name="item_source_image_height">200dp</dimen> <!-- TODO to support all size screen and perfect height ...-->
+    <dimen name="fragment_source_detail_image_height">250dp</dimen>
 
     <!-- Settings Activity -->
     <dimen name="activity_settings_linear_container_padding_top">10dp</dimen>
