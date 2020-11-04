@@ -5,10 +5,10 @@ import androidx.room.RoomDatabase
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.database.dao.SourcePageDao
+import org.desperu.independentnews.database.dao.SourceWithDataDao
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.SourcePage
-import org.desperu.independentnews.models.SourceWithData
 
 /**
  * The database class of the application.
@@ -28,7 +28,7 @@ abstract class ArticleDatabase: RoomDatabase() {
      *
      * @return the database access object for sources with data.
      */
-    abstract fun sourceWithDataDao(): SourceWithData
+    abstract fun sourceWithDataDao(): SourceWithDataDao
 
     /**
      * Returns the database access object for sources.

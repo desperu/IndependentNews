@@ -20,7 +20,7 @@ data class SourceWithData(
     @Embedded val source: Source,
     @Relation(
         parentColumn = "id",
-        entityColumn = "source"
+        entityColumn = "sourceId"
     )
     val sourcePages: List<SourcePage>
 ): Parcelable

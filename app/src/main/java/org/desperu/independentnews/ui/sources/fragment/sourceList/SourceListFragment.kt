@@ -1,8 +1,10 @@
 package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.view.animation.LayoutAnimationController
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +17,8 @@ import org.desperu.independentnews.ui.sources.fragment.sourceDetail.ITEM_POSITIO
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+
+private const val START_OFF_SET = 100L
 
 /**
  * Fragment to show source list.
@@ -30,6 +34,8 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
     private lateinit var binding: FragmentSourceListBinding
     private val viewModel: SourcesListViewModel by viewModel { parametersOf(this) }
     private var sourcesAdapter: RecyclerViewAdapter? = null
+    private lateinit var controller: LayoutAnimationController
+    private var fromDetail: Boolean? = null
 
     // --------------
     // BASE METHODS
@@ -75,19 +81,24 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
         sourcesAdapter = RecyclerViewAdapter(R.layout.item_source)
         sources_recycler.layoutManager = LinearLayoutManager(context)
 
-        val controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
-        sources_recycler.layoutAnimation = controller
-        sources_recycler.layoutAnimation.animation.startOffset = 100
-        sources_recycler.scheduleLayoutAnimation()
+        controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
+        controller.animation.startOffset = START_OFF_SET
+        updateRecyclerAnim()
     }
 
     // --------------
     // METHODS OVERRIDE
     // --------------
 
-    override fun onResume() { // TODO remove ??
+    override fun onResume() {
         super.onResume()
-        sources_recycler.scheduleLayoutAnimation()
+        updateRecyclerAnim()
+        fromDetail = false
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        fromDetail?.let { fromDetail = true }
     }
 
     // --------------
@@ -128,6 +139,21 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
         sharedElement.doOnPreDraw {
             startPostponedEnterTransition()
         }
+    }
+
+    /**
+     * Update recycler view layout animation, depends of fromDetail value
+     * to show or not the animation.
+     */
+    private fun updateRecyclerAnim() {
+        controller.animation.duration =
+            if (fromDetail == null || fromDetail == false) // Show animation
+                resources.getInteger(R.integer.item_anim_duration).toLong()
+            else
+                0L
+
+        sources_recycler.layoutAnimation = controller
+        sources_recycler.scheduleLayoutAnimation()
     }
 
     // --- GETTERS ---
