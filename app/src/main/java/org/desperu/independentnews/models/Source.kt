@@ -15,20 +15,20 @@ import kotlinx.android.parcel.Parcelize
  * @property editorial              the editorial of the source.
  * @property imageId                the unique identifier of the source image.
  * @property logoId                 the unique identifier of the source logo.
- * @property backgroundColorId      the unique identifier of the background color to set.
+ * @property backgroundColorId      the unique identifier of the background color.
  * @property isEnabled              the enabled state of the source.
  *
  * @constructor Sets all properties of the source.
  *
- * @property id                     the unique identifier of the source to set.
- * @property name                   the name of the source to set.
- * @property url                    the url of the source to set.
- * @property editorialUrl           the editorial url of the source to set.
- * @property editorial              the title of the source to set.
- * @property imageId                the unique identifier of the source image to set.
- * @property logoId                 the unique identifier of the source logo to set.
+ * @param id                        the unique identifier of the source to set.
+ * @param name                      the name of the source to set.
+ * @param url                       the url of the source to set.
+ * @param editorialUrl              the editorial url of the source to set.
+ * @param editorial                 the title of the source to set.
+ * @param imageId                   the unique identifier of the source image to set.
+ * @param logoId                    the unique identifier of the source logo to set.
  * @param backgroundColorId         the unique identifier of the background color to set.
- * @property isEnabled              the enabled state of the source to set.
+ * @param isEnabled                 the enabled state of the source to set.
  */
 @Parcelize
 @Entity

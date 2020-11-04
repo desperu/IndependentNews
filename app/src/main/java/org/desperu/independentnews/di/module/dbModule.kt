@@ -30,9 +30,23 @@ val dbModule = module{
     }
 
     /**
+     * Provides the database access object for source with data.
+     */
+    single{
+        (get() as ArticleDatabase).sourceWithDataDao()
+    }
+
+    /**
      * Provides the database access object for sources.
      */
     single{
         (get() as ArticleDatabase).sourceDao()
+    }
+
+    /**
+     * Provides the database access object for source pages.
+     */
+    single{
+        (get() as ArticleDatabase).sourcePageDao()
     }
 }

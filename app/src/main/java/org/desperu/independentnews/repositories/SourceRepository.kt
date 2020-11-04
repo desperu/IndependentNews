@@ -3,6 +3,7 @@ package org.desperu.independentnews.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.SourceDao
+import org.desperu.independentnews.database.dao.SourcePageDao
 import org.desperu.independentnews.models.Source
 
 /**
@@ -58,13 +59,18 @@ interface SourceRepository {
  *
  * @author Desperu
  *
- * @property sourceDao      the database access for source.
+ * @property sourceDao          the database access for source.
+ * @property sourcePageDao      the database access for source page.
  *
  * @constructor Instantiates a new SourceRepositoryImpl.
  *
- * @param sourceDao         the database access for source to set.
+ * @param sourceDao             the database access for source to set.
+ * @param sourcePageDao         the database access for source page to set.
  */
-class SourceRepositoryImpl(private val sourceDao: SourceDao): SourceRepository {
+class SourceRepositoryImpl(
+    private val sourceDao: SourceDao,
+    private val sourcePageDao: SourcePageDao
+): SourceRepository {
 
     /**
      * Return the source with it's unique identifier.

@@ -61,8 +61,8 @@ abstract class BaseBindingFragment(private vararg val module: Module): Fragment(
 //        Icepick.saveInstanceState(this, outState)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         unloadKoinModules(module.toList())
     }
 }
