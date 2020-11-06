@@ -45,7 +45,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     // FROM BUNDLE
     private val article: Article
         get() = intent.getParcelableExtra(ARTICLE)
-            ?: Article(title = getString(R.string.show_article_activity_article_error), url = source.editorialUrl, article = source.editorial) // TODO for test
+            ?: Article(title = getString(R.string.show_article_activity_article_error), url = source.editorialUrl)//, article = source.editorial) // TODO for test
     private val source: Source get() = intent.getParcelableExtra(SOURCE) ?: Source()
 
     // FOR DATA

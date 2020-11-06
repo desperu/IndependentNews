@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.database.dao.SourcePageDao
 import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
 
 /**
  * Source Repository interface to get data from Source database.
@@ -52,6 +53,15 @@ interface SourceRepository {
      * @return the id list of inserted sources.
      */
     suspend fun insertSources(vararg sources: Source): List<Long>
+
+    /**
+     * Insert the given source pages in database.
+     *
+     * @param sourcePages the source pages to insert.
+     *
+     * @return the id list of inserted source pages.
+     */
+    suspend fun insertSourcePages(vararg sourcePages: SourcePage): List<Long>
 }
 
 /**
@@ -114,5 +124,16 @@ class SourceRepositoryImpl(
      */
     override suspend fun insertSources(vararg sources: Source): List<Long> = withContext(Dispatchers.IO) {
         sourceDao.insertSources(*sources)
+    }
+
+    /**
+     * Insert the given source pages in database.
+     *
+     * @param sourcePages the source pages to insert.
+     *
+     * @return the id list of inserted source pages.
+     */
+    override suspend fun insertSourcePages(vararg sourcePages: SourcePage): List<Long> = withContext(Dispatchers.IO) {
+        sourcePageDao.insertSourcePages(*sourcePages)
     }
 }

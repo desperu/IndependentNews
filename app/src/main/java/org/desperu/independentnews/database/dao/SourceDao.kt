@@ -52,15 +52,14 @@ interface SourceDao {
     suspend fun setIsEnabled(name: String, isEnabled: Boolean)
 
     /**
-     * Update the editorial url, the editorial and the image url of the source with the given unique identifier.
+     * Update the editorial url, the image id of the source with the given name.
      *
      * @param editorialUrl    the editorial url of the source.
-     * @param editorial       the editorial of the source.
      * @param image           the unique identifier of the source image.
      * @param name            the name of the source.
      */
-    @Query("UPDATE source SET editorialUrl=:editorialUrl, editorial=:editorial, imageId=:image WHERE name=:name")
-    suspend fun update(editorialUrl: String, editorial: String, image: Int, name: String): Int
+    @Query("UPDATE source SET editorialUrl=:editorialUrl, imageId=:image WHERE name=:name")
+    suspend fun update(editorialUrl: String, image: Int, name: String): Int
 
     /**
      * Update the given source in database.

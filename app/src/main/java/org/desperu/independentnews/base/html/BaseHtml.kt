@@ -70,7 +70,7 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
 
     // --- GETTERS ---
 
-    internal fun getUrl(): String = document.baseUri()
+    internal fun getUrl(): String = document.location() // TODO remove if not work
 
     internal fun getHtmlPage(): String = htmlPage.string()
 }

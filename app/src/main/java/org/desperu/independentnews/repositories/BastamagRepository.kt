@@ -2,12 +2,15 @@ package org.desperu.independentnews.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
 import org.desperu.independentnews.models.web.bastamag.BastamagCategory
+import org.desperu.independentnews.models.web.bastamag.BastamagSourcePage
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
+import org.desperu.independentnews.utils.BASTAMAG_EDITO_URL
 import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
 import org.desperu.independentnews.utils.BASTA_SEC_INVENTER
 import org.desperu.independentnews.utils.BASTA_SEC_RESISTER
@@ -35,11 +38,11 @@ interface BastamagRepository {
     suspend fun fetchCategories(): List<Article>?
 
     /**
-     * Returns the editorial of Basta ! from it's Web site.
+     * Returns the source page list of Basta ! from it's Web site.
      *
-     * @return the editorial of Basta ! from it's Web site.
+     * @return the source page list of Basta ! from it's Web site.
      */
-    suspend fun fetchSourceEditorial(source: Source): String
+    suspend fun fetchSourcePages(): List<SourcePage>
 }
 
 /**
@@ -99,15 +102,26 @@ class BastamagRepositoryImpl(
         fetchArticleList(articleRepository.getNewArticles(articleList))
     }
 
-
     /**
-     * Returns the editorial of Basta ! from it's Web site.
+     * Returns the source pages list of Basta ! from it's Web site.
      *
-     * @return the editorial of Basta ! from it's Web site.
+     * @return the source page list of Basta ! from it's Web site.
      */
-    override suspend fun fetchSourceEditorial(source: Source): String = withContext(Dispatchers.IO) {
-        val responseBody = webService.getArticle(source.editorialUrl)
-        BastamagArticle(responseBody).getArticle() ?: ""
+    override suspend fun fetchSourcePages(): List<SourcePage> = withContext(Dispatchers.IO) {
+        val sourcePages = mutableListOf<SourcePage>()
+
+        val responseBody = webService.getArticle(BASTAMAG_EDITO_URL)
+        val bastamagSourcePage = BastamagSourcePage(responseBody)
+        sourcePages.add(bastamagSourcePage.toSourceEditorial(BASTAMAG_EDITO_URL)) // Add the editorial page, the primary
+
+        bastamagSourcePage.getPageUrlList().forEachIndexed { index, pageUrl ->
+            val title = bastamagSourcePage.getTitleList()[index]
+
+            val response = webService.getArticle(getPageNameFromUrl(pageUrl.mToString()))
+            sourcePages.add(BastamagSourcePage(response).toSourcePage(pageUrl, index, title))
+        }
+
+        sourcePages
     }
 
     /**

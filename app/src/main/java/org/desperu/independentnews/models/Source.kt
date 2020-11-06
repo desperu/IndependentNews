@@ -12,7 +12,6 @@ import kotlinx.android.parcel.Parcelize
  * @property name                   the name of the source.
  * @property url                    the url of the source.
  * @property editorialUrl           the editorial url of the source.
- * @property editorial              the editorial of the source.
  * @property imageId                the unique identifier of the source image.
  * @property logoId                 the unique identifier of the source logo.
  * @property backgroundColorId      the unique identifier of the background color.
@@ -24,7 +23,6 @@ import kotlinx.android.parcel.Parcelize
  * @param name                      the name of the source to set.
  * @param url                       the url of the source to set.
  * @param editorialUrl              the editorial url of the source to set.
- * @param editorial                 the title of the source to set.
  * @param imageId                   the unique identifier of the source image to set.
  * @param logoId                    the unique identifier of the source logo to set.
  * @param backgroundColorId         the unique identifier of the background color to set.
@@ -37,7 +35,6 @@ data class Source(@PrimaryKey(autoGenerate = true)
                   val name: String = "",
                   val url: String = "",
                   val editorialUrl: String = "",
-                  var editorial: String = "",
                   val imageId: Int = 0,
                   val logoId: Int = 0,
                   val backgroundColorId: Int = 0,

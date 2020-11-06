@@ -2,12 +2,15 @@ package org.desperu.independentnews.repositories
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
 import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
+import org.desperu.independentnews.models.web.reporterre.ReporterreSourcePage
 import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
+import org.desperu.independentnews.utils.REPORTERRE_EDITO_URL
 import org.desperu.independentnews.utils.REPORT_SEC_DECRYPTER
 import org.desperu.independentnews.utils.REPORT_SEC_INVENTER
 import org.desperu.independentnews.utils.REPORT_SEC_RESISTER
@@ -35,11 +38,11 @@ interface ReporterreRepository {
     suspend fun fetchCategories(): List<Article>?
 
     /**
-     * Returns the editorial of Reporterre from it's Web site.
+     * Returns the source page list of Reporterre from it's Web site.
      *
-     * @return the editorial of Reporterre from it's Web site.
+     * @return the source page list of Reporterre from it's Web site.
      */
-    suspend fun fetchSourceEditorial(source: Source): String
+    suspend fun fetchSourcePages(): List<SourcePage>
 }
 
 /**
@@ -97,13 +100,23 @@ class ReporterreRepositoryImpl(
     }
 
     /**
-     * Returns the editorial of Basta ! from it's Web site.
+     * Returns the source page list of Reporterre from it's Web site.
      *
-     * @return the editorial of Basta ! from it's Web site.
+     * @return the source page list of Reporterre from it's Web site.
      */
-    override suspend fun fetchSourceEditorial(source: Source): String = withContext(Dispatchers.IO) {
-        val responseBody = webService.getArticle(source.editorialUrl)
-        ReporterreArticle(responseBody).getArticle() ?: ""
+    override suspend fun fetchSourcePages(): List<SourcePage> = withContext(Dispatchers.IO) {
+        val sourcePages = mutableListOf<SourcePage>()
+
+        val responseBody = webService.getArticle(REPORTERRE_EDITO_URL)
+        val reporterreSourcePage = ReporterreSourcePage(responseBody)
+        sourcePages.add(reporterreSourcePage.toSourceEditorial(REPORTERRE_EDITO_URL)) // Add the editorial page, the primary
+
+        reporterreSourcePage.getPageUrlList().forEachIndexed { index, pageUrl ->
+            val response = webService.getArticle(getPageNameFromUrl(pageUrl.mToString()))
+            sourcePages.add(ReporterreSourcePage(response).toSourcePage(pageUrl, index))
+        }
+
+        sourcePages
     }
 
     /**

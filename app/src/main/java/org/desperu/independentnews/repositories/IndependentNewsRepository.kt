@@ -7,6 +7,7 @@ import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.extension.setSourceForEach
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import java.util.*
@@ -291,31 +292,52 @@ class IndependentNewsRepositoryImpl(
      */
     private suspend fun setSources() = withContext(Dispatchers.IO) {
         if (sources.isNullOrEmpty())
-            sources = sourceRepository.getEnabledSources()
+            sources = sourceRepository.getEnabledSources() // TODO to update
     }
 
+    // TODO put into source repo ??
     /**
      * Create all sources in database for first apk start.
      *
-     * @return the id list of inserted sources.
+     * @return the id list of inserted sources pages.
      */
     override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
         val sourceList = listOf(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
-        sourceList.forEach { it.editorial = fetchSourceEditorial(it) }
 
-        sourceRepository.insertSources(*sourceList.toTypedArray())
+        val sourcesIds = sourceRepository.insertSources(*sourceList.toTypedArray())
+
+        // Fetch and store in database the source pages for each source.
+        val sourcePages = mutableListOf<SourcePage>()
+        sourceList.forEachIndexed { index, source ->
+            val fetchedSourcePages = fetchSourcePages(source.name)
+            fetchedSourcePages.forEach { it.sourceId = sourcesIds[index] }
+            sourcePages.addAll(fetchedSourcePages)
+        }
+        sourceRepository.insertSourcePages(*sourcePages.toTypedArray())
     }
 
     /**
-     * Returns the editorial of the given source.
+     * Returns the source pages of the given source.
      *
-     * @return the editorial of the given source.
+     * @param sourceName the name of the source.
+     *
+     * @return the source pages of the given source.
      */
-    private suspend fun fetchSourceEditorial(source: Source): String = withContext(Dispatchers.IO) {
-        when (source.name) {
-            BASTAMAG -> bastamagRepository.fetchSourceEditorial(source)
-            REPORTERRE -> reporterreRepository.fetchSourceEditorial(source)
-            else -> ""
+    private suspend fun fetchSourcePages(sourceName: String): List<SourcePage> = withContext(Dispatchers.IO) {
+        val sourcePages = mutableListOf<SourcePage>()
+
+        try { // TODO handle all try / catch in the child repo (basta, reporterre...)
+            sourcePages.addAll(
+                when (sourceName) {
+                    BASTAMAG -> bastamagRepository.fetchSourcePages()
+                    REPORTERRE -> reporterreRepository.fetchSourcePages()
+                    else -> listOf()
+                }
+            )
+        } catch (e: Exception) {
+            Log.e("IdeRepo-fetchSrcPages", "Error while fetching source web data.")
         }
+
+        sourcePages
     }
 }

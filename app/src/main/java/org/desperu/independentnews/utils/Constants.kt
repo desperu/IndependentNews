@@ -37,7 +37,7 @@ const val HTML = 1
 const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
 const val REPORTERRE_BASE_URL = "https://reporterre.net/"
 // Editorial
-const val BASTAMAG_EDITO_URL = "Site-d-informations-independant-sur-les-enjeux-sociaux-et-environnementaux"
+const val BASTAMAG_EDITO_URL = "Qui-sommes-nous"
 const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
 
 // Section value

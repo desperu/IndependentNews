@@ -39,12 +39,12 @@ import kotlinx.android.parcel.Parcelize
     indices = [Index(name = "sourcePage_sourceId_index", value = ["sourceId"])])
 data class SourcePage(@PrimaryKey(autoGenerate = true)
                       val id: Long = 0L,
-                      val sourceId: Long = 0L,
+                      var sourceId: Long = 0L,
                       val url: String = "",
                       val title: String = "",
                       val body: String = "",
                       val imageUrl: String = "",
                       val cssUrl: String = "",
-                      val position: Int = 0,
+                      val position: Int = -1,
                       val isPrimary: Boolean = false
 ): Parcelable

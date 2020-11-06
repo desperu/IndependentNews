@@ -20,7 +20,10 @@
 
         <!-- TODO for perfect anim, need to use fitCenter
               with height wrap content and no min size set
-              but there's a big difference between logo size ... -->
+              but there's a big difference between logo size ...
+              !!!! use double container frame + recycler to lock
+              logo at the center of the container as in item_article
+              but it still work ?? constraint it's the best ??-->
 
         <ImageView
             android:id="@+id/item_source_image"
