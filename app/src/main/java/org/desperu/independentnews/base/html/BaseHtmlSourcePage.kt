@@ -20,20 +20,15 @@ abstract class BaseHtmlSourcePage(private val htmlPage: ResponseBody): BaseHtml(
 
     internal abstract fun getTitle(): String?
 
-//    internal abstract fun getPublishedDate(): String?
-
     internal abstract fun getBody(): String?
 
     internal abstract fun getImage(): List<String?>
 
     internal abstract fun getCssUrl(): String?
 
-//    internal abstract fun getPosition(): Int?
-
     internal abstract fun getPageUrlList(): List<String?>
 
-//    internal abstract fun isPrimary(): Boolean?
-
+    // TODO already in base html article
     /**
      * Correct all url links with their full url in the given html code.
      *

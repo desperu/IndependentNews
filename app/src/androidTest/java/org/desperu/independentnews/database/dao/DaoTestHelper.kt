@@ -5,9 +5,9 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.desperu.independentnews.database.ArticleDatabase
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
-import org.desperu.independentnews.utils.BASTAMAG_EDITO_URL
 
 /**
  * Dao Test Helper which provide initialized database, and models with data,
@@ -29,6 +29,10 @@ class DaoTestHelper {
             // allowing main thread queries, just for testing
             .allowMainThreadQueries()
             .build()
+
+    // -----------------
+    // ARTICLE
+    // -----------------
 
     /**
      * Article object for dao test.
@@ -71,17 +75,20 @@ class DaoTestHelper {
         return listOf(getArticle(sourceId), article2)
     }
 
+    // -----------------
+    // SOURCE
+    // -----------------
+
     /**
      * Source object for dao test.
      */
-    val source = Source(
+    internal val source = Source(
         100000000000000000L,
         BASTAMAG + "test",
         BASTAMAG_BASE_URL,
-        BASTAMAG_EDITO_URL,
-        "an editorial",
         1,
         2,
+        3,
         true
     )
 
@@ -90,10 +97,58 @@ class DaoTestHelper {
      *
      * @return the created source list.
      */
-    internal fun getSourceList(): List<Source> {
-        val source2 = source.copy()
-        source2.id = 100000000000000001L
-        source2.editorial = "an editorial 2"
-        return listOf(source, source2)
-    }
+    internal val sourceList = listOf(
+        source,
+        Source(
+            100000000000000001L,
+            source.name,
+            source.url,
+            source.imageId,
+            source.logoId,
+            source.backgroundColorId,
+            source.isEnabled
+        )
+    )
+
+    // -----------------
+    // SOURCE PAGE
+    // -----------------
+
+    /**
+     * Source Page object for dao test.
+     */
+    internal fun sourcePage(sourceId: Long) = SourcePage(
+        200000000000000000L,
+        sourceId,
+        BASTAMAG_BASE_URL + "test",
+        "a title",
+        "a body",
+        "an image url",
+        "a css url",
+        3,
+        false
+    )
+
+    /**
+     * Source Page List for dao test.
+     */
+    internal fun getSourcePageList(sourceId: Long): List<SourcePage> =
+        listOf(
+            sourcePage(sourceId),
+            SourcePage(
+                200000000000000001L,
+                sourceId,
+                BASTAMAG_BASE_URL + "test2",
+                "a title 2",
+                "a body 2",
+                "an image url 2",
+                "a css url 2",
+                5,
+                true
+            )
+        )
+
+    // -----------------
+    // SOURCE WITH DATA
+    // -----------------
 }

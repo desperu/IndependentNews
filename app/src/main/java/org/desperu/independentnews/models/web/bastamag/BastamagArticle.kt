@@ -74,6 +74,10 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     override fun getCssUrl(): String? =
         findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
+    // -----------------
+    // CONVERT
+    // -----------------
+
     /**
      * Convert BastamagArticle to Article.
      * @param article the article to set data.
@@ -99,6 +103,10 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
 
         return article
     }
+
+    // -----------------
+    // UTILS
+    // -----------------
 
     /**
      * Correct all media url's with their full url's in the given html code.

@@ -80,6 +80,10 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     override fun getCssUrl(): String? =
         findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
+    // -----------------
+    // CONVERT
+    // -----------------
+
     /**
      * Convert ReporterreArticle to Article.
      * @param article the article to set data.
@@ -105,6 +109,10 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
 
         return article
     }
+
+    // -----------------
+    // UTILS
+    // -----------------
 
     /**
      * Correct all media url's with their full url's in the given html code.

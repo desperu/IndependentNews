@@ -32,22 +32,23 @@ class ArticleTest {
     fun given_emptyArticle_When_createArticle_Then_checkDefaultValues() {
         val article = Article()
 
-        assertEquals(article.id, 0L)
-        assertEquals(article.sourceId, 0L)
-        assertEquals(article.url, "")
-        assertEquals(article.title, "")
-        assertEquals(article.section, "")
-        assertEquals(article.theme, "")
-        assertEquals(article.author, "")
-        assertEquals(article.publishedDate, 0L)
-        assertEquals(article.article, "")
-        assertEquals(article.categories, "")
-        assertEquals(article.description, "")
-        assertEquals(article.imageUrl, "")
-        assertEquals(article.cssUrl, "")
-        assertEquals(article.isTopStory, false)
-        assertEquals(article.read, false)
-        assertEquals(article.source, Source())
+        assertEquals(0L, article.id)
+        assertEquals(0L, article.sourceId)
+        assertEquals("", article.sourceName)
+        assertEquals("", article.url)
+        assertEquals("", article.title)
+        assertEquals("", article.section)
+        assertEquals("", article.theme)
+        assertEquals("", article.author)
+        assertEquals(0L, article.publishedDate)
+        assertEquals("", article.article)
+        assertEquals("", article.categories)
+        assertEquals("", article.description)
+        assertEquals("", article.imageUrl)
+        assertEquals("", article.cssUrl)
+        assertEquals(false, article.isTopStory)
+        assertEquals(false, article.read)
+        assertEquals(Source(), article.source)
     }
 
     @Test
@@ -57,22 +58,23 @@ class ArticleTest {
             article, categories, description, imageUrl, cssUrl, isTopStory, read, source
         )
 
-        assertEquals(articleSet.id, id)
-        assertEquals(articleSet.sourceId, sourceId)
-        assertEquals(articleSet.url, url)
-        assertEquals(articleSet.title, title)
-        assertEquals(articleSet.section, section)
-        assertEquals(articleSet.theme, theme)
-        assertEquals(articleSet.author, author)
-        assertEquals(articleSet.publishedDate, publishedDate)
-        assertEquals(articleSet.article, article)
-        assertEquals(articleSet.categories, categories)
-        assertEquals(articleSet.description, description)
-        assertEquals(articleSet.imageUrl, imageUrl)
-        assertEquals(articleSet.cssUrl, cssUrl)
-        assertEquals(articleSet.isTopStory, isTopStory)
-        assertEquals(articleSet.read, read)
-        assertEquals(articleSet.source, source)
+        assertEquals(id, articleSet.id)
+        assertEquals(sourceId, articleSet.sourceId)
+        assertEquals(sourceName, articleSet.sourceName)
+        assertEquals(url, articleSet.url)
+        assertEquals(title, articleSet.title)
+        assertEquals(section, articleSet.section)
+        assertEquals(theme, articleSet.theme)
+        assertEquals(author, articleSet.author)
+        assertEquals(publishedDate, articleSet.publishedDate)
+        assertEquals(article, articleSet.article)
+        assertEquals(categories, articleSet.categories)
+        assertEquals(description, articleSet.description)
+        assertEquals(imageUrl, articleSet.imageUrl)
+        assertEquals(cssUrl, articleSet.cssUrl)
+        assertEquals(isTopStory, articleSet.isTopStory)
+        assertEquals(read, articleSet.read)
+        assertEquals(source, articleSet.source)
     }
 
     @Test
@@ -81,6 +83,7 @@ class ArticleTest {
 
         articleEmpty.id = id
         articleEmpty.sourceId = sourceId
+        articleEmpty.sourceName = sourceName
         articleEmpty.url = url
         articleEmpty.title = title
         articleEmpty.section = section
@@ -96,21 +99,22 @@ class ArticleTest {
         articleEmpty.read = read
         articleEmpty.source = source
 
-        assertEquals(articleEmpty.id, id)
-        assertEquals(articleEmpty.sourceId, sourceId)
-        assertEquals(articleEmpty.url, url)
-        assertEquals(articleEmpty.title, title)
-        assertEquals(articleEmpty.section, section)
-        assertEquals(articleEmpty.theme, theme)
-        assertEquals(articleEmpty.author, author)
-        assertEquals(articleEmpty.publishedDate, publishedDate)
-        assertEquals(articleEmpty.article, article)
-        assertEquals(articleEmpty.categories, categories)
-        assertEquals(articleEmpty.description, description)
-        assertEquals(articleEmpty.imageUrl, imageUrl)
-        assertEquals(articleEmpty.cssUrl, cssUrl)
-        assertEquals(articleEmpty.isTopStory, isTopStory)
-        assertEquals(articleEmpty.read, read)
-        assertEquals(articleEmpty.source, source)
+        assertEquals(id, articleEmpty.id)
+        assertEquals(sourceId, articleEmpty.sourceId)
+        assertEquals(sourceName, articleEmpty.sourceName)
+        assertEquals(url, articleEmpty.url)
+        assertEquals(title, articleEmpty.title)
+        assertEquals(section, articleEmpty.section)
+        assertEquals(theme, articleEmpty.theme)
+        assertEquals(author, articleEmpty.author)
+        assertEquals(publishedDate, articleEmpty.publishedDate)
+        assertEquals(article, articleEmpty.article)
+        assertEquals(categories, articleEmpty.categories)
+        assertEquals(description, articleEmpty.description)
+        assertEquals(imageUrl, articleEmpty.imageUrl)
+        assertEquals(cssUrl, articleEmpty.cssUrl)
+        assertEquals(isTopStory, articleEmpty.isTopStory)
+        assertEquals(read, articleEmpty.read)
+        assertEquals(sourceId, articleEmpty.sourceId)
     }
 }

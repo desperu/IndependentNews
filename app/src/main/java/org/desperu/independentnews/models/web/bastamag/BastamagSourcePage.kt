@@ -2,12 +2,14 @@ package org.desperu.independentnews.models.web.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlSourcePage
+import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.getChild
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.*
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 /**
@@ -31,40 +33,69 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     override fun getTitle(): String? =
         findData(H1, CLASS, TITRE_PAGE_LIST, 0)?.text() // TODO null et owntext()
 
-//    override fun getPublishedDate(): String? =
-//        findData(TIME, PUBDATE, PUBDATE, null)?.attr(DATETIME)
-
     override fun getBody(): String? =
-//        setMainCssId(
-//            correctMediaUrl(
-//                escapeHashtag(
+        setMainCssId(
+            correctMediaUrl(
+                escapeHashtag(
                     correctUrlLink(
 //                        findData(DIV, CLASS, HERO_UNIT, 0)?.outerHtml(),
                         findData(DIV, CLASS, MAIN, 0)?.outerHtml(),
                         BASTAMAG_BASE_URL
                     )
-//                )
-//            )
-//        )
+                )
+            )
+        )
 
     override fun getImage(): List<String?> = listOf()
 
     override fun getCssUrl(): String? =
         findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
-//    override fun getPosition(): Int? {
-//
-//
-//        return 0
-//    }
-
     override fun getPageUrlList(): List<String?> = pageUrlList
 
-//    override fun isPrimary(): Boolean? {
-//        TODO("Not yet implemented")
-//    }
-
     internal fun getTitleList() = titleList
+
+    // -----------------
+    // CONVERT
+    // -----------------
+
+    /**
+     * Convert BastamagSourcePage to SourcePage (Editorial).
+     *
+     * @param url the url of the source page.
+     *
+     * @return source page with all data set.
+     */
+    internal fun toSourceEditorial(url: String): SourcePage {
+        setTitleAndPageList()
+        return SourcePage(
+            url = url.toFullUrl(BASTAMAG_BASE_URL),
+            title = getTitle().mToString(),
+            body = getBody().mToString(),
+//            imageUrl = getImage()[0].mToString(),
+            cssUrl = getCssUrl().mToString(),
+            isPrimary = true
+        )
+    }
+
+    /**
+     * Convert BastamagSourcePage to SourcePage.
+     *
+     * @param url           the url of the source page.
+     * @param position      the position of the source page in the list.
+     * @param title         the title of the source page.
+     *
+     * @return source page with all data set.
+     */
+    internal fun toSourcePage(url: String?, position: Int, title: String): SourcePage =
+        SourcePage(
+            url = url.mToString(),
+            title = title,
+            body = getBody().mToString(),
+//            imageUrl = getImage()[0].mToString(),
+            cssUrl = getCssUrl().mToString(),
+            position = position
+        )
 
     // -----------------
     // UTILS
@@ -128,45 +159,47 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
         pageUrlList.add(element.attr(HREF).toFullUrl(BASTAMAG_BASE_URL))
     }
 
-    // -----------------
-    // CONVERT
-    // -----------------
+    // TODO already in BastamagArticle ... serialize !!! put in ElementExtension???
+    /**
+     * Correct all media url's with their full url's in the given html code.
+     * @param html the html code to correct.
+     * @return the html code with corrected media url's.
+     */
+    private fun correctMediaUrl(html: String?): String? =
+        if (!html.isNullOrBlank()) {
+            val document = Jsoup.parse(html)
+
+            document.select(IMG).forEach {
+                it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
+                correctSrcSetUrls(it)
+            }
+
+            document.select(SOURCE_TAG).forEach { correctSrcSetUrls(it) }
+            document.select(AUDIO).forEach { it.attrToFullUrl(SRC, BASTAMAG_BASE_URL) }
+            document.toString()
+        } else
+            null
 
     /**
-     * Convert BastamagSourcePage to SourcePage (Editorial).
-     *
-     * @param url the url of the source page.
-     *
-     * @return source page with all data set.
+     * Correct the srcset url value of the given element with their full url.
+     * @param element the element for which correct url's.
      */
-    internal fun toSourceEditorial(url: String): SourcePage {
-        setTitleAndPageList()
-        return SourcePage(
-            url = url.toFullUrl(BASTAMAG_BASE_URL),
-            title = getTitle().mToString(),
-            body = getBody().mToString(),
-//            imageUrl = getImage()[0].mToString(),
-            cssUrl = getCssUrl().mToString(),
-            isPrimary = true
-        )
+    private fun correctSrcSetUrls(element: Element) {
+        val srcSetList = Utils.deConcatenateStringToMutableList(element.attr(SRCSET))
+        val correctedList = srcSetList.map { it.toFullUrl(BASTAMAG_BASE_URL) }
+        element.attr(SRCSET, Utils.concatenateStringFromMutableList(correctedList.toMutableList()))
     }
 
     /**
-     * Convert BastamagSourcePage to SourcePage.
-     *
-     * @param url           the url of the source page.
-     * @param position      the position of the source page in the list.
-     * @param title         the title of the source page.
-     *
-     * @return source page with all data set.
+     * Set main css id to apply css style to the article body.
+     * @param html the article body.
+     * @return the article with main css id set.
      */
-    internal fun toSourcePage(url: String?, position: Int, title: String): SourcePage =
-        SourcePage(
-            url = url.mToString(),
-            title = title,
-            body = getBody().mToString(),
-//            imageUrl = getImage()[0].mToString(),
-            cssUrl = getCssUrl().mToString(),
-            position = position
-        )
+    private fun setMainCssId(html: String?): String? =
+        if(!html.isNullOrBlank()) {
+            val document = Jsoup.parse(html)
+            document.select(BODY)[0].attr(CLASS, MAIN_CONTAINER)
+            document.toString()
+        } else
+            null
 }
