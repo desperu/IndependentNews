@@ -32,6 +32,7 @@ val repositoryModule = module {
     single<SourceRepository> {
         SourceRepositoryImpl(
             get(),
+            get(),
             get()
         )
     }

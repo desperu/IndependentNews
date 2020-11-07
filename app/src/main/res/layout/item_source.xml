@@ -16,7 +16,7 @@
         android:layout_marginBottom="@dimen/default_margin"
         app:cardCornerRadius="@dimen/item_article_corner_radius"
         app:cardElevation="@dimen/default_elevation"
-        app:myBackground="@{viewModel.source.enabled}">
+        app:myBackground="@{viewModel.sourceWithData.source.enabled}">
 
         <!-- TODO for perfect anim, need to use fitCenter
               with height wrap content and no min size set
@@ -36,9 +36,9 @@
             android:scaleType="fitCenter"
             android:transitionName="@string/animation_source_list_to_detail"
             android:onClick="@{viewModel.onClickImage}"
-            app:setImage="@{viewModel.source.imageId}"
-            app:myBackgroundColor="@{viewModel.source.backgroundColorId}"
-            app:myPadding="@{viewModel.source.name}"
+            app:setImage="@{viewModel.sourceWithData.source.imageId}"
+            app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
+            app:myPadding="@{viewModel.sourceWithData.source.name}"
             tools:ignore="UnusedAttribute" />
 
     </androidx.cardview.widget.CardView>

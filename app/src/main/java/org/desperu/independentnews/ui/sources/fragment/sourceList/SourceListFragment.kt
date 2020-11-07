@@ -82,7 +82,7 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
         sources_recycler.layoutManager = LinearLayoutManager(context)
 
         controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
-        controller.animation.startOffset = START_OFF_SET
+        controller.animation.startOffset = START_OFF_SET // Todo already delayed in the layout anim
         updateRecyclerAnim()
     }
 

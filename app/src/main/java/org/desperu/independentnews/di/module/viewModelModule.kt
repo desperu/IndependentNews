@@ -3,13 +3,14 @@ package org.desperu.independentnews.di.module
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
+import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailInterface
+import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailViewModel
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListInterface
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceViewModel
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourcesListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.parameter.parametersOf
@@ -50,13 +51,13 @@ val viewModelModule = module {
     }
 
     /**
-     * Provides the SourceViewModel instance.
+     * Provides the SourceDetailViewModel instance.
      */
-    viewModel { (source: Source, itemPosition: Int, fragment: BaseBindingFragment) -> // TODO not good here ...
-        SourceViewModel(
-            source,
-            itemPosition,
-            get()
+    viewModel { (sourceWithData: SourceWithData, fragment: BaseBindingFragment) ->
+        SourceDetailViewModel(
+            sourceWithData,
+            get(),
+            fragment as SourceDetailInterface
         )
     }
 

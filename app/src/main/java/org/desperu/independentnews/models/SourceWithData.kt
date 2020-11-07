@@ -17,10 +17,10 @@ import kotlinx.android.parcel.Parcelize
  */
 @Parcelize
 data class SourceWithData(
-    @Embedded val source: Source,
+    @Embedded val source: Source = Source(),
     @Relation(
         parentColumn = "id",
         entityColumn = "sourceId"
     )
-    val sourcePages: List<SourcePage>
+    val sourcePages: List<SourcePage> = listOf()
 ): Parcelable

@@ -3,20 +3,20 @@ package org.desperu.independentnews.ui.sources.fragment.sourceDetail
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.fragment_source_detail.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentSourceDetailBinding
-import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceViewModel
+import org.desperu.independentnews.models.SourceWithData
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 /**
- * The name of the argument to received source for this Fragment.
+ * The name of the argument to received source with data for this Fragment.
  */
-const val SOURCE: String = "source"
+const val SOURCE_WITH_DATA: String = "sourceWithData"
 /**
  * The name of the argument to received the position of this source item into the recycler view.
  */
@@ -27,15 +27,16 @@ const val ITEM_POSITION = "itemPosition"
  *
  * @constructor Instantiates a new SourceDetailFragment.
  */
-class SourceDetailFragment : BaseBindingFragment() {
+class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     // FROM BUNDLE
-    private val source: Source get() = arguments?.getParcelable(SOURCE) ?: Source()
+    private val sourceWithData: SourceWithData get() = arguments?.getParcelable(SOURCE_WITH_DATA) ?: SourceWithData()
     private val itemPosition: Int get() = arguments?.getInt(ITEM_POSITION) ?: -1
 
     // FOR DATA
     private lateinit var binding: FragmentSourceDetailBinding
-    private val viewModel: SourceViewModel by viewModel { parametersOf(source, itemPosition, this) }
+    private val viewModel: SourceDetailViewModel by viewModel { parametersOf(sourceWithData, this) }
+    private var sourceDetailAdapter: SourceDetailAdapter? = null
 
     /**
      * Companion object, used to create a new instance of this fragment.
@@ -43,14 +44,14 @@ class SourceDetailFragment : BaseBindingFragment() {
     companion object {
         /**
          * Create a new instance of this fragment and set source.
-         * @param source the source to set and show in this fragment.
+         * @param sourceWithData the source with data to set and show in this fragment.
          * @param itemPosition the position of the source item in the recycler view.
          * @return the new instance of SourceDetailFragment.
          */
-        fun newInstance(source: Source, itemPosition: Int): SourceDetailFragment {
+        fun newInstance(sourceWithData: SourceWithData, itemPosition: Int): SourceDetailFragment {
             val sourceDetailFragment = SourceDetailFragment()
             sourceDetailFragment.arguments = Bundle()
-            sourceDetailFragment.arguments?.putParcelable(SOURCE, source)
+            sourceDetailFragment.arguments?.putParcelable(SOURCE_WITH_DATA, sourceWithData)
             sourceDetailFragment.arguments?.putInt(ITEM_POSITION, itemPosition)
             return sourceDetailFragment
         }
@@ -64,9 +65,12 @@ class SourceDetailFragment : BaseBindingFragment() {
 
     override fun configureDesign() {
         updateTransitionName()
+        configureRecyclerView()
     }
 
-    override fun updateDesign() {}
+    override fun updateDesign() {
+        updateRecyclerData()
+    }
 
     // --------------
     // CONFIGURATION
@@ -92,4 +96,39 @@ class SourceDetailFragment : BaseBindingFragment() {
             startPostponedEnterTransition()
         }
     }
+
+    /**
+     * Configure recycler view, support large screen size. Set from left animation
+     * for recycler view items, to show animation each time the recycler appear on user screen.
+     */
+    private fun configureRecyclerView() {
+        sourceDetailAdapter = SourceDetailAdapter(context!!, R.layout.item_source_link)
+        source_detail_nested_scroll.setOnScrollChangeListener(
+            NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+                val recyclerTop = source_detail_recycler.top - v.measuredHeight
+                    source_detail_recycler.adapter =
+                        if (recyclerTop < scrollY)
+                            if (source_detail_recycler.adapter == null) sourceDetailAdapter
+                            else return@OnScrollChangeListener
+                        else
+                            null
+            }
+        )
+    }
+
+    // --------------
+    // UPDATE
+    // --------------
+
+    /**
+     * Update the recycler adapter list.
+     */
+    private fun updateRecyclerData() = viewModel.updateRecyclerData()
+
+    // --- GETTERS ---
+
+    /**
+     * Get the source detail recycler view adapter instance.
+     */
+    override fun getRecyclerAdapter(): SourceDetailAdapter? = sourceDetailAdapter
 }

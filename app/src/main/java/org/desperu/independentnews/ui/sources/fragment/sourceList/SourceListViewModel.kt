@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.repositories.SourceRepository
 
 /**
@@ -29,7 +29,7 @@ class SourcesListViewModel(private val sourceRepository: SourceRepository,
 
     // FOR DATA
     val recyclerAdapter get() = sourcesInterface.getRecyclerAdapter()
-    private var sourceList: List<Source>? = null
+    private var sourceList: List<SourceWithData>? = null
 
     // -----------------
     // DATABASE

@@ -6,7 +6,10 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
-import android.webkit.*
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setMargins
@@ -19,7 +22,7 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
@@ -31,9 +34,9 @@ import org.koin.core.parameter.parametersOf
  */
 const val ARTICLE: String = "article"
 /**
- * The name of the argument to received source for this Activity.
+ * The name of the argument to received source page for this Activity.
  */
-const val SOURCE: String = "source"
+const val SOURCE_PAGE: String = "sourcePage"
 
 /**
  * Activity to show articles list.
@@ -45,8 +48,14 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     // FROM BUNDLE
     private val article: Article
         get() = intent.getParcelableExtra(ARTICLE)
-            ?: Article(title = getString(R.string.show_article_activity_article_error), url = source.editorialUrl)//, article = source.editorial) // TODO for test
-    private val source: Source get() = intent.getParcelableExtra(SOURCE) ?: Source()
+            ?: Article(
+                title = getString(R.string.show_article_activity_article_error),
+                url = sourcePage.url,
+                article = sourcePage.body,
+                imageUrl = sourcePage.imageUrl,
+                cssUrl = sourcePage.cssUrl
+            ) // TODO for test
+    private val sourcePage: SourcePage get() = intent.getParcelableExtra(SOURCE_PAGE) ?: SourcePage()
 
     // FOR DATA
     private lateinit var binding: ViewDataBinding
@@ -96,12 +105,12 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
          * Redirects from an Activity to this Activity with transition animation.
          *
          * @param activity the activity use to perform redirection.
-         * @param source the source to show in this activity.
+         * @param sourcePage the source page to show in this activity.
          */
         fun routeFromActivity(activity: AppCompatActivity,
-                              source: Source) {
+                              sourcePage: SourcePage) {
             activity.startActivity(Intent(activity, ShowArticleActivity::class.java)
-                .putExtra(SOURCE, source))
+                .putExtra(SOURCE_PAGE, sourcePage))
         }
     }
 

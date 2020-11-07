@@ -4,8 +4,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.database.dao.SourcePageDao
+import org.desperu.independentnews.database.dao.SourceWithDataDao
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.SourceWithData
 
 /**
  * Source Repository interface to get data from Source database.
@@ -31,11 +33,11 @@ interface SourceRepository {
     suspend fun getEnabledSources(): List<Source>?
 
     /**
-     * Returns the list of all sources from the database.
+     * Returns the list of all sources with data from the database.
      *
-     * @return the list of all sources from the database.
+     * @return the list of all sources with data from the database.
      */
-    suspend fun getAll(): List<Source>?
+    suspend fun getAll(): List<SourceWithData>?
 
     /**
      * Set the enabled state of the source in the database.
@@ -69,17 +71,20 @@ interface SourceRepository {
  *
  * @author Desperu
  *
- * @property sourceDao          the database access for source.
- * @property sourcePageDao      the database access for source page.
+ * @property sourceDao              the database access for source.
+ * @property sourcePageDao          the database access for source page.
+ * @property sourceWithDataDao      the database access for source with data to set.
  *
  * @constructor Instantiates a new SourceRepositoryImpl.
  *
- * @param sourceDao             the database access for source to set.
- * @param sourcePageDao         the database access for source page to set.
+ * @param sourceDao                 the database access for source to set.
+ * @param sourcePageDao             the database access for source page to set.
+ * @param sourceWithDataDao         the database access for source with data to set.
  */
 class SourceRepositoryImpl(
     private val sourceDao: SourceDao,
-    private val sourcePageDao: SourcePageDao
+    private val sourcePageDao: SourcePageDao,
+    private val sourceWithDataDao: SourceWithDataDao
 ): SourceRepository {
 
     /**
@@ -97,12 +102,12 @@ class SourceRepositoryImpl(
     override suspend fun getEnabledSources(): List<Source> = sourceDao.getEnabled()
 
     /**
-     * Returns the list of all sources from the database.
+     * Returns the list of all sources with data from the database.
      *
-     * @return the list of all sources from the database.
+     * @return the list of all sources with data from the database.
      */
-    override suspend fun getAll(): List<Source>? = withContext(Dispatchers.IO) {
-        return@withContext sourceDao.getAll()
+    override suspend fun getAll(): List<SourceWithData>? = withContext(Dispatchers.IO) {
+        return@withContext sourceWithDataDao.getAll()
     }
 
     /**

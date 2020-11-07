@@ -2,7 +2,8 @@ package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
 import org.desperu.independentnews.ui.sources.SourcesInterface
 
@@ -14,19 +15,18 @@ interface SourceRouter {
     /**
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
-     * @param source the source to show in the fragment.
+     * @param sourceWithData the source with data to show in the fragment.
      * @param imageView the image view to animate.
      * @param itemPosition the position of the source item in the recycler view.
      */
-    fun showSourceDetail(source: Source, imageView: View, itemPosition: Int)
+    fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int)
 
     /**
      * Redirects the user to the ShowArticle Activity to show sources.
      *
-     * @param source the source to show in the Activity.
-     * @param imageView the image view to animate.
+     * @param sourcePage the source page to show in the Activity.
      */
-    fun openShowArticle(source: Source, imageView: View)
+    fun openShowArticle(sourcePage: SourcePage)
 }
 
 /**
@@ -43,18 +43,17 @@ class SourceRouterImpl(private val activity: AppCompatActivity): SourceRouter {
     /**
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
-     * @param source the source to show in the fragment.
+     * @param sourceWithData the source with data to show in the fragment.
      * @param imageView the image view to animate.
      * @param itemPosition the position of the source item in the recycler view.
      */
-    override fun showSourceDetail(source: Source, imageView: View, itemPosition: Int) =
-        (activity as SourcesInterface).showSourceDetail(source, imageView, itemPosition)
+    override fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int) =
+        (activity as SourcesInterface).showSourceDetail(sourceWithData, imageView, itemPosition)
 
     /**
      * Redirects the user to the Sources Activity to manage sources.
-     * @param source the source to show in the Activity.
-     * @param imageView the image view to animate.
+     * @param sourcePage the source page to show in the Activity.
      */
-    override fun openShowArticle(source: Source, imageView: View) =
-        ShowArticleActivity.routeFromActivity(activity, source)
+    override fun openShowArticle(sourcePage: SourcePage) =
+        ShowArticleActivity.routeFromActivity(activity, sourcePage)
 }

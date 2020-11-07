@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.ui.sources.fragment.sourceList.RecyclerViewAdapter
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
@@ -28,7 +29,7 @@ fun TextView.setPublishedDate(millis: Long?) {
 
 @BindingAdapter("setInt")
 fun TextView.setInt(value: Int?) {
-    text = value?.toString() ?: ""
+    text = value.mToString()
 }
 
 /**
