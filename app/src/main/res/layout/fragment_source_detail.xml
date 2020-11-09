@@ -37,7 +37,6 @@
             <org.desperu.independentnews.views.NoScrollWebView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="500dp"
                 app:setArticle="@{viewModel.sourceWithData.sourcePages[0].body}"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -46,16 +45,17 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/default_margin"
                 android:clipToPadding="false"
-                app:layoutManager="LinearLayoutManager"/>
+                app:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/item_source_link"/>
 
             <Button
-                android:id="@+id/source_detail_enable_button"
+                android:id="@+id/source_detail_disable_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin"
-                android:theme="@style/AppButton"
                 android:onClick="@{viewModel.onClickEnable}"
-                app:myButton="@{viewModel.sourceWithData.source.enabled}"/>
+                app:myButton="@{viewModel.isEnabled}"
+                style="@style/AppButton"/>
 
         </LinearLayout>
 

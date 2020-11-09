@@ -3,6 +3,7 @@ package org.desperu.independentnews.ui.sources.fragment.sourceDetail
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.fragment_source_detail.*
@@ -20,7 +21,7 @@ const val SOURCE_WITH_DATA: String = "sourceWithData"
 /**
  * The name of the argument to received the position of this source item into the recycler view.
  */
-const val ITEM_POSITION = "itemPosition"
+const val SOURCE_POSITION = "sourcePosition"
 
 /**
  * Fragment to show source details.
@@ -31,7 +32,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     // FROM BUNDLE
     private val sourceWithData: SourceWithData get() = arguments?.getParcelable(SOURCE_WITH_DATA) ?: SourceWithData()
-    private val itemPosition: Int get() = arguments?.getInt(ITEM_POSITION) ?: -1
+    private val sourcePosition: Int get() = arguments?.getInt(SOURCE_POSITION) ?: -1
 
     // FOR DATA
     private lateinit var binding: FragmentSourceDetailBinding
@@ -45,14 +46,14 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
         /**
          * Create a new instance of this fragment and set source.
          * @param sourceWithData the source with data to set and show in this fragment.
-         * @param itemPosition the position of the source item in the recycler view.
+         * @param sourcePosition the position of the source item in the recycler view.
          * @return the new instance of SourceDetailFragment.
          */
-        fun newInstance(sourceWithData: SourceWithData, itemPosition: Int): SourceDetailFragment {
+        fun newInstance(sourceWithData: SourceWithData, sourcePosition: Int): SourceDetailFragment {
             val sourceDetailFragment = SourceDetailFragment()
             sourceDetailFragment.arguments = Bundle()
             sourceDetailFragment.arguments?.putParcelable(SOURCE_WITH_DATA, sourceWithData)
-            sourceDetailFragment.arguments?.putInt(ITEM_POSITION, itemPosition)
+            sourceDetailFragment.arguments?.putInt(SOURCE_POSITION, sourcePosition)
             return sourceDetailFragment
         }
     }
@@ -92,7 +93,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition()
             source_detail_image.transitionName =
-                getString(R.string.animation_source_list_to_detail) + itemPosition
+                getString(R.string.animation_source_list_to_detail) + sourcePosition
             startPostponedEnterTransition()
         }
     }
@@ -108,7 +109,10 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
                 val recyclerTop = source_detail_recycler.top - v.measuredHeight
                     source_detail_recycler.adapter =
                         if (recyclerTop < scrollY)
-                            if (source_detail_recycler.adapter == null) sourceDetailAdapter
+                            if (source_detail_recycler.adapter == null) {
+                                animDisableButton(viewModel.getSourcePageList.size - 1)
+                                sourceDetailAdapter // TODO remove listener before onDestroy
+                            }
                             else return@OnScrollChangeListener
                         else
                             null
@@ -124,6 +128,16 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
      * Update the recycler adapter list.
      */
     private fun updateRecyclerData() = viewModel.updateRecyclerData()
+
+    /**
+     * Animate the disable source button.
+     */
+    private fun animDisableButton(position: Int) {
+        val anim = AnimationUtils.makeInAnimation(context, true)
+        anim.startOffset = position * 200L / 3
+        anim.duration = 250L
+        source_detail_disable_button.startAnimation(anim)
+    }
 
     // --- GETTERS ---
 

@@ -4,7 +4,6 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourceWithData
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
@@ -27,9 +26,19 @@ val viewModelModule = module {
     viewModel { (fragment: BaseBindingFragment) ->
         ArticleListViewModel(
             get(),
-            fragment as ArticleListInterface,
+            get { parametersOf(fragment) }, // TODO remove from parameter, and call get with KoinComponent support
             get()
         )
+    }
+
+    /**
+     * To handle definition error
+     */
+    single {
+//        ArticleRouter()
+        // TODO try to separate view Model module by activity.
+        //  should be better to use factory koin instance,
+        //  and no cast for interface, and no module for frag, only activity
     }
 
     /**
@@ -56,7 +65,6 @@ val viewModelModule = module {
     viewModel { (sourceWithData: SourceWithData, fragment: BaseBindingFragment) ->
         SourceDetailViewModel(
             sourceWithData,
-            get(),
             fragment as SourceDetailInterface
         )
     }

@@ -134,10 +134,10 @@ fun View.myPadding(sourceName: String?) {
 @BindingAdapter("myButton")
 fun Button.myButton(enabled: Boolean?) {
     if (enabled != null && enabled) {
-        text = resources.getString(R.string.fragment_source_detail_button_disable)
-        setBackgroundResource(R.drawable.source_button_disabled)
-    } else {
         text = resources.getString(R.string.fragment_source_detail_button_enable)
         setBackgroundResource(R.drawable.source_button_enabled)
+    } else {
+        text = resources.getString(R.string.fragment_source_detail_button_disable)
+        setBackgroundResource(R.drawable.source_button_disabled)
     }
 }

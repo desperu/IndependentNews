@@ -47,4 +47,7 @@
     <color name="bastamag_background">#f78c11</color>
     <color name="reporterre_background">#f5f5f5</color>
 
+    <!-- Sources Buttons Links color -->
+    <color name="reporterre_button_link">#8b9f1a</color>
+
 </resources>

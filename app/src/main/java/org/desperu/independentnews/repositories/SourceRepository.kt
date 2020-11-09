@@ -42,10 +42,10 @@ interface SourceRepository {
     /**
      * Set the enabled state of the source in the database.
      *
-     * @param name the name of the source.
+     * @param id the unique identifier of the source.
      * @param isEnabled the value to update.
      */
-    suspend fun setEnabled(name: String, isEnabled: Boolean)
+    suspend fun setEnabled(id: Long, isEnabled: Boolean)
 
     /**
      * Insert the given sources in database.
@@ -113,11 +113,11 @@ class SourceRepositoryImpl(
     /**
      * Set the enabled state of the source in the database.
      *
-     * @param name the name of the source.
+     * @param id the unique identifier of the source.
      * @param isEnabled the value to update.
      */
-    override suspend fun setEnabled(name: String, isEnabled: Boolean) = withContext(Dispatchers.IO) {
-        sourceDao.setIsEnabled(name, isEnabled)
+    override suspend fun setEnabled(id: Long, isEnabled: Boolean) = withContext(Dispatchers.IO) {
+        sourceDao.setIsEnabled(id, isEnabled)
     }
 
     /**

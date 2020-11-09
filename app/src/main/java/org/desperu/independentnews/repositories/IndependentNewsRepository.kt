@@ -191,7 +191,7 @@ class IndependentNewsRepositoryImpl(
     // -----------------
     // GET DATA (DATABASE)
     // -----------------
-
+// TODO for all db get, get only enabled sources.
     /**
      * Returns the top story list of articles from the database.
      *

@@ -44,12 +44,12 @@ interface SourceDao {
     /**
      * Set the source with the given name as enabled in database.
      *
-     * @param name the name of the source to set as enabled.
+     * @param id the unique identifier of the source to set enabled / disabled.
      * @param isEnabled the value to update.
      */
-    @Query("UPDATE source SET isEnabled=:isEnabled WHERE name=:name")
+    @Query("UPDATE source SET isEnabled=:isEnabled WHERE id=:id")
 //    @Query("UPDATE source SET isEnabled=1 WHERE name=:name")
-    suspend fun setIsEnabled(name: String, isEnabled: Boolean)
+    suspend fun setIsEnabled(id: Long, isEnabled: Boolean)
 
     /**
      * Update the given source in database.

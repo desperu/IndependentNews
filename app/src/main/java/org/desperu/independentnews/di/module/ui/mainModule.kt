@@ -1,7 +1,9 @@
 package org.desperu.independentnews.di.module.ui
 
 import org.desperu.independentnews.base.ui.BaseActivity
+import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.ui.main.MainInterface
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouterImpl
 import org.koin.dsl.module
@@ -26,4 +28,11 @@ val mainModule = module {
             activity
         )
     }
+    /**
+     * Provides a ArticleListInterface interface from the instance of ArticleListFragment.
+     */
+    factory { (fragment: BaseBindingFragment) ->
+        fragment as ArticleListInterface
+    }
+
 }

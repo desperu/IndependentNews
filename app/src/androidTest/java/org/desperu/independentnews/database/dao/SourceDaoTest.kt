@@ -75,7 +75,7 @@ class SourceDaoTest {
     @Test
     fun setDisabledSources() = oneSourceTest {
         // When set Enabled Sources via the DAO
-        mDatabase.sourceDao().setIsEnabled(source.name, false)
+        mDatabase.sourceDao().setIsEnabled(source.id, false)
 
         // When getting the Source via the DAO
         val sourceDb = mDatabase.sourceDao().getSource(source.id)

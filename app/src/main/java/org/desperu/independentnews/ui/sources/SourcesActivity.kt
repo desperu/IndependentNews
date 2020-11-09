@@ -12,7 +12,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
 import org.desperu.independentnews.models.SourceWithData
-import org.desperu.independentnews.ui.sources.fragment.sourceDetail.ITEM_POSITION
+import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
@@ -32,7 +32,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     // FOR DATA
     @JvmField @State var fragmentKey: Int = NO_FRAG
     private val fm = supportFragmentManager
-    private var itemPosition = -1
+    private var sourcePosition = -1
 
     // --------------
     // BASE METHODS
@@ -65,13 +65,13 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      * @param fragmentKey Key for fragment.
      * @param sourceWithData the source with data detail to show.
      * @param sharedElement the shared element to animate during the transition.
-     * @param itemPosition the position of the source item in the recycler view.
+     * @param sourcePosition the position of the source item in the recycler view.
      */
     private fun configureAndShowFragment(fragmentKey: Int, sourceWithData: SourceWithData?,
-                                         sharedElement: View?, itemPosition: Int) {
+                                         sharedElement: View?, sourcePosition: Int) {
         if (this.fragmentKey != fragmentKey) {
             this.fragmentKey = fragmentKey
-            this.itemPosition = itemPosition
+            this.sourcePosition = sourcePosition
 
             // Try to restore fragment instance from back stack.
             val fragment = fm.findFragmentByTag(getFragFromKey(fragmentKey).javaClass.simpleName)
@@ -79,7 +79,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
                 // If null, instantiate a new fragment.
                 ?: when (fragmentKey) {
                     FRAG_SOURCES_LIST -> SourceListFragment()
-                    FRAG_SOURCES_DETAIL -> SourceDetailFragment.newInstance(sourceWithData!!, itemPosition)
+                    FRAG_SOURCES_DETAIL -> SourceDetailFragment.newInstance(sourceWithData!!, sourcePosition)
                     else -> Fragment()
                 }
 
@@ -96,7 +96,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
             while (fm.backStackEntryCount > 0) fm.popBackStackImmediate()
             super.onBackPressed()
         } else {
-            sourceListFrag?.let { it.arguments?.putInt(ITEM_POSITION, itemPosition) }
+            sourceListFrag?.let { it.arguments?.putInt(SOURCE_POSITION, sourcePosition) }
             super.onBackPressed()
             fragmentKey = FRAG_SOURCES_LIST
         }
@@ -118,7 +118,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && sharedElement != null) {
             performTransition(fragment)
-            sharedElement.transitionName = getString(R.string.animation_source_list_to_detail) + itemPosition
+            sharedElement.transitionName = getString(R.string.animation_source_list_to_detail) + sourcePosition
             fragTransaction.addSharedElement(sharedElement, sharedElement.transitionName)
         }
 

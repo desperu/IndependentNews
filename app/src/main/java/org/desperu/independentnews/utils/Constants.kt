@@ -26,6 +26,11 @@ const val numberOfPage = 4
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
+// For Source Detail Links
+// Button Link type
+const val LOCAL_LINK = 0
+const val WEB_LINK = 1
+
 
 // --- FOR RETROFIT REQUEST ---
 

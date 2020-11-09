@@ -13,12 +13,12 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentSourceListBinding
 import org.desperu.independentnews.di.module.ui.sourceListModule
-import org.desperu.independentnews.ui.sources.fragment.sourceDetail.ITEM_POSITION
+import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-private const val START_OFF_SET = 100L
+const val START_OFF_SET = 100L
 
 /**
  * Fragment to show source list.
@@ -28,7 +28,7 @@ private const val START_OFF_SET = 100L
 class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInterface {
 
     // FROM BUNDLE
-    private val itemPosition get() = arguments?.getInt(ITEM_POSITION) ?: -1
+    private val sourcePosition get() = arguments?.getInt(SOURCE_POSITION) ?: -1
 
     // FOR DATA
     private lateinit var binding: FragmentSourceListBinding
@@ -123,7 +123,7 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
     override fun updateTransitionName(itemPosition: Int, image: View) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             image.transitionName = getString(R.string.animation_source_list_to_detail) + itemPosition
-            if (this.itemPosition == itemPosition || this.itemPosition == -1)
+            if (this.sourcePosition == itemPosition || this.sourcePosition == -1)
                 scheduleStartPostponedTransition(image)
         }
     }

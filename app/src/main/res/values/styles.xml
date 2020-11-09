@@ -77,7 +77,8 @@
     <style name="AppButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/default_edit_text_size</item>
-        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="android:padding">@dimen/default_margin</item>
+        <item name="android:background">@drawable/source_button_enabled</item>
     </style>
 
 </resources>
