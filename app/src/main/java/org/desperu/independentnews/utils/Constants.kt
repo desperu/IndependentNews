@@ -17,7 +17,7 @@ const val FRAG_ENERGY = 5
 const val FRAG_HEALTH = 6
 const val FRAG_TODAY_ARTICLES = 7
 // Sources
-const val FRAG_SOURCES_LIST = 102
+const val FRAG_SOURCES_LIST = 100
 const val FRAG_SOURCES_DETAIL = 101
 
 // View Pager
@@ -25,11 +25,6 @@ const val numberOfPage = 4
 
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
-
-// For Source Detail Links
-// Button Link type
-const val LOCAL_LINK = 0
-const val WEB_LINK = 1
 
 
 // --- FOR RETROFIT REQUEST ---

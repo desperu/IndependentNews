@@ -35,12 +35,12 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.settings.SettingsActivity
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
@@ -159,6 +159,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     override fun onResume() {
         super.onResume()
         showFragment(fragmentKey, todayArticles)
+        syncDrawerWithFrag()
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
@@ -196,6 +197,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         else -> {
             fm.fragmentBack { super.onBackPressed() }
             showTabLayout()
+            syncDrawerWithFrag()
         }
     }
 
@@ -283,7 +285,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * @param isFiltered true if apply filters to the list, false otherwise.
      */
     override fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) =
-        (getCurrentFrag() as ArticleListInterface).filterList(selectedMap, isFiltered)
+        (fm.getCurrentArticleListFrag() as ArticleListInterface).filterList(selectedMap, isFiltered)
 
     // --------------
     // UI
@@ -314,6 +316,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
     }
 
+    /***
+     * Synchronize the checked drawer item with the current fragment.
+     */
+    private fun syncDrawerWithFrag() =
+        nav_view.setCheckedItem(getDrawerItemIdFromFragKey(fragmentKey))
+
     /**
      * Show or hide filter motion, depends of toShow value.
      * @param toShow true to show filter motion, false to hide.
@@ -331,7 +339,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * @return the adapter scale down animator for the recycler view of article list.
      */
     override fun getAdapterScaleDownAnimator(isScaledDown: Boolean): ValueAnimator? =
-        (getCurrentFrag() as? ArticleListInterface)?.getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
+        (fm.getCurrentArticleListFrag() as? ArticleListInterface)
+            ?.getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
 
     /**
      * Update filters motion state adapter state, when switch fragment.
@@ -339,18 +348,4 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     override fun updateFiltersMotionState(isFiltered: Boolean) =
         filters_motion_layout.updateFiltersMotionState(isFiltered)
-
-    // --------------
-    // UTILS
-    // --------------
-
-    /**
-     * Return the current fragment instance.
-     * @return the current fragment instance.
-     */
-    private fun getCurrentFrag(): ArticleListFragment? =
-        if (fragmentKey == FRAG_CATEGORY)
-            fm.categoryFragment?.getCurrentFrag()
-        else
-            fm.articleListFragment
 }

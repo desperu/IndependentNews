@@ -1,6 +1,7 @@
 package org.desperu.independentnews.utils
 
 import androidx.fragment.app.Fragment
+import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
@@ -36,5 +37,21 @@ object MainUtils {
         is CategoriesFragment -> FRAG_CATEGORY
         else -> fragment.arguments?.getInt(FRAG_KEY)
             ?: throw IllegalArgumentException("Fragment class not found : ${fragment.javaClass.simpleName}")
+    }
+
+    // -----------------
+    // MENU DRAWER
+    // -----------------
+
+    /**
+     * Get the menu drawer item id from fragment key.
+     * @param fragmentKey the given fragment key from which get the id.
+     * @return the corresponding item id.
+     */
+    internal fun getDrawerItemIdFromFragKey(fragmentKey: Int) = when(fragmentKey) {
+        FRAG_TOP_STORY -> R.id.activity_main_menu_drawer_top_story
+        FRAG_CATEGORY -> R.id.activity_main_menu_drawer_categories
+        FRAG_ALL_ARTICLES -> R.id.activity_main_menu_drawer_all_articles
+        else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }
 }

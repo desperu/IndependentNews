@@ -56,7 +56,7 @@ class MainFragmentManager(private val fm: FragmentManager,
             populateDataToFragment(fragment, articleList)
 
             // Apply the fragment transaction in the corresponding frame.
-            fragmentTransaction(fragment, R.id.main_frame_container)//getFrame(fragmentKey, isFrame2Visible))
+            fragmentTransaction(fragment)
         }
     }
 
@@ -75,12 +75,11 @@ class MainFragmentManager(private val fm: FragmentManager,
     /**
      * Show fragment in corresponding container, add to back stack and set transition.
      * @param fragment the fragment to show in the frame layout.
-     * @param frame the unique identifier of the frame layout to set the fragment.
      */
-    private fun fragmentTransaction(fragment: Fragment, frame: Int) {
+    private fun fragmentTransaction(fragment: Fragment) {
         if (!fm.isDestroyed) {
             fm.beginTransaction()
-                .replace(frame, fragment, fragment.javaClass.simpleName)
+                .replace(R.id.main_frame_container, fragment, fragment.javaClass.simpleName)
                 .addToBackStack(fragment.javaClass.simpleName)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit()
@@ -153,16 +152,27 @@ class MainFragmentManager(private val fm: FragmentManager,
     // --------------
 
     // Try to get Fragment instance from current and back stack, if not found value was null.
-    internal val articleListFragment
+    private val articleListFragment
         get() = (fm.findFragmentByTag(ArticleListFragment::class.java.simpleName) as ArticleListFragment?)
 
-    internal val categoryFragment
+    private val categoryFragment
         get() = (fm.findFragmentByTag(CategoriesFragment::class.java.simpleName) as CategoriesFragment?)
 
     /**
-     * Return the current fragment instance attached to frame layout 1.
-     * @return the current fragment instance attached to frame layout 1.
-     */
+    * Return the current fragment instance attached to frame layout 1.
+    * @return the current fragment instance attached to frame layout 1.
+    */
     private fun getCurrentFragment(): Fragment? =
         fm.findFragmentById(R.id.main_frame_container)
+
+    /**
+     * Returns the current article list fragment instance attached to the frame layout.
+     * @return the current article list fragment instance attached to the frame layout.
+     */
+    internal fun getCurrentArticleListFrag(): ArticleListFragment? =
+        if (fragmentKey == FRAG_CATEGORY)
+            categoryFragment?.getCurrentFrag()
+        else
+            articleListFragment
+
 }

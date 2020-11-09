@@ -5,13 +5,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
-import android.view.ViewTreeObserver
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.setMargins
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
@@ -269,15 +269,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      * @param sharedElement the shared element to animate for the transition.
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
-        sharedElement.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    sharedElement.viewTreeObserver.removeOnPreDrawListener(this)
-                    supportStartPostponedEnterTransition()
-                    return true
-                }
-            }
-        )
+        sharedElement.doOnPreDraw { supportStartPostponedEnterTransition() }
     }
 
     /**
@@ -327,35 +319,21 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     /**
      * Restore the saved scroll position of the scroll view.
      */
-    override fun restoreScrollPosition() {
-        sv.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    sv.scrollY = scrollPosition
-                    sv.viewTreeObserver.removeOnPreDrawListener(this)
-                    return true
-                }
-            }
-        )
-    }
+    override fun restoreScrollPosition() { sv.doOnPreDraw { sv.scrollY = scrollPosition } }
 
     /**
      * Set decor system ui visibility.
      *
      * @param flags the decor system ui visibility flags to set.
      */
-    override fun setDecorUiVisibility(flags: Int) {
-        window.decorView.systemUiVisibility = flags
-    }
+    override fun setDecorUiVisibility(flags: Int) { window.decorView.systemUiVisibility = flags }
 
     /**
      * Set requested screen orientation.
      *
      * @param flags the screen orientation flags to set.
      */
-    override fun setOrientation(flags: Int) {
-        requestedOrientation = flags
-    }
+    override fun setOrientation(flags: Int) { requestedOrientation = flags }
 
     /**
      * Update the design of the web view, with css and javascript support.

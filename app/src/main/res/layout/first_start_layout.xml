@@ -52,4 +52,15 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+    <org.desperu.independentnews.views.FontTextView
+        android:id="@+id/first_start_text_fetch_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="@dimen/default_large_margin"
+        android:textColor="@color/list_item_bg_collapsed"
+        android:textSize="@dimen/default_edit_text_size"
+        android:text="@string/fragment_first_start_fetch_time"
+        app:fontName="Annie_use_your_telescope"/>
+
 </LinearLayout>

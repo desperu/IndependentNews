@@ -10,8 +10,6 @@ import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.repositories.SourceRepository
 import org.desperu.independentnews.service.ResourceService
-import org.desperu.independentnews.utils.LOCAL_LINK
-import org.desperu.independentnews.utils.WEB_LINK
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -48,7 +46,7 @@ class SourceDetailViewModel(
         sourcePageAdapter?.updateList(
             sourceWithData.sourcePages
                 .filter { !it.isPrimary }
-                .map { SourceLinkViewModel(it, getType(it)) }
+                .map { SourceLinkViewModel(it) }
                 .toMutableList()
         )
     }
@@ -57,19 +55,6 @@ class SourceDetailViewModel(
      * On click enable listener.
      */
     val onClickEnable = OnClickListener { inverseSourceState() }
-
-    /**
-     * Get the button type, depends of properties values.
-     *
-     * @param sourcePage the source page for which determine the type.
-     *
-     * @return the type of the source page.
-     */
-    private fun getType(sourcePage: SourcePage): Int =
-        when {
-            sourcePage.body.isEmpty() -> WEB_LINK
-            else -> LOCAL_LINK
-        }
 
     /**
      * Inverse the state of the source.

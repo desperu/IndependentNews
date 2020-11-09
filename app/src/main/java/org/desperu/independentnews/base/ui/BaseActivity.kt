@@ -70,5 +70,5 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
     /**
      * Onc click on back arrow finish the child activity.
      */
-    protected fun onClickBackArrow() = supportFinishAfterTransition()
+    protected fun onClickBackArrow() = onBackPressed()
 }
