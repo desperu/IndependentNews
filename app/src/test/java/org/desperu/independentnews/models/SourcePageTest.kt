@@ -14,7 +14,6 @@ class SourcePageTest {
     private val url: String = BASTAMAG_BASE_URL
     private val title: String = "a title"
     private val body: String = "a body"
-    private val imageUrl: String = "an image url"
     private val cssUrl: String = "a css url"
     private val position: Int = 0
     private val isPrimary: Boolean = true
@@ -28,7 +27,6 @@ class SourcePageTest {
         assertEquals(sourcePage.url, "")
         assertEquals(sourcePage.title, "")
         assertEquals(sourcePage.body, "")
-        assertEquals(sourcePage.imageUrl, "")
         assertEquals(sourcePage.cssUrl, "")
         assertEquals(sourcePage.position, -1)
         assertEquals(sourcePage.isPrimary, false)
@@ -37,7 +35,7 @@ class SourcePageTest {
     @Test
     fun given_sourcePage_When_createSourcePage_Then_checkValues() {
         val sourcePage = SourcePage(
-            id, sourceId, url, title, body, imageUrl, cssUrl, position, isPrimary
+            id, sourceId, url, title, body, cssUrl, position, isPrimary
         )
 
         assertEquals(sourcePage.id, id)
@@ -45,7 +43,6 @@ class SourcePageTest {
         assertEquals(sourcePage.url, url)
         assertEquals(sourcePage.title, title)
         assertEquals(sourcePage.body, body)
-        assertEquals(sourcePage.imageUrl, imageUrl)
         assertEquals(sourcePage.cssUrl, cssUrl)
         assertEquals(sourcePage.position, position)
         assertEquals(sourcePage.isPrimary, isPrimary)

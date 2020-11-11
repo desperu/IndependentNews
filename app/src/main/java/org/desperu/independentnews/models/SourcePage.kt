@@ -15,7 +15,6 @@ import kotlinx.android.parcel.Parcelize
  * @property url                    the url of the source page.
  * @property title                  the title of the source page.
  * @property body                   the body of the source page.
- * @property imageUrl               the image url of the source page.
  * @property cssUrl                 the css url of the source page.
  * @property position               the position of the source page.
  * @property isPrimary              true if it's the primary source page.
@@ -27,7 +26,6 @@ import kotlinx.android.parcel.Parcelize
  * @param url                       the url of the source page to set.
  * @param title                     the title of the source page to set.
  * @param body                      the body of the source page to set.
- * @param imageUrl                  the image url of the source page to set.
  * @param cssUrl                    the css url of the source page to set.
  * @param position                  the position of the source page to set.
  * @param isPrimary                 true if it's the primary source page to set.
@@ -43,7 +41,6 @@ data class SourcePage(@PrimaryKey(autoGenerate = true)
                       val url: String = "",
                       val title: String = "",
                       var body: String = "",
-                      val imageUrl: String = "",
                       val cssUrl: String = "",
                       val position: Int = -1,
                       val isPrimary: Boolean = false

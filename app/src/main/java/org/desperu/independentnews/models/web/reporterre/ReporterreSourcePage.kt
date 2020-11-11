@@ -78,7 +78,6 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             url = url.toFullUrl(REPORTERRE_BASE_URL),
             title = getTitle().mToString(),
             body = getBody().mToString(),
-            imageUrl = getImage()[0].mToString(),
             cssUrl = getCssUrl().mToString(),
             isPrimary = true
         )
@@ -96,7 +95,6 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             url = url.mToString(),
             title = getTitle().mToString(),
             body = getBody().mToString(),
-            imageUrl = getImage()[0].mToString(),
             cssUrl = getCssUrl().mToString(),
             position = position
         )

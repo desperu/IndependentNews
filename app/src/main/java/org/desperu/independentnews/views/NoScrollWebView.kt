@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.util.AttributeSet
 import android.util.Base64
+import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -109,6 +110,7 @@ class NoScrollWebView @JvmOverloads constructor(
             cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
             injectCssCode(resizeMedia)
             updateTextSize(it, sourceName)
+            updateBackground(it, sourceName)
             updateMargins(it, sourceName)
         }
 
@@ -120,8 +122,13 @@ class NoScrollWebView @JvmOverloads constructor(
     private val myWebViewClient = object : WebViewClient() {
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-            // Update the text size, needed for Bastamag pages
-            url?.let { updateTextSize(it, sourceName) }
+            url?.let {
+                // Update the text size, needed for Bastamag pages
+                updateTextSize(it, sourceName)
+
+                // Update background color, needed for Reporterre pages
+                updateBackground(it, sourceName)
+            }
             super.onPageStarted(view, url, favicon)
         }
 
@@ -184,16 +191,14 @@ class NoScrollWebView @JvmOverloads constructor(
     private fun injectCssCode(cssCode: String) {
         val buffer = cssCode.toByteArray()
         val encoded = Base64.encodeToString(buffer, Base64.NO_WRAP)
-        loadUrl(
-            "javascript:(function() {" +
-                    "var parent = document.getElementsByTagName('head').item(0);" +
-                    "var style = document.createElement('style');" +
-                    "style.type = 'text/css';" +
-                    // Tell the browser to BASE64-decode the string into your script !!!
-                    "style.innerHTML = window.atob('" + encoded + "');" +
-                    "parent.appendChild(style)" +
-                    "})()"
-        )
+
+        val js = "var parent = document.getElementsByTagName('head').item(0);" +
+                " var style = document.createElement('style');" +
+                " style.type = 'text/css';" +
+                // Tell the browser to BASE64-decode the string into your script !!!
+                " style.innerHTML = window.atob('" + encoded + "');" +
+                " parent.appendChild(style)" //+
+        evaluateJavascript(js, null)
     }
 
     /**
@@ -243,6 +248,24 @@ class NoScrollWebView @JvmOverloads constructor(
 
         // Apply margins to the web view.
         (this.layoutParams as LinearLayout.LayoutParams).setMargins(margins)
+    }
+
+    /**
+     * Update the background for reporterre page.
+     *
+     * @param url               the actual url of the web view.
+     * @param sourceName        the name of the source of the page.
+     */
+    @Suppress("Deprecation")
+    private fun updateBackground(url: String, sourceName: String) {
+        (parent as View).setBackgroundColor(
+            resources.getColor(
+                if (isSourceUrl(url) && sourceName == REPORTERRE)
+                    R.color.reporterre_background
+                else
+                    android.R.color.white
+            )
+        )
     }
 
     /**

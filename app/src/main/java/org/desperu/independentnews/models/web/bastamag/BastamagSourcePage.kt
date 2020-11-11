@@ -72,7 +72,6 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
             url = url.toFullUrl(BASTAMAG_BASE_URL),
             title = getTitle().mToString(),
             body = getBody().mToString(),
-//            imageUrl = getImage()[0].mToString(),
             cssUrl = getCssUrl().mToString(),
             isPrimary = true
         )
@@ -92,7 +91,6 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
             url = url.mToString(),
             title = title,
             body = getBody().mToString(),
-//            imageUrl = getImage()[0].mToString(),
             cssUrl = getCssUrl().mToString(),
             position = position
         )

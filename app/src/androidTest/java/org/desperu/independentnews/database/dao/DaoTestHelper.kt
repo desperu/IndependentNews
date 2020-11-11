@@ -123,7 +123,6 @@ class DaoTestHelper {
         BASTAMAG_BASE_URL + "test",
         "a title",
         "a body",
-        "an image url",
         "a css url",
         3,
         false
@@ -141,7 +140,6 @@ class DaoTestHelper {
                 BASTAMAG_BASE_URL + "test2",
                 "a title 2",
                 "a body 2",
-                "an image url 2",
                 "a css url 2",
                 5,
                 true
