@@ -28,6 +28,8 @@ val mainModule = module {
             activity
         )
     }
+
+    // TODO useless ??? not that the error... ??? Must check
     /**
      * Provides a ArticleListInterface interface from the instance of ArticleListFragment.
      */

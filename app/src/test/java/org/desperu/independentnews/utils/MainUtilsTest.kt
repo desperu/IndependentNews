@@ -28,7 +28,7 @@ class MainUtilsTest {
 
         val expected = "Fragment key not found : $fragmentKey"
         val output = try { getFragFromKey(fragmentKey) }
-        catch (e: IllegalArgumentException) { e.message }
+                     catch (e: IllegalArgumentException) { e.message }
 
         assertEquals(expected, output)
     }

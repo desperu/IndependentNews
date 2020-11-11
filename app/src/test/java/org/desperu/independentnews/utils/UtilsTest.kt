@@ -13,6 +13,7 @@ import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
+import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.desperu.independentnews.utils.Utils.millisToString
@@ -265,6 +266,21 @@ class UtilsTest {
         output = getPageNameFromUrl(url)
 
         assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_sourceUrl_When_isSourceUrl_Then_checkTrue() {
+        val output = isSourceUrl("data:text/html; charset=UTF-8,")
+
+        assertTrue(output)
+    }
+
+    @Test
+    fun given_normalUrl_When_isSourceUrl_Then_checkFalse() {
+        val url = "https://www.bastamag.net/ecologie-quartiers-populaires-front-des-meres-fatima-Ouassak-cantines-scolaires"
+        val output = isSourceUrl(url)
+
+        assertFalse(output)
     }
 
     @Test

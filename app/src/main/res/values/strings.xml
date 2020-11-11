@@ -45,11 +45,6 @@
     <string name="filter_layout_dates_text_begin">Begin Date</string>
     <string name="filter_layout_dates_text_end">End Date</string>
 
-    <!-- SOURCES ACTIVITY -->
-    <!-- Source Detail Fragment -->
-    <string name="fragment_source_detail_button_enable">Enable</string>
-    <string name="fragment_source_detail_button_disable">Disable</string>
-
     <!-- SETTINGS ACTIVITY -->
     <string name="activity_settings_text_category_notification" translatable="false">Notifications</string>
     <string name="activity_settings_text_notifications_state">Enable notifications</string>

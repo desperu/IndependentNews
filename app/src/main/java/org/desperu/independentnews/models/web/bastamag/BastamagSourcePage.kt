@@ -198,8 +198,10 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     private fun setMainCssId(html: String?): String? =
         if(!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
-            document.select(BODY)[0].attr(CLASS, MAIN_CONTAINER)
+            document.select(BODY).getIndex(0)?.attr(CLASS, MAIN_CONTAINER)
             document.toString()
         } else
             null
+
+    // TODO correct http to https, else web view not want "clear text not permitted"
 }

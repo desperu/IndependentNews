@@ -163,7 +163,7 @@ internal object Utils {
     }
 
     // -----------------
-    // CONVERT URL
+    // URL
     // -----------------
 
     /**
@@ -175,6 +175,14 @@ internal object Utils {
         val list = url.split("/").toTypedArray()
         return list[list.size - 1]
     }
+
+    /**
+     * Returns true if the given url is a source article, false otherwise.
+     * @param url the given url to compare with source urls.
+     * @return true if the given url is a source article, false otherwise.
+     */
+    internal fun isSourceUrl(url: String) =
+        url.contains("data:text/html; charset=UTF-8,")
 
     // -----------------
     // WEB CONNECTION

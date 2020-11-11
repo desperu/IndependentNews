@@ -2,11 +2,11 @@ package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
 import org.desperu.independentnews.ui.sources.SourcesInterface
-
+// TODO to move with activity, use in the two fragments.
 /**
  * The source router that allows redirection of the user.
  */
@@ -23,10 +23,9 @@ interface SourceRouter {
 
     /**
      * Redirects the user to the ShowArticle Activity to show sources.
-     *
-     * @param sourcePage the source page to show in the Activity.
+     * @param article the article to show in the Activity.
      */
-    fun openShowArticle(sourcePage: SourcePage)
+    fun openShowArticle(article: Article)
 }
 
 /**
@@ -52,8 +51,8 @@ class SourceRouterImpl(private val activity: AppCompatActivity): SourceRouter {
 
     /**
      * Redirects the user to the Sources Activity to manage sources.
-     * @param sourcePage the source page to show in the Activity.
+     * @param article the article to show in the Activity.
      */
-    override fun openShowArticle(sourcePage: SourcePage) =
-        ShowArticleActivity.routeFromActivity(activity, sourcePage)
+    override fun openShowArticle(article: Article) =
+        ShowArticleActivity.routeFromActivity(activity, article, null)
 }

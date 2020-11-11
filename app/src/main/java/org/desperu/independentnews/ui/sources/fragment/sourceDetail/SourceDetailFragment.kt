@@ -1,9 +1,9 @@
 package org.desperu.independentnews.ui.sources.fragment.sourceDetail
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AnimationUtils
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.fragment_source_detail.*
@@ -66,6 +66,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     override fun configureDesign() {
         updateTransitionName()
+        configureWebView()
         configureRecyclerView()
     }
 
@@ -87,37 +88,46 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     }
 
     /**
-     * Update transition name of the shared element (image).
+     * Configure the web view, set the css style.
      */
-    private fun updateTransitionName() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            postponeEnterTransition()
-            source_detail_image.transitionName =
-                getString(R.string.animation_source_list_to_detail) + sourcePosition
-            startPostponedEnterTransition()
-        }
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun configureWebView() {
+        val sourcePage = sourceWithData.sourcePages.find { it.isPrimary }
+
+        source_detail_web_view.settings.javaScriptEnabled = true
+        source_detail_web_view.updateWebViewDesign(
+            sourceWithData.source.name,
+            sourcePage?.cssUrl
+        )
     }
 
     /**
      * Configure recycler view, support large screen size. Set from left animation
-     * for recycler view items, to show animation each time the recycler appear on user screen.
+     * for recycler view items,.
      */
     private fun configureRecyclerView() {
         sourceDetailAdapter = SourceDetailAdapter(context!!, R.layout.item_source_link)
-        source_detail_nested_scroll.setOnScrollChangeListener(
-            NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
-                val recyclerTop = source_detail_recycler.top - v.measuredHeight
-                    source_detail_recycler.adapter =
-                        if (recyclerTop < scrollY)
-                            if (source_detail_recycler.adapter == null) {
-                                animDisableButton(viewModel.getSourcePageList.size - 1)
-                                sourceDetailAdapter // TODO remove listener before onDestroy
-                            }
-                            else return@OnScrollChangeListener
-                        else
-                            null
-            }
-        )
+        source_detail_nested_scroll.setOnScrollChangeListener(scrollListener)
+    }
+
+    // --------------
+    // LISTENER
+    // --------------
+
+    /**
+     * Scroll listener, to show recycler animation each time it appear on user screen.
+     */
+    private val scrollListener = NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+        source_detail_nested_scroll?.let {
+            val recyclerTop = source_detail_recycler.top - v.measuredHeight
+            source_detail_recycler.adapter =
+                if (recyclerTop < scrollY)
+                    if (source_detail_recycler.adapter == null)
+                        sourceDetailAdapter
+                    else return@OnScrollChangeListener
+                else
+                    null
+        }
     }
 
     // --------------
@@ -130,13 +140,15 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     private fun updateRecyclerData() = viewModel.updateRecyclerData()
 
     /**
-     * Animate the disable source button.
+     * Update transition name of the shared element (image).
      */
-    private fun animDisableButton(position: Int) {
-        val anim = AnimationUtils.makeInAnimation(context, true)
-        anim.startOffset = position * 200L / 3
-        anim.duration = 250L
-        source_detail_disable_button.startAnimation(anim)
+    private fun updateTransitionName() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            postponeEnterTransition()
+            source_detail_image.transitionName =
+                getString(R.string.animation_source_list_to_detail) + sourcePosition
+            startPostponedEnterTransition()
+        }
     }
 
     // --- GETTERS ---

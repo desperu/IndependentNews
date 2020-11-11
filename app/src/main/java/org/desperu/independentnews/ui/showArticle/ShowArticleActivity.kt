@@ -9,23 +9,17 @@ import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.setMargins
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
-import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.SourcePage
-import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.utils.*
-import org.koin.android.ext.android.get
+import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -33,10 +27,6 @@ import org.koin.core.parameter.parametersOf
  * The name of the argument to received article for this Activity.
  */
 const val ARTICLE: String = "article"
-/**
- * The name of the argument to received source page for this Activity.
- */
-const val SOURCE_PAGE: String = "sourcePage"
 
 /**
  * Activity to show articles list.
@@ -48,26 +38,18 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     // FROM BUNDLE
     private val article: Article
         get() = intent.getParcelableExtra(ARTICLE)
-            ?: Article(
-                title = getString(R.string.show_article_activity_article_error),
-                url = sourcePage.url,
-                article = sourcePage.body,
-                imageUrl = sourcePage.imageUrl,
-                cssUrl = sourcePage.cssUrl
-            ) // TODO for test
-    private val sourcePage: SourcePage get() = intent.getParcelableExtra(SOURCE_PAGE) ?: SourcePage()
+            ?: Article(title = getString(R.string.show_article_activity_article_error))
 
     // FOR DATA
     private lateinit var binding: ViewDataBinding
     private val viewModel: ArticleViewModel by viewModel { parametersOf(article) }
-    private val prefs = get<SharedPrefService>()
     private var mWebChromeClient: WebChromeClient? = null
     override var inCustomView: Boolean = false
     private lateinit var actualUrl: String
 
     // FOR UI
     private val sv: NestedScrollView by bindView(R.id.article_scroll_view)
-    private var margins = 0
+//    private var margins = 0
     private var scrollPosition = -1
     private var navigationCount = 0
 
@@ -84,12 +66,12 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
          */
         fun routeFromActivity(activity: AppCompatActivity,
                               article: Article,
-                              imageView: View) {
+                              imageView: View?) {
             val intent = Intent(activity, ShowArticleActivity::class.java)
                 .putExtra(ARTICLE, article)
 
             // Start Animation
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && imageView != null) {
                 val options = ActivityOptions.makeSceneTransitionAnimation(
                     activity,
                     imageView,
@@ -99,18 +81,6 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             } else {
                 activity.startActivity(intent)
             }
-        }
-
-        /**
-         * Redirects from an Activity to this Activity with transition animation.
-         *
-         * @param activity the activity use to perform redirection.
-         * @param sourcePage the source page to show in this activity.
-         */
-        fun routeFromActivity(activity: AppCompatActivity,
-                              sourcePage: SourcePage) {
-            activity.startActivity(Intent(activity, ShowArticleActivity::class.java)
-                .putExtra(SOURCE_PAGE, sourcePage))
         }
     }
 
@@ -173,7 +143,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             super.onPageStarted(view, url, favicon)
             url?.let {
                 actualUrl = url
-                updateTextSize()
+                web_view.updateTextSize(actualUrl, article.sourceName)
 
                 // Handle web view navigation
                 hideArticleDataContainer(!isSourceUrl(url))
@@ -190,7 +160,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-            url?.let { if (!isDesignProperlySet(it)) updateWebViewDesign() }
+            url?.let { if (!web_view.isDesignProperlySet(it, article.sourceName)) updateWebViewDesign() }
             article_loading_progress_bar.hide()
             article_scroll_view.visibility = View.VISIBLE
             web_view.settings.textZoom = web_view.settings.textZoom
@@ -301,9 +271,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      * @param toHide true to hide data container, false to show.
      */
     private fun hideArticleDataContainer(toHide: Boolean) {
-        article_data_container.visibility =
-            if (toHide) View.GONE
-            else View.VISIBLE
+        article_data_container.visibility = if (toHide) View.GONE else View.VISIBLE
     }
 
     /**
@@ -341,38 +309,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      */
     override fun updateWebViewDesign() {
         if (!::actualUrl.isInitialized) return
-        margins = 0
-
-        if (isSourceUrl(actualUrl)) {
-            // Apply css style for the article in the web view.
-            val js = "var link = document.createElement('link');" +
-                    " link.setAttribute('rel', 'stylesheet');" +
-                    " link.setAttribute('href','${article.cssUrl}');" +
-                    " link.setAttribute('type','text/css');" +
-                    " document.head.appendChild(link);"
-            web_view.evaluateJavascript(js, null)
-
-            // Needed to correct Reporterre article design.
-            if (article.sourceName == REPORTERRE)
-                margins = bindDimen(R.dimen.default_margin).value.toInt()
-        }
-
-        // Apply margins to the web view.
-        (web_view.layoutParams as LinearLayout.LayoutParams).setMargins(margins)
-    }
-
-    /**
-     * Update web view text size with the selected value in settings.
-     * Special text size correction for Bastamag.
-     */
-    private fun updateTextSize() {
-        web_view.settings.apply {
-            textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
-            // Needed to correct Bastamag article text size.
-            if (isSourceUrl(actualUrl) && article.sourceName == BASTAMAG ||
-                    actualUrl.contains(BASTAMAG_BASE_URL))
-                textZoom += 20
-        }
+        web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
     }
 
     // --------------
@@ -405,24 +342,4 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
         startActivity(Intent.createChooser(share, getString(R.string.show_article_activity_share_chooser_title)))
     }
-
-    /**
-     * Returns true if the given url is a source article, false otherwise.
-     *
-     * @param url the given url to compare with source urls.
-     *
-     * @return true if the given url is a source article, false otherwise.
-     */
-    private fun isSourceUrl(url: String) =
-        url.contains("data:text/html; charset=UTF-8,")
-
-    /**
-     * Returns true if the design of the web view is properly set, false otherwise.
-     *
-     * @param url the url of the web view.
-     *
-     * @return true if the design of the web view is properly set, false otherwise.
-     */
-    private fun isDesignProperlySet(url: String) =
-        (isSourceUrl(url) && article.sourceName == REPORTERRE && margins != 0) || (margins != 0)
 }

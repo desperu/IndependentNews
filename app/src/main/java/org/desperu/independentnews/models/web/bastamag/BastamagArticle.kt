@@ -146,7 +146,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     private fun setMainCssId(html: String?): String? =
         if(!html.isNullOrBlank()) {
             val document = Jsoup.parse(html)
-            document.select(BODY)[0].attr(CLASS, MAIN_CONTAINER)
+            document.select(BODY).getIndex(0)?.attr(CLASS, MAIN_CONTAINER)
             document.toString()
         } else
             null

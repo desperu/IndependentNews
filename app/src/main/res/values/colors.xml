@@ -49,5 +49,10 @@
 
     <!-- Sources Buttons Links color -->
     <color name="reporterre_button_link">#8b9f1a</color>
+    <color name="bastamag_button_link_contact">#464646</color>
+    <color name="bastamag_button_link_support">#cccc33</color>
+    <color name="bastamag_button_link_economy">#fc5320</color>
+    <color name="bastamag_button_link_most_viewed">#669999</color>
+    <color name="bastamag_button_link_cgu">#8bb85e</color>
 
 </resources>

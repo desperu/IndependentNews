@@ -2,7 +2,7 @@ package org.desperu.independentnews.ui.sources.fragment.sourceDetail
 
 import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -10,24 +10,25 @@ import org.koin.core.get
 /**
  * View Model witch provide data for source link.
  *
- * @property sourcePage     the given source page for this view model.
- * @property router         the source router interface witch provide user redirection.
+ * @property sourceWithData     the given source with data, (single source page) for this view model.
+ * @property router             the source router interface witch provide user redirection.
  *
  * @constructor Instantiates a new SourceLinkViewModel.
  *
- * @param sourcePage        the given source page for this view model to set.
+ * @param sourceWithData        the given source with data, (single source page) for this view model to set.
  */
 class SourceLinkViewModel(
-    val sourcePage: SourcePage
+    val sourceWithData: SourceWithData
 ) : ViewModel(), KoinComponent {
 
     // FOR DATA
     private val router: SourceRouter = get()
+    val sourcePage = sourceWithData.sourcePages.getOrNull(0)
 
     /**
      * On click button listener, to handle user redirection.
      */
     val onClickButton = OnClickListener {
-        router.openShowArticle(sourcePage)
+        router.openShowArticle(sourceWithData.toArticle())
     }
 }

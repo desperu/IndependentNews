@@ -4,9 +4,9 @@ import android.view.View.OnClickListener
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.repositories.SourceRepository
 import org.desperu.independentnews.service.ResourceService
@@ -38,6 +38,7 @@ class SourceDetailViewModel(
     private val sourcePageAdapter: SourceDetailAdapter?
         get() = sourceDetailInterface.getRecyclerAdapter() // TODO WeakReference or MutableLiveData but here to save adapter instance....gahfy
     val isEnabled = ObservableBoolean(sourceWithData.source.isEnabled)
+    val primaryPage = sourceWithData.sourcePages.find { it.isPrimary }
 
     /**
      * Update recycler views data.
@@ -45,8 +46,8 @@ class SourceDetailViewModel(
     internal fun updateRecyclerData() {
         sourcePageAdapter?.updateList(
             sourceWithData.sourcePages
-                .filter { !it.isPrimary }
-                .map { SourceLinkViewModel(it) }
+                .filter { !it.isPrimary } // TODO to perfect
+                .mapIndexed { index, _ -> SourceLinkViewModel(sourceWithData.toSimplePage(index + 1)) }
                 .toMutableList()
         )
     }
@@ -54,7 +55,11 @@ class SourceDetailViewModel(
     /**
      * On click enable listener.
      */
-    val onClickEnable = OnClickListener { inverseSourceState() }
+    val onClickEnable = OnClickListener {
+        val fab = it as FloatingActionButton
+        fab.rotation = 3f
+        inverseSourceState()
+    }
 
     /**
      * Inverse the state of the source.
@@ -64,11 +69,4 @@ class SourceDetailViewModel(
         sourceRepository.setEnabled(sourceWithData.source.id, !originalState)
         isEnabled.set(!originalState)
     }
-
-    // --- GETTERS ---
-
-    /**
-     * Returns the source page list.
-     */
-    internal val getSourcePageList: List<SourcePage> = sourceWithData.sourcePages
 }

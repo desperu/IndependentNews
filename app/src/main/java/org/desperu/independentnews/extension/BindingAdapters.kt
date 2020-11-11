@@ -1,5 +1,6 @@
 package org.desperu.independentnews.extension
 
+import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.webkit.WebView
@@ -10,11 +11,15 @@ import androidx.core.view.setPadding
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.sources.fragment.sourceList.RecyclerViewAdapter
 import org.desperu.independentnews.utils.BASTAMAG
+import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
 
@@ -60,12 +65,26 @@ fun ImageView.setImage(imageId: Int?) {
 }
 
 /**
+ * Set the html code to load in the web view.
+ * @param html the html code to show in the web view.
+ */
+@BindingAdapter("setHtml")
+fun WebView.setHtml(html: String?) {
+    html?.let { loadData(it, "text/html; charset=UTF-8", null) }
+}
+
+/**
  * Set the article html code to load in the web view.
- * @param article the article html code to load.
+ * @param article the article to show in the web view.
  */
 @BindingAdapter("setArticle")
-fun WebView.setArticle(article: String?) {
-    article?.let { loadData(it, "text/html; charset=UTF-8", null) }
+fun WebView.setArticle(article: Article?) {
+    article?.let {
+        if (it.article.isNotBlank())
+            loadData(it.article, "text/html; charset=UTF-8", null)
+        else
+            loadUrl(it.url)
+    }
 }
 
 /**
@@ -102,6 +121,20 @@ fun ImageView.myBackgroundColor(color: Int?) {
 }
 
 /**
+ * Set the background color depends of the source name and the single source page position.
+ * @param sourceWithData the source with data, single page, to set for the background.
+ */
+@Suppress("Deprecation")
+@BindingAdapter("myBackgroundColor")
+fun Button.myBackgroundColor(sourceWithData: SourceWithData?) {
+    sourceWithData?.let {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            backgroundTintList = ColorStateList.valueOf(resources.getColor(getButtonLinkColor(it)))
+        }
+    }
+}
+
+/**
  * Set the background resource of the view, depends of the enabled value.
  * @param enabled true if the source is enabled.
  */
@@ -128,16 +161,18 @@ fun View.myPadding(sourceName: String?) {
 }
 
 /**
- * Set the text and the background resource of the button, depends of the enabled value.
+ * Set the source drawable and the background color of the fab, depends of the enabled value.
  * @param enabled true if the source is enabled.
  */
-@BindingAdapter("myButton")
-fun Button.myButton(enabled: Boolean?) {
+@BindingAdapter("disableFab")
+@Suppress("Deprecation")
+fun FloatingActionButton.disableFab(enabled: Boolean?) {
     if (enabled != null && enabled) {
-        text = resources.getString(R.string.fragment_source_detail_button_enable)
-        setBackgroundResource(R.drawable.source_button_enabled)
+        setImageResource(R.drawable.ic_baseline_check_white_24)
+        backgroundTintList = ColorStateList.valueOf(resources.getColor(android.R.color.holo_green_light))
     } else {
-        text = resources.getString(R.string.fragment_source_detail_button_disable)
-        setBackgroundResource(R.drawable.source_button_disabled)
+        setImageResource(R.drawable.ic_close)
+        supportImageTintList = ColorStateList.valueOf(resources.getColor(android.R.color.white))
+        backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorAccent))
     }
 }

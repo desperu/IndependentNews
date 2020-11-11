@@ -21,23 +21,57 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/source_detail_image"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/fragment_source_detail_image_height"
-                android:minWidth="@dimen/fragment_source_detail_image_height"
-                android:minHeight="@dimen/fragment_source_detail_image_height"
-                android:scaleType="fitCenter"
-                android:transitionName="@string/animation_source_list_to_detail"
-                app:setImage="@{viewModel.sourceWithData.source.imageId}"
-                app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
-                app:myPadding="@{viewModel.sourceWithData.source.name}"
-                tools:ignore="UnusedAttribute" />
-
-            <org.desperu.independentnews.views.NoScrollWebView
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:setArticle="@{viewModel.sourceWithData.sourcePages[0].body}"/>
+                android:layout_margin="@dimen/default_margin">
+
+                <ImageView
+                    android:id="@+id/source_detail_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/fragment_source_detail_image_height"
+                    android:minWidth="@dimen/fragment_source_detail_image_height"
+                    android:minHeight="@dimen/fragment_source_detail_image_height"
+                    android:scaleType="fitCenter"
+                    android:transitionName="@string/animation_source_list_to_detail"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:setImage="@{viewModel.sourceWithData.source.imageId}"
+                    app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
+                    app:myPadding="@{viewModel.sourceWithData.source.name}"
+                    tools:ignore="UnusedAttribute" />
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/source_detail_disable_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:scaleType="centerInside"
+                    android:onClick="@{viewModel.onClickEnable}"
+                    app:disableFab="@{viewModel.isEnabled}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/source_detail_image"
+                    app:layout_constraintBottom_toBottomOf="@id/source_detail_image"
+                    tools:backgroundTint="@android:color/holo_green_light"
+                    tools:src="@drawable/ic_baseline_check_white_24"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_marginBottom="@dimen/default_large_margin"
+                android:gravity="center"
+                android:textSize="@dimen/article_title_text_size"
+                android:textStyle="bold"
+                android:text="@{viewModel.primaryPage.title}" />
+
+            <org.desperu.independentnews.views.NoScrollWebView
+                android:id="@+id/source_detail_web_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:setHtml="@{viewModel.primaryPage.body}"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/source_detail_recycler"
@@ -47,15 +81,6 @@
                 android:clipToPadding="false"
                 app:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_source_link"/>
-
-            <Button
-                android:id="@+id/source_detail_disable_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:onClick="@{viewModel.onClickEnable}"
-                app:myButton="@{viewModel.isEnabled}"
-                style="@style/AppButton"/>
 
         </LinearLayout>
 
