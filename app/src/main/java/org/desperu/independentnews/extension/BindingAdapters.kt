@@ -1,5 +1,6 @@
 package org.desperu.independentnews.extension
 
+import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
@@ -24,6 +25,17 @@ import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
 
 /**
+ * Show or hide view, depends of toShow value.
+ * @param toShow true to show, false to hide view.
+ */
+@BindingAdapter("toShow")
+fun View.toShow(toShow: Boolean?) {
+    toShow?.let {
+        visibility = if (toShow) View.VISIBLE else View.GONE
+    }
+}
+
+/**
  * Set the published date in millis to string format.
  * @param millis the time in millis to set.
  */
@@ -35,6 +47,13 @@ fun TextView.setPublishedDate(millis: Long?) {
 @BindingAdapter("setInt")
 fun TextView.setInt(value: Int?) {
     text = value.mToString()
+}
+
+@SuppressLint("SetTextI18n")
+@BindingAdapter("setSectionTheme")
+fun TextView.setSectionTheme(article: Article?) {
+    if (!article?.section.isNullOrBlank() || !article?.theme.isNullOrBlank())
+        text = "${article?.section} > ${article?.theme}"
 }
 
 /**

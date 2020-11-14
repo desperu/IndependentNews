@@ -96,6 +96,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
         showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
         postponeSceneTransition()
         scheduleStartPostponedTransition(article_image)
+        setActivityTransition()
         setupProgressBarWithScrollView()
     }
 
@@ -105,6 +106,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
     /**
      * Configure data binding and return the root view.
+     *
      * @return the binding root view.
      */
     private fun configureDataBinding(): View {
@@ -227,7 +229,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
     /**
      * Postpone the shared elements enter transition, because the shared elements
-     * are in the fragment of the view pager.
+     * is an image downloaded from network.
      */
     private fun postponeSceneTransition() = supportPostponeEnterTransition()
 
@@ -240,6 +242,14 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
         sharedElement.doOnPreDraw { supportStartPostponedEnterTransition() }
+    }
+
+    /**
+     * Set custom activity transition, only for source detail to source page transition.
+     */
+    private fun setActivityTransition() {
+        if (article.id == 0L)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     /**

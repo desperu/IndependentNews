@@ -89,7 +89,7 @@
                             android:layout_marginStart="@dimen/default_margin"
                             android:gravity="end"
                             android:textStyle="italic"
-                            android:text="@{viewModel.article.section + ' '  + '>' + ' ' + viewModel.article.theme}"/>
+                            app:setSectionTheme="@{viewModel.article}"/>
 
                     </RelativeLayout>
 
@@ -106,7 +106,8 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin">
+                        android:layout_margin="@dimen/default_margin"
+                        app:toShow="@{viewModel.article.id != 0L}">
 
                         <TextView
                             android:id="@+id/article_author"

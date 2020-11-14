@@ -33,6 +33,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
 
     override fun getTitle(): String? =
         findData(SMALL, CLASS, TITRE_ARTICLE, null)?.ownText()
+            ?: findData(H1, CLASS, TITRE_PAGE_LIST, null)?.text()
 
     override fun getBody(): String? =
         findData(DIV, CLASS, MAIN, 0)?.outerHtml().updateBody()

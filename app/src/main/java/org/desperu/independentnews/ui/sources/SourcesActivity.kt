@@ -91,6 +91,11 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     // METHODS OVERRIDE
     // --------------
 
+    override fun onResume() {
+        super.onResume()
+        setActivityTransition()
+    }
+
     override fun onBackPressed() {
         if (fragmentKey == FRAG_SOURCES_LIST) {
             while (fm.backStackEntryCount > 0) fm.popBackStackImmediate()
@@ -189,6 +194,14 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         val enterFade = Fade()
         enterFade.duration = FADE_DEFAULT_TIME
         fragment.enterTransition = enterFade
+    }
+
+    /**
+     * Set custom activity transition, only for source detail to source page transition.
+     */
+    private fun setActivityTransition() {
+        if (sourcePosition != -1)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
     // --- GETTERS ---
