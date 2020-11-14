@@ -24,6 +24,8 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
 
     // FOR DATA
     override val sourceName = REPORTERRE
+    private val pageUrlList = mutableListOf<String>()
+    private val buttonNameList = mutableListOf<String>()
 
     // --- GETTERS ---
 
@@ -35,16 +37,9 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
     override fun getCssUrl(): String? =
         findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
-    override fun getPageUrlList(): List<String?> {
-        val pageUrlList = mutableListOf<String>()
+    override fun getPageUrlList(): List<String> = pageUrlList
 
-        getTagList(A).getMatchAttr(CLASS, LIEN_RUBRIQUE).forEach {
-            pageUrlList.add(it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL))
-        }
-
-        return pageUrlList
-    }
-    // TODO soutenir title and les hommes et femmes page
+    override fun getButtonNameList(): List<String> = buttonNameList
 
     // -----------------
     // CONVERT
@@ -57,28 +52,32 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
      *
      * @return source page with all data set.
      */
-    internal fun toSourceEditorial(url: String): SourcePage =
-        SourcePage(
+    internal fun toSourceEditorial(url: String): SourcePage {
+        setButtonNameAndPageList()
+        return SourcePage(
             url = url.toFullUrl(REPORTERRE_BASE_URL),
             title = getTitle().mToString(),
             body = getBody().mToString(),
             cssUrl = getCssUrl().mToString(),
             isPrimary = true
         )
+    }
 
     /**
      * Convert ReporterreSourcePage to SourcePage.
      *
      * @param url           the url of the source page.
+     * @param buttonName    the button name of the source page.
      * @param position      the position of the source page in the list.
      *
      * @return source page with all data set.
      */
-    internal fun toSourcePage(url: String?, position: Int): SourcePage =
+    internal fun toSourcePage(url: String?, buttonName: String, position: Int): SourcePage =
         SourcePage(
             url = url.mToString(),
+            buttonName = buttonName,
             title = getTitle().mToString(),
-            body = getBody().mToString(),
+            body = if (position != 4) getBody().mToString() else "", // For Men and Women of Reporterre
             cssUrl = getCssUrl().mToString(),
             position = position
         )
@@ -101,4 +100,14 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             .forceHttps()
             .escapeHashtag()
         }
+
+    /**
+     * Set all button name and page list, for all links.
+     */
+    private fun setButtonNameAndPageList() {
+        getTagList(A).getMatchAttr(CLASS, LIEN_RUBRIQUE).forEach {
+            pageUrlList.add(it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL))
+            it.getChild(0)?.text()?.let { buttonName -> buttonNameList.add(buttonName) }
+        }
+    }
 }

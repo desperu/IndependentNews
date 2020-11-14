@@ -22,4 +22,6 @@ abstract class BaseHtmlSourcePage(private val htmlPage: ResponseBody): BaseHtml(
     internal abstract fun getCssUrl(): String?
 
     internal abstract fun getPageUrlList(): List<String?>
+
+    internal abstract fun getButtonNameList(): List<String?>
 }

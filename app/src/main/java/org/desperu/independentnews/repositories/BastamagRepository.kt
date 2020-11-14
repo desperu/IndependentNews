@@ -115,10 +115,10 @@ class BastamagRepositoryImpl(
         sourcePages.add(bastamagSourcePage.toSourceEditorial(BASTAMAG_EDITO_URL)) // Add the editorial page, the primary
 
         bastamagSourcePage.getPageUrlList().forEachIndexed { index, pageUrl ->
-            val title = bastamagSourcePage.getTitleList()[index]
+            val buttonName = bastamagSourcePage.getButtonNameList()[index]
 
             val response = webService.getArticle(getPageNameFromUrl(pageUrl.mToString()))
-            sourcePages.add(BastamagSourcePage(response).toSourcePage(pageUrl, index, title))
+            sourcePages.add(BastamagSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
         sourcePages

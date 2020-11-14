@@ -112,8 +112,10 @@ class ReporterreRepositoryImpl(
         sourcePages.add(reporterreSourcePage.toSourceEditorial(REPORTERRE_EDITO_URL)) // Add the editorial page, the primary
 
         reporterreSourcePage.getPageUrlList().forEachIndexed { index, pageUrl ->
+            val buttonName = reporterreSourcePage.getButtonNameList()[index]
+
             val response = webService.getArticle(getPageNameFromUrl(pageUrl.mToString()))
-            sourcePages.add(ReporterreSourcePage(response).toSourcePage(pageUrl, index))
+            sourcePages.add(ReporterreSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
         sourcePages

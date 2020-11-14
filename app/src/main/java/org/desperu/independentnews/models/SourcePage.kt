@@ -13,6 +13,7 @@ import kotlinx.android.parcel.Parcelize
  * @property id                     the unique identifier of the source page.
  * @property sourceId               the unique identifier of the source.
  * @property url                    the url of the source page.
+ * @property buttonName             the button name of the source page.
  * @property title                  the title of the source page.
  * @property body                   the body of the source page.
  * @property cssUrl                 the css url of the source page.
@@ -24,6 +25,7 @@ import kotlinx.android.parcel.Parcelize
  * @param id                        the unique identifier of the source page to set.
  * @param sourceId                  the unique identifier of the source to set.
  * @param url                       the url of the source page to set.
+ * @param buttonName                the button name of the source page to set.
  * @param title                     the title of the source page to set.
  * @param body                      the body of the source page to set.
  * @param cssUrl                    the css url of the source page to set.
@@ -39,6 +41,7 @@ data class SourcePage(@PrimaryKey(autoGenerate = true)
                       val id: Long = 0L,
                       var sourceId: Long = 0L,
                       val url: String = "",
+                      val buttonName: String = "",
                       val title: String = "",
                       var body: String = "",
                       val cssUrl: String = "",

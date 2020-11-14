@@ -15,10 +15,10 @@ class SourceWithDataTest {
     private val source = Source(1L, BASTAMAG, BASTAMAG_BASE_URL,
         1, 2, 3, false)
 
-    private val sourcePage1 = SourcePage(1L, 2L, BASTAMAG_BASE_URL, "a title",
-        "a body", "a css url",0,  true)
-    private val sourcePage2 = SourcePage(2L, 2L, REPORTERRE_BASE_URL, "a title2",
-        "a body2", "a css url2",1,  false)
+    private val sourcePage1 = SourcePage(1L, 2L, BASTAMAG_BASE_URL, "a button name",
+        "a title", "a body", "a css url",0,  true)
+    private val sourcePage2 = SourcePage(2L, 2L, REPORTERRE_BASE_URL, "a button name 2",
+        "a title2", "a body2", "a css url2",1,  false)
 
     private val sourcePages = listOf(sourcePage1, sourcePage2)
 

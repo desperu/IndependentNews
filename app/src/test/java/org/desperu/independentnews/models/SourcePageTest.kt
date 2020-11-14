@@ -12,6 +12,7 @@ class SourcePageTest {
     private val id: Long = 1L
     private val sourceId: Long = 2L
     private val url: String = BASTAMAG_BASE_URL
+    private val buttonName: String = "a button name"
     private val title: String = "a title"
     private val body: String = "a body"
     private val cssUrl: String = "a css url"
@@ -25,6 +26,7 @@ class SourcePageTest {
         assertEquals(sourcePage.id, 0L)
         assertEquals(sourcePage.sourceId, 0L)
         assertEquals(sourcePage.url, "")
+        assertEquals(sourcePage.buttonName, "")
         assertEquals(sourcePage.title, "")
         assertEquals(sourcePage.body, "")
         assertEquals(sourcePage.cssUrl, "")
@@ -35,12 +37,13 @@ class SourcePageTest {
     @Test
     fun given_sourcePage_When_createSourcePage_Then_checkValues() {
         val sourcePage = SourcePage(
-            id, sourceId, url, title, body, cssUrl, position, isPrimary
+            id, sourceId, url, buttonName, title, body, cssUrl, position, isPrimary
         )
 
         assertEquals(sourcePage.id, id)
         assertEquals(sourcePage.sourceId, sourceId)
         assertEquals(sourcePage.url, url)
+        assertEquals(sourcePage.buttonName, buttonName)
         assertEquals(sourcePage.title, title)
         assertEquals(sourcePage.body, body)
         assertEquals(sourcePage.cssUrl, cssUrl)

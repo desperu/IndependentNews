@@ -1,8 +1,5 @@
 package org.desperu.independentnews.utils
 
-import org.desperu.independentnews.R
-import org.desperu.independentnews.models.Source
-
 // --- FOR MAIN ---
 
 // Fragment identifier
@@ -25,55 +22,6 @@ const val numberOfPage = 4
 
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
-
-
-// --- FOR RETROFIT REQUEST ---
-
-// Key for response type
-const val XML = 0
-const val HTML = 1
-
-// Base url for retrofit request
-const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
-const val REPORTERRE_BASE_URL = "https://reporterre.net/"
-// Editorial
-const val BASTAMAG_EDITO_URL = "Qui-sommes-nous"
-const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
-
-// Section value
-const val BASTA_SEC_DECRYPTER = "Approfondir"
-const val BASTA_SEC_RESISTER = "Resister"
-const val BASTA_SEC_INVENTER = "Inventer"
-
-const val REPORT_SEC_DECRYPTER = "Enquete"
-const val REPORT_SEC_RESISTER = "Reportage"
-const val REPORT_SEC_INVENTER = "Alternatives"
-
-
-// --- SOURCES ---
-
-// Source name
-const val BASTAMAG = "Basta !"
-const val REPORTERRE = "Reporterre"
-
-// Source for database
-val BASTAMAG_SOURCE = Source(
-    name = BASTAMAG,
-    url = BASTAMAG_BASE_URL,
-    imageId = R.drawable.logo_bastamag,
-    logoId = R.drawable.logo_mini_bastamag,
-    backgroundColorId = R.color.bastamag_background
-)
-val REPORTERRE_SOURCE = Source(
-    name = REPORTERRE,
-    url = REPORTERRE_BASE_URL,
-    imageId = R.drawable.logo_reporterre,
-    logoId = R.drawable.logo_mini_reporterre,
-    backgroundColorId = R.color.reporterre_background
-)
-
-// Source button link (to correct)
-const val BASTA_EDITO = "Ligne éditoriale"
 
 
 // --- FOR FILTERS ---
@@ -101,11 +49,6 @@ const val RESET_DIALOG = 4
 // To Convert Date
 val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre")
-
-// To parse author for Reporterre Html page
-const val SOURCE = "Source"
-const val PHOTO = "Photo"
-const val PHOTOS = "Photos"
 
 
 // --- FOR SERVICES ---

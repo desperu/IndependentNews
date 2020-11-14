@@ -26,13 +26,13 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
 
     // FOR DATA
     override val sourceName = BASTAMAG
-    private val titleList = mutableListOf<String>()
+    private val buttonNameList = mutableListOf<String>()
     private val pageUrlList = mutableListOf<String>()
 
     // --- GETTERS ---
 
     override fun getTitle(): String? =
-        findData(H1, CLASS, TITRE_PAGE_LIST, 0)?.text() // TODO null et owntext()
+        findData(SMALL, CLASS, TITRE_ARTICLE, null)?.ownText()
 
     override fun getBody(): String? =
         findData(DIV, CLASS, MAIN, 0)?.outerHtml().updateBody()
@@ -42,8 +42,8 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
 
     override fun getPageUrlList(): List<String> = pageUrlList
 
-    internal fun getTitleList(): MutableList<String> = titleList
-// TODO button name and source page title !!!!
+    override fun getButtonNameList(): List<String> = buttonNameList
+
     // -----------------
     // CONVERT
     // -----------------
@@ -56,7 +56,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
      * @return source page with all data set.
      */
     internal fun toSourceEditorial(url: String): SourcePage {
-        setTitleAndPageList()
+        setButtonNameAndPageList()
         return SourcePage(
             url = url.toFullUrl(BASTAMAG_BASE_URL),
             title = getTitle().mToString(),
@@ -70,15 +70,16 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
      * Convert BastamagSourcePage to SourcePage.
      *
      * @param url           the url of the source page.
+     * @param buttonName    the button name of the source page.
      * @param position      the position of the source page in the list.
-     * @param title         the title of the source page.
      *
      * @return source page with all data set.
      */
-    internal fun toSourcePage(url: String?, position: Int, title: String): SourcePage =
+    internal fun toSourcePage(url: String?, buttonName: String, position: Int): SourcePage =
         SourcePage(
             url = url.mToString(),
-            title = title,
+            buttonName = buttonName,
+            title = getTitle().mToString(),
             body = getBody().mToString(),
             cssUrl = getCssUrl().mToString(),
             position = position
@@ -105,9 +106,9 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
         }
 
     /**
-     * Set all title and page list, for all links.
+     * Set all button name and page list, for all links.
      */
-    private fun setTitleAndPageList() {
+    private fun setButtonNameAndPageList() {
         setAfter()
         setContacts()
         setButtons()
@@ -120,7 +121,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
         val after = findData(SPAN, CLASS, LIRE, null)
             ?.getChild(0)
 
-        titleList.add(BASTA_EDITO)
+        buttonNameList.add(BASTA_EDITO)
         val url = after?.attr(HREF)?.toFullUrl(BASTAMAG_BASE_URL)
         url?.let { pageUrlList.add(it) }
 
@@ -138,7 +139,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
             ?.select(a)
             ?.getIndex(0)
 
-        contacts?.let { addTitleAndUrlToList(it) }
+        contacts?.let { addButtonNameAndUrlToList(it) }
     }
 
     /**
@@ -147,21 +148,21 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     private fun setButtons() {
         getTagList(a).forEach {
             when (it.attr(CLASS)) {
-                SPAN_SUPPORTS -> addTitleAndUrlToList(it)// For supports
-                SPAN_ECONOMY -> addTitleAndUrlToList(it)// For economy
-                SPAN_MOST_VIEWED -> addTitleAndUrlToList(it)// For most viewed articles
-                SPAN_CGU -> addTitleAndUrlToList(it)// For CGU
+                SPAN_SUPPORTS -> addButtonNameAndUrlToList(it)// For supports
+                SPAN_ECONOMY -> addButtonNameAndUrlToList(it)// For economy
+                SPAN_MOST_VIEWED -> addButtonNameAndUrlToList(it)// For most viewed articles
+                SPAN_CGU -> addButtonNameAndUrlToList(it)// For CGU
             }
         }
     }
 
     /**
-     * Add the title and the url to each list for the given element, and remove from parent.
+     * Add the button name and the url to each list for the given element, and remove from parent.
      *
      * @param element the element for which save title and url.
      */
-    private fun addTitleAndUrlToList(element: Element) {
-        titleList.add(element.text())
+    private fun addButtonNameAndUrlToList(element: Element) {
+        buttonNameList.add(element.text())
         pageUrlList.add(element.attr(HREF).toFullUrl(BASTAMAG_BASE_URL))
         element.remove()
     }
