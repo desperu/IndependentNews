@@ -3,6 +3,8 @@
     <words>
       <w>adresse</w>
       <w>août</w>
+      <w>appel</w>
+      <w>appeldon</w>
       <w>approfondir</w>
       <w>arianne</w>
       <w>atob</w>
@@ -40,8 +42,10 @@
       <w>liberta</w>
       <w>lienauteur</w>
       <w>lientheme</w>
+      <w>ligne</w>
       <w>liste</w>
       <w>multinationales</w>
+      <w>noprint</w>
       <w>notif</w>
       <w>novembre</w>
       <w>observatoire</w>
@@ -55,6 +59,7 @@
       <w>septembre</w>
       <w>sociaux</w>
       <w>sommes</w>
+      <w>soutenir</w>
       <w>soutient</w>
       <w>spip</w>
       <w>srcset</w>
@@ -63,6 +68,7 @@
       <w>tous</w>
       <w>unfilter</w>
       <w>vert</w>
+      <w>éditoriale</w>
     </words>
   </dictionary>
 </component>

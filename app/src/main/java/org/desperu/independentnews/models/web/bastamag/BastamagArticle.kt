@@ -3,17 +3,12 @@ package org.desperu.independentnews.models.web.bastamag
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
 import org.desperu.independentnews.extension.parseHtml.*
-import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
-import org.desperu.independentnews.extension.parseHtml.getChild
-import org.desperu.independentnews.extension.parseHtml.getIndex
-import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
+import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
-import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.stringToDate
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
+import org.jsoup.nodes.Document
 
 /**
  * Class which provides a model to parse bastamag article html page.
@@ -48,16 +43,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         findData(TIME, PUBDATE, PUBDATE, null)?.attr(DATETIME)
 
     override fun getArticle(): String? =
-        setMainCssId(
-            correctMediaUrl(
-                escapeHashtag(
-                    correctUrlLink(
-                        findData(DIV, CLASS, MAIN, null)?.outerHtml(),
-                        BASTAMAG_BASE_URL
-                    )
-                )
-            )
-        )
+        findData(DIV, CLASS, MAIN, null)?.outerHtml().updateArticleBody()
 
     override fun getDescription(): String? =
         findData(DIV, ITEMPROP, DESCRIPTION, null).getChild(0)?.text()
@@ -72,7 +58,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     }
 
     override fun getCssUrl(): String? =
-        findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
+        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
     // -----------------
     // CONVERT
@@ -89,7 +75,6 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         val description = getDescription()
         article.apply {
             sourceName = this@BastamagArticle.sourceName
-            if (getUrl().isNotBlank()) url = getUrl()
             title = getTitle().mToString()
             section = getSection().mToString()
             theme = getTheme().mToString()
@@ -109,45 +94,32 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     // -----------------
 
     /**
-     * Correct all media url's with their full url's in the given html code.
-     * @param html the html code to correct.
-     * @return the html code with corrected media url's.
+     * Update article body to add, correct and remove needed data.
+     *
+     * @return the article body updated.
      */
-    private fun correctMediaUrl(html: String?): String? =
-        if (!html.isNullOrBlank()) {
-            val document = Jsoup.parse(html)
-
-            document.select(IMG).forEach {
-                it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
-                correctSrcSetUrls(it)
-            }
-
-            document.select(SOURCE_TAG).forEach { correctSrcSetUrls(it) }
-            document.select(AUDIO).forEach { it.attrToFullUrl(SRC, BASTAMAG_BASE_URL) }
-            document.toString()
-        } else
-            null
+    private fun String?.updateArticleBody(): String? =
+        this?.let {
+            it.toDocument()
+                .addNotes()
+                .correctUrlLink(BASTAMAG_BASE_URL)
+                .correctBastaMediaUrl()
+                .setMainCssId()
+                .mToString()
+                .forceHttps()
+                .escapeHashtag()
+        }
 
     /**
-     * Correct the srcset url value of the given element with their full url.
-     * @param element the element for which correct url's.
+     * Add notes at the end of the article body?
+     *
+     * @return the article body with notes at the end.
      */
-    private fun correctSrcSetUrls(element: Element) {
-        val srcSetList = deConcatenateStringToMutableList(element.attr(SRCSET))
-        val correctedList = srcSetList.map { it.toFullUrl(BASTAMAG_BASE_URL) }
-        element.attr(SRCSET, concatenateStringFromMutableList(correctedList.toMutableList()))
-    }
+    private fun Document?.addNotes(): Document? =
+        this?.let {
+            val notes = findData(DIV, CLASS, NOTES, null)?.outerHtml()
 
-    /**
-     * Set main css id to apply css style to the article body.
-     * @param html the article body.
-     * @return the article with main css id set.
-     */
-    private fun setMainCssId(html: String?): String? =
-        if(!html.isNullOrBlank()) {
-            val document = Jsoup.parse(html)
-            document.select(BODY).getIndex(0)?.attr(CLASS, MAIN_CONTAINER)
-            document.toString()
-        } else
-            null
+            notes?.let { select(BODY).append(it) }
+            this
+        }
 }

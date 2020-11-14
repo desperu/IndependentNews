@@ -67,10 +67,4 @@ abstract class BaseHtml(private val htmlPage: ResponseBody) {
 
         return null
     }
-
-    // --- GETTERS ---
-
-    internal fun getUrl(): String = document.location() // TODO remove if not work
-
-    internal fun getHtmlPage(): String = htmlPage.string()
 }

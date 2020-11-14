@@ -72,6 +72,9 @@ val REPORTERRE_SOURCE = Source(
     backgroundColorId = R.color.reporterre_background
 )
 
+// Source button link (to correct)
+const val BASTA_EDITO = "Ligne éditoriale"
+
 
 // --- FOR FILTERS ---
 

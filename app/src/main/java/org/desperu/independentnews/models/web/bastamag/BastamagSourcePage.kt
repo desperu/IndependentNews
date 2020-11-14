@@ -6,10 +6,11 @@ import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.getChild
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
+import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.*
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 
 /**
@@ -34,27 +35,15 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
         findData(H1, CLASS, TITRE_PAGE_LIST, 0)?.text() // TODO null et owntext()
 
     override fun getBody(): String? =
-        setMainCssId(
-            correctMediaUrl(
-                escapeHashtag(
-                    correctUrlLink(
-//                        findData(DIV, CLASS, HERO_UNIT, 0)?.outerHtml(),
-                        findData(DIV, CLASS, MAIN, 0)?.outerHtml(),
-                        BASTAMAG_BASE_URL
-                    )
-                )
-            )
-        )
-
-    override fun getImage(): List<String?> = listOf()
+        findData(DIV, CLASS, MAIN, 0)?.outerHtml().updateBody()
 
     override fun getCssUrl(): String? =
-        findData(LINK, REL, STYLESHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
+        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
-    override fun getPageUrlList(): List<String?> = pageUrlList
+    override fun getPageUrlList(): List<String> = pageUrlList
 
-    internal fun getTitleList() = titleList
-
+    internal fun getTitleList(): MutableList<String> = titleList
+// TODO button name and source page title !!!!
     // -----------------
     // CONVERT
     // -----------------
@@ -100,6 +89,22 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     // -----------------
 
     /**
+     * Update source page body to add, correct and remove needed data.
+     *
+     * @return the source page body updated.
+     */
+    private fun String?.updateBody(): String? =
+        this?.let {
+            it.toDocument()
+                .correctUrlLink(BASTAMAG_BASE_URL)
+                .correctBastaMediaUrl()
+                .setMainCssId()
+                .mToString()
+                .escapeHashtag()
+                .forceHttps()
+        }
+
+    /**
      * Set all title and page list, for all links.
      */
     private fun setTitleAndPageList() {
@@ -109,32 +114,35 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     }
 
     /**
-     * Set the after (read editorial and info about basta !)
+     * Set the after (read editorial and info about basta !), and remove from parent.
      */
     private fun setAfter() {
         val after = findData(SPAN, CLASS, LIRE, null)
             ?.getChild(0)
 
-        after?.text()?.let { titleList.add(it) }
+        titleList.add(BASTA_EDITO)
         val url = after?.attr(HREF)?.toFullUrl(BASTAMAG_BASE_URL)
         url?.let { pageUrlList.add(it) }
+
+        after?.remove()
+        findData(SPAN, CLASS, ENGLISH, null)?.remove()
     }
 
     /**
-     * Set the contacts url and title.
+     * Set the contacts url and title, and remove from parent.
      */
     private fun setContacts() {
         val contacts = findData(DIV, CLASS, ADDRESS, null)
-            ?.select(P)?.getMatchAttr(CLASS, TOUS)
+            ?.select(P)
+            ?.getMatchAttr(CLASS, TOUS)
             ?.select(a)
+            ?.getIndex(0)
 
-        contacts?.text()?.let { titleList.add(it) }
-        val url = contacts?.attr(HREF)?.toFullUrl(BASTAMAG_BASE_URL)
-        url?.let { pageUrlList.add(it) }
+        contacts?.let { addTitleAndUrlToList(it) }
     }
 
     /**
-     * Set the "standards" button.
+     * Set the "standards" buttons.
      */
     private fun setButtons() {
         getTagList(a).forEach {
@@ -148,58 +156,13 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     }
 
     /**
-     * Add the title and the url to each list for the given element.
+     * Add the title and the url to each list for the given element, and remove from parent.
      *
      * @param element the element for which save title and url.
      */
     private fun addTitleAndUrlToList(element: Element) {
         titleList.add(element.text())
         pageUrlList.add(element.attr(HREF).toFullUrl(BASTAMAG_BASE_URL))
+        element.remove()
     }
-
-    // TODO already in BastamagArticle ... serialize !!! put in ElementExtension???
-    /**
-     * Correct all media url's with their full url's in the given html code.
-     * @param html the html code to correct.
-     * @return the html code with corrected media url's.
-     */
-    private fun correctMediaUrl(html: String?): String? =
-        if (!html.isNullOrBlank()) {
-            val document = Jsoup.parse(html)
-
-            document.select(IMG).forEach {
-                it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
-                correctSrcSetUrls(it)
-            }
-
-            document.select(SOURCE_TAG).forEach { correctSrcSetUrls(it) }
-            document.select(AUDIO).forEach { it.attrToFullUrl(SRC, BASTAMAG_BASE_URL) }
-            document.toString()
-        } else
-            null
-
-    /**
-     * Correct the srcset url value of the given element with their full url.
-     * @param element the element for which correct url's.
-     */
-    private fun correctSrcSetUrls(element: Element) {
-        val srcSetList = Utils.deConcatenateStringToMutableList(element.attr(SRCSET))
-        val correctedList = srcSetList.map { it.toFullUrl(BASTAMAG_BASE_URL) }
-        element.attr(SRCSET, Utils.concatenateStringFromMutableList(correctedList.toMutableList()))
-    }
-
-    /**
-     * Set main css id to apply css style to the article body.
-     * @param html the article body.
-     * @return the article with main css id set.
-     */
-    private fun setMainCssId(html: String?): String? =
-        if(!html.isNullOrBlank()) {
-            val document = Jsoup.parse(html)
-            document.select(BODY).getIndex(0)?.attr(CLASS, MAIN_CONTAINER)
-            document.toString()
-        } else
-            null
-
-    // TODO correct http to https, else web view not want "clear text not permitted"
 }
