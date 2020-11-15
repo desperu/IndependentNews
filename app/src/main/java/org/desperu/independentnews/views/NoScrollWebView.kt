@@ -220,7 +220,7 @@ class NoScrollWebView @JvmOverloads constructor(
      * Update web view text size with the selected value in settings.
      * Special text size correction for Bastamag.
      */
-    internal fun updateTextSize(actualUrl: String, sourceName: String) {
+    private fun updateTextSize(actualUrl: String, sourceName: String) {
         settings.apply {
             textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
             // Needed to correct Bastamag article text size.
@@ -236,7 +236,7 @@ class NoScrollWebView @JvmOverloads constructor(
      * @param url               the actual url of the web view.
      * @param sourceName        the name of the source of the page.
      */
-    private fun updateMargins(url: String, sourceName: String) {
+    internal fun updateMargins(url: String, sourceName: String) {
         margins = 0
 
         if (isSourceUrl(url)) {

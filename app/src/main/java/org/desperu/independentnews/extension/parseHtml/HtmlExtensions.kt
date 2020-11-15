@@ -1,6 +1,7 @@
 package org.desperu.independentnews.extension.parseHtml
 
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
@@ -25,10 +26,7 @@ internal fun Document?.correctUrlLink(baseUrl: String): Document? =
         select(a).forEach {
             when {
                 it.attr(ONCLICK).isNotBlank() -> it.removeAttr(ONCLICK)
-                it.attr(HREF).matches("#nh([0-9]){2}-([0-9]){2}".toRegex()) -> return@forEach
-                it.attr(HREF).matches("#nb([0-9]){2}-([0-9]){2}".toRegex()) -> return@forEach
-                it.attr(HREF).matches("#nh([0-9]){2}".toRegex()) -> return@forEach
-                it.attr(HREF).matches("#nb([0-9]){2}".toRegex()) -> return@forEach
+//                isNoteRedirect(it.attr(HREF)) -> return@forEach
                 else -> it.attrToFullUrl(HREF, baseUrl)
             }
         }

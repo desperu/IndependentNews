@@ -35,7 +35,7 @@ interface ShowArticleInterface {
     fun setOrientation(flags: Int)
 
     /**
-     * Update web view design, css style and margins.
+     * Update web view margins.
      */
-    fun updateWebViewDesign()
+    fun updateWebViewMargins()
 }

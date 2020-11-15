@@ -184,6 +184,14 @@ internal object Utils {
     internal fun isSourceUrl(url: String) =
         url.contains("data:text/html; charset=UTF-8,")
 
+    /**
+     * Returns true if the given url is a note redirection, false otherwise.
+     * @param url the given url to compare with pattern.
+     * @return true if the given url is a note redirection, false otherwise.
+     */
+    internal fun isNoteRedirect(url: String): Boolean =
+        url.matches("""(#|%23)n([bh])(\d){1,2}(-\d{1,2})?""".toRegex())
+
     // -----------------
     // WEB CONNECTION
     // -----------------

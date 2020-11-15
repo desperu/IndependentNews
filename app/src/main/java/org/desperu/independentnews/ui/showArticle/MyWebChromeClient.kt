@@ -72,7 +72,7 @@ class MyWebChromeClient(context: Context,
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
         // Update web view design.
-        if (newProgress > 50) parentCallback.updateWebViewDesign()
+        if (newProgress > 50) parentCallback.updateWebViewMargins()
     }
 
     override fun onHideCustomView() {

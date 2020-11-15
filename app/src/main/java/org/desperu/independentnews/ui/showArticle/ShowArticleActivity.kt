@@ -5,10 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
@@ -18,7 +15,10 @@ import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
+import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -49,9 +49,10 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
 
     // FOR UI
     private val sv: NestedScrollView by bindView(R.id.article_scroll_view)
-//    private var margins = 0
     private var scrollPosition = -1
     private var navigationCount = 0
+    private var isNoteRedirect = false
+    private var noteScrollPosition = -1
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -140,33 +141,18 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      */
     private val webViewClient = object : WebViewClient() {
 
-        // Force links and redirects to open in the WebView.
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
             url?.let {
-                actualUrl = url
-                web_view.updateTextSize(actualUrl, article.sourceName)
+                actualUrl = it
+//                web_view.updateTextSize(actualUrl, article.sourceName)
 
-                // Handle web view navigation
-                hideArticleDataContainer(!isSourceUrl(url))
-                if (!isSourceUrl(url)) {
-                    sv.scrollY = 0
-                    article_loading_progress_bar.apply { show(); visibility = View.VISIBLE }
-
-                    navigationCount += 1
-                    if (navigationCount == 1)
-                        article_scroll_view.visibility = View.INVISIBLE
-                } else
-                    navigationCount = 0
+                handleNavigation(it)
             }
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-            url?.let { if (!web_view.isDesignProperlySet(it, article.sourceName)) updateWebViewDesign() }
-            article_loading_progress_bar.hide()
-            article_scroll_view.visibility = View.VISIBLE
-            web_view.settings.textZoom = web_view.settings.textZoom
-            url?.let { if (isSourceUrl(it) && scrollPosition > -1) restoreScrollPosition() }
+            url?.let { updateDesign(it) }
             super.onPageFinished(view, url)
         }
 
@@ -175,7 +161,14 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             request: WebResourceRequest?
         ): Boolean {
             saveScrollPosition()
-            return super.shouldOverrideUrlLoading(view, request)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                val url = request?.url.mToString()
+                if (!isNoteRedirect && isNoteRedirect(getPageNameFromUrl(url)))
+//                    || (!isNoteRedirect(getPageNameFromUrl(url)) && !isSourceUrl(url)))
+                    noteScrollPosition = sv.scrollY
+                handleRedirect(url)
+            } else
+                super.shouldOverrideUrlLoading(view, request)
         }
     }
 
@@ -183,15 +176,9 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     // METHODS OVERRIDE
     // --------------
 
-    override fun onPause() {
-        super.onPause()
-        web_view.onPause()
-    }
+    override fun onPause() { super.onPause(); web_view.onPause() }
 
-    override fun onResume() {
-        super.onResume()
-        web_view.onResume()
-    }
+    override fun onResume() { super.onResume(); web_view.onResume() }
 
     override fun onStop() {
         super.onStop()
@@ -204,6 +191,8 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             article_scroll_view.visibility = View.INVISIBLE
             web_view.goBack()
         }
+        article_loading_progress_bar.isShown -> updateDesign(actualUrl)
+        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
         else -> super.onBackPressed()
     }
 
@@ -276,6 +265,20 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     }
 
     /**
+     * Update layout and web view design.
+     *
+     * @param url the actual url of the web view.
+     */
+    private fun updateDesign(url: String) {
+        if (!web_view.isDesignProperlySet(url, article.sourceName))
+            web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
+        article_loading_progress_bar.hide()
+        article_scroll_view.visibility = View.VISIBLE
+//                web_view.settings.textZoom = web_view.settings.textZoom
+        if (isSourceUrl(url) && scrollPosition > -1) scrollTo(scrollPosition)
+    }
+
+    /**
      * Hide article data container, depends of toHide value.
      *
      * @param toHide true to hide data container, false to show.
@@ -290,6 +293,13 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     private fun hideCustomView() { mWebChromeClient?.onHideCustomView() }
 
     /**
+     * Scroll horizontally to the y position value, use smooth scroll with custom duration.
+     *
+     * @param y the y, horizontal axe, value to scroll to.
+     */
+    private fun scrollTo(y: Int) { sv.smoothScrollTo(sv.scrollX, y, 1000) }
+
+    /**
      * Save the scroll position of the scroll view.
      */
     override fun saveScrollPosition() { scrollPosition = sv.scrollY }
@@ -297,7 +307,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     /**
      * Restore the saved scroll position of the scroll view.
      */
-    override fun restoreScrollPosition() { sv.doOnPreDraw { sv.scrollY = scrollPosition } }
+    override fun restoreScrollPosition() { sv.doOnPreDraw { scrollTo(scrollPosition) } }
 
     /**
      * Set decor system ui visibility.
@@ -314,17 +324,51 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
     override fun setOrientation(flags: Int) { requestedOrientation = flags }
 
     /**
-     * Update the design of the web view, with css and javascript support.
-     * Set custom margins to the web view for Reporterre source.
+     * Update margins of the web view, needed for Reporterre source only, so switch if it is or not.
      */
-    override fun updateWebViewDesign() {
+    override fun updateWebViewMargins() { // TODO to check with reporterre and navigation
         if (!::actualUrl.isInitialized) return
-        web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
+        web_view.updateMargins(actualUrl, article.sourceName)
     }
 
     // --------------
     // UTILS
     // --------------
+
+    /**
+     * Handle note redirection into the page, if it is scroll to bottom of page.
+     *
+     * @param url the url that the loading start.
+     */
+    private fun handleRedirect(url: String) =
+        if (isNoteRedirect(getPageNameFromUrl(url))) {
+            isNoteRedirect = !isNoteRedirect
+            val svBottom = sv.getChildAt(0).bottom - sv.measuredHeight
+            scrollTo(if (isNoteRedirect) svBottom else noteScrollPosition)
+            true
+        } else {
+            if (noteScrollPosition == -1) isNoteRedirect = false
+            false
+        }
+
+    /**
+     * Handle web view navigation, hide article data container, show loading progress,
+     * hide scroll view during loading and manage navigation count.
+     *
+     * @param url the url that the loading start.
+     */
+    private fun handleNavigation(url: String) {
+        hideArticleDataContainer(!isSourceUrl(url))
+        if (!isSourceUrl(url)) {
+            sv.scrollY = 0
+            article_loading_progress_bar.apply { visibility = View.VISIBLE; show() }
+
+            navigationCount += 1
+            if (navigationCount == 1)
+                article_scroll_view.visibility = View.INVISIBLE
+        } else
+            navigationCount = 0
+    }
 
     /**
      * Share article with title and url, to other applications.

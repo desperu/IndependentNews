@@ -13,6 +13,7 @@ import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
+import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
@@ -281,6 +282,33 @@ class UtilsTest {
         val output = isSourceUrl(url)
 
         assertFalse(output)
+    }
+
+    @Test
+    fun given_noteRedirect_When_isNoteRedirect_Then_checkTrue() {
+        val noteRedirectList = listOf(
+            "#nb1", "%23nb99", "#nh1", "#nh99",
+            "%23nb1-1", "#nb1-99", "#nh1-1", "#nh1-99"
+        )
+
+        noteRedirectList.forEach {
+            val output = isNoteRedirect(it)
+            assertTrue(output)
+        }
+    }
+
+    @Test
+    fun given_wrongNoteRedirect_When_isNoteRedirect_Then_checkFalse() {
+        val noteRedirectList = listOf(
+            "#nb", "%23nb9-99-9", "#nt1", "#nh99-",
+            "#nb1-100", "#nb100", "#nh-", "#nh1--99",
+            "%nb2", "%24nh2-8"
+        )
+
+        noteRedirectList.forEach {
+            val output = isNoteRedirect(it)
+            assertFalse(output)
+        }
     }
 
     @Test
