@@ -200,7 +200,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      * Set custom activity transition, only for source detail to source page transition.
      */
     private fun setActivityTransition() {
-        if (sourcePosition != -1)
+        if (fragmentKey == FRAG_SOURCES_DETAIL && sourcePosition != -1)
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 

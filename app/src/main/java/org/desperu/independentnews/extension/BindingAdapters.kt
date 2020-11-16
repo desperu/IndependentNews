@@ -135,7 +135,8 @@ fun View.updateTransitionName(position: Int?) { // TODO use string and set in vi
 @BindingAdapter("myBackgroundColor")
 fun ImageView.myBackgroundColor(color: Int?) {
     if (color != null && color != 0) {
-        setBackgroundColor(resources.getColor(color))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            backgroundTintList = ColorStateList.valueOf(resources.getColor(color))
     }
 }
 
@@ -147,9 +148,8 @@ fun ImageView.myBackgroundColor(color: Int?) {
 @BindingAdapter("myBackgroundColor")
 fun Button.myBackgroundColor(sourceWithData: SourceWithData?) {
     sourceWithData?.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             backgroundTintList = ColorStateList.valueOf(resources.getColor(getButtonLinkColor(it)))
-        }
     }
 }
 
@@ -173,8 +173,8 @@ fun View.myBackground(enabled: Boolean?) {
 fun View.myPadding(sourceName: String?) {
     setPadding(
         bindDimen(
-            if (sourceName == BASTAMAG) R.dimen.default_margin
-            else R.dimen.default_little_margin
+            if (sourceName == BASTAMAG) R.dimen.default_large_margin
+            else R.dimen.default_margin
         ).value.toInt()
     )
 }

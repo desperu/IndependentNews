@@ -7,7 +7,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_source_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
@@ -79,7 +79,7 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
      */
     private fun configureRecyclerView() {
         sourcesAdapter = RecyclerViewAdapter(R.layout.item_source)
-        sources_recycler.layoutManager = LinearLayoutManager(context)
+        sources_recycler.layoutManager = GridLayoutManager(context, 2)
 
         controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
         controller.animation.startOffset = START_OFF_SET // Todo already delayed in the layout anim
@@ -137,6 +137,7 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
         sharedElement.doOnPreDraw {
+            updateRecyclerAnim()
             startPostponedEnterTransition()
         }
     }

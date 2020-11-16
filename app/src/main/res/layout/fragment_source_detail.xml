@@ -26,40 +26,71 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/default_margin">
 
-                <ImageView
-                    android:id="@+id/source_detail_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/fragment_source_detail_image_height"
-                    android:minWidth="@dimen/fragment_source_detail_image_height"
-                    android:minHeight="@dimen/fragment_source_detail_image_height"
-                    android:scaleType="fitCenter"
-                    android:transitionName="@string/animation_source_list_to_detail"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/source_detail_container"
+                    android:layout_width="@dimen/article_image_min_width_height"
+                    android:layout_height="@dimen/article_image_min_width_height"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    app:cardPreventCornerOverlap="true"
+                    app:cardCornerRadius="@dimen/item_article_corner_radius"
+                    app:cardElevation="@dimen/default_elevation"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:setImage="@{viewModel.sourceWithData.source.imageId}"
-                    app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
-                    app:myPadding="@{viewModel.sourceWithData.source.name}"
-                    tools:ignore="UnusedAttribute" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:myBackground="@{viewModel.isEnabled()}"
+                    tools:ignore="UnusedAttribute">
+
+                    <ImageView
+                        android:id="@+id/source_detail_image"
+                        android:transitionName="@string/animation_source_list_to_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/default_little_margin"
+                        android:padding="@dimen/default_little_margin"
+                        android:cropToPadding="true"
+                        android:scaleType="fitCenter"
+                        android:background="@drawable/source_border_disabled"
+                        app:setImage="@{viewModel.sourceWithData.source.imageId}"
+                        app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
+                        app:myPadding="@{viewModel.sourceWithData.source.name}" />
+
+                </androidx.cardview.widget.CardView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/source_detail_disable_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/default_margin"
                     android:scaleType="centerInside"
                     android:onClick="@{viewModel.onClickEnable}"
                     app:disableFab="@{viewModel.isEnabled}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/source_detail_image"
-                    app:layout_constraintBottom_toBottomOf="@id/source_detail_image"
+                    app:layout_constraintEnd_toEndOf="@id/source_detail_container"
+                    app:layout_constraintStart_toStartOf="@id/source_detail_guideline_vertical"
+                    app:layout_constraintTop_toTopOf="@id/source_detail_guideline_horizontal"
+                    app:layout_constraintBottom_toBottomOf="@id/source_detail_container"
+                    app:elevation="@dimen/default_margin"
                     tools:backgroundTint="@android:color/holo_green_light"
                     tools:src="@drawable/ic_baseline_check_white_24"/>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/source_detail_guideline_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.66" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/source_detail_guideline_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.7" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/default_large_margin"
                 android:layout_marginHorizontal="@dimen/default_margin"
                 android:layout_marginBottom="@dimen/default_large_margin"
                 android:gravity="center"

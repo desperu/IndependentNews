@@ -10,36 +10,31 @@
     </data>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:id="@+id/item_source_container"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_middle_margin"
+        android:layout_marginBottom="@dimen/default_middle_margin"
+        app:cardPreventCornerOverlap="true"
         app:cardCornerRadius="@dimen/item_article_corner_radius"
         app:cardElevation="@dimen/default_elevation"
-        app:myBackground="@{viewModel.sourceWithData.source.enabled}">
-
-        <!-- TODO for perfect anim, need to use fitCenter
-              with height wrap content and no min size set
-              but there's a big difference between logo size ...
-              !!!! use double container frame + recycler to lock
-              logo at the center of the container as in item_article
-              but it still work ?? constraint it's the best ??-->
+        app:myBackground="@{viewModel.sourceWithData.source.enabled}"
+        tools:ignore="UnusedAttribute">
 
         <ImageView
             android:id="@+id/item_source_image"
+            android:transitionName="@string/animation_source_list_to_detail"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/item_source_image_height"
-            android:minWidth="@dimen/article_image_min_width_height"
-            android:minHeight="@dimen/item_source_image_height"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/default_little_margin"
             android:padding="@dimen/default_little_margin"
+            android:cropToPadding="true"
             android:scaleType="fitCenter"
-            android:transitionName="@string/animation_source_list_to_detail"
+            android:background="@drawable/source_border_disabled"
             android:onClick="@{viewModel.onClickImage}"
             app:setImage="@{viewModel.sourceWithData.source.imageId}"
             app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
-            app:myPadding="@{viewModel.sourceWithData.source.name}"
-            tools:ignore="UnusedAttribute" />
+            app:myPadding="@{viewModel.sourceWithData.source.name}" />
 
     </androidx.cardview.widget.CardView>
 

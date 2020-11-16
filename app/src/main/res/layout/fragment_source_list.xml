@@ -13,10 +13,12 @@
         android:id="@+id/sources_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/default_margin"
+        android:paddingTop="@dimen/default_middle_margin"
+        android:paddingStart="@dimen/default_middle_margin"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:adapter="@{viewModel.recyclerAdapter}"
-        tools:listitem="@layout/item_source" />
+        tools:listitem="@layout/item_source"
+        tools:ignore="RtlSymmetry" />
 
 </layout>
