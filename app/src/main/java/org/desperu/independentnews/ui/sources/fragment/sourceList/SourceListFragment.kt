@@ -18,8 +18,6 @@ import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-const val START_OFF_SET = 100L
-
 /**
  * Fragment to show source list.
  *
@@ -82,7 +80,6 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
         sources_recycler.layoutManager = GridLayoutManager(context, 2)
 
         controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
-        controller.animation.startOffset = START_OFF_SET // Todo already delayed in the layout anim
         updateRecyclerAnim()
     }
 

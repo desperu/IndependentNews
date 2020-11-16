@@ -4,7 +4,6 @@ import android.view.View.OnClickListener
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.models.SourceWithData
@@ -44,10 +43,13 @@ class SourceDetailViewModel(
      * Update recycler views data.
      */
     internal fun updateRecyclerData() {
+        val sourceWithData = SourceWithData(
+            sourceWithData.source,
+            sourceWithData.sourcePages.filter { !it.isPrimary }
+        )
         sourcePageAdapter?.updateList(
             sourceWithData.sourcePages
-                .filter { !it.isPrimary } // TODO to perfect
-                .mapIndexed { index, _ -> SourceLinkViewModel(sourceWithData.toSimplePage(index + 1)) }
+                .mapIndexed { index, _ -> SourceLinkViewModel(sourceWithData.toSimplePage(index)) }
                 .toMutableList()
         )
     }
@@ -55,11 +57,7 @@ class SourceDetailViewModel(
     /**
      * On click enable listener.
      */
-    val onClickEnable = OnClickListener {
-        val fab = it as FloatingActionButton
-        fab.rotation = 3f
-        inverseSourceState()
-    }
+    val onClickEnable = OnClickListener { inverseSourceState() }
 
     /**
      * Inverse the state of the source.

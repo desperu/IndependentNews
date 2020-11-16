@@ -8,6 +8,9 @@ import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.fragment_source_detail.*
 import org.desperu.independentnews.R
+import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
+import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
+import org.desperu.independentnews.anim.AnimHelper.scaleViewAnimation
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentSourceDetailBinding
 import org.desperu.independentnews.models.SourceWithData
@@ -72,6 +75,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     override fun updateDesign() {
         updateRecyclerData()
+        animateViews()
     }
 
     // --------------
@@ -149,6 +153,21 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
                 getString(R.string.animation_source_list_to_detail) + sourcePosition
             startPostponedEnterTransition()
         }
+    }
+
+    // --------------
+    // ANIMATION
+    // --------------
+
+    /**
+     * Animate view when fragment appear.
+     */
+    private fun animateViews() {
+        scaleViewAnimation(source_detail_disable_button, 250)
+        alphaViewAnimation(source_detail_container, 0)
+        alphaViewAnimation(source_detail_title, 300)
+        alphaViewAnimation(source_detail_web_view, 300)
+        fromBottomAnimation(source_detail_web_view, 300)
     }
 
     // --- GETTERS ---
