@@ -32,6 +32,12 @@
         <item name="android:statusBarColor" tools:targetApi="lollipop">@color/colorPrimary</item>
     </style>
 
+    <!-- Show Images Theme -->
+    <style name="ShowImages" parent="AppTheme">
+        <item name="colorPrimary">@color/colorTransGrey</item>
+        <item name="colorPrimaryDark">@color/colorTransGrey</item>
+    </style>
+
     <!-- Settings Theme -->
     <style name="SettingsTheme" parent="ShowArticleTheme">
         <item name="colorAccent">@color/colorPrimaryDark</item>

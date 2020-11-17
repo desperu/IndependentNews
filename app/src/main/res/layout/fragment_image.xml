@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.showImages.fragment.ShowImageViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:onClick="showToolbar">
+
+        <ImageView
+            android:id="@+id/fragment_image_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            app:setImage="@{viewModel.imageUrl}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+<!--        <TextView-->
+<!--            android:id="@+id/fragment_image_text_description"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="@dimen/fragment_image_text_description_height"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:gravity="center"-->
+<!--            android:background="@color/colorTransDark"-->
+<!--            android:ellipsize="end"-->
+<!--            android:maxLines="2"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="@dimen/fragment_image_text_description_size"-->
+<!--            android:textColorHint="@android:color/white"-->
+<!--            app:setValue="@{viewModel.getImage.description}"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/fragment_image_image_view"/>-->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

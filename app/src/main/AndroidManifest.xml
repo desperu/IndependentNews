@@ -38,6 +38,11 @@
             android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/SettingsTheme" />
 
+        <!-- SHOW IMAGES ACTIVITY -->
+        <activity android:name=".ui.showImages.ShowImagesActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:theme="@style/ShowImages" />
+
         <!-- SETTINGS ACTIVITY -->
         <activity android:name=".ui.settings.SettingsActivity"
             android:parentActivityName=".ui.main.MainActivity"
