@@ -11,7 +11,7 @@ interface SourceListInterface {
      * Return the source list adapter instance.
      * @return the source list adapter instance.
      */
-    fun getRecyclerAdapter(): RecyclerViewAdapter?
+    fun getRecyclerAdapter(): SourceListAdapter?
 
     /**
      * Update shared element transition name.

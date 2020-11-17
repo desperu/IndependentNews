@@ -18,7 +18,7 @@ import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourceWithData
-import org.desperu.independentnews.ui.sources.fragment.sourceList.RecyclerViewAdapter
+import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListAdapter
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
@@ -111,7 +111,7 @@ fun WebView.setArticle(article: Article?) {
  * @param adapter the adapter to set for the recycler view.
  */
 @BindingAdapter("adapter")
-fun RecyclerView.myAdapter(adapter: RecyclerViewAdapter?) {
+fun RecyclerView.myAdapter(adapter: SourceListAdapter?) {
     this.adapter = adapter
 }
 

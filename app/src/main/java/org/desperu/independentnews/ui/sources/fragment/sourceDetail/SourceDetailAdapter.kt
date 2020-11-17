@@ -4,12 +4,23 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import org.desperu.independentnews.anim.AnimHelper.fromSideAnimation
 
+/**
+ * Recycler view adapter for Source Detail.
+ *
+ * @property context    the context from this adapter is instantiate to set.
+ * @property layoutId   the unique identifier of the item layout to set.
+ *
+ * @constructor Instantiate a new SourceDetailAdapter.
+ *
+ * @param context       the context from this adapter is instantiate to set.
+ * @param layoutId      the unique identifier of the item layout to set.
+ */
 class SourceDetailAdapter(
     private val context: Context,
     @LayoutRes private val layoutId: Int
@@ -39,10 +50,8 @@ class SourceDetailAdapter(
      * @param position the position of the item in the recycler view.
      */
     private fun setAnimation(itemView: View, position: Int) {
-        val anim = AnimationUtils.makeInAnimation(context, true)
-        anim.startOffset = position * 200L / 3 // TODO use const val
-        anim.duration = 250L
-        itemView.startAnimation(anim)
+        val startDelay = position * 200L / 3
+        fromSideAnimation(context, itemView, startDelay, true)
     }
 
     /**

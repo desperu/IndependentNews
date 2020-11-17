@@ -60,7 +60,7 @@ const val PHOTO = "Photo"
 const val PHOTOS = "Photos"
 
 // Donate call for Reporterre
-val NO_DONATE_CALL = listOf("Brèves", "Hors les murs")
+val NO_DONATE_CALL = listOf("Brèves", "Hors les murs", "On en parle")
 const val DONATE_CALL =
     "<div  id=\"appel-dons\"><p><strong>Puisque vous êtes ici…</strong></p>\n" +
             "<p>... nous avons une faveur à vous demander. Le désastre environnemental" +

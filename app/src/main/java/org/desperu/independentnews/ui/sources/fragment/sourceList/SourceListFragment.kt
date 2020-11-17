@@ -31,7 +31,7 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
     // FOR DATA
     private lateinit var binding: FragmentSourceListBinding
     private val viewModel: SourcesListViewModel by viewModel { parametersOf(this) }
-    private var sourcesAdapter: RecyclerViewAdapter? = null
+    private var sourceListAdapter: SourceListAdapter? = null
     private lateinit var controller: LayoutAnimationController
     private var fromDetail: Boolean? = null
 
@@ -76,7 +76,7 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
      * Set fall down animation for recycler view items.
      */
     private fun configureRecyclerView() {
-        sourcesAdapter = RecyclerViewAdapter(R.layout.item_source)
+        sourceListAdapter = SourceListAdapter(R.layout.item_source)
         sources_recycler.layoutManager = GridLayoutManager(context, 2)
 
         controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
@@ -160,6 +160,6 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
      * Return the source list adapter instance.
      * @return the source list adapter instance.
      */
-    override fun getRecyclerAdapter(): RecyclerViewAdapter? = sourcesAdapter
+    override fun getRecyclerAdapter(): SourceListAdapter? = sourceListAdapter
 
 }

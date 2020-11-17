@@ -11,8 +11,18 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
 import org.koin.core.KoinComponent
 import org.koin.core.get
-
-class RecyclerViewAdapter(@LayoutRes private val layoutId: Int): RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>(), KoinComponent {
+/**
+ * Recycler view adapter for Source List.
+ *
+ * @property layoutId   the unique identifier of the item layout to set.
+ *
+ * @constructor Instantiate a new SourceListAdapter.
+ *
+ * @param layoutId      the unique identifier of the item layout to set.
+ */
+class SourceListAdapter(
+    @LayoutRes private val layoutId: Int
+): RecyclerView.Adapter<SourceListAdapter.ViewHolder>(), KoinComponent {
 
     // FOR DATA
     private lateinit var list: MutableList<Any>
