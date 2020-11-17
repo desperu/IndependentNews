@@ -17,6 +17,10 @@ import org.koin.core.module.Module
  */
 abstract class BaseBindingActivity(private vararg val module: Module): AppCompatActivity() {
 
+    init {
+        loadKoinModules(module.toList())
+    }
+
     // --------------------
     // BASE METHODS
     // --------------------
@@ -30,7 +34,6 @@ abstract class BaseBindingActivity(private vararg val module: Module): AppCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadKoinModules(module.toList())
         setContentView(getBindingView())
         configureDesign()
     }

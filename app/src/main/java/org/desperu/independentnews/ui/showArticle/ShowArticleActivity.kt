@@ -13,19 +13,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromSideAnimation
 import org.desperu.independentnews.base.ui.BaseBindingActivity
+import org.desperu.independentnews.databinding.ActivityShowArticleBinding
+import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceUrl
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -39,7 +41,7 @@ const val ARTICLE: String = "article"
  *
  * @constructor Instantiates a new ShowArticleActivity.
  */
-class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
+class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleInterface {
 
     // FROM BUNDLE
     private val article: Article
@@ -47,8 +49,9 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
             ?: Article(title = getString(R.string.show_article_activity_article_error))
 
     // FOR DATA
-    private lateinit var binding: ViewDataBinding
-    private val viewModel: ArticleViewModel by viewModel { parametersOf(article) }
+    private lateinit var binding: ActivityShowArticleBinding
+    private val router: ImageRouter = get { parametersOf(this) }
+    private val viewModel: ArticleViewModel by viewModel { parametersOf(article, router) }
     private var mWebChromeClient: WebChromeClient? = null
     override var inCustomView: Boolean = false
     private lateinit var actualUrl: String
@@ -120,7 +123,7 @@ class ShowArticleActivity: BaseBindingActivity(), ShowArticleInterface {
      */
     private fun configureDataBinding(): View {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_show_article)
-        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
+        binding.viewModel = viewModel
         return binding.root
     }
 

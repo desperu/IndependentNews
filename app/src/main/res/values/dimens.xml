@@ -91,6 +91,10 @@
     <dimen name="item_source_image_height">200dp</dimen> <!-- TODO to support all size screen and perfect height ...-->
     <dimen name="fragment_source_detail_image_height">250dp</dimen>
 
+    <!-- Show images Activity -->
+    <dimen name="status_bar_height">24dp</dimen>
+    <dimen name="action_bar_height">56dp</dimen>
+
     <!-- Settings Activity -->
     <dimen name="activity_settings_linear_container_padding_top">10dp</dimen>
     <dimen name="activity_settings_text_category_and_divider_margin">10dp</dimen>

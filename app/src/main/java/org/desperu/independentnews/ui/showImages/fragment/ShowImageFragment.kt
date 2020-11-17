@@ -6,6 +6,8 @@ import androidx.databinding.DataBindingUtil
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentImageBinding
+import org.koin.core.parameter.parametersOf
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * The name of the argument to received the image url in this fragment.
@@ -21,8 +23,8 @@ class ShowImageFragment: BaseBindingFragment() {
 
     // FOR DATA
     private lateinit var binding: FragmentImageBinding
-    private var viewModel: ShowImageViewModel? = null
-    private val imageUrl: String? get() = arguments?.getParcelable(IMAGE_URL)
+    private val viewModel: ShowImageViewModel by viewModel { parametersOf(imageUrl) }
+    private val imageUrl: String get() = arguments?.getString(IMAGE_URL) ?: ""
 
     /**
      * Companion object, used to create new instance of this fragment.
@@ -60,8 +62,6 @@ class ShowImageFragment: BaseBindingFragment() {
      */
     private fun configureViewModel(): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_image, container, false)
-        viewModel = imageUrl?.let { ShowImageViewModel(it) }
-
         binding.viewModel = viewModel
         return binding.root
     }

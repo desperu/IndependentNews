@@ -2,11 +2,9 @@ package org.desperu.independentnews.views
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.Build
 import android.util.AttributeSet
 import android.util.Base64
 import android.view.View
-import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
@@ -14,9 +12,7 @@ import android.widget.ScrollView
 import androidx.core.view.setMargins
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
-import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.koin.core.KoinComponent
@@ -36,7 +32,6 @@ class NoScrollWebView @JvmOverloads constructor(
 ) : WebView(context, attrs, defStyleAttr), KoinComponent {
 
     // FOR DATA
-    private val router: SourceRouter by inject()
     private val prefs: SharedPrefService by inject()
     private var cssUrl: String by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
@@ -144,23 +139,6 @@ class NoScrollWebView @JvmOverloads constructor(
             }
             super.onPageFinished(view, url)
         }
-
-        override fun shouldOverrideUrlLoading(
-            view: WebView?,
-            request: WebResourceRequest?
-        ): Boolean =
-
-            // Force to open link in a new activity
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                router.openShowArticle(
-                    Article(
-                        url = request?.url.toString(),
-                        sourceName = sourceName
-                    )
-                )
-                true
-            } else
-                super.shouldOverrideUrlLoading(view, request)
     }
 
     // --------------

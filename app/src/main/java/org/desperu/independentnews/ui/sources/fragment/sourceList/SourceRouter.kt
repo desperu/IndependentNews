@@ -33,7 +33,7 @@ interface SourceRouter {
  *
  * @property activity the Activity that is used to perform redirection.
  *
- * @constructor Instantiates a new ArticleRouterImpl.
+ * @constructor Instantiates a new SourceRouterImpl.
  *
  * @param activity the Activity that is used to perform redirection to set.
  */

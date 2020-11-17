@@ -133,12 +133,13 @@
 
                     <ImageView
                         android:id="@+id/article_image"
+                        android:transitionName="@string/animation_main_to_show_article"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minWidth="@dimen/article_image_min_width_height"
                         android:minHeight="@dimen/article_image_min_width_height"
                         android:tag="show_article"
-                        android:transitionName="@string/animation_main_to_show_article"
+                        android:onClick="@{viewModel.onClickImage}"
                         app:setImage="@{viewModel.article.imageUrl}"
                         tools:ignore="UnusedAttribute" />
 
