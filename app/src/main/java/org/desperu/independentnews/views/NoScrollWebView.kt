@@ -107,13 +107,12 @@ class NoScrollWebView @JvmOverloads constructor(
         cssUrl: String?
     ) {
         url?.let {
-            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
-            injectCssCode(resizeMedia)
+            updateMargins(it, sourceName)
             updateTextSize(it, sourceName)
             updateBackground(it, sourceName)
-            updateMargins(it, sourceName)
+            injectCssCode(resizeMedia)
+            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
         }
-
     }
 
     /**
@@ -123,6 +122,9 @@ class NoScrollWebView @JvmOverloads constructor(
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             url?.let {
+                // Update web view margins, needed for Reporterre pages
+                updateMargins(it, sourceName)
+
                 // Update the text size, needed for Bastamag pages
                 updateTextSize(it, sourceName)
 
@@ -134,12 +136,11 @@ class NoScrollWebView @JvmOverloads constructor(
 
         override fun onPageFinished(view: WebView?, url: String?) {
             url?.let {
-                // Apply css style with JavaScript support
-                injectCssUrl(it, cssUrl)
+                // Force to resize medias
                 injectCssCode(resizeMedia)
 
-                // Update web view margins, needed for Reporterre pages
-                updateMargins(it, sourceName)
+                // Apply css style with JavaScript support
+                injectCssUrl(it, cssUrl)
             }
             super.onPageFinished(view, url)
         }
@@ -179,7 +180,7 @@ class NoScrollWebView @JvmOverloads constructor(
                     " link.setAttribute('href','$cssUrl');" +
                     " link.setAttribute('type','text/css');" +
                     " document.head.appendChild(link);"
-            evaluateJavascript(js, null)
+            evaluateJavascript(js) { zoomOut() }
         }
     }
 
@@ -197,7 +198,7 @@ class NoScrollWebView @JvmOverloads constructor(
                 " style.type = 'text/css';" +
                 // Tell the browser to BASE64-decode the string into your script !!!
                 " style.innerHTML = window.atob('" + encoded + "');" +
-                " parent.appendChild(style)" //+
+                " parent.appendChild(style)"
         evaluateJavascript(js, null)
     }
 
@@ -267,16 +268,4 @@ class NoScrollWebView @JvmOverloads constructor(
             )
         )
     }
-
-    /**
-     * Returns true if the design of the web view is properly set, false otherwise.
-     * Use margin to know.
-     *
-     * @param url           the url of the web view.
-     * @param sourceName    the name of the source of the page.
-     *
-     * @return true if the design of the web view is properly set, false otherwise.
-     */
-    internal fun isDesignProperlySet(url: String, sourceName: String) =
-        (isSourceUrl(url) && sourceName == REPORTERRE && margins != 0) || (margins != 0)
 }
