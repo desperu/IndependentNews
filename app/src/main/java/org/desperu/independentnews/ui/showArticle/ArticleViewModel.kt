@@ -23,14 +23,5 @@ class ArticleViewModel(
     /**
      * On click image listener.
      */
-    val onClickImage = OnClickListener { showImage(article.imageUrl) }
-
-    /**
-     * Show image of the given image url, open Show Image Activity.
-     *
-     * @param imageUrl the url of the image to show.
-     */
-    internal fun showImage(imageUrl: String) {
-        router.openShowImages(imageUrl)
-    }
+    val onClickImage = OnClickListener { router.openShowImages(article.imageUrl) }
 }

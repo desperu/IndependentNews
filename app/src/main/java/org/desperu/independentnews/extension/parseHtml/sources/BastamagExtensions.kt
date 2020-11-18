@@ -16,10 +16,18 @@ import org.jsoup.nodes.Element
  */
 internal fun Document?.correctBastaMediaUrl(): Document? =
     this?.let {
+        val toRemove = mutableListOf<Element>()
+
         select(IMG).forEach {
-            it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
             correctSrcSetUrls(it)
+
+            val picture = it.parent()
+            val url = it.attr(SRC).toFullUrl(BASTAMAG_BASE_URL)
+            picture.parent().appendElement(a).attr(HREF, url).append(picture.html())
+
+            toRemove.add(it)
         }
+        toRemove.forEach { it.remove() }
 
         select(SOURCE_TAG).forEach { correctSrcSetUrls(it) }
         select(AUDIO).forEach { it.attrToFullUrl(SRC, BASTAMAG_BASE_URL) }

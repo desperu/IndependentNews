@@ -172,7 +172,7 @@ internal object Utils {
      * @return the page name from it's complete url.
      */
     internal fun getPageNameFromUrl(url: String): String {
-        val list = url.split("/").toTypedArray()
+        val list = url.split("/")
         return list[list.size - 1]
     }
 
@@ -191,6 +191,23 @@ internal object Utils {
      */
     internal fun isNoteRedirect(url: String): Boolean =
         url.matches("""(#|%23)n([bh])(\d){1,2}(-\d{1,2})?""".toRegex())
+
+    /**
+     * Returns true if the given url is an image url, false otherwise.
+     * @param url the given url to compare with images suffix.
+     * @return true if the given url is an image url, false otherwise.
+     */
+    internal fun isImageUrl(url: String): Boolean {
+        // Specific here, it's html page...
+        if (url.contains("wikimedia.org")) return false
+        val pageName = getPageNameFromUrl(url)
+
+        imageSuffix.forEach {
+            if (pageName.contains(it)) return true
+        }
+
+        return false
+    }
 
     // -----------------
     // WEB CONNECTION

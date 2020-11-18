@@ -49,6 +49,7 @@ const val RESET_DIALOG = 4
 // To Convert Date
 val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre")
+val imageSuffix = listOf(".png", ".jpg", ".jpeg")
 
 
 // --- FOR SERVICES ---

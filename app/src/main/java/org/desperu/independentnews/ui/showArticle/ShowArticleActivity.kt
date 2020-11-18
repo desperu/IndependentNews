@@ -3,6 +3,7 @@ package org.desperu.independentnews.ui.showArticle
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import android.view.View
 import android.webkit.WebChromeClient
@@ -25,6 +26,7 @@ import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
+import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.koin.android.ext.android.get
@@ -205,7 +207,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //            handleNavigation(actualUrl)
 //            web_view.stopLoading()
 //        }
-        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
+//        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
         else -> super.onBackPressed()
     }
 
@@ -387,19 +389,29 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      *
      * @param url the url that the loading start.
      */
-    private fun handleRedirect(url: String) =
-        if (isNoteRedirect(getPageNameFromUrl(url))) {
+    private fun handleRedirect(url: String) = when {
+        isNoteRedirect(getPageNameFromUrl(url)) -> {
             if (!isNoteRedirect) noteScrollPosition = sv.scrollY
             scrollPosition = -1
             isNoteRedirect = !isNoteRedirect
             val svBottom = sv.getChildAt(0).bottom - sv.measuredHeight
             scrollTo(if (isNoteRedirect) svBottom else noteScrollPosition)
             true
-        } else {
+        }
+        isImageUrl(url) -> { router.openShowImages(url); true }
+        url.endsWith(".pdf") -> {
+            val browserIntent = Intent(Intent.ACTION_VIEW)
+            browserIntent.setDataAndType(Uri.parse(url), "text/html")
+            startActivity(browserIntent)
+            true
+        }
+        else -> {
             if (!isSourceUrl(url) && url.isNotBlank()) saveScrollPosition()
             if (noteScrollPosition == -1) isNoteRedirect = false
             false
         }
+        // TODO handle if is blank !!!
+    }
 
     /**
      * Handle web view navigation, hide article data container, show loading progress,

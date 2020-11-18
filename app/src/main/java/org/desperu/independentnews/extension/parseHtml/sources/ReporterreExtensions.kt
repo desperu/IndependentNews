@@ -32,7 +32,9 @@ internal fun Document?.correctRepoMediaUrl(): Document? =
         select(IMG).forEach {
             val dataOriginal = it.attr(DATA_ORIGINAL)
             val urlLink = if (!dataOriginal.isNullOrBlank()) dataOriginal else it.attr(SRC)
-            it.attr(SRC, urlLink.toFullUrl(REPORTERRE_BASE_URL))
+            val fullUrl = urlLink.toFullUrl(REPORTERRE_BASE_URL)
+            it.attr(SRC, fullUrl)
+            it.attr(DATA_ORIGINAL, fullUrl)
         }
 
         select(AUDIO).forEach { it.attrToFullUrl(SRC, REPORTERRE_BASE_URL) }

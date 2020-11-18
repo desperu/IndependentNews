@@ -13,6 +13,7 @@ import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
+import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
@@ -310,6 +311,36 @@ class UtilsTest {
             assertFalse(output)
         }
     }
+
+    @Test
+    fun given_imageUrl_When_isImageUrl_Then_checkResult() {
+        val imageUrlList = listOf(
+            "https://www.bastamag.net/local/adapt-img/740/10x/IMG/png/charts-1-01.png",
+            "https://reporterre.net/local/cache-gd2/20/aaaa97eaa9b5060e50383a02af2aa7.jpg?1605601443",
+            "https://www.bastamag.net/local/adapt-img/740/10x/IMG/arton8033.jpeg"
+        )
+
+        imageUrlList.forEach {
+            val output = isImageUrl(it)
+            assertTrue(output)
+        }
+    }
+
+    @Test
+    fun given_wrongImageUrl_When_isImageUrl_Then_checkFalse() {
+        val imageUrlList = listOf(
+            "https://commons.wikimedia.org/wiki/File:Police_Municipale_Toulouse-3301.jpg",
+            "https://www.bastamag.net/local/adapt-img/740/10x/IMG/png/charts-1-01.pnG",
+            "https://reporterre.net/local/cache-gd2/20/aaaa97eaa9b5060e50383a02af2aa7jpg?1605601443",
+            "https://www.bastamag.net/local/adapt-img/740/10x/IMG/arton8033.jipeg"
+        )
+
+        imageUrlList.forEach {
+            val output = isImageUrl(it)
+            assertFalse(output)
+        }
+    }
+
 
     @Test
     fun given_connectedNetworkAndWifi_When_isWifiAvailable_Then_checkResult() {
