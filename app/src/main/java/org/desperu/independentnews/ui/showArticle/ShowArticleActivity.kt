@@ -253,7 +253,32 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      */
     private fun animateViews() {
         if (article.id != 0L) {
-            alphaViewAnimation(article_root_view, -200)
+// TODO use getValueAnimator ???
+
+//            val a = getValueAnimator(
+//                true,
+//                450L,
+//                DecelerateInterpolator(),
+//                { progress ->
+//                    val views = listOf(article_source_name, article_source_image, article_subtitle,
+//                        article_author, article_date)
+//
+//                    views.forEach {
+//                        val left = it.left
+//                        it.alpha = progress
+//                        it.translationX = left - (left * progress)
+//                    }
+//
+//                    article_title.alpha = progress
+//                    web_view.alpha = progress
+//                    val top = web_view.top
+//                    web_view.translationY = top - (top * progress)
+//                }
+//            )
+//
+//            a.start()
+
+//            alphaViewAnimation(article_root_view, -200)
 
             fromSideAnimation(this, article_source_name, 50, true)
             fromSideAnimation(this, article_source_image, 50, true)
@@ -262,8 +287,8 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             fromSideAnimation(this, article_date, 200, false)
 
             alphaViewAnimation(article_title, 0)
-            alphaViewAnimation(web_view, 50)
-            fromBottomAnimation(web_view, 50)
+            alphaViewAnimation(web_view, -50)
+            fromBottomAnimation(web_view, -50)
         }
     }
 

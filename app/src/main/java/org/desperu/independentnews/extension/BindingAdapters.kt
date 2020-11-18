@@ -67,7 +67,7 @@ fun ImageView.setImage(imageUrl: String?) {
     val image: Any? = if (isNotNull) imageUrl else R.drawable.no_image
 
     if (isItem || isNotNull)
-        Glide.with(this).load(image).into(this)
+        Glide.with(this).load(image).into(this) // TODO to hide loading when finish
     else
         visibility = View.GONE
 }

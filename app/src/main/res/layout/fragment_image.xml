@@ -14,6 +14,16 @@
         android:background="@android:color/transparent"
         android:onClick="showAppBar">
 
+        <androidx.core.widget.ContentLoadingProgressBar
+            style="?android:attr/progressBarStyleLargeInverse"
+            android:layout_width="@dimen/article_loading_progress_bar_width_height"
+            android:layout_height="@dimen/article_loading_progress_bar_width_height"
+            android:theme="@style/ProgressBarTheme"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <ImageView
             android:id="@+id/fragment_image_image_view"
             android:layout_width="match_parent"
