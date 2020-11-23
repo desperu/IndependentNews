@@ -3,7 +3,7 @@ package org.desperu.independentnews.ui.showImages
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
-import android.os.Handler
+import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -12,9 +12,11 @@ import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_show_images.*
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
+import org.desperu.independentnews.anim.SystemUiHelper.hideSystemUi
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
+import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
 import org.desperu.independentnews.views.DepthPageTransformer
 
 /**
@@ -32,7 +34,7 @@ const val POSITION: String = "position"
  *
  * @constructor Instantiates a new ShowImagesActivity.
  */
-class ShowImagesActivity: BaseActivity() {
+class ShowImagesActivity: BaseActivity(), ShowImagesInterface {
 
     // FROM BUNDLE
     private val imageList: List<String>? get() = intent.getStringArrayListExtra(IMAGE_LIST)
@@ -82,20 +84,9 @@ class ShowImagesActivity: BaseActivity() {
     // -----------------
 
     /**
-     * Configure the system ui design.
+     * Configure the system ui design, hide status bar and low nav bar.
      */
-    private fun configureSystemDesign() {
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN // Hide status bar
-                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // Layout draw under status bar
-//                        or View.SYSTEM_UI_FLAG_IMMERSIVE
-                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY // Re hide status and/or navigation bar
-//                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // Hide navigation bar
-//                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION // Layout draw under navigation bar
-                        or View.SYSTEM_UI_FLAG_LOW_PROFILE // Alpha 0.5 the navigation bar
-                )
-    }
+    private fun configureSystemDesign() = hideSystemUi(this)
 
     /**
      * Configure App Bar design.
@@ -107,7 +98,10 @@ class ShowImagesActivity: BaseActivity() {
         val statusBarSize by bindDimen(R.dimen.status_bar_height)
 
         toolbar_title.setTextColor(color)
-        appbar_container.updateLayoutParams { height = (actionBarSize + statusBarSize).toInt() }
+        appbar.apply {
+            updateLayoutParams { height = (actionBarSize + statusBarSize).toInt() }
+            setPadding(0, statusBarSize.toInt(), 0, 0)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             back_arrow_icon.imageTintList = ColorStateList.valueOf(color)
         else
@@ -124,9 +118,13 @@ class ShowImagesActivity: BaseActivity() {
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         viewPager.adapter = mAdapter
         viewPager.setPageTransformer(true, DepthPageTransformer())
-
-
     }
+
+    // --------------
+    // METHODS OVERRIDE
+    // --------------
+
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean = getCurrentPage().onTouchEvent(ev)
 
     // --------------
     // ACTION
@@ -136,7 +134,16 @@ class ShowImagesActivity: BaseActivity() {
      * On click back arrow icon menu.
      */
     @Suppress("unused_parameter")
-    fun onClickBackArrow(v: View) = onClickBackArrow()
+    override fun onClickBackArrow(v: View) = onClickBackArrow()
+
+    /**
+     * Dispatch the motion event to the view pager to consume it.
+     *
+     * @param ev the motion event action to dispatch.
+     *
+     * @return true if the event was consumed, false if not.
+     */
+    override fun viewPagerOnTouchEvent(ev: MotionEvent?) = viewPager.dispatchTouchEvent(ev)
 
     // -----------------
     // UI
@@ -152,12 +159,20 @@ class ShowImagesActivity: BaseActivity() {
     }
 
     /**
-     * Show toolbar when click on fragment.
-     * @param v the clicked view.
+     * Show app bar when click on fragment.
+     *
+     * @param toShow true to show, false to hide.
      */
-    @Suppress("unused_parameter")
-    fun showAppBar(v: View) {
-        appbar.visibility = View.VISIBLE
-        Handler().postDelayed( { appbar.visibility = View.INVISIBLE }, 3000)
+    override fun showAppBar(toShow: Boolean) {
+        appbar.visibility = if (toShow) View.VISIBLE else View.INVISIBLE
     }
+
+    // --- GETTERS ---
+
+    /**
+     * Returns the current page instance of the view pager.
+     * @return the current page instance of the view pager.
+     */
+    private fun getCurrentPage(): ShowImageFragment =
+        mAdapter.instantiateItem(show_images_view_pager, viewPager.currentItem) as ShowImageFragment
 }

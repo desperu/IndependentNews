@@ -236,7 +236,7 @@ class NoScrollWebView @JvmOverloads constructor(
      * @param sourceName        the name of the source of the page.
      */
     @Suppress("Deprecation")
-    private fun updateBackground(url: String, sourceName: String) {
+    private fun updateBackground(url: String, sourceName: String) { // TODO use alpha with value animator
         (parent as View).setBackgroundColor(
             resources.getColor(
                 if (isSourceUrl(url) && sourceName == REPORTERRE)

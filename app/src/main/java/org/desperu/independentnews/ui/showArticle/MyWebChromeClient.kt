@@ -1,6 +1,5 @@
 package org.desperu.independentnews.ui.showArticle
 
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.webkit.WebChromeClient
@@ -16,18 +15,15 @@ import org.desperu.independentnews.views.NoScrollWebView
  *
  * @constructor Instantiates a new MyWebChromeClient.
  *
- * @param context the context from this class is called to set.
  * @param webView the web view witch used this custom Web Chrome Client to set.
  */
-class MyWebChromeClient(context: Context,
-                        private val webView: NoScrollWebView
-) : WebChromeClient() {
+class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient() {
 
     // FOR DATA
     private var mCustomView: View? = null
     private val customViewContainer = webView.rootView.findViewById<FrameLayout>(R.id.video_container)
     private var customViewCallback: CustomViewCallback? = null
-    private val parentCallback = context as ShowArticleInterface
+    private val parentCallback = webView.context as ShowArticleInterface
 
     // --------------
     // METHODS OVERRIDE
@@ -65,6 +61,7 @@ class MyWebChromeClient(context: Context,
         setSystemUIFlags(true)
         setScreenOrientation(true)
         parentCallback.saveScrollPosition()
+        // TODO disable auto screen off
 
         parentCallback.inCustomView = true
     }

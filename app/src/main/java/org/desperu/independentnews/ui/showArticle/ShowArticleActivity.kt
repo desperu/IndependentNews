@@ -144,7 +144,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
         web_view.webViewClient = webViewClient
 
-        mWebChromeClient = MyWebChromeClient(this, web_view)
+        mWebChromeClient = MyWebChromeClient(web_view)
         web_view.webChromeClient = mWebChromeClient
     }
 

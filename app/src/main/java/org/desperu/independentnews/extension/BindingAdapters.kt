@@ -2,16 +2,23 @@ package org.desperu.independentnews.extension
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.View
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.setPadding
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
@@ -23,6 +30,7 @@ import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
+import org.desperu.independentnews.views.GestureImageView
 
 /**
  * Show or hide view, depends of toShow value.
@@ -63,13 +71,68 @@ fun TextView.setSectionTheme(article: Article?) {
 @BindingAdapter("setImage")
 fun ImageView.setImage(imageUrl: String?) {
     val isItem = tag == "item_article"
+    val isFragImage = tag == "frag_image"
     val isNotNull = !imageUrl.isNullOrBlank() && getPageNameFromUrl(imageUrl) != "null"
     val image: Any? = if (isNotNull) imageUrl else R.drawable.no_image
 
     if (isItem || isNotNull)
-        Glide.with(this).load(image).into(this) // TODO to hide loading when finish
+        Glide.with(this)
+            .load(image)
+            .listener(getRequestListener(this, isFragImage))
+            .override(Target.SIZE_ORIGINAL)
+            .encodeQuality(100)
+            .into(this)
     else
         visibility = View.GONE
+}
+
+/**
+ * Returns the Glide Request Listener for the Glide request. Used to hide loading bar,
+ * show no_image drawable on load failed, and resize image for fragment image.
+ *
+ * @param imageView the image view to set the image.
+ * @param isFragImage true if is image of Show Image Fragment, false otherwise.
+ *
+ * @return the Glide Request Listener for the Glide request.
+ */
+private fun getRequestListener(imageView: ImageView, isFragImage: Boolean): RequestListener<Drawable> {
+    val loadingBar = (imageView.parent as View).findViewById<ContentLoadingProgressBar>(R.id.progress_loading_bar)
+
+    // TODO to put in another class / file
+    return object : RequestListener<Drawable> {
+
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: Target<Drawable>?,
+            isFirstResource: Boolean
+        ): Boolean {
+
+            loadingBar?.hide()
+            imageView.background = ResourcesCompat
+                .getDrawable(imageView.context.resources, R.drawable.no_image, null)
+
+            return false
+        }
+
+        override fun onResourceReady(
+            resource: Drawable?,
+            model: Any?,
+            target: Target<Drawable>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
+
+            if (isFragImage)
+                target?.getSize { _, _ ->
+                    (imageView as GestureImageView).scaleToFullScreen()
+                    imageView.requestLayout()
+                }
+            loadingBar?.hide()
+
+            return false
+        }
+    }
 }
 
 /**
@@ -131,12 +194,12 @@ fun View.updateTransitionName(position: Int?) { // TODO use string and set in vi
  * Set the background color depends of the source.
  * @param color the color to set for the background.
  */
-@Suppress("Deprecation")
 @BindingAdapter("myBackgroundColor")
 fun ImageView.myBackgroundColor(color: Int?) {
     if (color != null && color != 0) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            backgroundTintList = ColorStateList.valueOf(resources.getColor(color))
+            backgroundTintList =
+                ColorStateList.valueOf(ResourcesCompat.getColor(resources, color, null))
     }
 }
 

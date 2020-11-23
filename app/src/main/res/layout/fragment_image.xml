@@ -8,32 +8,28 @@
             type="org.desperu.independentnews.ui.showImages.fragment.ShowImageViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
+        android:id="@+id/show_image_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:onClick="showAppBar">
+        android:background="@android:color/transparent">
 
         <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progress_loading_bar"
             style="?android:attr/progressBarStyleLargeInverse"
             android:layout_width="@dimen/article_loading_progress_bar_width_height"
             android:layout_height="@dimen/article_loading_progress_bar_width_height"
-            android:theme="@style/ProgressBarTheme"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_gravity="center"
+            android:theme="@style/ProgressBarTheme" />
 
-        <ImageView
-            android:id="@+id/fragment_image_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            app:setImage="@{viewModel.imageUrl}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+        <org.desperu.independentnews.views.GestureImageView
+            android:id="@+id/show_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleType="center"
+            android:tag="frag_image"
+            app:setImage="@{viewModel.imageUrl}" />
 
 <!--        <TextView-->
 <!--            android:id="@+id/fragment_image_text_description"-->
@@ -50,6 +46,6 @@
 <!--            app:setValue="@{viewModel.getImage.description}"-->
 <!--            app:layout_constraintBottom_toBottomOf="@id/fragment_image_image_view"/>-->
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 </layout>
