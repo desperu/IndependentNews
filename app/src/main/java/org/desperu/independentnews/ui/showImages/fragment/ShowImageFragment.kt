@@ -14,15 +14,16 @@ import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.fragment_image.*
 import org.desperu.independentnews.R
-import org.desperu.independentnews.anim.SystemUiHelper.hideSystemUi
-import org.desperu.independentnews.anim.SystemUiHelper.upNavAndStatusBar
+import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentImageBinding
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.ui.showImages.ShowImagesInterface
+import org.desperu.independentnews.utils.LOW_NAV_AND_STATUS_BAR
+import org.desperu.independentnews.utils.SYS_UI_HIDE
 import org.desperu.independentnews.views.GestureImageView
-import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.max
@@ -53,25 +54,28 @@ class ShowImageFragment: BaseBindingFragment() {
     private val viewModel: ShowImageViewModel by viewModel { parametersOf(imageUrl) }
     private val imageUrl: String get() = arguments?.getString(IMAGE_URL) ?: ""
 
+    // FOR IMAGE GESTURE
+    // Detectors instances
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleGestureDetector: ScaleGestureDetector
-
+    // Root layout, for size
     private val root: View by bindView(R.id.show_image_root)
     private val screenWidth get() = root.width
     private val screenHeight get() = root.height
-
+    // GestureImageView instance and Image drawable real rect position value.
     private val image: GestureImageView by bindView(R.id.show_image_view)
     private val hitRect get() = image.run { Rect().apply(::getHitRect) }
-
+    // Scale values, for zoom
     private val minScale get() = show_image_view?.scaleFactor ?: MIN_SCALE
     private val middleScale get() = minScale * MIDDLE_SCALE
     private val maxScale get() = minScale * MAX_SCALE
     private var scaleFactor: Float = minScale
     private val isZoomed: Boolean get() = image.scaleX > minScale
-
-    private val showImagesInterface: ShowImagesInterface = get()
+    // Activity interface and boolean to dispatch motion event.
+    private val showImagesInterface: ShowImagesInterface by inject()
     private var isVpEvent = false
-
+    // System ui
+    private val systemUiHelper: SystemUiHelper by inject()
     private val backArrow get() =  activity?.back_arrow_icon
     private val sysUiShow get() = activity?.appbar?.isVisible
     private val handler = Handler()
@@ -253,11 +257,11 @@ class ShowImageFragment: BaseBindingFragment() {
     private fun showSystemUi(toShow: Boolean) {
         activity?.let {
             if (toShow) {
-                upNavAndStatusBar(it)
+                systemUiHelper.removeDecorUiFlag(LOW_NAV_AND_STATUS_BAR)
                 showImagesInterface.showAppBar(true)
                 handler.postDelayed({ showSystemUi(false) }, SHOW_DELAY)
             } else {
-                hideSystemUi(it)
+                systemUiHelper.setDecorUiVisibility(SYS_UI_HIDE)
                 showImagesInterface.showAppBar(false)
                 handler.removeCallbacksAndMessages(null)
             }

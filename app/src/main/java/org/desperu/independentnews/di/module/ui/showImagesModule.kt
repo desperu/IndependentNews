@@ -1,8 +1,9 @@
 package org.desperu.independentnews.di.module.ui
 
 import org.desperu.independentnews.base.ui.BaseActivity
+import org.desperu.independentnews.helpers.SystemUiHelper
+import org.desperu.independentnews.helpers.SystemUiHelperImpl
 import org.desperu.independentnews.ui.showImages.ShowImagesInterface
-
 import org.koin.dsl.module
 
 /**
@@ -15,5 +16,12 @@ val showImagesModule = module {
      */
     single { (activity: BaseActivity) ->
         activity as ShowImagesInterface
+    }
+
+    /**
+     * Provides a SystemUiHelper from the instance of the given Activity.
+     */
+    single<SystemUiHelper>(override = true) { (activity: BaseActivity) ->
+        SystemUiHelperImpl(activity)
     }
 }

@@ -12,14 +12,16 @@ import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_show_images.*
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
-import org.desperu.independentnews.anim.SystemUiHelper.hideSystemUi
+import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.showImagesModule
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
+import org.desperu.independentnews.utils.SYS_UI_HIDE
 import org.desperu.independentnews.views.DepthPageTransformer
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 /**
@@ -46,6 +48,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
     // FOR DATA
     private lateinit var viewPager: ViewPager
     private lateinit var mAdapter: ShowImageAdapter
+    private val sysUiHelper: SystemUiHelper by inject { parametersOf(this) }
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -97,7 +100,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
     /**
      * Configure the system ui design, hide status bar and low nav bar.
      */
-    private fun configureSystemDesign() = hideSystemUi(this)
+    private fun configureSystemDesign() = sysUiHelper.setDecorUiVisibility(SYS_UI_HIDE)
 
     /**
      * Configure App Bar design.

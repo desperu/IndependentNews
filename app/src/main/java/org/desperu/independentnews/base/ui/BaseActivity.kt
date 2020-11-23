@@ -18,6 +18,10 @@ import org.koin.core.module.Module
  */
 abstract class BaseActivity(private vararg val module: Module): AppCompatActivity() {
 
+    init {
+        loadKoinModules(module.toList())
+    }
+
     // --------------------
     // BASE METHODS
     // --------------------
@@ -33,7 +37,6 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
         super.onCreate(savedInstanceState)
         this.setContentView(getActivityLayout())
         Icepick.restoreInstanceState(this, savedInstanceState)
-        loadKoinModules(module.toList())
         configureDesign()
     }
 
@@ -44,7 +47,7 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
 
     override fun onDestroy() {
         super.onDestroy()
-        unloadKoinModules(listOf(*module))
+        unloadKoinModules(module.toList())
     }
 
     // --------------------

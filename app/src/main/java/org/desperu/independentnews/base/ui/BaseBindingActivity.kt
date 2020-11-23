@@ -40,7 +40,7 @@ abstract class BaseBindingActivity(private vararg val module: Module): AppCompat
 
     override fun onDestroy() {
         super.onDestroy()
-        unloadKoinModules(listOf(*module))
+        unloadKoinModules(module.toList())
     }
 
     // --------------------

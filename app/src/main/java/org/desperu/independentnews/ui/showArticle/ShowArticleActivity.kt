@@ -19,6 +19,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromSideAnimation
+import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
@@ -104,6 +105,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun getBindingView(): View = configureDataBinding()
 
     override fun configureDesign() {
+        configureKoinDependency()
         configureWebView()
         configureAppBar()
         showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
@@ -117,6 +119,14 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     // --------------
     // CONFIGURATION
     // --------------
+
+    /**
+     * Configure koin dependency for show article activity.
+     */
+    private fun configureKoinDependency() {
+        get<ShowArticleInterface> { parametersOf(this) }
+        get<SystemUiHelper> { parametersOf(this) }
+    }
 
     /**
      * Configure data binding and return the root view.
@@ -192,6 +202,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onStop() {
         super.onStop()
         if (inCustomView) hideCustomView()
+        mWebChromeClient = null
     }
 
     override fun onBackPressed() = when {
