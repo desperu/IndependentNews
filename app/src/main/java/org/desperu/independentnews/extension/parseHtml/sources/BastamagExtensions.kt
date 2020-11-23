@@ -19,6 +19,8 @@ internal fun Document?.correctBastaMediaUrl(): Document? =
         val toRemove = mutableListOf<Element>()
 
         select(IMG).forEach {
+            if (it.attr(CLASS) == PUCE) { it.remove(); return@forEach }
+
             correctSrcSetUrls(it)
 
             val picture = it.parent()

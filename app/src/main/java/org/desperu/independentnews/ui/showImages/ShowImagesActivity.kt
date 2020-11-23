@@ -14,10 +14,13 @@ import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.SystemUiHelper.hideSystemUi
 import org.desperu.independentnews.base.ui.BaseActivity
+import org.desperu.independentnews.di.module.ui.showImagesModule
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
 import org.desperu.independentnews.views.DepthPageTransformer
+import org.koin.android.ext.android.get
+import org.koin.core.parameter.parametersOf
 
 /**
  * The name of the argument to received image list for this Activity.
@@ -34,7 +37,7 @@ const val POSITION: String = "position"
  *
  * @constructor Instantiates a new ShowImagesActivity.
  */
-class ShowImagesActivity: BaseActivity(), ShowImagesInterface {
+class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
 
     // FROM BUNDLE
     private val imageList: List<String>? get() = intent.getStringArrayListExtra(IMAGE_LIST)
@@ -72,6 +75,7 @@ class ShowImagesActivity: BaseActivity(), ShowImagesInterface {
     override fun getActivityLayout(): Int = R.layout.activity_show_images
 
     override fun configureDesign() {
+        configureKoinDependency()
         configureSystemDesign()
         configureAppBarDesign()
         showAppBarIcon(listOf(R.id.back_arrow_icon))
@@ -82,6 +86,13 @@ class ShowImagesActivity: BaseActivity(), ShowImagesInterface {
     // -----------------
     // CONFIGURATION
     // -----------------
+
+    /**
+     * Configure koin dependency for show images activity.
+     */
+    private fun configureKoinDependency() {
+        get<ShowImagesInterface> { parametersOf(this) }
+    }
 
     /**
      * Configure the system ui design, hide status bar and low nav bar.

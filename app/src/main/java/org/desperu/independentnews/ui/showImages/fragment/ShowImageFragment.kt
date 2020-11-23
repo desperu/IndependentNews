@@ -22,6 +22,7 @@ import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.ui.showImages.ShowImagesInterface
 import org.desperu.independentnews.views.GestureImageView
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.max
@@ -51,6 +52,29 @@ class ShowImageFragment: BaseBindingFragment() {
     private lateinit var binding: FragmentImageBinding
     private val viewModel: ShowImageViewModel by viewModel { parametersOf(imageUrl) }
     private val imageUrl: String get() = arguments?.getString(IMAGE_URL) ?: ""
+
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
+
+    private val root: View by bindView(R.id.show_image_root)
+    private val screenWidth get() = root.width
+    private val screenHeight get() = root.height
+
+    private val image: GestureImageView by bindView(R.id.show_image_view)
+    private val hitRect get() = image.run { Rect().apply(::getHitRect) }
+
+    private val minScale get() = show_image_view?.scaleFactor ?: MIN_SCALE
+    private val middleScale get() = minScale * MIDDLE_SCALE
+    private val maxScale get() = minScale * MAX_SCALE
+    private var scaleFactor: Float = minScale
+    private val isZoomed: Boolean get() = image.scaleX > minScale
+
+    private val showImagesInterface: ShowImagesInterface = get()
+    private var isVpEvent = false
+
+    private val backArrow get() =  activity?.back_arrow_icon
+    private val sysUiShow get() = activity?.appbar?.isVisible
+    private val handler = Handler()
 
     /**
      * Companion object, used to create new instance of this fragment.
@@ -94,29 +118,6 @@ class ShowImageFragment: BaseBindingFragment() {
         return binding.root
     }
 
-    private lateinit var gestureDetector: GestureDetector
-    private lateinit var scaleGestureDetector: ScaleGestureDetector
-
-    private val root: View by bindView(R.id.show_image_root)
-    private val screenWidth get() = root.width
-    private val screenHeight get() = root.height
-
-    private val image: GestureImageView by bindView(R.id.show_image_view)
-    private val hitRect get() = image.run { Rect().apply(::getHitRect) }
-
-    private val minScale get() = show_image_view?.scaleFactor ?: MIN_SCALE
-    private val middleScale get() = minScale * MIDDLE_SCALE
-    private val maxScale get() = minScale * MAX_SCALE
-    private var scaleFactor: Float = minScale
-    private val isZoomed: Boolean get() = image.scaleX > minScale
-
-    private val parentCallback get() = activity as ShowImagesInterface // TODO Koin...
-    private var isVpEvent = false
-
-    private val backArrow get() =  activity?.back_arrow_icon
-    private val sysUiShow get() = activity?.appbar?.isVisible // TODO good ???
-    private val handler = Handler()
-
     /**
      * Configure global and scale gesture listeners.
      */
@@ -132,13 +133,17 @@ class ShowImageFragment: BaseBindingFragment() {
         }
 
         if (isVpEvent || ev?.action == MotionEvent.ACTION_DOWN || !isZoomed) {
-            parentCallback.viewPagerOnTouchEvent(ev) // Always return true ...
+            showImagesInterface.viewPagerOnTouchEvent(ev) // Always return true ...
             if (ev?.action == MotionEvent.ACTION_UP) isVpEvent = false
             if (ev?.action == MotionEvent.ACTION_CANCEL) isVpEvent = false
         }
 
         return true
     }
+
+    // -----------------
+    // LISTENERS
+    // -----------------
 
     /**
      * Gesture listener, to handle user action on fragment, single tap, double tap and scroll.
@@ -148,7 +153,7 @@ class ShowImageFragment: BaseBindingFragment() {
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             val backArrowRect = backArrow?.run { Rect().apply(::getDrawingRect) }
             val isArrowClick = e?.let { backArrowRect?.contains(it.x.toInt(), it.y.toInt()) }
-            if (isArrowClick == true) parentCallback.onClickBackArrow(backArrow!!)
+            if (isArrowClick == true) showImagesInterface.onClickBackArrow(backArrow!!)
 
             // show or hide nav, status and action bars
             showSystemUi(sysUiShow == false)
@@ -210,7 +215,7 @@ class ShowImageFragment: BaseBindingFragment() {
                     if (translate == 0 && (canVpToLeft || canVpToRight)) {
                         val ev = MotionEvent.obtain(e2)
                         ev.action = MotionEvent.ACTION_DOWN
-                        parentCallback.viewPagerOnTouchEvent(ev)
+                        showImagesInterface.viewPagerOnTouchEvent(ev)
                         isVpEvent = true
                     }
                 }
@@ -249,11 +254,11 @@ class ShowImageFragment: BaseBindingFragment() {
         activity?.let {
             if (toShow) {
                 upNavAndStatusBar(it)
-                parentCallback.showAppBar(true)
+                showImagesInterface.showAppBar(true)
                 handler.postDelayed({ showSystemUi(false) }, SHOW_DELAY)
             } else {
                 hideSystemUi(it)
-                parentCallback.showAppBar(false)
+                showImagesInterface.showAppBar(false)
                 handler.removeCallbacksAndMessages(null)
             }
         }

@@ -1,12 +1,15 @@
 package org.desperu.independentnews.anim
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.view.View
 
 /**
  * SystemUiHelp witch provide functions for system ui.
  */
 object SystemUiHelper {// TODO in the good folder/place ??
+                       //  must be called from activity only !!!!
+                       //  create a service with an interface and koin !!!!
 
     /**
      * Show full system ui, status and navigation bar.
@@ -39,6 +42,22 @@ object SystemUiHelper {// TODO in the good folder/place ??
      */
     internal fun upNavAndStatusBar(activity: Activity) =
         removeDecorUiFlag(activity, lowNavAndStatusBar)
+
+    /**
+     * Set screen orientation to let user choose.
+     *
+     * @param activity the activity on which perform change.
+     */
+    internal fun setOrientationUser(activity: Activity) =
+        setOrientation(activity, ActivityInfo.SCREEN_ORIENTATION_USER)
+
+    /**
+     * Set screen orientation to force to landscape.
+     *
+     * @param activity the activity on which perform change.
+     */
+    internal fun setOrientationLandscape(activity: Activity) =
+        setOrientation(activity, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
 
     // --------------
     // FLAGS

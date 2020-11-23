@@ -11,6 +11,7 @@ import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.*
+import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 /**
@@ -98,12 +99,26 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     private fun String?.updateBody(): String? =
         this?.let {
             it.toDocument()
+                .addNotes()
                 .correctUrlLink(BASTAMAG_BASE_URL)
                 .correctBastaMediaUrl()
                 .setMainCssId()
                 .mToString()
                 .escapeHashtag()
                 .forceHttps()
+        }
+
+    /**
+     * Add notes at the end of the article body?
+     *
+     * @return the article body with notes at the end.
+     */
+    private fun Document?.addNotes(): Document? = // Duplicate in BastamagArticle
+        this?.let {
+            val notes = findData(DIV, CLASS, NOTES, null)?.outerHtml()
+
+            notes?.let { select(BODY).append(it) }
+            this
         }
 
     /**
