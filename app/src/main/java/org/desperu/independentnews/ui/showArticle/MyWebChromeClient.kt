@@ -1,6 +1,7 @@
 package org.desperu.independentnews.ui.showArticle
 
 import android.app.Activity
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.webkit.WebChromeClient
@@ -14,7 +15,8 @@ import org.desperu.independentnews.utils.SYS_UI_FULL_HIDE
 import org.desperu.independentnews.utils.SYS_UI_VISIBLE
 import org.desperu.independentnews.views.NoScrollWebView
 import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.get
+import java.lang.Exception
 
 /**
  * My custom Web Chrome Client, used to show full screen video in a custom view.
@@ -36,9 +38,9 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
     private var mCustomView: View? = null
     private val customViewContainer = webView.rootView.findViewById<FrameLayout>(R.id.video_container)
     private var customViewCallback: CustomViewCallback? = null
-    private val showArticleInterface: ShowArticleInterface by inject()
+    private val showArticleInterface: ShowArticleInterface = get()
     private val activity = webView.context as Activity
-    private val sysUiHelper: SystemUiHelper by inject()
+    private val sysUiHelper: SystemUiHelper = get()
 
     // --------------
     // METHODS OVERRIDE
@@ -76,18 +78,24 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         sysUiHelper.setDecorUiVisibility(SYS_UI_FULL_HIDE)
         sysUiHelper.setOrientation(LANDSCAPE)
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)// TODO disable auto screen off, need to check, and if good serialize
-        showArticleInterface.saveScrollPosition()
-
+        showArticleInterface.saveScrollPosition()                               //  not good ... find another way !!
 
         showArticleInterface.inCustomView = true
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        // Update web view margins...
-        if (newProgress < 50) showArticleInterface.updateWebViewMargins()
-        // Update web view design.
-        else if (newProgress > 70) showArticleInterface.updateWebViewDesign()
+        try {
+            // Update web view margins...
+            if (newProgress < 50) showArticleInterface.updateWebViewMargins()
+            // Update web view design.
+            else if (newProgress > 70) showArticleInterface.updateWebViewDesign()
+        } catch (e: Exception) {
+            Log.e(
+                "WebChrome-onProgress",
+                "Error while getting koin instance, the activity is closed ..."
+            )
+        }
     }
 
     override fun onHideCustomView() {

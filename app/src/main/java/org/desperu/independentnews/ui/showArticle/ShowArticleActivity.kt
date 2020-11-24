@@ -6,10 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.view.View
-import android.webkit.WebChromeClient
-import android.webkit.WebResourceRequest
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
@@ -147,10 +144,15 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         web_view.settings.apply {
             javaScriptEnabled = true
             javaScriptCanOpenWindowsAutomatically = true
-            setSupportZoom(true)
-            builtInZoomControls = true
-            displayZoomControls = false
+//            setSupportZoom(true) // TODO try to remove all zoom
+//            builtInZoomControls = true // It seems to be good
+//            displayZoomControls = false
         }
+
+        // Test to fix zoom bug...
+//        web_view.setInitialScale(500)
+//        web_view.settings.defaultZoom = WebSettings.ZoomDensity.MEDIUM
+//        web_view.settings.useWideViewPort = true
 
         web_view.webViewClient = webViewClient
 
@@ -169,6 +171,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 actualUrl = it
                 isWebViewDesigned = false
                 handleNavigation(it)
+                web_view.updateWebViewStart(article.sourceName, it)
             }
         }
 
@@ -202,6 +205,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onStop() {
         super.onStop()
         if (inCustomView) hideCustomView()
+        web_view.onFinishTemporaryDetach()
         mWebChromeClient = null
     }
 
@@ -331,7 +335,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             else
                 article_scroll_progress_bar.progress = progress.toInt()
         }
-
+        // TODO on scroll video should pause ...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> svScrollY = scrollY; setup() }
         else
@@ -345,7 +349,8 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      */
     private fun updateDesign(url: String) {
         if (!isWebViewDesigned)
-            web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
+            web_view.updateWebViewFinish(actualUrl, article.cssUrl)
+//            web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
         article_loading_progress_bar.hide()
         article_scroll_view.visibility = View.VISIBLE
 //        web_view.zoomOut()
@@ -458,12 +463,12 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private fun handleNavigation(url: String) {
         hideArticleDataContainer(!isSourceUrl(url))
         if (!isSourceUrl(url)) {
-            sv.scrollY = 0
-            article_loading_progress_bar.apply { visibility = View.VISIBLE; show() }
-
             navigationCount += 1
             if (navigationCount == 1)
                 article_scroll_view.visibility = View.INVISIBLE
+
+            scrollTo(0)
+            article_loading_progress_bar.apply { visibility = View.VISIBLE; show() }
         } else
             navigationCount = 0
     }

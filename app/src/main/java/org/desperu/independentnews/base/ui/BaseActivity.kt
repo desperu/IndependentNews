@@ -19,6 +19,7 @@ import org.koin.core.module.Module
 abstract class BaseActivity(private vararg val module: Module): AppCompatActivity() {
 
     init {
+        unloadKoinModules(module.toList())
         loadKoinModules(module.toList())
     }
 
@@ -46,8 +47,8 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         unloadKoinModules(module.toList())
+        super.onDestroy()
     }
 
     // --------------------

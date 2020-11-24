@@ -55,25 +55,31 @@ class ShowImageFragment: BaseBindingFragment() {
     private val imageUrl: String get() = arguments?.getString(IMAGE_URL) ?: ""
 
     // FOR IMAGE GESTURE
+
     // Detectors instances
     private lateinit var gestureDetector: GestureDetector
     private lateinit var scaleGestureDetector: ScaleGestureDetector
+
     // Root layout, for size
     private val root: View by bindView(R.id.show_image_root)
     private val screenWidth get() = root.width
     private val screenHeight get() = root.height
+
     // GestureImageView instance and Image drawable real rect position value.
     private val image: GestureImageView by bindView(R.id.show_image_view)
     private val hitRect get() = image.run { Rect().apply(::getHitRect) }
+
     // Scale values, for zoom
     private val minScale get() = show_image_view?.scaleFactor ?: MIN_SCALE
     private val middleScale get() = minScale * MIDDLE_SCALE
     private val maxScale get() = minScale * MAX_SCALE
     private var scaleFactor: Float = minScale
     private val isZoomed: Boolean get() = image.scaleX > minScale
+
     // Activity interface and boolean to dispatch motion event.
     private val showImagesInterface: ShowImagesInterface by inject()
     private var isVpEvent = false
+
     // System ui
     private val systemUiHelper: SystemUiHelper by inject()
     private val backArrow get() =  activity?.back_arrow_icon
@@ -155,7 +161,7 @@ class ShowImageFragment: BaseBindingFragment() {
     private val gestureListener = object : SimpleOnGestureListener() {
 
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-            val backArrowRect = backArrow?.run { Rect().apply(::getDrawingRect) }
+            val backArrowRect = backArrow?.run { Rect().apply(::getHitRect) }
             val isArrowClick = e?.let { backArrowRect?.contains(it.x.toInt(), it.y.toInt()) }
             if (isArrowClick == true) showImagesInterface.onClickBackArrow(backArrow!!)
 

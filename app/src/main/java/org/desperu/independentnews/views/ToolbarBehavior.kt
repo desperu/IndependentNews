@@ -62,6 +62,9 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
         getViews(child)
 
+        // TODO full size on new fragment !!!!
+        //  and use memo for scroll size, and start at fixed value, for scroll down
+
         if (dyConsumed > 0) {
 
             // scroll up:

@@ -16,7 +16,7 @@ import kotlin.math.min
  * - layout_width="wrap_content"
  * - layout_height="wrap_content"
  * - layout_gravity="center"
- * - scaleType="center"
+ * - scaleType="centerInside"
  */
 class GestureImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : AppCompatImageView(context, attrs, defStyleAttr) {

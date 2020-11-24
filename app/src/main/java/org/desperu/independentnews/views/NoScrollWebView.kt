@@ -42,6 +42,10 @@ class NoScrollWebView @JvmOverloads constructor(
     private var sourceName: String by Delegates.notNull()
     private var margins = 0
 
+    init {
+        setWebContentsDebuggingEnabled(true) // TODO needed ??
+    }
+
     // --------------
     // METHODS OVERRIDE
     // --------------
@@ -93,15 +97,41 @@ class NoScrollWebView @JvmOverloads constructor(
     }
 
     /**
-     * Update the design of the web view. Set the css style, text size, margin
-     * and force to redirect link to another activity.
+     * Update the design of the web view on loading start.
+     * Set the text margin, size and background.
      *
+     * @param sourceName        the name of the source of the page.
+     * @param url               the url of the page.
+     */
+    internal fun updateWebViewStart(sourceName: String, url: String?,) {
+        url?.let {
+            updateMargins(it, sourceName)
+            updateTextSize(it, sourceName)
+            updateBackground(it, sourceName)
+        }
+    }
+
+    /**
+     * Update the design of the web view on loading finish. Resize media and set the css style.
+     *
+     * @param url               the url of the page.
+     * @param cssUrl            the css url to apply to the web view.
+     */
+    internal fun updateWebViewFinish(url: String?, cssUrl: String?) {
+        url?.let {
+            injectCssCode(resizeMedia)
+            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
+        }
+    }
+
+    /**
+     * Update the design of the web view. Set the css style, text size, margin and background.
      *
      * @param sourceName        the name of the source of the page.
      * @param url               the url of the page.
      * @param cssUrl            the css url to apply to the web view.
      */
-    internal fun updateWebViewDesign(
+    internal fun updateWebViewDesign( // TODO to remove??
         sourceName: String,
         url: String?,
         cssUrl: String?
@@ -180,7 +210,7 @@ class NoScrollWebView @JvmOverloads constructor(
                     " link.setAttribute('href','$cssUrl');" +
                     " link.setAttribute('type','text/css');" +
                     " document.head.appendChild(link);"
-            evaluateJavascript(js) { zoomOut() }
+            evaluateJavascript(js, null)// { zoomOut() }
         }
     }
 

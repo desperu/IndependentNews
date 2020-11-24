@@ -109,7 +109,7 @@ object FilterUtils {
         val defaultDates = listOf(Long.MIN_VALUE.toString(), Long.MAX_VALUE.toString())
         parsedMap[DATES] =
             if (selectedMap.getValue(DATES).isNotEmpty())
-                selectedMap.getValue(DATES).mapIndexed { index, date ->
+                selectedMap.getValue(DATES).mapIndexed { index, date -> // TODO error with end date when search day - 1
                     (intStringToDate(date)?.time ?: defaultDates[index]).toString()
                 }
             else

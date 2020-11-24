@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.views.ToolbarBehavior
+import org.koin.android.ext.android.getKoin
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
 import org.koin.core.module.Module
@@ -18,6 +19,7 @@ import org.koin.core.module.Module
 abstract class BaseBindingActivity(private vararg val module: Module): AppCompatActivity() {
 
     init {
+        unloadKoinModules(module.toList())
         loadKoinModules(module.toList())
     }
 
@@ -34,13 +36,14 @@ abstract class BaseBindingActivity(private vararg val module: Module): AppCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // TODO add here configureKoinDependency to load before setContentView and binding so !!!
         setContentView(getBindingView())
         configureDesign()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         unloadKoinModules(module.toList())
+        super.onDestroy()
     }
 
     // --------------------

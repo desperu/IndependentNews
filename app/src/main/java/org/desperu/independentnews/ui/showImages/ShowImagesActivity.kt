@@ -21,7 +21,6 @@ import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
 import org.desperu.independentnews.utils.SYS_UI_HIDE
 import org.desperu.independentnews.views.DepthPageTransformer
 import org.koin.android.ext.android.get
-import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 /**
@@ -48,7 +47,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
     // FOR DATA
     private lateinit var viewPager: ViewPager
     private lateinit var mAdapter: ShowImageAdapter
-    private val sysUiHelper: SystemUiHelper by inject { parametersOf(this) }
+    private lateinit var sysUiHelper: SystemUiHelper
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -95,6 +94,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
      */
     private fun configureKoinDependency() {
         get<ShowImagesInterface> { parametersOf(this) }
+        sysUiHelper = get { parametersOf(this) }
     }
 
     /**
