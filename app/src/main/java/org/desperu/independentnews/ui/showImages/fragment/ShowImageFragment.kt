@@ -217,6 +217,7 @@ class ShowImageFragment: BaseBindingFragment() {
 
                     // need to handle all gesture in this listener vp here, for perfect dispatch
                     // PageTransformer interface ... position -> distanceX / 2 / screenWidth
+                    // Try to store previous distanceX value and compare more than 20 difference
 
                     val isDistPos = distanceX > 0
                     val canVpToLeft = hitRect.left == 0 && !isDistPos

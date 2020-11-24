@@ -131,12 +131,13 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
      */
     private fun Document?.addDescription(): Document? =
         this?.let {
-            val description = if (!getDescription().isNullOrBlank())
-                findData(DIV, CLASS, CHAPO, null)?.outerHtml()
-            else
-                ""
+            val description =
+                if (!getDescription().isNullOrBlank())
+                    findData(DIV, CLASS, CHAPO, null)?.outerHtml()
+                else
+                    ""
 
-            select(BODY)?.before(description)
+            select(BODY)?.getIndex(0)?.before(description)
             this
         }
 

@@ -4,6 +4,7 @@ import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.utils.*
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 /**
@@ -28,14 +29,23 @@ internal fun Elements?.getAuthor(): String? {
  */
 internal fun Document?.correctRepoMediaUrl(): Document? =
     this?.let {
+        val toRemove = mutableListOf<Element>()
 
         select(IMG).forEach {
             val dataOriginal = it.attr(DATA_ORIGINAL)
             val urlLink = if (!dataOriginal.isNullOrBlank()) dataOriginal else it.attr(SRC)
             val fullUrl = urlLink.toFullUrl(REPORTERRE_BASE_URL)
+            val parent = it.parent()
+
             it.attr(SRC, fullUrl)
             it.attr(DATA_ORIGINAL, fullUrl)
+
+            if (!parent.`is`(a)) {
+                parent.appendElement(a).attr(HREF, fullUrl).append(it.outerHtml())
+                toRemove.add(it)
+            }
         }
+        toRemove.forEach { it.remove() }
 
         select(AUDIO).forEach { it.attrToFullUrl(SRC, REPORTERRE_BASE_URL) }
         this

@@ -25,9 +25,9 @@ internal fun Document?.correctBastaMediaUrl(): Document? =
 
             val picture = it.parent()
             val url = it.attr(SRC).toFullUrl(BASTAMAG_BASE_URL)
-            picture.parent().appendElement(a).attr(HREF, url).append(picture.html())
+            picture.parent().appendElement(a).attr(HREF, url).append(it.outerHtml())
 
-            toRemove.add(it)
+            toRemove.add(picture)
         }
         toRemove.forEach { it.remove() }
 

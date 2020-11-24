@@ -3,6 +3,7 @@ package org.desperu.independentnews.extension.parseHtml
 import org.desperu.independentnews.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import java.lang.StringBuilder
 
 /**
  * Returns the string convert to Jsoup document.
@@ -30,6 +31,41 @@ internal fun Document?.correctUrlLink(baseUrl: String): Document? =
         }
 
         this
+    }
+
+// TODO on test check it in https://reporterre.net/Les-mareyeuses-d-Abidjan-en-lutte-contre-la-peche-industrielle
+//  and need to set url to full url for each photo !!!
+internal fun Document?.correctScriptUrl(baseUrl: String): Document? =
+    this?.let {
+
+        select("script").forEach {
+            val url = it.attr(SRC).removePrefix("/").toFullUrl(baseUrl)
+            it.attr(SRC, url)
+
+            val script = it.ownText().setJsImageListToFullUrl(baseUrl)
+            it.text(script)
+        }
+
+        this
+    }
+
+internal fun String?.setJsImageListToFullUrl(baseUrl: String): String? =
+    this?.let {
+        val result = StringBuilder()
+
+        val list = split("\'")
+        list.forEachIndexed { index, fourthItem ->
+
+            var fullUrl: String? = null
+
+            if (fourthItem.contains("/") && !fourthItem.contains("/js/galleria/"))
+                fullUrl = fourthItem.removePrefix("/").toFullUrl(baseUrl)
+
+            if (index != 0) result.append("\'")
+            result.append(fullUrl ?: fourthItem)
+        }
+
+        result.toString()
     }
 
 /**

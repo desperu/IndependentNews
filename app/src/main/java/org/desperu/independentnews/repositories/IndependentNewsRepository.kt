@@ -146,7 +146,7 @@ class IndependentNewsRepositoryImpl(
                     reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
             }
         } catch (e: Exception) {
-          Log.e("IdeRepo-fetchRssArticle", "Error while fetching source web data.")
+          Log.e("IdeRepo-fetchRssArticle", e.message.toString())
         }
 
         articleRepository.persist(rssArticleList)
@@ -169,7 +169,7 @@ class IndependentNewsRepositoryImpl(
                     reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
             }
         } catch (e: Exception) {
-            Log.e("IdeRepo-fetchCategories", "Error while fetching source web data.")
+            Log.e("IdeRepo-fetchCategories", e.message.toString())
         }
 
         articleRepository.persist(articleList)
@@ -335,7 +335,7 @@ class IndependentNewsRepositoryImpl(
                 }
             )
         } catch (e: Exception) {
-            Log.e("IdeRepo-fetchSrcPages", "Error while fetching source web data.")
+            Log.e("IdeRepo-fetchSrcPages", e.message.toString())
         }
 
         sourcePages
