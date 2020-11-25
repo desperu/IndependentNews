@@ -18,6 +18,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     private lateinit var backArrowIcon: View
     private lateinit var searchIcon: View
     private lateinit var shareIcon: View
+    private lateinit var infoIcon: View
 
     private var toolbarOriginalHeight: Float = -1f
     private var toolbarCollapsedHeight: Float = -1f
@@ -37,6 +38,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
         backArrowIcon = toolbar.findViewById(R.id.back_arrow_icon)
         searchIcon = toolbar.findViewById(R.id.search_icon)
         shareIcon = toolbar.findViewById(R.id.share_icon)
+        infoIcon = toolbar.findViewById(R.id.info_icon)
 
         toolbarOriginalHeight = toolbar.layoutParams.height.toFloat()
         toolbarCollapsedHeight = toolbarOriginalHeight * minScale
@@ -82,13 +84,14 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                 backArrowIcon.translationY = -translate
                 searchIcon.translationY = -translate
                 shareIcon.translationY = -translate
+                infoIcon.translationY = -translate
 
                 //--- title
                 val scale = toolbar.layoutParams.height / toolbarOriginalHeight
                 toolbarTitle.scaleX = if (scale < minScale) minScale else scale
                 toolbarTitle.scaleY = toolbarTitle.scaleX
             }
-        } else if (dyConsumed < -15) {
+        } else if (dyConsumed < -20) {
 
             // scroll down
             if (toolbar.layoutParams.height < toolbarOriginalHeight) {
@@ -106,6 +109,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                 backArrowIcon.translationY = -translate
                 searchIcon.translationY = -translate
                 shareIcon.translationY = -translate
+                infoIcon.translationY = -translate
 
                 //--- title
                 val scale = toolbar.layoutParams.height / toolbarOriginalHeight

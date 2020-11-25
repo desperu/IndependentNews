@@ -116,7 +116,6 @@
     <!-- MENU -->
     <!-- Appbar -->
     <dimen name="appbar_title_text_size">28sp</dimen>
-    <dimen name="appbar_icon_padding">12dp</dimen> <!-- TODO Should needed screen size support -->
 
     <!-- Menu Drawer -->
     <dimen name="nav_header_height">250dp</dimen>

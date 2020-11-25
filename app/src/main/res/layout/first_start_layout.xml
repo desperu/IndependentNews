@@ -35,7 +35,7 @@
             android:theme="@style/FabInfoTheme"
             android:onClick="onClickInfo"
             android:layout_toEndOf="@+id/first_start_who_owns_what"
-            app:srcCompat="@drawable/ic_outline_info_36"
+            app:srcCompat="@drawable/ic_outline_info_24"
             app:fabSize="normal"
             app:fabCustomSize="@dimen/first_start_fab_size"
             app:maxImageSize="@dimen/first_start_fab_image_size"
