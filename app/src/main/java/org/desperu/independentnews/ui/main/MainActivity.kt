@@ -38,6 +38,8 @@ import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.settings.SettingsActivity
+import org.desperu.independentnews.ui.showImages.IMAGE_LIST
+import org.desperu.independentnews.ui.showImages.ShowImagesActivity
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
@@ -226,6 +228,9 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         startActivity(browserIntent)
     }
 
+    @Suppress("Unused_parameter")
+    fun onClickInfo(v: View) { showShowImagesActivity() }
+
     // --------------
     // ACTIVITY
     // --------------
@@ -241,6 +246,14 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     private fun showSourcesActivity() =
         startActivity(Intent(this, SourcesActivity::class.java))
+
+    /**
+     * Start Show Images activity.
+     */
+    private fun showShowImagesActivity() =
+        startActivity(Intent(this, ShowImagesActivity::class.java)
+            .putIntegerArrayListExtra(IMAGE_LIST, WHO_OWNS_WHAT)
+        )
 
     // -----------------
     // DATA

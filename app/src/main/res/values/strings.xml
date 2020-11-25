@@ -6,9 +6,10 @@
     <!-- LAYOUT -->
     <!-- Main Activity -->
     <!-- First Start Fragment -->
+    <string name="fragment_first_start_button">Who owns what ?</string>
     <string name="fragment_first_start_text">First Start !</string>
     <string name="fragment_first_start_loading">fetching\narticle list…</string>
-    <string name="fragment_first_start_fetch_time">This could take few minutes to fetch data, depends of your network connection !</string>
+    <string name="fragment_first_start_fetch_time">This could take a few minutes to fetch data, depends of your network connection !</string>
     <!-- Article List Fragment -->
     <string name="fragment_article_list_no_article">No article find !</string>
     <!-- Dialog About -->

@@ -16,7 +16,7 @@ import kotlin.math.min
  * - layout_width="wrap_content"
  * - layout_height="wrap_content"
  * - layout_gravity="center"
- * - scaleType="centerInside"
+ * - scaleType="center" // TODO if too large, set to centreInside and reScaleToFullScreen
  */
 class GestureImageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : AppCompatImageView(context, attrs, defStyleAttr) {

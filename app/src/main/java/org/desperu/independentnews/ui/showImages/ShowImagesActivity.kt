@@ -41,7 +41,7 @@ const val POSITION: String = "position"
 class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
 
     // FROM BUNDLE
-    private val imageList: List<String>? get() = intent.getStringArrayListExtra(IMAGE_LIST)
+    private val imageList: List<Any>? get() = intent.getParcelableArrayListExtra(IMAGE_LIST)
     private val position: Int? get() = intent.getIntExtra(POSITION, 0)
 
     // FOR DATA

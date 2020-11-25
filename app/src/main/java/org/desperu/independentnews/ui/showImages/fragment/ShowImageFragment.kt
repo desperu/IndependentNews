@@ -23,16 +23,17 @@ import org.desperu.independentnews.ui.showImages.ShowImagesInterface
 import org.desperu.independentnews.utils.LOW_NAV_AND_STATUS_BAR
 import org.desperu.independentnews.utils.SYS_UI_HIDE
 import org.desperu.independentnews.views.GestureImageView
-import org.koin.android.ext.android.inject
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.math.max
 import kotlin.math.min
 
 /**
- * The name of the argument to received the image url in this fragment.
+ * The name of the argument to received the image url or id in this fragment.
  */
 const val IMAGE_URL: String = "showImage"
+const val IMAGE_ID: String = "imageId"
 
 /**
  * Image scale and system ui show delay values.
@@ -51,8 +52,9 @@ class ShowImageFragment: BaseBindingFragment() {
 
     // FOR DATA
     private lateinit var binding: FragmentImageBinding
-    private val viewModel: ShowImageViewModel by viewModel { parametersOf(imageUrl) }
-    private val imageUrl: String get() = arguments?.getString(IMAGE_URL) ?: ""
+    private val viewModel: ShowImageViewModel by viewModel { parametersOf(imageData) }
+    private val imageData: Any
+        get() = arguments?.getString(IMAGE_URL) ?: arguments?.getInt(IMAGE_ID) ?: ""
 
     // FOR IMAGE GESTURE
 
@@ -77,11 +79,11 @@ class ShowImageFragment: BaseBindingFragment() {
     private val isZoomed: Boolean get() = image.scaleX > minScale
 
     // Activity interface and boolean to dispatch motion event.
-    private val showImagesInterface: ShowImagesInterface by inject()
+    private val showImagesInterface: ShowImagesInterface get() = get()
     private var isVpEvent = false
 
     // System ui
-    private val systemUiHelper: SystemUiHelper by inject()
+    private val systemUiHelper: SystemUiHelper get() = get()
     private val backArrow get() =  activity?.back_arrow_icon
     private val sysUiShow get() = activity?.appbar?.isVisible
     private val handler = Handler()
@@ -92,13 +94,18 @@ class ShowImageFragment: BaseBindingFragment() {
     companion object {
         /**
          * Create a new instance of this fragment and set the image url bundle.
-         * @param imageUrl the image url to load.
+         * @param imageData the image data, url or id to load.
          * @return the new instance of ShowImageFragment.
          */
-        fun newInstance(imageUrl: String): ShowImageFragment {
+        fun newInstance(imageData: Any): ShowImageFragment {
             val showImageFragment = ShowImageFragment()
             showImageFragment.arguments = Bundle()
-            showImageFragment.arguments?.putString(IMAGE_URL, imageUrl)
+
+            when(imageData) {
+                is String -> showImageFragment.arguments?.putString(IMAGE_URL, imageData)
+                is Int -> showImageFragment.arguments?.putInt(IMAGE_ID, imageData)
+            }
+
             return showImageFragment
         }
     }

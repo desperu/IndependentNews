@@ -52,7 +52,7 @@ object MainUtils {
         FRAG_TOP_STORY -> R.id.activity_main_menu_drawer_top_story
         FRAG_CATEGORY -> R.id.activity_main_menu_drawer_categories
         FRAG_ALL_ARTICLES -> R.id.activity_main_menu_drawer_all_articles
-        FRAG_TODAY_ARTICLES -> 0 // TODO to check when click on notification
+        FRAG_TODAY_ARTICLES -> 0
         else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }
 }

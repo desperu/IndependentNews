@@ -65,20 +65,25 @@ fun TextView.setSectionTheme(article: Article?) {
 }
 
 /**
- * Load the image with the url into the image view.
- * @param imageUrl the image url to load.
+ * Load the image with the data, url or id, into the image view.
+ * @param imageData the image data, url or id, to load.
  */
 @BindingAdapter("setImage")
-fun ImageView.setImage(imageUrl: String?) {
+fun ImageView.setImage(imageData: Any?) {
     val isItem = tag == "item_article"
     val isFragImage = tag == "frag_image"
-    val isNotNull = !imageUrl.isNullOrBlank() && getPageNameFromUrl(imageUrl) != "null"
-    val image: Any? = if (isNotNull) imageUrl else R.drawable.no_image
+    val isNotNull = when(imageData) {
+        is Int -> imageData.toInt() != 0
+        is String -> imageData.isNotBlank() && getPageNameFromUrl(imageData) != "null"
+        else -> false
+    }
+    val image: Any? = if (isNotNull) imageData else R.drawable.no_image
+    val listener = if (isFragImage) getRequestListener(this, isFragImage) else null
 
     if (isItem || isNotNull)
         Glide.with(this)
             .load(image)
-            .listener(getRequestListener(this, isFragImage))
+            .listener(listener)
             .override(Target.SIZE_ORIGINAL)
             .encodeQuality(100)
             .into(this)
@@ -136,7 +141,7 @@ private fun getRequestListener(imageView: ImageView, isFragImage: Boolean): Requ
 }
 
 /**
- * Load the image with the url into the image view.
+ * Load the image with the image id into the image view.
  * @param imageId the unique identifier of the image to load.
  */
 @BindingAdapter("setImage")

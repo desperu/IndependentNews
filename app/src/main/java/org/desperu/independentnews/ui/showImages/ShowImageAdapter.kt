@@ -16,7 +16,7 @@ import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
 class ShowImageAdapter(fm: FragmentManager,
                        behavior: Int) : FragmentPagerAdapter(fm, behavior) {
 
-    private lateinit var imageList: List<String>
+    private lateinit var imageList: List<Any>
 
     override fun getCount(): Int = if (::imageList.isInitialized) imageList.size else 0
 
@@ -26,5 +26,5 @@ class ShowImageAdapter(fm: FragmentManager,
      * Update all item list.
      * @param newImageList the new image list to set.
      */
-    internal fun updateImageList(newImageList: List<String>) { imageList = newImageList }
+    internal fun updateImageList(newImageList: List<Any>) { imageList = newImageList }
 }

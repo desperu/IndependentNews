@@ -11,4 +11,4 @@ import androidx.lifecycle.ViewModel
  *
  * @param imageUrl      the given image url for this view model to set.
  */
-class ShowImageViewModel(val imageUrl: String): ViewModel()
+class ShowImageViewModel(val imageUrl: Any): ViewModel()

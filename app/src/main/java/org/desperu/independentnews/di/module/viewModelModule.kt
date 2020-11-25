@@ -78,7 +78,7 @@ val viewModelModule = module {
     /**
      * Provides the ShowImageViewModel instance.
      */
-    viewModel { (imageUrl: String) ->
+    viewModel { (imageUrl: Any) ->
         ShowImageViewModel(imageUrl)
     }
 
