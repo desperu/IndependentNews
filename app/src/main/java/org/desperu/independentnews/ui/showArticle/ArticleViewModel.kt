@@ -23,5 +23,5 @@ class ArticleViewModel(
     /**
      * On click image listener.
      */
-    val onClickImage = OnClickListener { router.openShowImages(article.imageUrl) }
+    val onClickImage = OnClickListener { router.openShowImages(arrayListOf(article.imageUrl)) }
 }

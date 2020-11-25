@@ -12,11 +12,15 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
 import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
-import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.FRAG_SOURCES_DETAIL
+import org.desperu.independentnews.utils.FRAG_SOURCES_LIST
+import org.desperu.independentnews.utils.NO_FRAG
+import org.desperu.independentnews.utils.WHO_OWNS_WHAT
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
@@ -43,7 +47,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     override fun configureDesign() {
         configureKoinDependency()
         configureAppBar()
-        showAppBarIcon(listOf(R.id.back_arrow_icon))
+        showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.info_icon))
         configureAndShowFragment(FRAG_SOURCES_LIST, null, null, -1)
     }
 
@@ -164,6 +168,15 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      */
     @Suppress("unused_parameter")
     fun onClickBackArrow(v: View) = onClickBackArrow()
+
+    /**
+     * On click info icon menu.
+     */
+    @Suppress("unused_parameter", "Unchecked_cast")
+    fun onClickInfo(v: View) {
+        get<ImageRouter> { parametersOf(this) }
+            .openShowImages(WHO_OWNS_WHAT as ArrayList<Any>)
+    }
 
     // --------------
     // ANIMATION

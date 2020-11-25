@@ -61,12 +61,21 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
          * @param imageList the images list to show in this activity.
          * @param position the position of the clicked image in the list.
          */
-        fun routeFromActivity(activity: AppCompatActivity, imageList: ArrayList<String>, position: Int) {
-            activity.startActivity(
-                Intent(activity, ShowImagesActivity::class.java)
-                    .putStringArrayListExtra(IMAGE_LIST, imageList)
-                    .putExtra(POSITION, position)
-            )
+        fun routeFromActivity(activity: AppCompatActivity, imageList: ArrayList<Any>, position: Int) {
+            val intent = Intent(activity, ShowImagesActivity::class.java)
+
+            if (imageList.isNotEmpty())
+                when (imageList[0]) {
+
+                    is Int -> intent.putIntegerArrayListExtra(IMAGE_LIST,
+                        imageList.map { it as Int } as ArrayList<Int>)
+
+                    is String -> intent.putStringArrayListExtra(IMAGE_LIST,
+                        imageList.map { it.toString() } as java.util.ArrayList<String>?)
+                }
+
+            intent.putExtra(POSITION, position)
+            activity.startActivity(intent)
         }
     }
 

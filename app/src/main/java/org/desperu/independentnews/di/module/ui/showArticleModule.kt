@@ -23,7 +23,7 @@ val showArticleModule = module {
     /**
      * Provides a ImageRouter from the instance of ShowArticleActivity.
      */
-    single<ImageRouter> { (activity: BaseBindingActivity) ->
+    single<ImageRouter>(override = true) { (activity: BaseBindingActivity) ->
         ImageRouterImpl(activity)
     }
 

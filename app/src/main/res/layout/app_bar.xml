@@ -69,6 +69,17 @@
             app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_baseline_share_24" />
 
+        <ImageView
+            android:id="@+id/info_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:padding="@dimen/default_margin"
+            android:visibility="gone"
+            android:onClick="onClickInfo"
+            app:tint="@color/subtitle_color"
+            app:srcCompat="@drawable/ic_outline_info_white_36" />
+
     </FrameLayout>
 
     <com.google.android.material.tabs.TabLayout

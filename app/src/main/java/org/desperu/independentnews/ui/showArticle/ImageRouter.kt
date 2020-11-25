@@ -11,9 +11,9 @@ interface ImageRouter {
     /**
      * Redirects the user to the Show Images Activity.
      *
-     * @param imageUrl the image url to show in the Activity.
+     * @param imageData the image data, url or integer, to show in the Activity.
      */
-    fun openShowImages(imageUrl: String)
+    fun openShowImages(imageData: ArrayList<Any>)
 }
 
 /**
@@ -29,8 +29,8 @@ class ImageRouterImpl(private val activity: AppCompatActivity): ImageRouter {
 
     /**
      * Redirects the user to the Show Images Activity.
-     * @param imageUrl the image url to show in the Activity.
+     * @param imageData the image data, url or integer, to show in the Activity.
      */
-    override fun openShowImages(imageUrl: String) =
-        ShowImagesActivity.routeFromActivity(activity, arrayListOf(imageUrl), 0)
+    override fun openShowImages(imageData: ArrayList<Any>) =
+        ShowImagesActivity.routeFromActivity(activity, imageData, 0)
 }

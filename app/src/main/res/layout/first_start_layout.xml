@@ -33,7 +33,7 @@
             android:layout_margin="@dimen/default_margin"
             android:scaleType="center"
             android:theme="@style/FabInfoTheme"
-            android:src="@drawable/ic_baseline_info_white_36"
+            android:src="@drawable/ic_outline_info_white_36"
             android:onClick="onClickInfo"
             android:layout_toEndOf="@+id/first_start_who_owns_what"
             app:fabSize="normal"

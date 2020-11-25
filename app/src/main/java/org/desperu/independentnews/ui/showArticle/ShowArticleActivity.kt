@@ -439,7 +439,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             scrollTo(if (isNoteRedirect) svBottom else noteScrollPosition)
             true
         }
-        isImageUrl(url) -> { router.openShowImages(url); true }
+        isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
         url.endsWith(".pdf") -> {
             val browserIntent = Intent(Intent.ACTION_VIEW)
             browserIntent.setDataAndType(Uri.parse(url), "text/html")
