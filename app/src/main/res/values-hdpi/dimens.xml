@@ -103,7 +103,7 @@
 
     <!-- MENU -->
     <!-- Toolbar -->
-    <dimen name="toolbar_title_text_size">26sp</dimen>
+    <dimen name="appbar_title_text_size">26sp</dimen>
 
     <!-- Menu Drawer -->
     <dimen name="nav_header_height">250dp</dimen>

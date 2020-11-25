@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/default_large_margin"
             android:textColor="@color/list_item_bg_collapsed"
-            android:textSize="@dimen/toolbar_title_text_size"
+            android:textSize="@dimen/appbar_title_text_size"
             android:text="@string/fragment_first_start_button"
             android:fontFamily="Annie_use_your_telescope"
             android:gravity="start|center_horizontal" />
@@ -33,9 +33,9 @@
             android:layout_margin="@dimen/default_margin"
             android:scaleType="center"
             android:theme="@style/FabInfoTheme"
-            android:src="@drawable/ic_outline_info_white_36"
             android:onClick="onClickInfo"
             android:layout_toEndOf="@+id/first_start_who_owns_what"
+            app:srcCompat="@drawable/ic_outline_info_36"
             app:fabSize="normal"
             app:fabCustomSize="@dimen/first_start_fab_size"
             app:maxImageSize="@dimen/first_start_fab_image_size"
@@ -61,7 +61,7 @@
         android:gravity="center"
         android:layout_margin="@dimen/default_large_margin"
         android:textColor="@color/list_item_bg_collapsed"
-        android:textSize="@dimen/toolbar_title_text_size"
+        android:textSize="@dimen/appbar_title_text_size"
         android:text="@string/fragment_first_start_text"
         app:fontName="Annie_use_your_telescope"/>
 
