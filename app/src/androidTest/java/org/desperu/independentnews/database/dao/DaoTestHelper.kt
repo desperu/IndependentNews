@@ -86,9 +86,6 @@ class DaoTestHelper {
         100000000000000000L,
         BASTAMAG + "test",
         BASTAMAG_BASE_URL,
-        1,
-        2,
-        3,
         true
     )
 
@@ -103,9 +100,6 @@ class DaoTestHelper {
             100000000000000001L,
             source.name,
             source.url,
-            source.imageId,
-            source.logoId,
-            source.backgroundColorId,
             source.isEnabled
         )
     )

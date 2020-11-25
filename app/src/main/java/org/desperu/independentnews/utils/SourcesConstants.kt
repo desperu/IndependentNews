@@ -1,6 +1,5 @@
 package org.desperu.independentnews.utils
 
-import org.desperu.independentnews.R
 import org.desperu.independentnews.models.Source
 
 // --- FOR RETROFIT REQUEST ---
@@ -35,17 +34,11 @@ const val REPORTERRE = "Reporterre"
 // Source for database
 val BASTAMAG_SOURCE = Source(
     name = BASTAMAG,
-    url = BASTAMAG_BASE_URL,
-    imageId = R.drawable.logo_bastamag,
-    logoId = R.drawable.logo_mini_bastamag,
-    backgroundColorId = R.color.bastamag_background
+    url = BASTAMAG_BASE_URL
 )
 val REPORTERRE_SOURCE = Source(
     name = REPORTERRE,
-    url = REPORTERRE_BASE_URL,
-    imageId = R.drawable.logo_reporterre,
-    logoId = R.drawable.logo_mini_reporterre,
-    backgroundColorId = R.color.reporterre_background
+    url = REPORTERRE_BASE_URL
 )
 
 

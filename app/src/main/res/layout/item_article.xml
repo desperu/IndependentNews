@@ -61,7 +61,7 @@
                         android:layout_alignTop="@id/source_name"
                         android:layout_alignBottom="@id/source_name"
                         android:scaleType="fitCenter"
-                        setImage="@{viewModel.article.source.logoId}"/>
+                        app:setMiniLogo="@{viewModel.article.source.name}"/>
 
                     <TextView
                         android:id="@+id/source_name"

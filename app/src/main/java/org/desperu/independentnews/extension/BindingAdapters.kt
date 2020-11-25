@@ -27,7 +27,10 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListAdapter
 import org.desperu.independentnews.utils.BASTAMAG
+import org.desperu.independentnews.utils.SourcesUtils.getBackgroundColorId
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
+import org.desperu.independentnews.utils.SourcesUtils.getLogoId
+import org.desperu.independentnews.utils.SourcesUtils.getMiniLogoId
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.millisToString
 import org.desperu.independentnews.views.GestureImageView
@@ -52,11 +55,19 @@ fun TextView.setPublishedDate(millis: Long?) {
     text = if (millis != null && millis != 0L) millisToString(millis) else ""
 }
 
+/**
+ * Set integer value in the text view.
+ * @param value the value to display.
+ */
 @BindingAdapter("setInt")
 fun TextView.setInt(value: Int?) {
     text = value.mToString()
 }
 
+/**
+ * Set section and theme in the text view.
+ * @param article the article of which show section and theme.
+ */
 @SuppressLint("SetTextI18n")
 @BindingAdapter("setSectionTheme")
 fun TextView.setSectionTheme(article: Article?) {
@@ -142,12 +153,23 @@ private fun getRequestListener(imageView: ImageView, isFragImage: Boolean): Requ
 
 /**
  * Load the image with the image id into the image view.
- * @param imageId the unique identifier of the image to load.
+ * @param sourceName the name of the source for which set the logo.
  */
-@BindingAdapter("setImage")
-fun ImageView.setImage(imageId: Int?) {
+@BindingAdapter("setLogo")
+fun ImageView.setLogo(sourceName: String?) {
     Glide.with(this)
-        .load(if (imageId != null && imageId != 0) imageId else R.drawable.no_image)
+        .load(if (!sourceName.isNullOrBlank()) getLogoId(sourceName) else R.drawable.no_image)
+        .into(this)
+}
+
+/**
+ * Load the image logo with name into the image view.
+ * @param sourceName the name of the source for which set the mini logo.
+ */
+@BindingAdapter("setMiniLogo")
+fun ImageView.setMiniLogo(sourceName: String?) {
+    Glide.with(this)
+        .load(if (!sourceName.isNullOrBlank()) getMiniLogoId(sourceName) else R.drawable.no_image)
         .into(this)
 }
 
@@ -197,14 +219,14 @@ fun View.updateTransitionName(position: Int?) { // TODO use string and set in vi
 
 /**
  * Set the background color depends of the source.
- * @param color the color to set for the background.
+ * @param sourceName the name of the source for which set the background color.
  */
 @BindingAdapter("myBackgroundColor")
-fun ImageView.myBackgroundColor(color: Int?) {
-    if (color != null && color != 0) {
+fun ImageView.myBackgroundColor(sourceName: String?) {
+    if (!sourceName.isNullOrBlank()) {
+        val color = ResourcesCompat.getColor(resources, getBackgroundColorId(sourceName), null)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            backgroundTintList =
-                ColorStateList.valueOf(ResourcesCompat.getColor(resources, color, null))
+            backgroundTintList = ColorStateList.valueOf(color)
     }
 }
 
@@ -216,8 +238,9 @@ fun ImageView.myBackgroundColor(color: Int?) {
 @BindingAdapter("myBackgroundColor")
 fun Button.myBackgroundColor(sourceWithData: SourceWithData?) {
     sourceWithData?.let {
+        val color = ResourcesCompat.getColor(resources, getButtonLinkColor(it), null)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            backgroundTintList = ColorStateList.valueOf(resources.getColor(getButtonLinkColor(it)))
+            backgroundTintList = ColorStateList.valueOf(color)
     }
 }
 

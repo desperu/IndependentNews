@@ -4,7 +4,10 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.utils.SourcesUtils.getBackgroundColorId
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
+import org.desperu.independentnews.utils.SourcesUtils.getLogoId
+import org.desperu.independentnews.utils.SourcesUtils.getMiniLogoId
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.lang.IllegalArgumentException
@@ -13,6 +16,90 @@ import java.lang.IllegalArgumentException
  * Source Utils class test, to check that all utils functions work as needed.
  */
 class SourceUtilsTest {
+
+    @Test
+    fun given_bastamag_When_getMiniLogoId_Then_checkResult() {
+        val expected = R.drawable.logo_mini_bastamag
+
+        val output = getMiniLogoId(BASTAMAG)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_reporterre_When_getMiniLogoId_Then_checkResult() {
+        val expected = R.drawable.logo_mini_reporterre
+
+        val output = getMiniLogoId(REPORTERRE)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_wrongName_When_getMiniLogoId_Then_checkError() {
+        val expected = "Source name not found : wrong"
+
+        val output = try { getMiniLogoId("wrong name") }
+        catch (e: IllegalArgumentException) { e.message }
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_bastamag_When_getLogoId_Then_checkResult() {
+        val expected = R.drawable.logo_bastamag
+
+        val output = getLogoId(BASTAMAG)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_reporterre_When_getLogoId_Then_checkResult() {
+        val expected = R.drawable.logo_reporterre
+
+        val output = getLogoId(REPORTERRE)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_wrongName_When_getLogoId_Then_checkError() {
+        val expected = "Source name not found : wrong"
+
+        val output = try { getLogoId("wrong name") }
+        catch (e: IllegalArgumentException) { e.message }
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_bastamag_When_getBackgroundColorId_Then_checkResult() {
+        val expected = R.color.bastamag_background
+
+        val output = getBackgroundColorId(BASTAMAG)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_reporterre_When_getBackgroundColorId_Then_checkResult() {
+        val expected = R.color.reporterre_background
+
+        val output = getBackgroundColorId(REPORTERRE)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_wrongName_When_getBackgroundColorId_Then_checkError() {
+        val expected = "Source name not found : wrong"
+
+        val output = try { getBackgroundColorId("wrong name") }
+        catch (e: IllegalArgumentException) { e.message }
+
+        assertEquals(expected, output)
+    }
 
     @Test
     fun given_bastamagSWDP0_When_getButtonLinkColor_Then_checkResult() {

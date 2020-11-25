@@ -51,8 +51,8 @@
                         android:cropToPadding="true"
                         android:scaleType="fitCenter"
                         android:background="@drawable/source_border_disabled"
-                        app:setImage="@{viewModel.sourceWithData.source.imageId}"
-                        app:myBackgroundColor="@{viewModel.sourceWithData.source.backgroundColorId}"
+                        app:setLogo="@{viewModel.sourceWithData.source.name}"
+                        app:myBackgroundColor="@{viewModel.sourceWithData.source.name}"
                         app:myPadding="@{viewModel.sourceWithData.source.name}" />
 
                 </androidx.cardview.widget.CardView>

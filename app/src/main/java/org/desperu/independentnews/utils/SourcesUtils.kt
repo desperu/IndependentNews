@@ -10,6 +10,47 @@ import org.desperu.independentnews.models.SourceWithData
 object SourcesUtils {
 
     // -----------------
+    // LOGO
+    // -----------------
+
+    /**
+     * Returns the unique identifier of the source mini logo drawable.
+     *
+     * @return the unique identifier of the source mini logo drawable.
+     */
+    internal fun getMiniLogoId(sourceName: String) = when(sourceName) {
+        BASTAMAG -> R.drawable.logo_mini_bastamag
+        REPORTERRE -> R.drawable.logo_mini_reporterre
+        else -> throw IllegalArgumentException("Source name not found : $sourceName")
+    }
+
+    /**
+     * Returns the unique identifier of the source logo drawable.
+     *
+     * @return the unique identifier of the source logo drawable.
+     */
+    internal fun getLogoId(sourceName: String) = when(sourceName) {
+        BASTAMAG -> R.drawable.logo_bastamag
+        REPORTERRE -> R.drawable.logo_reporterre
+        else -> throw IllegalArgumentException("Source name not found : $sourceName")
+    }
+
+    // -----------------
+    // BACKGROUND COLOR
+    // -----------------
+
+    /**
+     * Returns the unique identifier of the source background color.
+     *
+     * @return the unique identifier of the source background color.
+     */
+    internal fun getBackgroundColorId(sourceName: String) = when(sourceName) {
+        BASTAMAG -> R.color.bastamag_background
+        REPORTERRE -> R.color.reporterre_background
+        else -> throw IllegalArgumentException("Source name not found : $sourceName")
+    }
+
+    // -----------------
     // BUTTON LINK
     // -----------------
 
