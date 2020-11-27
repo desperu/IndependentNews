@@ -103,7 +103,7 @@ class NoScrollWebView @JvmOverloads constructor(
      * @param sourceName        the name of the source of the page.
      * @param url               the url of the page.
      */
-    internal fun updateWebViewStart(sourceName: String, url: String?,) {
+    internal fun updateWebViewStart(sourceName: String, url: String?) {
         url?.let {
             updateMargins(it, sourceName)
             updateTextSize(it, sourceName)
@@ -119,27 +119,6 @@ class NoScrollWebView @JvmOverloads constructor(
      */
     internal fun updateWebViewFinish(url: String?, cssUrl: String?) {
         url?.let {
-            injectCssCode(resizeMedia)
-            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
-        }
-    }
-
-    /**
-     * Update the design of the web view. Set the css style, text size, margin and background.
-     *
-     * @param sourceName        the name of the source of the page.
-     * @param url               the url of the page.
-     * @param cssUrl            the css url to apply to the web view.
-     */
-    internal fun updateWebViewDesign( // TODO to remove??
-        sourceName: String,
-        url: String?,
-        cssUrl: String?
-    ) {
-        url?.let {
-            updateMargins(it, sourceName)
-            updateTextSize(it, sourceName)
-            updateBackground(it, sourceName)
             injectCssCode(resizeMedia)
             cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
         }

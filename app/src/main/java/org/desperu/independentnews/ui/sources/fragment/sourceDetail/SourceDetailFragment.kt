@@ -170,11 +170,10 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
      * Animate view when fragment appear.
      */
     private fun animateViews() {
-        alphaViewAnimation(source_detail_container, 0)
+        alphaViewAnimation(listOf(source_detail_container), 0)
         scaleViewAnimation(source_detail_disable_button, 250)
-        alphaViewAnimation(source_detail_title, 150)
-        alphaViewAnimation(source_detail_web_view, 150)
-        fromBottomAnimation(source_detail_web_view, 150)
+        alphaViewAnimation(listOf(source_detail_title, source_detail_web_view), 50)
+        fromBottomAnimation(source_detail_web_view, 50)
     }
 
     // --- GETTERS ---

@@ -51,7 +51,7 @@ class SourceDetailAdapter(
      */
     private fun setAnimation(itemView: View, position: Int) {
         val startDelay = position * 200L / 3
-        fromSideAnimation(context, itemView, startDelay, true)
+        fromSideAnimation(context, listOf(itemView), startDelay, true)
     }
 
     /**

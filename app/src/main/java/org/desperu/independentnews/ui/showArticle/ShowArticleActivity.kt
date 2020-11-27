@@ -6,7 +6,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.view.View
-import android.webkit.*
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.NestedScrollView
@@ -16,12 +19,13 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromSideAnimation
-import org.desperu.independentnews.helpers.SystemUiHelper
+import org.desperu.independentnews.anim.AnimHelper.scaleViewAnimation
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.isImageUrl
@@ -268,41 +272,15 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      */
     private fun animateViews() {
         if (article.id != 0L) {
-// TODO use getValueAnimator ???
+            fromSideAnimation(this, listOf(article_source_name, article_source_image), 50, true)
+//            fromSideAnimation(this, article_source_image, 50, true)
+            fromSideAnimation(this, listOf(article_subtitle), 100, false)
+            fromSideAnimation(this, listOf(article_author), 200, true)
+            fromSideAnimation(this, listOf(article_date), 200, false)
 
-//            val a = getValueAnimator(
-//                true,
-//                450L,
-//                DecelerateInterpolator(),
-//                { progress ->
-//                    val views = listOf(article_source_name, article_source_image, article_subtitle,
-//                        article_author, article_date)
-//
-//                    views.forEach {
-//                        val left = it.left
-//                        it.alpha = progress
-//                        it.translationX = left - (left * progress)
-//                    }
-//
-//                    article_title.alpha = progress
-//                    web_view.alpha = progress
-//                    val top = web_view.top
-//                    web_view.translationY = top - (top * progress)
-//                }
-//            )
-//
-//            a.start()
-
-//            alphaViewAnimation(article_root_view, -200)
-
-            fromSideAnimation(this, article_source_name, 50, true)
-            fromSideAnimation(this, article_source_image, 50, true)
-            fromSideAnimation(this, article_subtitle, 100, false)
-            fromSideAnimation(this, article_author, 200, true)
-            fromSideAnimation(this, article_date, 200, false)
-
-            alphaViewAnimation(article_title, 0)
-            alphaViewAnimation(web_view, -50)
+//            alphaViewAnimation(article_title, 0)
+            scaleViewAnimation(article_title, 150)
+            alphaViewAnimation(listOf(web_view), -50)
             fromBottomAnimation(web_view, -50)
         }
     }
