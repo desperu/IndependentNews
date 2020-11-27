@@ -69,6 +69,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     override fun configureDesign() {
         updateTransitionName()
+        imageRequestLayout()
         configureWebView()
         configureRecyclerView()
     }
@@ -158,6 +159,12 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     // --------------
     // ANIMATION
     // --------------
+
+    /**
+     * Request layout after transition animation for the image.
+     */
+    private fun imageRequestLayout() =
+        source_detail_image.postOnAnimation { source_detail_image.requestLayout() }
 
     /**
      * Animate view when fragment appear.

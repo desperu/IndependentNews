@@ -7,7 +7,7 @@ import org.koin.dsl.module
 /**
  * Koin module which provide dependencies related to sources list fragment.
  */
-val sourceListModule = module {
+val sourceListModule = module { // TODO to remove use activity module ...
 
     /**
      * Provides a SourceListInterface from the instance of SourceListFragment.

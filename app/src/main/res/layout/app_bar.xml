@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="@dimen/default_middle_margin"
-            android:visibility="visible"
+            android:visibility="gone"
             android:onClick="onClickBackArrow"
             app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_baseline_arrow_back_24" />
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:padding="@dimen/default_middle_margin"
-            android:visibility="visible"
+            android:visibility="gone"
             app:tint="@color/subtitle_color"
             app:srcCompat="@drawable/ic_baseline_search_24" />
 

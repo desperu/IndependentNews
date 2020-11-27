@@ -37,6 +37,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     @JvmField @State var fragmentKey: Int = NO_FRAG
     private val fm = supportFragmentManager
     private var sourcePosition = -1
+    private val imageRouter get() = get<ImageRouter> { parametersOf(this) }
 
     // --------------
     // BASE METHODS
@@ -77,11 +78,8 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
             this.fragmentKey = fragmentKey
             this.sourcePosition = sourcePosition
 
-            // Try to restore fragment instance from back stack.
-            val fragment = fm.findFragmentByTag(getFragFromKey(fragmentKey).javaClass.simpleName)
-
-                // If null, instantiate a new fragment.
-                ?: when (fragmentKey) {
+            // Get fragment instance from key.
+            val fragment =  when (fragmentKey) {
                     FRAG_SOURCES_LIST -> SourceListFragment()
                     FRAG_SOURCES_DETAIL -> SourceDetailFragment.newInstance(sourceWithData!!, sourcePosition)
                     else -> Fragment()
@@ -131,11 +129,13 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
             fragTransaction.addSharedElement(sharedElement, sharedElement.transitionName)
         }
 
-        fragTransaction
-            .setReorderingAllowed(true)
-            .replace(R.id.source_frame_container, fragment, fragment.javaClass.simpleName)
-            .addToBackStack(fragment.javaClass.simpleName)
-            .commit()
+        if (!fm.isDestroyed) {
+            fragTransaction
+                .setReorderingAllowed(true)
+                .replace(R.id.source_frame_container, fragment, fragment.javaClass.simpleName)
+                .addToBackStack(fragment.javaClass.simpleName)
+                .commit()
+        }
     }
 
     /**
@@ -147,17 +147,6 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      */
     override fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int) =
         configureAndShowFragment(FRAG_SOURCES_DETAIL, sourceWithData, imageView, itemPosition)
-
-    /**
-     * Get the associated fragment with the given fragment key.
-     * @param fragmentKey the given fragment key from witch get the key.
-     * @return the corresponding fragment instance.
-     */
-    private fun getFragFromKey(fragmentKey: Int): Fragment = when(fragmentKey) {
-        FRAG_SOURCES_LIST -> SourceListFragment()
-        FRAG_SOURCES_DETAIL -> SourceDetailFragment()
-        else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
-    }
 
     // --------------
     // ACTION
@@ -174,8 +163,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      */
     @Suppress("unused_parameter", "Unchecked_cast")
     fun onClickInfo(v: View) {
-        get<ImageRouter> { parametersOf(this) }
-            .openShowImages(WHO_OWNS_WHAT as ArrayList<Any>)
+        imageRouter.openShowImages(WHO_OWNS_WHAT as ArrayList<Any>)
     }
 
     // --------------
