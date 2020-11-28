@@ -22,12 +22,16 @@ internal fun Document?.correctBastaMediaUrl(): Document? =
             if (it.attr(CLASS) == PUCE) { it.remove(); return@forEach }
 
             correctSrcSetUrls(it)
+            it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
 
-            val picture = it.parent()
-            val url = it.attr(SRC).toFullUrl(BASTAMAG_BASE_URL)
-            picture.parent().appendElement(a).attr(HREF, url).append(it.outerHtml())
-
-            toRemove.add(picture)
+            val parent = it.parent()
+            if (parent.`is`(PICTURE)) {
+                parent.parent().appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
+                toRemove.add(parent)
+            } else {
+                parent.appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
+                toRemove.add(it)
+            }
         }
         toRemove.forEach { it.remove() }
 

@@ -13,7 +13,10 @@
     <org.desperu.independentnews.views.FontTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/first_start_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_large_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_gravity="center_vertical|end"
         android:textColor="@color/list_item_bg_collapsed"
         android:textSize="@dimen/appbar_title_text_size"
         android:text="@string/fragment_first_start_button"
