@@ -5,6 +5,8 @@ import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.Article
+import org.koin.core.KoinComponent
+import org.koin.core.get
 
 /**
  * View Model witch provide data for article item.
@@ -17,9 +19,10 @@ import org.desperu.independentnews.models.Article
  * @property article the given article data for this view model to set.
  * @property router the router that allows redirection of the user to set.
  */
-class ArticleItemViewModel(val article: Article,
-                           private val router: ArticleRouter
-): ViewModel() {
+class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
+
+    // FOR DATA
+    private val router: ArticleRouter get() = get()
 
     // ------------
     // LISTENERS

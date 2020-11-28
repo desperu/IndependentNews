@@ -12,18 +12,15 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
  *
  * @property ideNewsRepository      the app repository interface witch provide database and network access.
  * @property articleListInterface   the article list interface witch provide fragment interface.
- * @property router                 the article router interface witch provide user redirection.
  *
  * @constructor Instantiates a new ArticleListViewModel.
  *
  * @param ideNewsRepository         the app repository interface witch provide database and network
  *                                  access to set.
  * @param articleListInterface      the article list interface witch provide fragment interface to set.
- * @param router                    the article router interface witch provide user redirection to set.
  */
 class ArticleListViewModel(private val ideNewsRepository: IndependentNewsRepository,
-                           private val articleListInterface: ArticleListInterface,
-                           private val router: ArticleRouter
+                           private val articleListInterface: ArticleListInterface
 ): ViewModel() {
 
     // FOR DATA
@@ -107,7 +104,7 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
     private fun updateRecyclerData() = viewModelScope.launch(Dispatchers.Main) {
         articleList?.let {
             articleListInterface.getRecyclerAdapter()?.apply {
-                updateList(it.map { article -> ArticleItemViewModel(article, router) }.toMutableList())
+                updateList(it.map { article -> ArticleItemViewModel(article) }.toMutableList())
                 notifyDataSetChanged()
             }
         }
@@ -127,7 +124,7 @@ class ArticleListViewModel(private val ideNewsRepository: IndependentNewsReposit
 
             if (isFiltered)
                 this.filteredList = this@ArticleListViewModel.filteredList!!.map { article ->
-                    ArticleItemViewModel(article, router)
+                    ArticleItemViewModel(article)
                 }.toMutableList()
 
             this.isFiltered = isFiltered

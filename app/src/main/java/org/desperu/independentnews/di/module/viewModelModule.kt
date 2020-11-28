@@ -28,20 +28,8 @@ val viewModelModule = module {
     viewModel { (fragment: BaseBindingFragment) ->
         ArticleListViewModel(
             get(),
-            get { parametersOf(fragment) }, // TODO remove from parameter, and call get with KoinComponent support
-            get()
+            get { parametersOf(fragment) }
         )
-    }
-
-    /**
-     * To handle definition error
-     */
-    single {
-//        ArticleRouter()
-        // TODO try to separate view Model module by activity.
-        //  should be better to use factory koin instance,
-        //  and no cast for interface, and no module for frag, only activity
-        //  ----It's not the problem, koin module error but above, the real error !!! ------
     }
 
     /**

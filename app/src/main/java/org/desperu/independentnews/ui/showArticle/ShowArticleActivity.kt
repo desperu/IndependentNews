@@ -12,6 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_show_article.*
@@ -24,6 +25,7 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.Article
@@ -280,8 +282,14 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
 //            alphaViewAnimation(article_title, 0)
             scaleViewAnimation(article_title, 150)
+            article_title.postOnAnimation { article_title.setScale(1f) } // To prevent anim error...
             alphaViewAnimation(listOf(web_view), -50)
             fromBottomAnimation(web_view, -50)
+
+            val views = listOf(article_source_name, article_source_image, article_subtitle,
+            article_author, article_date, article_title, web_view)
+
+            views.forEach { it.postOnAnimationDelayed(1000L) { it.clearAnimation() } }
         }
     }
 

@@ -139,17 +139,6 @@
                         android:textStyle="italic"
                         app:setDate="@{viewModel.article.publishedDate}"/>
 
-                    <androidx.core.widget.ContentLoadingProgressBar
-                        style="?android:attr/progressBarStyleLargeInverse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_large_margin"
-                        android:theme="@style/ProgressBarTheme"
-                        android:layout_alignEnd="@id/image"
-                        android:layout_alignStart="@id/image"
-                        android:layout_alignTop="@id/image"
-                        android:layout_alignBottom="@id/image"/>
-
                     <ImageView
                         android:id="@+id/image"
                         android:layout_width="@dimen/item_article_image_width_height"
