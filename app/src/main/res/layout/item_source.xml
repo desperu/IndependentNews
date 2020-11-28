@@ -13,8 +13,9 @@
         android:id="@+id/item_source_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/default_middle_margin"
-        android:layout_marginBottom="@dimen/default_middle_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:tag="item_source"
         app:cardPreventCornerOverlap="true"
         app:cardCornerRadius="@dimen/item_article_corner_radius"
         app:cardElevation="@dimen/default_elevation"
@@ -30,11 +31,13 @@
             android:padding="@dimen/default_little_margin"
             android:cropToPadding="true"
             android:scaleType="fitCenter"
-            android:background="@drawable/source_border_disabled"
+            android:background="@drawable/source_rect_disabled"
             android:onClick="@{viewModel.onClickImage}"
             app:setLogo="@{viewModel.sourceWithData.source.name}"
             app:myBackgroundColor="@{viewModel.sourceWithData.source.name}"
-            app:myPadding="@{viewModel.sourceWithData.source.name}" />
+            app:myPadding="@{viewModel.sourceWithData.source.name}"
+            tools:src="@drawable/logo_bastamag"
+            tools:background="@color/bastamag_background"/>
 
     </androidx.cardview.widget.CardView>
 

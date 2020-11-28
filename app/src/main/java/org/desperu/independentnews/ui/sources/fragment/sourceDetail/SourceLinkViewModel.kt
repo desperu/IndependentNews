@@ -22,7 +22,7 @@ class SourceLinkViewModel(
 ) : ViewModel(), KoinComponent {
 
     // FOR DATA
-    private val router: SourceRouter = get()
+    private val router: SourceRouter get() = get()
     val sourcePage = sourceWithData.sourcePages.getOrNull(0)
 
     /**

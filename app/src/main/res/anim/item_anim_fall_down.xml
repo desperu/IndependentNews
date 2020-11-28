@@ -14,8 +14,8 @@
     <scale
         android:fromXScale="10%"
         android:fromYScale="10%"
-        android:toXScale="110%"
-        android:toYScale="110%"
+        android:toXScale="105%"
+        android:toYScale="105%"
         android:pivotX="50%"
         android:pivotY="50%"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator" />

@@ -30,6 +30,7 @@
                     android:layout_width="@dimen/article_image_min_width_height"
                     android:layout_height="@dimen/article_image_min_width_height"
                     android:layout_marginVertical="@dimen/default_margin"
+                    android:tag="frag_source_detail"
                     app:cardPreventCornerOverlap="true"
                     app:cardCornerRadius="@dimen/item_article_corner_radius"
                     app:cardElevation="@dimen/default_elevation"
@@ -50,7 +51,8 @@
                         android:padding="@dimen/default_little_margin"
                         android:cropToPadding="true"
                         android:scaleType="fitCenter"
-                        android:background="@drawable/source_border_disabled"
+                        android:background="@drawable/source_round_disabled"
+                        android:onClick="@{viewModel.onClickEnable}"
                         app:setLogo="@{viewModel.sourceWithData.source.name}"
                         app:myBackgroundColor="@{viewModel.sourceWithData.source.name}"
                         app:myPadding="@{viewModel.sourceWithData.source.name}" />

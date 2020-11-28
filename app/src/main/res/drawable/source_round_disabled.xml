@@ -3,9 +3,8 @@
     android:shape="oval">
 
     <size
-        android:height="180dp"
-        android:width="180dp" />
-<!--    TODO check on little screen -->
+        android:height="@dimen/fragment_source_drawable_size"
+        android:width="@dimen/fragment_source_drawable_size" />
 
     <gradient
         android:centerX="1"

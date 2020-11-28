@@ -189,6 +189,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         transitionSet.addTransition(
             TransitionInflater.from(this).inflateTransition(android.R.transition.move)
         )
+        transitionSet.addTransition(SourceTransition())
         fragment.sharedElementEnterTransition = transitionSet
 
         // 3. Enter Transition for New Fragment

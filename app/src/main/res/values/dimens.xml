@@ -93,7 +93,7 @@
     <!-- Sources Activity -->
     <dimen name="item_source_image_height">200dp</dimen> <!-- TODO to support all size screen and perfect height ...
                                                                check for other not already supported -->
-    <dimen name="fragment_source_detail_image_height">250dp</dimen>
+    <dimen name="fragment_source_drawable_size">180dp</dimen>
 
     <!-- Show images Activity -->
     <dimen name="status_bar_height">24dp</dimen>

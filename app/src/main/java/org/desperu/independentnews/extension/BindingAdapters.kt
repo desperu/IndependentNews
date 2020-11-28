@@ -250,9 +250,16 @@ fun Button.myBackgroundColor(sourceWithData: SourceWithData?) {
  */
 @BindingAdapter("myBackground")
 fun View.myBackground(enabled: Boolean?) {
+    val isItem = tag == "item_source"
+
     setBackgroundResource(
-        if (enabled != null && !enabled) R.drawable.source_border_disabled
-        else R.drawable.source_border_enabled
+        if (isItem) {
+            if (enabled != null && !enabled) R.drawable.source_rect_disabled
+            else R.drawable.source_rect_enabled
+        } else {
+            if (enabled != null && !enabled) R.drawable.source_round_disabled
+            else R.drawable.source_round_enabled
+        }
     )
 }
 
