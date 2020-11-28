@@ -20,8 +20,7 @@
 
     <!-- Main Activity -->
     <!-- First Start -->
-    <dimen name="first_start_fab_size">56dp</dimen>
-    <dimen name="first_start_fab_image_size">56dp</dimen>
+    <dimen name="first_start_margin">30dp</dimen>
     <!-- Fragment Article List -->
     <dimen name="recycler_view_padding_top">20dp</dimen>
     <dimen name="no_article_find_text_size">50sp</dimen>

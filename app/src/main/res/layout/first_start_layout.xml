@@ -10,44 +10,23 @@
     android:gravity="center_horizontal"
     tools:context=".ui.main.MainActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <org.desperu.independentnews.views.FontTextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center">
-
-        <org.desperu.independentnews.views.FontTextView
-            android:id="@+id/first_start_who_owns_what"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_large_margin"
-            android:textColor="@color/list_item_bg_collapsed"
-            android:textSize="@dimen/appbar_title_text_size"
-            android:text="@string/fragment_first_start_button"
-            android:fontFamily="Annie_use_your_telescope"
-            android:gravity="start|center_horizontal" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/first_start_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/default_margin"
-            android:scaleType="center"
-            android:theme="@style/FabInfoTheme"
-            android:onClick="onClickInfo"
-            android:layout_toEndOf="@+id/first_start_who_owns_what"
-            app:srcCompat="@drawable/ic_outline_info_24"
-            app:fabSize="normal"
-            app:fabCustomSize="@dimen/first_start_fab_size"
-            app:maxImageSize="@dimen/first_start_fab_image_size"
-            app:elevation="@dimen/default_elevation" />
-
-    </RelativeLayout>
+        android:layout_margin="@dimen/first_start_margin"
+        android:textColor="@color/list_item_bg_collapsed"
+        android:textSize="@dimen/appbar_title_text_size"
+        android:text="@string/fragment_first_start_button"
+        android:fontFamily="Annie_use_your_telescope"
+        android:drawableEnd="@drawable/ic_outline_info_white_36"
+        android:drawablePadding="@dimen/default_margin"
+        android:onClick="onClickInfo"/>
 
     <org.desperu.independentnews.views.FontTextView
         android:id="@+id/first_start_app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/first_start_fab_image_size"
+        android:layout_marginTop="@dimen/first_start_margin"
         android:gravity="center"
         android:textColor="@color/list_item_bg_collapsed"
         android:textSize="@dimen/no_article_find_text_size"

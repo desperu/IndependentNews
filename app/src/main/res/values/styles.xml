@@ -96,9 +96,4 @@
         <item name="android:background">@drawable/source_link_button</item>
     </style>
 
-    <!-- Floating Action Button Info Theme -->
-    <style name="FabInfoTheme" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/windowBackground</item>
-    </style>
-
 </resources>
