@@ -3,6 +3,7 @@ package org.desperu.independentnews.anim
 import android.content.Context
 import android.view.View
 import android.view.animation.*
+import androidx.core.view.postOnAnimationDelayed
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 /**
@@ -26,8 +27,9 @@ object AnimHelper {
             .scaleY(1f)
             .setInterpolator(FastOutSlowInInterpolator())
             .setStartDelay(startDelay)
-            .setDuration(300)
+            .setDuration(300L)
             .start()
+        clearAnimAfterPlaying(listOf(view), startDelay + 300L)
     }
 
     /**
@@ -38,10 +40,11 @@ object AnimHelper {
      */
     internal fun alphaViewAnimation(views: List<View>, startDelay: Long) {
         val animation: Animation = AlphaAnimation(0f, 1f)
-        animation.duration = 500
+        animation.duration = 500L
         animation.interpolator = AccelerateInterpolator()
         animation.startOffset = startDelay
         views.forEach { it.startAnimation(animation) }
+        clearAnimAfterPlaying(views, startDelay + animation.duration)
     }
 
     /**
@@ -57,10 +60,11 @@ object AnimHelper {
             Animation.RELATIVE_TO_PARENT, +1f,
             Animation.RELATIVE_TO_PARENT, 0f
         )
-        animation.duration = 500
+        animation.duration = 500L
         animation.interpolator = DecelerateInterpolator()
         animation.startOffset = startDelay
         view.startAnimation(animation)
+        clearAnimAfterPlaying(listOf(view), startDelay + animation.duration)
     }
 
     /**
@@ -81,5 +85,16 @@ object AnimHelper {
         anim.startOffset = startDelay
         anim.duration = 250L
         views.forEach { it.startAnimation(anim) }
+        clearAnimAfterPlaying(views, startDelay + anim.duration)
+    }
+
+    /**
+     * Clear animation after playing for each view in the given list.
+     *
+     * @param views the list of views for which clear animation.
+     * @param delay the post delay after which clear animation.
+     */
+    private fun clearAnimAfterPlaying(views: List<View>, delay: Long) {
+        views.forEach { it.postOnAnimationDelayed(delay) { it.clearAnimation() } }
     }
 }

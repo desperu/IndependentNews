@@ -1,7 +1,6 @@
 package org.desperu.independentnews.ui.showArticle
 
 import android.app.Activity
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.webkit.WebChromeClient
@@ -16,7 +15,6 @@ import org.desperu.independentnews.utils.SYS_UI_VISIBLE
 import org.desperu.independentnews.views.NoScrollWebView
 import org.koin.core.KoinComponent
 import org.koin.core.get
-import java.lang.Exception
 
 /**
  * My custom Web Chrome Client, used to show full screen video in a custom view.
@@ -38,7 +36,7 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
     private var mCustomView: View? = null
     private val customViewContainer = webView.rootView.findViewById<FrameLayout>(R.id.video_container)
     private var customViewCallback: CustomViewCallback? = null
-    private val showArticleInterface: ShowArticleInterface = get()
+    private val showArticleInterface: ShowArticleInterface? = getKoin().getOrNull()
     private val activity = webView.context as Activity
     private val sysUiHelper: SystemUiHelper = get()
 
@@ -76,26 +74,19 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
 
         // Configure Ui for full screen video
         sysUiHelper.setDecorUiVisibility(SYS_UI_FULL_HIDE)
-        sysUiHelper.setOrientation(LANDSCAPE)
+        sysUiHelper.setOrientation(LANDSCAPE) // Not needed for new api
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)// TODO disable auto screen off, need to check, and if good serialize
-        showArticleInterface.saveScrollPosition()                               //  not good ... find another way !!
+        showArticleInterface?.saveScrollPosition()                              //  not good ... find another way !!
 
-        showArticleInterface.inCustomView = true
+        showArticleInterface?.inCustomView = true
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        try {
-            // Update web view margins...
-            if (newProgress < 50) showArticleInterface.updateWebViewMargins()
-            // Update web view design.
-            else if (newProgress > 70) showArticleInterface.updateWebViewDesign()
-        } catch (e: Exception) {
-            Log.e(
-                "WebChrome-onProgress",
-                "Error while getting koin instance, the activity is closed ..."
-            )
-        }
+        // Update web view margins...
+        if (newProgress < 50) showArticleInterface?.updateWebViewMargins()
+        // Update web view design.
+        else if (newProgress > 70) showArticleInterface?.updateWebViewDesign()
     }
 
     override fun onHideCustomView() {
@@ -115,8 +106,8 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         // Restore Ui state
         sysUiHelper.setDecorUiVisibility(SYS_UI_VISIBLE)
         sysUiHelper.setOrientation(FULL_USER)
-        showArticleInterface.restoreScrollPosition()
+        showArticleInterface?.restoreScrollPosition()
 
-        showArticleInterface.inCustomView = false
+        showArticleInterface?.inCustomView = false
     }
 }

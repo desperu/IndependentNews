@@ -282,14 +282,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
 //            alphaViewAnimation(article_title, 0)
             scaleViewAnimation(article_title, 150)
-            article_title.postOnAnimation { article_title.setScale(1f) } // To prevent anim error...
+            article_title.postOnAnimationDelayed(450) { article_title.setScale(1f) } // To prevent anim error...
             alphaViewAnimation(listOf(web_view), -50)
             fromBottomAnimation(web_view, -50)
-
-            val views = listOf(article_source_name, article_source_image, article_subtitle,
-            article_author, article_date, article_title, web_view)
-
-            views.forEach { it.postOnAnimationDelayed(1000L) { it.clearAnimation() } }
         }
     }
 
@@ -376,20 +371,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Restore the saved scroll position of the scroll view.
      */
     override fun restoreScrollPosition() { sv.doOnPreDraw { scrollTo(scrollPosition) } }
-
-    /**
-     * Set decor system ui visibility.
-     *
-     * @param flags the decor system ui visibility flags to set.
-     */
-    override fun setDecorUiVisibility(flags: Int) { window.decorView.systemUiVisibility = flags }
-
-    /**
-     * Set requested screen orientation.
-     *
-     * @param flags the screen orientation flags to set.
-     */
-    override fun setOrientation(flags: Int) { requestedOrientation = flags }
 
     /**
      * Update web view design, css style and margins.

@@ -21,20 +21,6 @@ interface ShowArticleInterface {
     fun restoreScrollPosition()
 
     /**
-     * Set decor view system Ui visibility flags.
-     *
-     * @param flags the system ui flags to set.
-     */
-    fun setDecorUiVisibility(flags: Int)
-
-    /**
-     * Set the screen orientation flags.
-     *
-     * @param flags the orientation flags to set.
-     */
-    fun setOrientation(flags: Int)
-
-    /**
      * Update web view design, css style and margins.
      */
     fun updateWebViewDesign()

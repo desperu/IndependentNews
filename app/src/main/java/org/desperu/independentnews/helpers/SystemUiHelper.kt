@@ -1,6 +1,6 @@
 package org.desperu.independentnews.helpers
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 
 /**
  * SystemUiHelper witch provide functions for system ui.
@@ -33,11 +33,13 @@ interface SystemUiHelper {
  * Implementation of the SystemUiHelper which use an Activity instance
  * to provide helper functions for system ui navigation bars, orientation ...
  *
+ * @property activity the Activity instance used to provide system ui helper functions.
+ *
  * @constructor Instantiate a new SystemUiHelperImpl.
  *
- * @param activity the Activity instance used to provide system ui helper functions.
+ * @param activity the Activity instance used to provide system ui helper functions to set.
  */
-class SystemUiHelperImpl(private val activity: Activity) : SystemUiHelper {// TODO in the good folder/place ??
+class SystemUiHelperImpl(private val activity: AppCompatActivity) : SystemUiHelper {
 
     /**
      * Set decor system ui visibility for the activity.
