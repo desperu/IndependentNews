@@ -2,6 +2,8 @@ package org.desperu.independentnews.di.module.ui
 
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
+import org.desperu.independentnews.helpers.SnackBarHelper
+import org.desperu.independentnews.helpers.SnackBarHelperImpl
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
@@ -20,6 +22,15 @@ val mainModule = module {
      */
     single { (activity: BaseActivity) ->
         activity as MainInterface
+    }
+
+    /**
+     * Provides a SnackBarHelper interface from the instance of MainActivity.
+     */
+    single<SnackBarHelper> { (activity: BaseActivity) ->
+        SnackBarHelperImpl(
+            activity
+        )
     }
 
     /**
@@ -47,5 +58,4 @@ val mainModule = module {
     factory { (fragment: BaseBindingFragment) ->
         fragment as ArticleListInterface
     }
-
 }

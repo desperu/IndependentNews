@@ -26,7 +26,16 @@ const val numberOfPage = 4
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
 // Who owns what image list
-val WHO_OWNS_WHAT = arrayListOf(R.drawable.who_owns_what_2019, R.drawable.who_owns_what_2016)
+internal val WHO_OWNS_WHAT = arrayListOf(R.drawable.who_owns_what_2019, R.drawable.who_owns_what_2016)
+
+// SnackBar Keys
+const val SEARCH = 0
+const val FIND = 1
+const val FETCH = 2
+const val ERROR = 3
+const val END_FIND = 4
+const val END_NOT_FIND = 5
+const val END_ERROR = 6
 
 
 // --- FOR FILTERS ---
@@ -52,9 +61,9 @@ const val RESET_DIALOG = 4
 // --- FOR UTILS ---
 
 // To Convert Date
-val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
+internal val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre")
-val imageSuffix = listOf(".png", ".jpg", ".jpeg")
+internal val imageSuffix = listOf(".png", ".jpg", ".jpeg")
 
 
 // --- FOR SERVICES ---

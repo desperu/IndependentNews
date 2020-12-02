@@ -48,4 +48,15 @@ interface MainInterface {
      * @param isFiltered true if the adapter is filtered, false otherwise.
      */
     fun updateFiltersMotionState(isFiltered: Boolean)
+
+    /**
+     * Show new downloaded articles.
+     */
+    fun showNewArticles()
+
+    /**
+     * Refresh data for the application, fetch data from Rss and Web, and persist them
+     * into the database.
+     */
+    fun refreshData()
 }

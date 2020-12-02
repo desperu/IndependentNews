@@ -24,12 +24,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.layout_filter_motion.*
 import kotlinx.android.synthetic.main.nav_drawer.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
@@ -106,6 +106,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     private fun configureKoinDependency() {
         get<MainInterface> { parametersOf(this@MainActivity) }
+        get<SnackBarHelper> { parametersOf(this@MainActivity) }
         get<ArticleRouter> { parametersOf(this@MainActivity) }
     }
 
@@ -171,8 +172,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_sources -> showSourcesActivity()
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
             R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
-            R.id.activity_main_drawer_about -> this.showAboutDialog()
-            R.id.activity_main_drawer_help -> this.showHelpDocumentation()
+            R.id.activity_main_drawer_about -> showAboutDialog()
+            R.id.activity_main_drawer_help -> showHelpDocumentation()
             else -> {}
         }
         showTabLayout()
@@ -261,7 +262,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             showFirstStart(true)
             // TODO check internet state, if no connexion don't set first start to false,
             //  disable menu drawer motion event detection ??
-            ideNewsRepository.createSourcesForFirstStart()
+            //  save state of each download to know and retry after
+            ideNewsRepository.createSourcesForFirstStart() // TODO check if there's in db
             ideNewsRepository.fetchRssArticles()
             setAlarmAtFirstStart()
             isFirstTime = false
@@ -282,8 +284,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Refresh data for the application, fetch data from Rss and Web, and persist them
      * into the database.
      */
-    private fun refreshData() = lifecycleScope.launch(Dispatchers.IO) {
-        ideNewsRepository.refreshData()
+    override fun refreshData() {
+        lifecycleScope.launch(Dispatchers.Unconfined) { ideNewsRepository.refreshData() }
     }
 
     /**
@@ -313,6 +315,14 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             fragmentKey = NO_FRAG
             if (coordinator_layout.isShown) showFragment(fragmentKey, todayArticles)
         }
+    }
+
+    /**
+     * Show new downloaded articles.
+     */
+    override fun showNewArticles() {
+        fragmentKey = NO_FRAG
+        onResume()
     }
 
     /**

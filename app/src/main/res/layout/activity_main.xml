@@ -26,7 +26,9 @@
             android:id="@+id/filters_motion_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutDescription="@xml/scene_filter" />
+            app:layoutDescription="@xml/scene_filter"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
+            app:layout_dodgeInsetEdges="bottom"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
