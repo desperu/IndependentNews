@@ -25,6 +25,7 @@ internal fun Document?.correctUrlLink(baseUrl: String): Document? =
         // TODO properly handle note redirect and pdf, preview and redirect
         select(a).forEach {
             when {
+                it.attr(HREF).isNullOrBlank() -> it.removeAttr(HREF) // Check there's no error
                 it.attr(ONCLICK).isNotBlank() -> it.removeAttr(ONCLICK)
                 else -> it.attrToFullUrl(HREF, baseUrl)
             }

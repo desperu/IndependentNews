@@ -182,7 +182,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-            url?.let { updateDesign(it) }
+            url?.let { if (it == actualUrl) updateDesign(it) } // Check if clause
             super.onPageFinished(view, url)
         }
 
