@@ -60,7 +60,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      * @param data the data list to display to the user into the message.
      */
     override suspend fun showMessage(snackKey: Int, data: List<String>) = withContext(Dispatchers.Main) {
-        if (snackBar == null || snackKey == SEARCH)
+        if (snackBar == null)
             initSnackBar(snackKey, data)
         else
             updateSnackBar(snackKey, data)
@@ -144,7 +144,12 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     private fun getMessage(snackKey: Int, data: List<String>) = when(snackKey) {
         SEARCH -> resource.getString(R.string.snack_bar_message_search_articles, data[0])
         FIND -> resource.getString(R.string.snack_bar_message_find_articles, data[0], data[1])
-        FETCH -> resource.getString(R.string.snack_bar_message_fetch_list, data[0], data[1], data[2])
+        FETCH -> resource.getString(
+            R.string.snack_bar_message_fetch_list,
+            data[0],
+            data[1],
+            data[2]
+        )
         ERROR -> resource.getString(R.string.snack_bar_message_error, data[0])
         END_FIND -> resource.getString(R.string.snack_bar_message_end, data[0])
         END_NOT_FIND -> resource.getString(R.string.snack_bar_message_not_find)
@@ -179,7 +184,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
                 ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, R.color.list_item_bg_collapsed, null))
 
             END_ERROR -> snackBar
-                ?.setAction(R.string.snack_bar_button_retry) { mainInterface.refreshData() }
+                ?.setAction(R.string.snack_bar_button_retry) { mainInterface.refreshData(); snackBar = null }
                 ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, android.R.color.holo_orange_dark, null))
 
             else -> snackBar?.setAction(null, null)

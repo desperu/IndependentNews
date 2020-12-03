@@ -31,14 +31,20 @@ const val REPORT_SEC_INVENTER = "Alternatives"
 const val BASTAMAG = "Basta !"
 const val REPORTERRE = "Reporterre"
 
+// Source data type (for snackbar message)
+const val RSS = " (RSS)"
+const val CATEGORY = " (Categories)"
+
 // Source for database
 val BASTAMAG_SOURCE = Source(
     name = BASTAMAG,
-    url = BASTAMAG_BASE_URL
+    url = BASTAMAG_BASE_URL,
+    isEnabled = true
 )
 val REPORTERRE_SOURCE = Source(
     name = REPORTERRE,
-    url = REPORTERRE_BASE_URL
+    url = REPORTERRE_BASE_URL,
+    isEnabled = true
 )
 
 

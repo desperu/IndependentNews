@@ -285,7 +285,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * into the database.
      */
     override fun refreshData() {
-        lifecycleScope.launch(Dispatchers.Unconfined) { ideNewsRepository.refreshData() }
+        // TODO check connexion and show dialog of not available
+        lifecycleScope.launch(Dispatchers.IO) { ideNewsRepository.refreshData() }
     }
 
     /**

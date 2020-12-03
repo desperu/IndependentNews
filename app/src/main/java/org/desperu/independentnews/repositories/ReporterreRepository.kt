@@ -3,6 +3,8 @@ package org.desperu.independentnews.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.helpers.FetchHelper.catchException
+import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
@@ -10,11 +12,9 @@ import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
 import org.desperu.independentnews.models.web.reporterre.ReporterreSourcePage
 import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
-import org.desperu.independentnews.utils.REPORTERRE_EDITO_URL
-import org.desperu.independentnews.utils.REPORT_SEC_DECRYPTER
-import org.desperu.independentnews.utils.REPORT_SEC_INVENTER
-import org.desperu.independentnews.utils.REPORT_SEC_RESISTER
+import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
+import org.koin.java.KoinJavaComponent.getKoin
 
 /**
  * Repository interface to get data from Reporterre services.
@@ -66,18 +66,25 @@ class ReporterreRepositoryImpl(
     private val articleRepository: ArticleRepository
 ): ReporterreRepository {
 
+    // FOR DATA
+    private val snackBarHelper: SnackBarHelper? get() = getKoin().getOrNull()
+
     /**
      * Returns the list of articles from the Rss flux of Reporterre.
      *
      * @return the list of articles from the Rss flux of Reporterre.
      */
-    override suspend fun fetchRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun fetchRssArticles(): List<Article>? = catchException(REPORTERRE + RSS) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
             val articleList = rssArticleList.map { it.toArticle() }
             articleRepository.updateTopStory(articleList)
-            fetchArticleList(articleRepository.getNewArticles(articleList))
+
+            val newArticles = articleRepository.getNewArticles(articleList)
+            snackBarHelper?.showMessage(FIND, listOf(REPORTERRE + RSS, newArticles.size.toString()))
+
+            fetchArticleList(newArticles)
         } else
             null
     }
@@ -87,7 +94,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the categories list of articles from the Web site of Reporterre.
      */
-    override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun fetchCategories(): List<Article>? = catchException(REPORTERRE + CATEGORY) {
         val categories = listOf(REPORT_SEC_DECRYPTER, REPORT_SEC_RESISTER, REPORT_SEC_INVENTER)
         val articleList = mutableListOf<Article>()
 
@@ -96,7 +103,10 @@ class ReporterreRepositoryImpl(
             articleList.addAll(ReporterreCategory(responseBody).getArticleList())
         }
 
-        fetchArticleList(articleRepository.getNewArticles(articleList))
+        val newArticles = articleRepository.getNewArticles(articleList)
+        snackBarHelper?.showMessage(FIND, listOf(REPORTERRE + CATEGORY, newArticles.size.toString()))
+
+        fetchArticleList(newArticles)
     }
 
     /**
@@ -132,9 +142,14 @@ class ReporterreRepositoryImpl(
         articleList: List<Article>
     ): List<Article> = withContext(Dispatchers.IO) {
 
-        articleList.forEach {
-            val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(it.url)))
-            reporterreArticle.toArticle(it)
+        articleList.forEachIndexed { index, article ->
+            val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(article.url)))
+            reporterreArticle.toArticle(article)
+
+            snackBarHelper?.showMessage(
+                FETCH,
+                listOf(REPORTERRE, (index + 1).toString(), articleList.size.toString())
+            )
         }
 
         articleList

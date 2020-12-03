@@ -3,6 +3,8 @@ package org.desperu.independentnews.repositories
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.helpers.FetchHelper.catchException
+import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.models.web.bastamag.BastamagArticle
@@ -10,11 +12,9 @@ import org.desperu.independentnews.models.web.bastamag.BastamagCategory
 import org.desperu.independentnews.models.web.bastamag.BastamagSourcePage
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
-import org.desperu.independentnews.utils.BASTAMAG_EDITO_URL
-import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
-import org.desperu.independentnews.utils.BASTA_SEC_INVENTER
-import org.desperu.independentnews.utils.BASTA_SEC_RESISTER
+import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
+import org.koin.java.KoinJavaComponent.getKoin
 
 /**
  * Repository interface to get Bastamag data from services.
@@ -66,18 +66,25 @@ class BastamagRepositoryImpl(
     private val articleRepository: ArticleRepository
 ): BastamagRepository {
 
+    // FOR DATA
+    private val snackBarHelper: SnackBarHelper? get() = getKoin().getOrNull()
+
     /**
      * Returns the list of articles from the Rss flux of Bastamag.
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    override suspend fun fetchRssArticles(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun fetchRssArticles(): List<Article>? = catchException(BASTAMAG + RSS) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
             val articleList = rssArticleList.map { it.toArticle() }
             articleRepository.updateTopStory(articleList)
-            fetchArticleList(articleRepository.getNewArticles(articleList))
+
+            val newArticles = articleRepository.getNewArticles(articleList)
+            snackBarHelper?.showMessage(FIND, listOf("$BASTAMAG (RSS)", newArticles.size.toString()))
+
+            fetchArticleList(newArticles)
         } else
             null
     }
@@ -87,19 +94,22 @@ class BastamagRepositoryImpl(
      *
      * @return the categories list of articles from the Web site of Bastamag.
      */
-    override suspend fun fetchCategories(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun fetchCategories(): List<Article>? = catchException(BASTAMAG + CATEGORY) {
         val categories = listOf(BASTA_SEC_DECRYPTER, BASTA_SEC_RESISTER, BASTA_SEC_INVENTER)
         val number = listOf(0, 10, 20, 30, 40)
         val articleList = mutableListOf<Article>()
 
-        categories.forEach {category ->
-            number.forEach {number ->
+        categories.forEach { category ->
+            number.forEach { number ->
                 val responseBody = webService.getCategory(category, number.toString())
                 articleList.addAll(BastamagCategory(responseBody).getArticleList())
             }
         }
 
-        fetchArticleList(articleRepository.getNewArticles(articleList))
+        val newArticles = articleRepository.getNewArticles(articleList)
+        snackBarHelper?.showMessage(FIND, listOf("$BASTAMAG (Categories)", newArticles.size.toString()))
+
+        fetchArticleList(newArticles)
     }
 
     /**
@@ -135,9 +145,14 @@ class BastamagRepositoryImpl(
         articleList: List<Article>
     ): List<Article> = withContext(Dispatchers.IO) {
 
-        articleList.forEach {
-            val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(it.url)))
-            bastamagArticle.toArticle(it)
+        articleList.forEachIndexed { index, article ->
+            val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(article.url)))
+            bastamagArticle.toArticle(article)
+
+            snackBarHelper?.showMessage(
+                FETCH,
+                listOf(BASTAMAG, (index + 1).toString(), articleList.size.toString())
+            )
         }
 
         articleList

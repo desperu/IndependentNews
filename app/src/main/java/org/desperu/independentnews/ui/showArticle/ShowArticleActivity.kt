@@ -282,7 +282,10 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
 //            alphaViewAnimation(article_title, 0)
             scaleViewAnimation(article_title, 150)
-            article_title.postOnAnimationDelayed(450) { article_title.setScale(1f) } // To prevent anim error...
+            article_title.postOnAnimationDelayed(500) {
+                article_title.setScale(1f) // To prevent anim error...
+                article_title.clearAnimation() // Re set here because override clear anim in helper
+            }
             alphaViewAnimation(listOf(web_view), -50)
             fromBottomAnimation(web_view, -50)
         }

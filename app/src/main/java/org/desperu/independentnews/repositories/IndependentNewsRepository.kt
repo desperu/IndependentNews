@@ -5,11 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.extension.setSourceForEach
+import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
+import org.koin.java.KoinJavaComponent.getKoin
 import java.util.*
 
 /**
@@ -124,6 +126,7 @@ class IndependentNewsRepositoryImpl(
 
     // FOR DATA
     private var sources: List<Source>? = null
+    private val snackBarHelper: SnackBarHelper? get() = getKoin().getOrNull()
 
     // -----------------
     // FETCH DATA (WEB)
@@ -138,22 +141,21 @@ class IndependentNewsRepositoryImpl(
     override suspend fun fetchRssArticles(): List<Long> = withContext(Dispatchers.IO) {
         setSources()
         val rssArticleList = mutableListOf<Article>()
-        try {
-            sources?.forEach { source ->
-                if (source.name == BASTAMAG)
-                    bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
-                if (source.name == REPORTERRE)
-                    reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
-            }
-        } catch (e: Exception) {
-          Log.e("IdeRepo-fetchRssArticle", e.message.toString())
+
+        // TODO serialize with base (BaseNetworkRepo) and use when to get good repo
+        sources?.forEach { source ->
+
+            if (source.name == BASTAMAG)
+                bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
+            if (source.name == REPORTERRE)
+                reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
         }
 
         articleRepository.persist(rssArticleList)
     }
 
     /**
-     * Fetch the categories list of articles from the Web Site for enabled all sources,
+     * Fetch the categories list of articles from the Web Site for all enabled sources,
      * and persist them in database.
      *
      * @return the id list of persisted articles.
@@ -161,15 +163,12 @@ class IndependentNewsRepositoryImpl(
     override suspend fun fetchCategories(): List<Long> = withContext(Dispatchers.IO) {
         setSources()
         val articleList = mutableListOf<Article>()
-        try {
-            sources?.forEach { source ->
-                if (source.name == BASTAMAG)
-                    bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
-                if (source.name == REPORTERRE)
-                    reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
-            }
-        } catch (e: Exception) {
-            Log.e("IdeRepo-fetchCategories", e.message.toString())
+
+        sources?.forEach { source ->
+            if (source.name == BASTAMAG)
+                bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
+            if (source.name == REPORTERRE)
+                reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
         }
 
         articleRepository.persist(articleList)
@@ -183,8 +182,15 @@ class IndependentNewsRepositoryImpl(
      * @return the number of row affected for removed articles.
      */
     override suspend fun refreshData(): Int = withContext(Dispatchers.IO) {
-        fetchRssArticles()
-        fetchCategories()
+        var newArticles = 0
+        newArticles += fetchRssArticles().size
+        newArticles += fetchCategories().size
+
+        snackBarHelper?.showMessage(
+            if (newArticles > 0) END_FIND else END_NOT_FIND,
+            listOf(newArticles.toString())
+        )
+
         articleRepository.removeOldArticles()
     }
 
@@ -288,11 +294,11 @@ class IndependentNewsRepositoryImpl(
     // -----------------
 
     /**
-     * Set enabled sources from the database.
+     * Get enabled sources from the database.
+     * Get from database on each call to handle source state change, from a user action.
      */
     private suspend fun setSources() = withContext(Dispatchers.IO) {
-        if (sources.isNullOrEmpty())
-            sources = sourceRepository.getEnabledSources() // TODO to update
+        sourceRepository.getEnabledSources() // TODO to update, re get each time if a source state change !!! and re-get list on back sources
     }
 
     // TODO put into source repo ??
