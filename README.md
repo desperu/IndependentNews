@@ -7,7 +7,7 @@
 <div align="center">
 <p align="center">
 <a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200" xml:space="preserve"></a>
-<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="220" height="75" xml:space="preserve"></a>
+<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="220" height="70" xml:space="preserve"></a>
 </p>    
 </div>
 
@@ -26,6 +26,7 @@
  &bull; <a href="#contribution">Contribution</a> &bull; <a href="#donate">Donate</a> &bull; <a href="#license">License</a></p>
  
 <hr>
+
 *Read this in other languages: [English](README.md), [Français](README.fr.md).*
 
 <b>WARNING: THIS IS A BETA VERSION, THEREFORE YOU MAY ENCOUNTER BUGS. IF YOU DO, OPEN AN ISSUE VIA OUR GITHUB REPOSITORY.</b>

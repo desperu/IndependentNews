@@ -7,7 +7,7 @@
 <div align="center">
 <p align="center">
 <a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200" xml:space="preserve"></a>
-<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="220" height="75" xml:space="preserve"></a>
+<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="220" height="70" xml:space="preserve"></a>
 </p>
 </div>
 
@@ -22,10 +22,11 @@
 
 <hr>
 <p align="center"><a href="#screenshots">Screenshots</a> &bull; <a href="#description">Description</a>
- &bull; <a href="#fonctionnalités">Fonctionnalités</a> &bull; <a href="#mises%20à%20jours">Mises à jours</a> &bull; <a href="#contribution">Contribution</a>
- &bull; <a href="#dons">Dons</a> &bull; <a href="#licence">Licence</a></p>
+ &bull; <a href="#fonctionnalités">Fonctionnalités</a> &bull; <a href="#mises%20à%20jours">Mises à jours</a> &bull;
+  <a href="#contribution">Contribution</a> &bull; <a href="#dons">Dons</a> &bull; <a href="#licence">Licence</a></p>
  
 <hr>
+
 *Lire dans une autre langue: [English](README.md), [Français](README.fr.md).*
 
 <b>ATTENTION: CECI EST UNE VERSION BÊTA, PAR CONSÉQUENT VOUS POUVEZ RENCONTRER DES BUGS. SI CELA VOUS ARRIVE, MERCI D'OUVRIR UNE ISSUE SUR NOTRE DÉPÔT GITHUB.</b>
