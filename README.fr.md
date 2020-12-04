@@ -1,18 +1,20 @@
-<p align="center"><img src="java/res/drawable-xxxhdpi/app_logo.png" width="150"/></p>
+<p align="center"><img src="fastlane/metadata/github/image/app_logo.png" width="150"/></p>
 <h2 align="center"><b>Independent News</b></h2>
 <h4 align="center">Un logiciel libre, léger, regroupant des journaux indépendants pour Android.</h4>
 
-<h4 align="center>Bientôt sur Google Play Store et F-Droid !</h4>
+<h5 align="center>Bientôt sur Google Play Store et F-Droid !</h5>
 <p align="center">
-<a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" /></a>
-<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" /></a>
+<a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200"></a>
+<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="200"></a>
 </p>
 
 <p align="center">
 <a href="https://github.com/desperu/IndependentNews/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/desperu/IndependentNews.svg" ></a>
 <a href="https://www.gnu.org/licenses/gpl-3.0" alt="License: GPLv3"><img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg"></a>
 <a href="https://travis-ci.org/desperu/IndependentNews" alt="Build Status"><img src="https://travis-ci.org/desperu/IndependentNews.svg"></a>
+<!--
 <a href="https://hosted.weblate.org/engage/independentnews/" alt="Translation Status"><img src="https://hosted.weblate.org/widgets/independentnews/-/svg-badge.svg"></a>
+-->
 </p>
 <hr>
 <p align="center"><a href="#screenshots">Screenshots</a> &bull; <a href="#description">Description</a>
@@ -29,23 +31,21 @@
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1-top-story.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/1-top-story.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2-cat-ecology.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/2-cat-ecology.png)
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3-expanded-article.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/3-expanded-article.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4-filter-themes.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/4-filter-themes.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5-filter-themes-selected.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/5-filter-themes-selected.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6-show-article.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/6-show-article.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7-show-article-rest.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/7-show-article-rest.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8-web-view-page.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/8-web-view-page.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/9-sources.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/9-sources.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-source-reporterre.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/10-source-reporterre.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/11-show-image-who-owns-what-landscape.png" width="300" />](fastlane/metadata/android/en-US/images/phoneScreenshots/11-show-image-who-owns-what-landscape.png)
-[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/12-menu-drawer.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/12-menu-drawer.png)
-[<img src="fastlane/metadata/android/en-US/images/tenInchScreenshots/1-article-list.png" width="250" />](fastlane/metadata/android/en-US/images/tenInchScreenshots/1-article-list.png)
-[<img src="fastlane/metadata/android/en-US/images/tenInchScreenshots/2-landscape-show-article.png" width="405" />](fastlane/metadata/android/en-US/images/tenInchScreenshots/2-landscape-show-article.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4-filter-themes-selected.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/4-filter-themes-selected.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5-show-article.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/5-show-article.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6-show-article-rest.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/6-show-article-rest.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7-web-view-page.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/7-web-view-page.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8-sources.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/8-sources.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/9-source-reporterre.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/9-source-reporterre.png)
+[<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-menu-drawer.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/10-menu-drawer.png)
+[<img src="fastlane/metadata/android/en-US/images/tenInchScreenshots/1-landscape-show-article.png" width="405" />](fastlane/metadata/android/en-US/images/tenInchScreenshots/1-landscape-show-article.png)
+[<img src="fastlane/metadata/android/en-US/images/tenInchScreenshots/2-show-image-who-owns-what-landscape.png" width="405" />](fastlane/metadata/android/en-US/images/tenInchScreenshots/2-show-image-who-owns-what-landscape.png)
 
 ## Description
 
-Independent News est une Application Android qui propose des articles de qualité provenant de multiples médias français indépendants, c'est une liste non exhaustive.
-De nos jours, il est très difficile d'avoir accès à des informations de qualité, c'est pour cela que cette application travail à vous en fournir. Ce qui répond à un besoin important de la communauté et de la démocratie : Des Informations Libres !
-Pour cela, toutes les sources contenu dans Independent News ont été préalablement analysé par notre équipe, et doivent respecter plusieurs points :
+Independent News est une Application Android qui propose des articles de qualité provenant de plusieurs médias français indépendants, c'est une liste non exhaustive.
+De nos jours, il est très difficile d'avoir accès à des informations de qualité, c'est pour cela que cette application vous fournis un contenu de qualité. Ce qui répond à un besoin important de la communauté et de la démocratie : Des Informations Libres !
+Pour cela, toutes les sources contenu dans Independent News ont été préalablement analysé par notre équipe, et doivent respecter plusieurs critères :
 
 * Une ligne éditoriale libre
 * Pas de publicité
@@ -54,7 +54,7 @@ Pour cela, toutes les sources contenu dans Independent News ont été préalable
 * Intérêt pour l'écologie
 
 Independent News n'utilise aucun service Google. Les sites web sont analysés uniquement pour récupérer les informations nécessaires,
-cette application peut donc être utilisée sur des périphériques n'ayant pas les services Google installés. De plus, vous n'avez pas besoin de compte pour utiliser Independent News, qui est un logiciel complètement libre.
+cette application peut donc être utilisée sur des périphériques n'ayant pas les services Google installés. De plus, vous n'avez pas besoin de compte pour utiliser Independent News. C'est un logiciel complètement libre.
 
 ### Fonctionnalités
 
@@ -76,7 +76,7 @@ cette application peut donc être utilisée sur des périphériques n'ayant pas 
 
 ## Mises à jours
 
-Quand une amélioration dans le code d'Independent News est effectuée (ajout de fonctionnalité ou correction de bug), une nouvelle version est éventuellement publié. Cette version sera ua format x.xx.x . Pour obtenir cette nouvelle version, vous pouvez:
+Quand une amélioration dans le code d'Independent News est effectuée (ajout de fonctionnalité ou correction de bug), une nouvelle version est éventuellement publiée. Cette version sera au format x.xx.x . Pour obtenir cette nouvelle version, vous pouvez:
  1. Compiler la version debug de l'application vous même. C'est la façon la plus rapide pour bénéficier des dernières fonctionnalités sur votre téléphone, mais c'est la plus compliqué, nous vous recommandons donc d'utiliser l'une des autres méthodes.
  2. *(Bientôt disponible)* Ajoutez notre canal bêta sur F-Droid et installez la dernière version disponible depuis ce canal dès que nous en publions une nouvelle version.
  3. Téléchargez l'APK depuis le [Github Releases](https://github.com/desperu/IndependentNews/releases) et installez la dès que nous publions une nouvelle version.
@@ -95,7 +95,7 @@ Le plus gros est fait, le meilleur est à venir!
 
 Si vous aimez Independent News, nous serions heureux de recevoir un don de votre part. Vous pouvez directement envoyer votre don aux médias indépendants. Pour cela, rendez-vous sur la page de don de leur site web.
 
-* [Basta ! donation](https://www.bastamag.net/don)
+* [Basta !](https://www.bastamag.net/don)
 * [Reporterre](https://reporterre.net/spip.php?page=don)
 
 Dans les prochaines mises à jours, nous prévoyons d'ajouter un système de dons global, pour touts les médias indépendants, directement depuis l'application.
