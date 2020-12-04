@@ -1,0 +1,11 @@
+Independent News is an Android Application that's provide multiples french independent (free) medias, a non exhaustive list of.
+These days, it's really hard to be able to access quality informations, so this application try to help for that. It's respond to an important community and democratic need : Independent Informations.
+For that, all included sources in Independent News were parsed from our teams, and must check some needed points :
+
+* Free editorial ligne
+* No publicity
+* No interest conflict
+* Freedom vision
+* Ecology vision
+
+Independent News does not use any Google framework libraries. Websites are only parsed to fetch required info, so this app can be used on devices without Google services installed. Also, you don't need account to use Independent News, which is copylefted libre software.
