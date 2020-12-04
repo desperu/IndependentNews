@@ -2,11 +2,14 @@
 <h2 align="center"><b>Independent News</b></h2>
 <h4 align="center">Un logiciel libre, léger, regroupant des journaux indépendants pour Android.</h4>
 
-<h5 align="center>Bientôt sur Google Play Store et F-Droid !</h5>
+<hr>
+<p align="center"><b>Bientôt sur Google Play Store et F-Droid !</b></p>
+<div align="center">
 <p align="center">
-<a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200"></a>
-<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="200"></a>
+<a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200" xml:space="preserve"></a>
+<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="220" height="70" xml:space="preserve"></a>
 </p>
+</div>
 
 <p align="center">
 <a href="https://github.com/desperu/IndependentNews/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/desperu/IndependentNews.svg" ></a>
@@ -16,12 +19,13 @@
 <a href="https://hosted.weblate.org/engage/independentnews/" alt="Translation Status"><img src="https://hosted.weblate.org/widgets/independentnews/-/svg-badge.svg"></a>
 -->
 </p>
+
 <hr>
 <p align="center"><a href="#screenshots">Screenshots</a> &bull; <a href="#description">Description</a>
  &bull; <a href="#fonctionnalités">Fonctionnalités</a> &bull; <a href="#mises%20à%20jours">Mises à jours</a> &bull; <a href="#contribution">Contribution</a>
  &bull; <a href="#dons">Dons</a> &bull; <a href="#licence">Licence</a></p>
+ 
 <hr>
-
 *Lire dans une autre langue: [English](README.md), [Français](README.fr.md).*
 
 <b>ATTENTION: CECI EST UNE VERSION BÊTA, PAR CONSÉQUENT VOUS POUVEZ RENCONTRER DES BUGS. SI CELA VOUS ARRIVE, MERCI D'OUVRIR UNE ISSUE SUR NOTRE DÉPÔT GITHUB.</b>

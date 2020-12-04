@@ -2,11 +2,14 @@
 <h2 align="center"><b>Independent News</b></h2>
 <h4 align="center">A free lightweight list of independent news for Android.</h4>
 
-<h5 align="center>Nearly on the Google Play Store and F-Droid !</h5>
+<hr>
+<p align="center"><b>Nearly on the Google Play Store and F-Droid !</b></p>
+<div align="center">
 <p align="center">
-<a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200"></a>
-<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="200"></a>
-</p>
+<a href="https://f-droid.org"><img src="https://f-droid.org/wiki/images/0/06/F-Droid-button_get-it-on.png" width="200" xml:space="preserve"></a>
+<a href="https://play.google.com/store"><img src="fastlane/metadata/github/image/google-play_get-it-on.png" width="220" height="70" xml:space="preserve"></a>
+</p>    
+</div>
 
 <p align="center">
 <a href="https://github.com/desperu/IndependentNews/releases" alt="GitHub release"><img src="https://img.shields.io/github/release/desperu/IndependentNews.svg" ></a>
@@ -16,12 +19,13 @@
 <a href="https://hosted.weblate.org/engage/independentnews/" alt="Translation Status"><img src="https://hosted.weblate.org/widgets/independentnews/-/svg-badge.svg"></a>
 -->
 </p>
+
 <hr>
 <p align="center"><a href="#screenshots">Screenshots</a> &bull; <a href="#description">Description</a>
  &bull; <a href="#features">Features</a> &bull; <a href="#updates">Updates</a>
  &bull; <a href="#contribution">Contribution</a> &bull; <a href="#donate">Donate</a> &bull; <a href="#license">License</a></p>
+ 
 <hr>
-
 *Read this in other languages: [English](README.md), [Français](README.fr.md).*
 
 <b>WARNING: THIS IS A BETA VERSION, THEREFORE YOU MAY ENCOUNTER BUGS. IF YOU DO, OPEN AN ISSUE VIA OUR GITHUB REPOSITORY.</b>
@@ -40,6 +44,7 @@
 [<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/10-menu-drawer.png" width="160" />](fastlane/metadata/android/en-US/images/phoneScreenshots/10-menu-drawer.png)
 [<img src="fastlane/metadata/android/en-US/images/tenInchScreenshots/1-landscape-show-article.png" width="405" />](fastlane/metadata/android/en-US/images/tenInchScreenshots/1-landscape-show-article.png)
 [<img src="fastlane/metadata/android/en-US/images/tenInchScreenshots/2-show-image-who-owns-what-landscape.png" width="405" />](fastlane/metadata/android/en-US/images/tenInchScreenshots/2-show-image-who-owns-what-landscape.png)
+
 ## Description
 
 Independent News is an Android Application that's provide quality articles from multiples french independent (free) medias, a non exhaustive list of.
