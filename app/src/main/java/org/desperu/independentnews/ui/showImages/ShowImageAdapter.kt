@@ -3,7 +3,7 @@ package org.desperu.independentnews.ui.showImages
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
+import org.desperu.independentnews.ui.showImages.fragment.ImageFragment
 
 /**
  * Recycler view adapter for Show Images.
@@ -20,7 +20,7 @@ class ShowImageAdapter(fm: FragmentManager,
 
     override fun getCount(): Int = if (::imageList.isInitialized) imageList.size else 0
 
-    override fun getItem(position: Int): Fragment = ShowImageFragment.newInstance(imageList[position])
+    override fun getItem(position: Int): Fragment = ImageFragment.newInstance(imageList[position])
 
     /**
      * Update all item list.

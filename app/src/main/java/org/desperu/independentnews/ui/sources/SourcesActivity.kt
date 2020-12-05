@@ -37,7 +37,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     @JvmField @State var fragmentKey: Int = NO_FRAG
     private val fm = supportFragmentManager
     private var sourcePosition = -1
-    private val imageRouter get() = get<ImageRouter> { parametersOf(this) }
+    private lateinit var imageRouter: ImageRouter
 
     // --------------
     // BASE METHODS
@@ -62,6 +62,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     private fun configureKoinDependency() {
         get<SourcesInterface> { parametersOf(this) }
         get<SourceRouter> { parametersOf(this) }
+        imageRouter = get { parametersOf(this) }
     }
 
     /**

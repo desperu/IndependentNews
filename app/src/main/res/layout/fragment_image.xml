@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="org.desperu.independentnews.ui.showImages.fragment.ShowImageViewModel" />
+            type="org.desperu.independentnews.ui.showImages.fragment.ImageViewModel" />
     </data>
 
     <FrameLayout

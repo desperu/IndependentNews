@@ -17,9 +17,10 @@ import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.showImagesModule
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
-import org.desperu.independentnews.ui.showImages.fragment.ShowImageFragment
+import org.desperu.independentnews.ui.showImages.fragment.ImageFragment
 import org.desperu.independentnews.utils.SYS_UI_HIDE
-import org.desperu.independentnews.views.DepthPageTransformer
+import org.desperu.independentnews.views.pageTransformer.DepthPageTransformer
+import org.desperu.independentnews.views.pageTransformer.PageTransformerInterface
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
@@ -47,6 +48,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
     // FOR DATA
     private lateinit var viewPager: ViewPager
     private lateinit var mAdapter: ShowImageAdapter
+    private lateinit var pageTransformer: DepthPageTransformer
     private lateinit var sysUiHelper: SystemUiHelper
 
     /**
@@ -140,14 +142,16 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
         mAdapter = ShowImageAdapter(supportFragmentManager,
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
         viewPager.adapter = mAdapter
-        viewPager.setPageTransformer(true, DepthPageTransformer())
+
+        pageTransformer = DepthPageTransformer()
+        viewPager.setPageTransformer(true, pageTransformer)
     }
 
     // --------------
     // METHODS OVERRIDE
     // --------------
 
-    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean = getCurrentPage().onTouchEvent(ev)
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean = getCurrentPage().dispatchTouchEvent(ev)
 
     // --------------
     // ACTION
@@ -196,6 +200,11 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
      * Returns the current page instance of the view pager.
      * @return the current page instance of the view pager.
      */
-    private fun getCurrentPage(): ShowImageFragment =
-        mAdapter.instantiateItem(show_images_view_pager, viewPager.currentItem) as ShowImageFragment
+    private fun getCurrentPage(): ImageFragment =
+        mAdapter.instantiateItem(show_images_view_pager, viewPager.currentItem) as ImageFragment
+
+    /**
+     * Returns the current value of the page position.
+     */
+    override fun getPosition(): Float = (pageTransformer as PageTransformerInterface).getPosition()
 }

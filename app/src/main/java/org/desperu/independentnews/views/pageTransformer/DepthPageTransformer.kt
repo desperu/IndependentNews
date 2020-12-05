@@ -1,4 +1,4 @@
-package org.desperu.independentnews.views
+package org.desperu.independentnews.views.pageTransformer
 
 import android.view.View
 import androidx.viewpager.widget.ViewPager
@@ -14,22 +14,29 @@ private const val MIN_SCALE = 0.75f
  *
  * @constructor Instantiates a new DepthPageTransformer.
  */
-class DepthPageTransformer : ViewPager.PageTransformer {
+class DepthPageTransformer : ViewPager.PageTransformer, PageTransformerInterface {
+
+    //FOR DATA
+    private var position: Float = 0.0f
 
     override fun transformPage(view: View, position: Float) {
+
+        // Store the current position on each function call
+        this.position = position
+
         view.apply {
             val pageWidth = width
             when {
                 position < -1 -> { // [-Infinity,-1)
                     // This page is way off-screen to the left.
-                    alpha = 0f
+                    alpha = 0.0f
                 }
                 position <= 0 -> { // [-1,0]
                     // Use the default slide transition when moving to the left page
-                    alpha = 1f
-                    translationX = 0f
-                    scaleX = 1f
-                    scaleY = 1f
+                    alpha = 1.0f
+                    translationX = 0.0f
+                    scaleX = 1.0f
+                    scaleY = 1.0f
                 }
                 position <= 1 -> { // (0,1]
                     // Fade the page out.
@@ -50,4 +57,9 @@ class DepthPageTransformer : ViewPager.PageTransformer {
             }
         }
     }
+
+    /**
+     * Returns the current value of the page position.
+     */
+    override fun getPosition(): Float = position
 }

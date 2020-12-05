@@ -25,4 +25,9 @@ interface ShowImagesInterface {
      * On click back arrow.
      */
     fun onClickBackArrow(v: View)
+
+    /**
+     * Returns the current value of the page position.
+     */
+    fun getPosition(): Float
 }

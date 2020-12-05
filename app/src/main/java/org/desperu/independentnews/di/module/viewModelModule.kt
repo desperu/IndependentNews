@@ -8,7 +8,7 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewM
 import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.desperu.independentnews.ui.showArticle.ImageRouter
-import org.desperu.independentnews.ui.showImages.fragment.ShowImageViewModel
+import org.desperu.independentnews.ui.showImages.fragment.ImageViewModel
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailInterface
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailViewModel
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListInterface
@@ -64,10 +64,10 @@ val viewModelModule = module {
     }
 
     /**
-     * Provides the ShowImageViewModel instance.
+     * Provides the ImageViewModel instance.
      */
     viewModel { (imageUrl: Any) ->
-        ShowImageViewModel(imageUrl)
+        ImageViewModel(imageUrl)
     }
 
     /**
