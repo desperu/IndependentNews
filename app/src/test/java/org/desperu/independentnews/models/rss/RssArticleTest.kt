@@ -1,5 +1,6 @@
 package org.desperu.independentnews.models.rss
 
+import org.desperu.independentnews.utils.REPORTERRE
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -20,13 +21,15 @@ class RssArticleTest {
     private val categories = "a category"
     private val htmlDescription = "<p>a description</p>"
     private val description = "a description"
+    private val sourceName = REPORTERRE
 
 
     @Test
     fun given_rssArticle_When_toArticle_Then_checkValues() {
         val rssArticle = RssArticle(title, url, permUrl, publishedDate, author, categoryList, htmlDescription)
-        val article = rssArticle.toArticle()
+        val article = rssArticle.toArticle(sourceName)
 
+        assertEquals(sourceName, article.sourceName)
         assertEquals(url, article.url)
         assertEquals(title, article.title)
         assertEquals(author, article.author)

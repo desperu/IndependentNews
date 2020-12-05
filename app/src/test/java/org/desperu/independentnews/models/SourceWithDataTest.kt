@@ -12,8 +12,7 @@ import org.junit.Test
 class SourceWithDataTest {
 
     // FOR DATA
-    private val source = Source(1L, BASTAMAG, BASTAMAG_BASE_URL,
-        1, 2, 3, false)
+    private val source = Source(1L, BASTAMAG, BASTAMAG_BASE_URL, false)
 
     private val sourcePage1 = SourcePage(1L, 2L, BASTAMAG_BASE_URL, "a button name",
         "a title", "a body", "a css url",0,  true)

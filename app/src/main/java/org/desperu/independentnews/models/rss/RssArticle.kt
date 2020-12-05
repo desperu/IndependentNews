@@ -61,10 +61,13 @@ data class RssArticle(
     /**
      * Convert RssArticle to Article.
      *
+     * @param sourceName the name of the source to set.
+     *
      * @return the article object from the rss article.
      */
-    internal fun toArticle(): Article { // TODO add source name to set ...
+    internal fun toArticle(sourceName: String): Article {
         val article = Article(
+            sourceName = sourceName,
             url = url.mToString(),
             title = title.mToString(),
             author = author.mToString(),

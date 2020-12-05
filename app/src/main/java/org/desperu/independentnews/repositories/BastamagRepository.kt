@@ -78,7 +78,7 @@ class BastamagRepositoryImpl(
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
-            val articleList = rssArticleList.map { it.toArticle() }
+            val articleList = rssArticleList.map { it.toArticle(BASTAMAG) }
             articleRepository.updateTopStory(articleList)
 
             val newArticles = articleRepository.getNewArticles(articleList)
