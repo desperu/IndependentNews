@@ -25,12 +25,21 @@ internal fun Document?.correctBastaMediaUrl(): Document? =
             it.attrToFullUrl(SRC, BASTAMAG_BASE_URL)
 
             val parent = it.parent()
-            if (parent.`is`(PICTURE)) {
-                parent.parent().appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
-                toRemove.add(parent)
-            } else {
-                parent.appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
-                toRemove.add(it)
+            when {
+                // General image structure, wrap into Picture tag
+                parent.`is`(PICTURE) -> {
+                    parent.parent().appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
+                    toRemove.add(parent)
+                }
+                // Source page "Who are us ?", home source page
+                parent.`is`(SPAN) && parent.attr(CLASS) == PHOTO_ATTR_VAL -> {
+                    parent.parent().attrToFullUrl(HREF, BASTAMAG_BASE_URL)
+                }
+                // Source page "Basta a tool for those", button "They support us"
+                parent.`is`(SPAN) && parent.attr(CLASS) == SPIP_DOCUMENT -> {
+                    parent.appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
+                    toRemove.add(it)
+                }
             }
         }
         toRemove.forEach { it.remove() }

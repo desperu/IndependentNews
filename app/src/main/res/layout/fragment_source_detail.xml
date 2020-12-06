@@ -27,8 +27,8 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/source_detail_container"
-                    android:layout_width="@dimen/article_image_min_width_height"
-                    android:layout_height="@dimen/article_image_min_width_height"
+                    android:layout_width="@dimen/fragment_source_detail_card_container_size"
+                    android:layout_height="@dimen/fragment_source_detail_card_container_size"
                     android:layout_marginVertical="@dimen/default_margin"
                     android:tag="frag_source_detail"
                     app:cardPreventCornerOverlap="true"
@@ -75,18 +75,18 @@
                     tools:src="@drawable/ic_baseline_check_white_24"/>
 
                 <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/source_detail_guideline_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.66" />
-
-                <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/source_detail_guideline_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.7" />
+                    app:layout_constraintGuide_percent="@integer/fragment_source_detail_guideline_horizontal" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/source_detail_guideline_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="@integer/fragment_source_detail_guideline_vertical" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

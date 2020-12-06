@@ -25,7 +25,7 @@ const val numberOfPage = 4
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
-// Who owns what image list
+// Who owns what image list // TODO add divided images for better view
 internal val WHO_OWNS_WHAT = arrayListOf(R.drawable.who_owns_what_2019, R.drawable.who_owns_what_2016)
 
 // SnackBar Keys
