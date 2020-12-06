@@ -86,7 +86,7 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         // Update web view margins...
         if (newProgress < 50) showArticleInterface?.updateWebViewMargins()
         // Update web view design.
-        else if (newProgress > 70) showArticleInterface?.updateWebViewDesign()
+        else if (newProgress > 80) showArticleInterface?.updateWebViewDesign()
     }
 
     override fun onHideCustomView() {

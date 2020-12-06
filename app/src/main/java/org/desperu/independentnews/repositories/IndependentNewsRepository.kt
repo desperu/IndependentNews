@@ -1,7 +1,10 @@
 package org.desperu.independentnews.repositories
 
+import android.media.Image
 import android.util.Log
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.extension.setSourceForEach
@@ -298,7 +301,8 @@ class IndependentNewsRepositoryImpl(
      * Get from database on each call to handle source state change, from a user action.
      */
     private suspend fun setSources() = withContext(Dispatchers.IO) {
-        sourceRepository.getEnabledSources() // TODO to update, re get each time if a source state change !!! and re-get list on back sources
+        if (sources == null)
+            sources = sourceRepository.getEnabledSources() // TODO to update, re get each time if a source state change !!! and re-get list on back sources
     }
 
     // TODO put into source repo ??

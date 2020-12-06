@@ -95,6 +95,7 @@ object AnimHelper {
      * @param delay the post delay after which clear animation.
      */
     private fun clearAnimAfterPlaying(views: List<View>, delay: Long) {
-        views.forEach { it.postOnAnimationDelayed(delay) { it.clearAnimation() } }
+        val fullDelay = delay + 500L
+        views.forEach { it.postOnAnimationDelayed(fullDelay) { it.clearAnimation() } }
     }
 }

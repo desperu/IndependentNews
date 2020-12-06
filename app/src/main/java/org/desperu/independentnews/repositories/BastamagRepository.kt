@@ -82,9 +82,9 @@ class BastamagRepositoryImpl(
             articleRepository.updateTopStory(articleList)
 
             val newArticles = articleRepository.getNewArticles(articleList)
-            snackBarHelper?.showMessage(FIND, listOf("$BASTAMAG (RSS)", newArticles.size.toString()))
+            snackBarHelper?.showMessage(FIND, listOf(BASTAMAG + RSS, newArticles.size.toString()))
 
-            fetchArticleList(newArticles)
+            fetchArticleList(newArticles, RSS)
         } else
             null
     }
@@ -107,9 +107,9 @@ class BastamagRepositoryImpl(
         }
 
         val newArticles = articleRepository.getNewArticles(articleList)
-        snackBarHelper?.showMessage(FIND, listOf("$BASTAMAG (Categories)", newArticles.size.toString()))
+        snackBarHelper?.showMessage(FIND, listOf(BASTAMAG + CATEGORY, newArticles.size.toString()))
 
-        fetchArticleList(newArticles)
+        fetchArticleList(newArticles, CATEGORY)
     }
 
     /**
@@ -142,7 +142,8 @@ class BastamagRepositoryImpl(
      * @return the article list with all fetched data.
      */
     private suspend fun fetchArticleList(
-        articleList: List<Article>
+        articleList: List<Article>,
+        type: String
     ): List<Article> = withContext(Dispatchers.IO) {
 
         articleList.forEachIndexed { index, article ->
@@ -151,7 +152,7 @@ class BastamagRepositoryImpl(
 
             snackBarHelper?.showMessage(
                 FETCH,
-                listOf(BASTAMAG, (index + 1).toString(), articleList.size.toString())
+                listOf(BASTAMAG + type, (index + 1).toString(), articleList.size.toString())
             )
         }
 

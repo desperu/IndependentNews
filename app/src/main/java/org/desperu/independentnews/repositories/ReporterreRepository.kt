@@ -84,7 +84,7 @@ class ReporterreRepositoryImpl(
             val newArticles = articleRepository.getNewArticles(articleList)
             snackBarHelper?.showMessage(FIND, listOf(REPORTERRE + RSS, newArticles.size.toString()))
 
-            fetchArticleList(newArticles)
+            fetchArticleList(newArticles, RSS)
         } else
             null
     }
@@ -106,7 +106,7 @@ class ReporterreRepositoryImpl(
         val newArticles = articleRepository.getNewArticles(articleList)
         snackBarHelper?.showMessage(FIND, listOf(REPORTERRE + CATEGORY, newArticles.size.toString()))
 
-        fetchArticleList(newArticles)
+        fetchArticleList(newArticles, CATEGORY)
     }
 
     /**
@@ -139,7 +139,8 @@ class ReporterreRepositoryImpl(
      * @return the article list with all fetched data.
      */
     private suspend fun fetchArticleList(
-        articleList: List<Article>
+        articleList: List<Article>,
+        type: String
     ): List<Article> = withContext(Dispatchers.IO) {
 
         articleList.forEachIndexed { index, article ->
@@ -148,7 +149,7 @@ class ReporterreRepositoryImpl(
 
             snackBarHelper?.showMessage(
                 FETCH,
-                listOf(REPORTERRE, (index + 1).toString(), articleList.size.toString())
+                listOf(REPORTERRE + type, (index + 1).toString(), articleList.size.toString())
             )
         }
 

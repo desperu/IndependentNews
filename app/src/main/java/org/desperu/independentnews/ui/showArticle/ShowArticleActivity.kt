@@ -182,7 +182,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-            url?.let { if (it == actualUrl) updateDesign(it) } // Check if clause
+            url?.let { if (it == actualUrl) updateDesign(it, false) }
             super.onPageFinished(view, url)
         }
 
@@ -330,8 +330,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Update layout and web view design.
      *
      * @param url the actual url of the web view.
+     * @param fromProgress true if call from onProgressChanged, false otherwise.
      */
-    private fun updateDesign(url: String) {
+    private fun updateDesign(url: String, fromProgress: Boolean) {
+        if (fromProgress && !isSourceUrl(url)) return
+
         if (!isWebViewDesigned)
             web_view.updateWebViewFinish(actualUrl, article.cssUrl)
 //            web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
@@ -380,7 +383,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      */
     override fun updateWebViewDesign() {
         if (!::actualUrl.isInitialized) return
-        updateDesign(actualUrl)
+        updateDesign(actualUrl, true)
     }
 
     /**
