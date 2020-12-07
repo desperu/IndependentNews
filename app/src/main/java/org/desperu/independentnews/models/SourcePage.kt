@@ -6,6 +6,8 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
+import org.desperu.independentnews.utils.EQUALS
+import org.desperu.independentnews.utils.NOT_EQUALS
 
 /**
  * Class witch provides a model for a source page.
@@ -47,4 +49,27 @@ data class SourcePage(@PrimaryKey(autoGenerate = true)
                       val cssUrl: String = "",
                       val position: Int = -1,
                       val isPrimary: Boolean = false
-): Parcelable
+): Parcelable, Comparable<SourcePage> {
+
+    /**
+     * Compare this source page to another source page. Compare fields one to one,
+     * if one field is different with the other, return not equals,
+     * else the two estates are equals, return equals.
+     *
+     * @param other the other source page to compare with.
+     *
+     * @return {@code EQUALS} if equals, {@code NOT_EQUALS} otherwise.
+     */
+    override fun compareTo(other: SourcePage): Int = when {
+        other.id != id -> NOT_EQUALS
+        other.sourceId != sourceId -> NOT_EQUALS
+        other.url != url -> NOT_EQUALS
+        other.buttonName != buttonName -> NOT_EQUALS
+        other.title != title -> NOT_EQUALS
+        other.body != body -> NOT_EQUALS
+        other.cssUrl != cssUrl -> NOT_EQUALS
+        other.position != position -> NOT_EQUALS
+        other.isPrimary != isPrimary -> NOT_EQUALS
+        else -> EQUALS
+    }
+}

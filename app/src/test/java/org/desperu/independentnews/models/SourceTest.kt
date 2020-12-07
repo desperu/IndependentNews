@@ -2,6 +2,8 @@ package org.desperu.independentnews.models
 
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
+import org.desperu.independentnews.utils.EQUALS
+import org.desperu.independentnews.utils.NOT_EQUALS
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -15,6 +17,8 @@ class SourceTest {
     private val url: String = BASTAMAG_BASE_URL
     private val isEnabled: Boolean = false
 
+    private val source = Source(id, name, url, isEnabled)
+
     @Test
     fun given_emptySource_When_createSource_Then_checkDefaultValues() {
         val source = Source()
@@ -27,9 +31,7 @@ class SourceTest {
 
     @Test
     fun given_source_When_createSource_Then_checkValues() {
-        val source = Source(
-            id, name, url, isEnabled
-        )
+        val source = Source(id, name, url, isEnabled)
 
         assertEquals(id, source.id)
         assertEquals(name, source.name)
@@ -44,5 +46,24 @@ class SourceTest {
         source.isEnabled = isEnabled
 
         assertEquals(source.isEnabled, isEnabled)
+    }
+
+    @Test
+    fun given_sameSource_When_compareTo_Then_checkEquals() {
+        val expected = EQUALS
+
+        val output = source.compareTo(source)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_otherSource_When_compareTo_Then_checkNotEquals() {
+        val expected = NOT_EQUALS
+
+        val otherSource = Source()
+        val output = source.compareTo(otherSource)
+
+        assertEquals(expected, output)
     }
 }

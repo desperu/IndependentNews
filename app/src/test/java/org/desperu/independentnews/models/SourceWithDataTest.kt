@@ -1,8 +1,6 @@
 package org.desperu.independentnews.models
 
-import org.desperu.independentnews.utils.BASTAMAG
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
-import org.desperu.independentnews.utils.REPORTERRE_BASE_URL
+import org.desperu.independentnews.utils.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -81,6 +79,27 @@ class SourceWithDataTest {
 
         val sourceWithData = SourceWithData()
         val output = sourceWithData.toArticle()
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_sameSourceWithData_When_compareTo_Then_checkEquals() {
+        val expected = EQUALS
+
+        val sourceWithData = SourceWithData(source, sourcePages)
+        val output = sourceWithData.compareTo(sourceWithData)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_otherSourceWithData_When_compareTo_Then_checkNotEquals() {
+        val expected = NOT_EQUALS
+
+        val sourceWithData = SourceWithData(source, sourcePages)
+        val otherSourceWithData = SourceWithData(source, listOf(sourcePage2))
+        val output = sourceWithData.compareTo(otherSourceWithData)
 
         assertEquals(expected, output)
     }
