@@ -159,10 +159,10 @@ class MainFragmentManager(private val fm: FragmentManager,
         get() = (fm.findFragmentByTag(CategoriesFragment::class.java.simpleName) as CategoriesFragment?)
 
     /**
-    * Return the current fragment instance attached to frame layout 1.
-    * @return the current fragment instance attached to frame layout 1.
+    * Returns the current fragment instance attached to frame layout main container.
+    * @return the current fragment instance attached to frame layout main container.
     */
-    private fun getCurrentFragment(): Fragment? =
+    internal fun getCurrentFragment(): Fragment? =
         fm.findFragmentById(R.id.main_frame_container)
 
     /**

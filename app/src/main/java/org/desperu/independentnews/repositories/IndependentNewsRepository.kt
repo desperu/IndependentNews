@@ -1,10 +1,7 @@
 package org.desperu.independentnews.repositories
 
-import android.media.Image
 import android.util.Log
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.extension.setSourceForEach
@@ -13,6 +10,7 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.SourcePage
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.FilterUtils.parseSelectedMap
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.koin.java.KoinJavaComponent.getKoin
 import java.util.*
@@ -111,6 +109,9 @@ interface IndependentNewsRepository {
  * @property reporterreRepository           the repository access for reporterre services.
  * @property bastamagRepository             the repository access for bastamag services.
  * @property articleDao                     the database access object for article.
+ * @property snackBarHelper                 the helper to display fetch messages to the user
+ *                                          with the snack bar.
+ * @property newArticles                    the number of new articles find.
  *
  * @constructor Instantiates a new IndependentNewsRepositoryImpl.
  * @param articleRepository                 the repository access for article database to set.
@@ -128,8 +129,8 @@ class IndependentNewsRepositoryImpl(
 ): IndependentNewsRepository {
 
     // FOR DATA
-    private var sources: List<Source>? = null
     private val snackBarHelper: SnackBarHelper? get() = getKoin().getOrNull()
+    private var newArticles = 0
 
     // -----------------
     // FETCH DATA (WEB)
@@ -142,18 +143,17 @@ class IndependentNewsRepositoryImpl(
      * @return the id list of persisted articles.
      */
     override suspend fun fetchRssArticles(): List<Long> = withContext(Dispatchers.IO) {
-        setSources()
         val rssArticleList = mutableListOf<Article>()
 
         // TODO serialize with base (BaseNetworkRepo) and use when to get good repo
-        sources?.forEach { source ->
-
-            if (source.name == BASTAMAG)
-                bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
-            if (source.name == REPORTERRE)
-                reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
+        getSources()?.forEach { source ->
+            when (source.name) {
+                BASTAMAG -> bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
+                REPORTERRE -> reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
+            }
         }
 
+        newArticles = rssArticleList.size // Reset new articles value in same time.
         articleRepository.persist(rssArticleList)
     }
 
@@ -164,19 +164,18 @@ class IndependentNewsRepositoryImpl(
      * @return the id list of persisted articles.
      */
     override suspend fun fetchCategories(): List<Long> = withContext(Dispatchers.IO) {
-        setSources()
         val articleList = mutableListOf<Article>()
 
-        sources?.forEach { source ->
-            if (source.name == BASTAMAG)
-                bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
-            if (source.name == REPORTERRE)
-                reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
+        getSources()?.forEach { source ->
+            when (source.name) {
+                BASTAMAG -> bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
+                REPORTERRE -> reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
+            }
         }
 
+        newArticles += articleList.size
         articleRepository.persist(articleList)
     }
-
 
     /**
      * Refresh data for the application, fetch data from Rss and Web, and persist them
@@ -185,9 +184,8 @@ class IndependentNewsRepositoryImpl(
      * @return the number of row affected for removed articles.
      */
     override suspend fun refreshData(): Int = withContext(Dispatchers.IO) {
-        var newArticles = 0
-        newArticles += fetchRssArticles().size
-        newArticles += fetchCategories().size
+        fetchRssArticles()
+        fetchCategories()
 
         snackBarHelper?.showMessage(
             if (newArticles > 0) END_FIND else END_NOT_FIND,
@@ -207,8 +205,9 @@ class IndependentNewsRepositoryImpl(
      * @return the top story list of articles from the database.
      */
     override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
-        setSources()
-        sources?.let { articleDao.getTopStory().setSourceForEach(it) }
+        getSources()?.let { sources ->
+            articleDao.getTopStory(sources.map { source -> source.id }).setSourceForEach(sources)
+        }
     }
 
     /**
@@ -219,14 +218,15 @@ class IndependentNewsRepositoryImpl(
      * @return the category list of articles from the database.
      */
     override suspend fun getCategory(categories: List<String>): List<Article>? = withContext(Dispatchers.IO) {
-        setSources()
         val articleList = mutableListOf<Article>()
 
-        categories.forEach { category ->
-            articleList.addAll(articleDao.getCategory("%$category%"))
-        }
+        getSources()?.let { sources ->
+            categories.forEach { category ->
+                articleList.addAll(
+                    articleDao.getCategory("%$category%", sources.map { it.id } )
+                )
+            }
 
-        sources?.let { sources ->
             articleDao.getWhereUrlsInSorted(articleList.map { it.url }).setSourceForEach(sources)
         }
     }
@@ -237,8 +237,9 @@ class IndependentNewsRepositoryImpl(
      * @return the list of all articles from the database.
      */
     override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
-        setSources()
-        sources?.let { articleDao.getAll().setSourceForEach(it) }
+        getSources()?.let { sources ->
+            articleDao.getAll(sources.map { it.id }).setSourceForEach(sources)
+        }
     }
 
     /**
@@ -249,11 +250,13 @@ class IndependentNewsRepositoryImpl(
      *
      * @return the list of filtered articles from the database.
      */
-    override suspend fun getFilteredList(selectedMap: Map<Int, MutableList<String>>,
-                                         actualList: List<Article>
+    override suspend fun getFilteredList(
+        selectedMap: Map<Int, MutableList<String>>,
+        actualList: List<Article>
     ): List<Article>? = withContext(Dispatchers.IO) {
-        setSources()
-        val parsedMap = FilterUtils.parseSelectedMap(selectedMap, sources!!)
+        val sources = getSources() ?: emptyList()
+
+        val parsedMap = parseSelectedMap(selectedMap, sources)
 
         val filteredList = articleRepository.getFilteredListFromDB(
             parsedMap.getValue(SOURCES),
@@ -263,13 +266,14 @@ class IndependentNewsRepositoryImpl(
             actualList.map { it.url }
         ).toMutableList()
 
-        val unMatchArticleList = actualList.filter { article -> !filteredList.map { it.id }.contains(article.id)}
+        val unMatchArticleList = actualList.filter { article ->
+            !filteredList.map { it.id }.contains(article.id)
+        }
         filteredList.addAll(articleRepository.filterCategories(parsedMap, unMatchArticleList))
 
-        return@withContext sources?.let { list ->
-            articleDao.getWhereUrlsInSorted(filteredList.map { it.url })
-                .setSourceForEach(list)
-        }
+        articleDao
+            .getWhereUrlsInSorted(filteredList.map { it.url })
+            .setSourceForEach(sources)
     }
 
     /**
@@ -287,9 +291,11 @@ class IndependentNewsRepositoryImpl(
      * @return the today article list, articles published today.
      */
     override suspend fun getTodayArticles(): List<Article>? = withContext(Dispatchers.IO) {
-        setSources()
         val todayStartMillis = millisToStartOfDay(Calendar.getInstance().timeInMillis)
-        sources?.let { articleDao.getTodayArticle(todayStartMillis).setSourceForEach(it) }
+        getSources()?.let { source ->
+            articleDao.getTodayArticle(todayStartMillis, source.map { it.id } )
+                .setSourceForEach(source)
+        }
     }
 
     // -----------------
@@ -300,9 +306,8 @@ class IndependentNewsRepositoryImpl(
      * Get enabled sources from the database.
      * Get from database on each call to handle source state change, from a user action.
      */
-    private suspend fun setSources() = withContext(Dispatchers.IO) {
-        if (sources == null)
-            sources = sourceRepository.getEnabledSources() // TODO to update, re get each time if a source state change !!! and re-get list on back sources
+    private suspend fun getSources(): List<Source>? = withContext(Dispatchers.IO) {
+        sourceRepository.getEnabledSources()
     }
 
     // TODO put into source repo ??

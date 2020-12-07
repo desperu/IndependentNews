@@ -70,7 +70,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         )
     }
 
-    override fun getCssUrl(): String? =
+    override fun getCssUrl(): String =
         findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
     // -----------------
@@ -96,7 +96,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
             this.article = getArticle().mToString()
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].mToString()
-            cssUrl = getCssUrl().mToString()
+            cssUrl = getCssUrl()
         }
 
         return article

@@ -34,33 +34,40 @@ interface ArticleDao {
     suspend fun getArticle(url: String): Article
 
     /**
-     * Returns the top story article list from database ordered from the most recent to the oldest.
+     * Returns the top story article list from database ordered from the most recent to the oldest,
+     * for the enabled sources.
+     *
+     * @param sourceIds the list of enabled sources unique identifier for which return articles.
      *
      * @return the top story article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE isTopStory = 1 ORDER BY publishedDate DESC")
-    suspend fun getTopStory(): List<Article>
+    @Query("SELECT * FROM article WHERE isTopStory = 1 AND sourceId IN (:sourceIds) ORDER BY publishedDate DESC")
+    suspend fun getTopStory(sourceIds: List<Long>): List<Article>
 
     /**
-     * Returns the category article list from database ordered from the most recent to the oldest.
+     * Returns the category article list from database ordered from the most recent to the oldest,
+     * for the enabled sources.
      *
      * @param category the category to search for.
+     * @param sourceIds the list of enabled sources unique identifier for which return articles.
      *
      * @return the category article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE LOWER(categories) LIKE :category OR LOWER(section) LIKE :category OR LOWER(theme) LIKE :category ORDER BY publishedDate DESC")
-    suspend fun getCategory(category: String): List<Article>
+    @Query("SELECT * FROM article WHERE (LOWER(categories) LIKE :category OR LOWER(section) LIKE :category OR LOWER(theme) LIKE :category) AND sourceId IN (:sourceIds) ORDER BY publishedDate DESC")
+    suspend fun getCategory(category: String, sourceIds: List<Long>): List<Article>
 
     /**
      * Returns the article list from database ordered from the most recent to the oldest.
      *
+     * @param sourceIds the list of enabled sources unique identifier for which return articles.
+     *
      * @return the article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article ORDER BY publishedDate DESC")
-    suspend fun getAll(): List<Article>
+    @Query("SELECT * FROM article WHERE sourceId IN (:sourceIds) ORDER BY publishedDate DESC")
+    suspend fun getAll(sourceIds: List<Long>): List<Article>
 
     /**
      * Returns the articles for which the url are in the given list.
@@ -89,11 +96,12 @@ interface ArticleDao {
      * the given today start in millis.
      *
      * @param todayStartMillis the first millisecond of today.
+     * @param sourceIds the list of enabled sources unique identifier for which return articles.
      *
      * @return the today article list.
      */
-    @Query("SELECT * FROM article WHERE publishedDate >= :todayStartMillis")
-    suspend fun getTodayArticle(todayStartMillis: Long): List<Article>
+    @Query("SELECT * FROM article WHERE publishedDate >= :todayStartMillis AND sourceId IN (:sourceIds)")
+    suspend fun getTodayArticle(todayStartMillis: Long, sourceIds: List<Long>): List<Article>
 
     // -----------------
     // FILTERS

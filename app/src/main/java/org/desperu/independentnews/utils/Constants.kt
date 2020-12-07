@@ -22,6 +22,9 @@ const val FRAG_SOURCES_DETAIL = 101
 // View Pager
 const val numberOfPage = 4
 
+// Source activity request code
+const val RC_SOURCE = 1000
+
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
@@ -64,6 +67,10 @@ const val RESET_DIALOG = 4
 internal val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre")
 internal val imageSuffix = listOf(".png", ".jpg", ".jpeg")
+
+// For compare result
+const val EQUALS = 0
+const val NOT_EQUALS = 1
 
 
 // --- FOR SERVICES ---

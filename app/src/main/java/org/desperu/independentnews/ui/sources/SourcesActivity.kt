@@ -1,5 +1,6 @@
 package org.desperu.independentnews.ui.sources
 
+import android.content.Intent
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
@@ -12,6 +13,8 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
 import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.ui.main.HAS_CHANGE
+import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
@@ -101,6 +104,11 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
 
     override fun onBackPressed() {
         if (fragmentKey == FRAG_SOURCES_LIST) {
+            setResult(
+                RESULT_OK,
+                Intent(baseContext, MainActivity::class.java)
+                    .putExtra(HAS_CHANGE, sourceListFrag?.hasChange())
+            )
             while (fm.backStackEntryCount > 0) fm.popBackStackImmediate()
             super.onBackPressed()
         } else {

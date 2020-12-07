@@ -40,12 +40,12 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     private val expandedImageSize: Float by bindDimen(context, R.dimen.item_article_image_width_height_expanded)
     private val originalLength = context.resources.getInteger(R.integer.item_article_title_text_length_collapsed)
 
-    private var list: MutableList<Any> = mutableListOf()
+    internal var list: MutableList<Any> = mutableListOf()
     internal var filteredList: MutableList<Any> = mutableListOf()
     private val adapterList: MutableList<Any> get() = if (!isFiltered) list else filteredList
 
     /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
-    @Suppress("unchecked_cast")
+
     var isFiltered = false
         set(value) {
             field = value
@@ -53,8 +53,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
             if (filteredList.isEmpty()) return
             val diff =
                 ArticleListDiffUtil(
-                    (if (field) list else filteredList) as List<ArticleItemViewModel>,
-                    (if (field) filteredList else list) as List<ArticleItemViewModel>
+                    (if (field) list else filteredList).map { it as ArticleItemViewModel }.toList(),
+                    (if (field) filteredList else list).map { it as ArticleItemViewModel }.toList()
                 )
             DiffUtil.calculateDiff(diff).dispatchUpdatesTo(this)
         }

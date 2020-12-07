@@ -69,6 +69,6 @@ class BastamagWebServiceTest : KoinTest {
      */
     private fun checkParsingCategory(responseBody: ResponseBody) {
         val bastaCategory = BastamagCategory(responseBody)
-        assertEquals(10, bastaCategory.getArticleList()?.size)
+        assertEquals(10, bastaCategory.getArticleList().size)
     }
 }

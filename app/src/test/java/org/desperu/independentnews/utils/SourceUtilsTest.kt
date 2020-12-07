@@ -37,7 +37,7 @@ class SourceUtilsTest {
 
     @Test
     fun given_wrongName_When_getMiniLogoId_Then_checkError() {
-        val expected = "Source name not found : wrong"
+        val expected = "Source name not found : wrong name"
 
         val output = try { getMiniLogoId("wrong name") }
         catch (e: IllegalArgumentException) { e.message }
@@ -65,7 +65,7 @@ class SourceUtilsTest {
 
     @Test
     fun given_wrongName_When_getLogoId_Then_checkError() {
-        val expected = "Source name not found : wrong"
+        val expected = "Source name not found : wrong name"
 
         val output = try { getLogoId("wrong name") }
         catch (e: IllegalArgumentException) { e.message }
@@ -93,7 +93,7 @@ class SourceUtilsTest {
 
     @Test
     fun given_wrongName_When_getBackgroundColorId_Then_checkError() {
-        val expected = "Source name not found : wrong"
+        val expected = "Source name not found : wrong name"
 
         val output = try { getBackgroundColorId("wrong name") }
         catch (e: IllegalArgumentException) { e.message }

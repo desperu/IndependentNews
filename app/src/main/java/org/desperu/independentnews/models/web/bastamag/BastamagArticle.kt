@@ -33,8 +33,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         findData(SPAN, CLASS, DIVIDER, 1)?.parent().getChild(0)?.ownText()
 
     override fun getTheme(): String? =
-        findData(HEADER, CLASS, CARTOUCHE, null)
-            ?.ownerDocument()?.select(P).getIndex(0)?.ownText()
+        findData(P, CLASS, SURTITRE, null)?.ownText()
 
     override fun getAuthor() : String? =
         findData(SPAN, ITEMPROP, AUTHOR, null).getChild(0)?.text()
@@ -57,7 +56,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         )
     }
 
-    override fun getCssUrl(): String? =
+    override fun getCssUrl(): String =
         findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
     // -----------------
@@ -83,7 +82,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
             this.article = getArticle().mToString()
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].mToString()
-            cssUrl = getCssUrl().mToString()
+            cssUrl = getCssUrl()
         }
 
         return article

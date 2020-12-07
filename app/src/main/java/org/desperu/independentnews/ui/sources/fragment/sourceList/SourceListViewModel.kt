@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.repositories.SourceRepository
+import org.desperu.independentnews.utils.EQUALS
 
 /**
  * View Model witch provide data for sources list.
@@ -30,6 +31,12 @@ class SourcesListViewModel(private val sourceRepository: SourceRepository,
     // FOR DATA
     val recyclerAdapter get() = sourcesInterface.getRecyclerAdapter()
     private var sourceList: List<SourceWithData>? = null
+        set(value) {
+            field = value
+            if (originalSourceList == null)
+                originalSourceList = value
+        }
+    private var originalSourceList: List<SourceWithData>? = null
 
     // -----------------
     // DATABASE
@@ -61,4 +68,19 @@ class SourcesListViewModel(private val sourceRepository: SourceRepository,
             }
         }
     }
+
+    // -----------------
+    // UTILS
+    // -----------------
+
+    /**
+     * Returns if there's source state change (enabled/disabled).
+     * @return if there's source state change (enabled/disabled).
+     */
+    internal fun hasChange(): Boolean =
+        originalSourceList?.withIndex()?.find {
+            sourceList?.get(it.index)?.let { sourceWithData ->
+                it.value.compareTo(sourceWithData)
+            } != EQUALS
+        } != null
 }

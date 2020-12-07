@@ -162,4 +162,9 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
      */
     override fun getRecyclerAdapter(): SourceListAdapter? = sourceListAdapter
 
+    /**
+     * Returns if there's source state change (enabled/disabled).
+     * @return if there's source state change (enabled/disabled).
+     */
+    internal fun hasChange(): Boolean = viewModel.hasChange()
 }

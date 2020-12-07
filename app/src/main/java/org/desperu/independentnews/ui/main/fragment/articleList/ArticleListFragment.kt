@@ -145,6 +145,11 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     }
 
     /**
+     * Refresh the article list from the database, and display with DiffUtils support.
+     */
+    override fun refreshList() { viewModel.refreshList(fragKey) }
+
+    /**
      * Sync filters motion state with adapter state, when resume to fragment.
      */
     private fun updateFiltersMotionState() =
@@ -167,6 +172,13 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * @param toShow true to show filter motion, false to hide.
      */
     override fun showFilterMotion(toShow: Boolean) = mainInterface.showFilterMotion(toShow)
+
+    /**
+     * Update filters motion state adapter state, when switch fragment.
+     * @param isFiltered true if the adapter is filtered, false otherwise.
+     */
+    override fun updateFiltersMotionState(isFiltered: Boolean) =
+        mainInterface.updateFiltersMotionState(isFiltered)
 
     // --- GETTERS ---
 

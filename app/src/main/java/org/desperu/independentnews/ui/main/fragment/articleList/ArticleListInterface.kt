@@ -19,6 +19,11 @@ interface ArticleListInterface {
     fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean)
 
     /**
+     * Refresh the article list from the database, and display with DiffUtils support.
+     */
+    fun refreshList()
+
+    /**
      * Show no article and hide recycler view, or invert, depends of toShow value.
      * @param toShow true to show no article, false otherwise.
      */
@@ -29,4 +34,10 @@ interface ArticleListInterface {
      * @param toShow true to show filter motion, false to hide.
      */
     fun showFilterMotion(toShow: Boolean)
+
+    /**
+     * Update filters motion state adapter state, when switch fragment.
+     * @param isFiltered true if the adapter is filtered, false otherwise.
+     */
+    fun updateFiltersMotionState(isFiltered: Boolean)
 }

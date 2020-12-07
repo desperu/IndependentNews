@@ -35,8 +35,10 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
+import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.ui.settings.SettingsActivity
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.SourcesActivity
@@ -47,9 +49,10 @@ import org.koin.core.parameter.parametersOf
 
 var animationPlaybackSpeed: Double = 0.8
 /**
- * The name of the argument to received today article list in this Activity.
+ * The names of the arguments to received data to this Activity.
  */
-const val TODAY_ARTICLES: String = "todayArticles"
+const val TODAY_ARTICLES: String = "todayArticles"  // For today article list
+const val HAS_CHANGE: String = "hasChange"          // For source state change
 
 /**
  * Main Activity root activity of the application.
@@ -164,6 +167,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         syncDrawerWithFrag()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Handle Sources Activity response on activity result.
+        handleSourceResponse(requestCode, resultCode, data)
+    }
+
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.activity_main_menu_drawer_top_story -> showFragment(FRAG_TOP_STORY, null)
@@ -248,7 +257,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Start Sources activity.
      */
     private fun showSourcesActivity() =
-        startActivity(Intent(this, SourcesActivity::class.java))
+        startActivityForResult(Intent(this, SourcesActivity::class.java), RC_SOURCE)
 
     // -----------------
     // DATA
@@ -366,4 +375,32 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     override fun updateFiltersMotionState(isFiltered: Boolean) =
         filters_motion_layout.updateFiltersMotionState(isFiltered)
+
+    // --------------
+    // UTILS
+    // --------------
+
+    /**
+     * Handle response when retrieve source result, if a source state has changed,
+     * update the article list.
+     * @param requestCode Code of request.
+     * @param resultCode Result code of request.
+     * @param data Intent request result data.
+     */
+    private fun handleSourceResponse(requestCode: Int, resultCode: Int, data: Intent?) {
+        // If result code and request code matches with source result.
+        if (resultCode == RESULT_OK && requestCode == RC_SOURCE) {
+            val hasChange: Boolean? = data?.getBooleanExtra(HAS_CHANGE, false)
+
+            // If has change, refresh the article list
+            if (hasChange == true) {
+                var currentFrag = fm.getCurrentFragment()
+
+                if (currentFrag is CategoriesFragment)
+                    currentFrag = currentFrag.getCurrentFrag()
+
+                (currentFrag as ArticleListFragment).refreshList()
+            }
+        }
+    }
 }

@@ -161,7 +161,9 @@ class ArticleRepositoryImpl(
             articleDao.markIsTopStory(*rssUrls.toTypedArray())
 
             val sourceName = rssArticleList[0].sourceName
-            val topStoryDB = articleDao.getTopStory().filter { it.sourceName == sourceName }
+            val sourceId = rssArticleList[0].sourceId
+            val topStoryDB =
+                articleDao.getTopStory(listOf(sourceId)).filter { it.sourceName == sourceName }
             val notTopStory = topStoryDB.filter { !rssUrls.contains(it.url) }
 
             if (!notTopStory.isNullOrEmpty())

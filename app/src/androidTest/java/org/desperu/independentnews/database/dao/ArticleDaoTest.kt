@@ -77,28 +77,31 @@ class ArticleDaoTest {
     @Test
     fun getTopStory() = articleListTest {
         // Try to get Top Story Articles in the database
-        val topStories = mDatabase.articleDao().getTopStory()
+        val topStories = mDatabase.articleDao().getTopStory(listOf(sourceId))
 
-        // Then check that the list isn't empty
-        assertTrue(topStories.isNotEmpty())
+        // Then check that the list size equal two
+        assertTrue(topStories.size == 2)
     }
 
     @Test
     fun getCategory() = articleListTest {
         // Try to get All Articles in the database
-        val categories = mDatabase.articleDao().getCategory("%${article.theme}%")
+        val categories = mDatabase.articleDao().getCategory(
+            "%${article.theme}%",
+            listOf(sourceId)
+        )
 
-        // Then check that the list isn't empty
-        assertTrue(categories.isNotEmpty())
+        // Then check that the list size equal two
+        assertTrue(categories.size == 2)
     }
 
     @Test
     fun getAll() = articleListTest {
         // Try to get All Articles in the database
-        val allArticles = mDatabase.articleDao().getAll()
+        val allArticles = mDatabase.articleDao().getAll(listOf(sourceId))
 
-        // Then check that the list isn't empty
-        assertTrue(allArticles.isNotEmpty())
+        // Then check that the list size equal two
+        assertTrue(allArticles.size == 2)
     }
 
     @Test
@@ -130,7 +133,7 @@ class ArticleDaoTest {
         mDatabase.articleDao().updateArticle(*articleList.toTypedArray())
 
         // Try to get Today Articles from the database
-        val todayArticles = mDatabase.articleDao().getTodayArticle(todayStartMillis)
+        val todayArticles = mDatabase.articleDao().getTodayArticle(todayStartMillis, listOf(sourceId))
 
         // Then check that the list size match the today articles in database
         assertEquals(articleList.size, todayArticles.size)
