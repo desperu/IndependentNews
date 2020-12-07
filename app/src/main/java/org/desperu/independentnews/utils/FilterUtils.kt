@@ -109,8 +109,10 @@ object FilterUtils {
         val defaultDates = listOf(Long.MIN_VALUE.toString(), Long.MAX_VALUE.toString())
         parsedMap[DATES] =
             if (selectedMap.getValue(DATES).isNotEmpty())
-                selectedMap.getValue(DATES).mapIndexed { index, date -> // TODO error with end date when search day - 1
-                    (intStringToDate(date)?.time ?: defaultDates[index]).toString()
+                selectedMap.getValue(DATES).mapIndexed { index, date ->
+                    val endDay = if (index == 1) 86400000L else 0L // One day in milliseconds : 24 * 60 * 60 * 1000 = 86400000
+                    // Add one day millis for end date to show articles of this last day
+                    (intStringToDate(date)?.time?.plus(endDay) ?: defaultDates[index]).toString()
                 }
             else
                 defaultDates

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,6 @@ import org.desperu.independentnews.extension.design.bindOptionalViews
 import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.utils.DATES
 import org.desperu.independentnews.utils.FilterUtils.filterViewsId
 import org.desperu.independentnews.utils.FilterUtils.getFilterValue
@@ -27,18 +27,19 @@ import org.desperu.independentnews.utils.SOURCES
 import org.desperu.independentnews.utils.THEMES
 
 /**
- * ViewPager adapter to display all the filters
+ * ViewPager adapter to display all the filters, handle enable / disable filter.
  */
-class FiltersPagerAdapter(private val context: Context, private val listener: (updatedPosition: Int, selectedMap: Map<Int, List<String>>) -> Unit)
-    : RecyclerView.Adapter<FiltersPagerAdapter.FiltersPagerViewHolder>() {
+class FiltersPagerAdapter(
+    private val context: Context,
+    private val listener: (updatedPosition: Int, selectedMap: Map<Int, List<String>>) -> Unit
+) : RecyclerView.Adapter<FiltersPagerAdapter.FiltersPagerViewHolder>() {
 
     private val unselectedColor: Int by bindColor(context, R.color.filter_pill_color)
     private val selectedColor: Int by bindColor(context, R.color.filter_pill_selected_color)
-
     private val toggleAnimDuration = context.resources.getInteger(R.integer.toggleAnimDuration).toLong()
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var selectedMap = mutableMapOf<Int, MutableList<String>>().withDefault { mutableListOf() }
 
+    private var selectedMap = mutableMapOf<Int, MutableList<String>>().withDefault { mutableListOf() }
+    private val lifeCycleOwner = context as AppCompatActivity
     private val beginDate = MutableLiveData<String>()
     private val endDate = MutableLiveData<String>()
 
@@ -57,7 +58,7 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FiltersPagerViewHolder =
-            FiltersPagerViewHolder(inflater.inflate(viewType, parent, false))
+            FiltersPagerViewHolder(LayoutInflater.from(context).inflate(viewType, parent, false))
 
     override fun onBindViewHolder(holder: FiltersPagerViewHolder, position: Int) {
         val selectedList = selectedMap.getOrPut(position) { mutableListOf() }
@@ -113,21 +114,15 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
             pickerView.setOnClickListener {
                 createDatePickerDialog(context, pickerView, if (index == 0) beginDate else endDate)
             }
-            beginDate.observe((context as MainActivity), observer)
-            endDate.observe(context, observer)
+            beginDate.observe(lifeCycleOwner, observer)
+            endDate.observe(lifeCycleOwner, observer)
         }
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         super.onDetachedFromRecyclerView(recyclerView)
-        beginDate.removeObservers(context as MainActivity)
-        endDate.removeObservers(context)
-    }
-
-    class FiltersPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val filterViews: List<View> by bindOptionalViews(*filterViewsId.toIntArray())
-
-        val pickerViews: List<TextView> by bindOptionalViews(R.id.filter_date_picker_begin, R.id.filter_date_picker_end)
+        beginDate.removeObservers(lifeCycleOwner)
+        endDate.removeObservers(lifeCycleOwner)
     }
 
     // --- GETTERS ---
@@ -138,4 +133,11 @@ class FiltersPagerAdapter(private val context: Context, private val listener: (u
      * @return the selected map, that contains all selected filters.
      */
     internal fun getSelectedMap() = selectedMap
+
+
+    class FiltersPagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val filterViews: List<View> by bindOptionalViews(*filterViewsId.toIntArray())
+
+        val pickerViews: List<TextView> by bindOptionalViews(R.id.filter_date_picker_begin, R.id.filter_date_picker_end)
+    }
 }

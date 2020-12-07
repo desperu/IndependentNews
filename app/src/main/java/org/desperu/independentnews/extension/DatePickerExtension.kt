@@ -32,8 +32,8 @@ internal fun createDatePickerDialog(context: Context, pickerView: TextView, date
         getOnDateSetListener(context, pickerView, date),
         year,
         monthOfYear,
-        dayOfMonth)
-        .show()
+        dayOfMonth
+    ).show()
 }
 
 /**
