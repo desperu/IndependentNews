@@ -160,4 +160,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     androidTestImplementation "androidx.room:room-testing:$room_version"
+
+    //EASY PERMISSIONS
+    implementation "pub.devrel:easypermissions:$easypermission_version"
 }

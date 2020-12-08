@@ -13,12 +13,14 @@ import androidx.core.widget.ContentLoadingProgressBar
 import com.google.android.material.behavior.SwipeDismissBehavior
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_first_start.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.R
 import org.desperu.independentnews.service.SharedPrefService
+import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.utils.*
@@ -85,7 +87,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
         else
             updateSnackBar(snackKey, data)
 
-        handleUi(snackKey)
+        handleLoadingBar(snackKey)
         handleButton(snackKey)
         handleError(snackKey, data)
         snackBar?.show()
@@ -168,9 +170,9 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      *
      * @return the view used as parent to display the snack bar.
      */
-    private fun getRootView() = when {
-        isFirstStart -> activity.drawer_layout
-        activity is MainActivity -> activity.coordinator_layout
+    private fun getRootView() = when (activity) {
+        is FirstStartActivity -> activity.first_start_root
+        is MainActivity -> activity.coordinator_layout
         else -> activity.coordinator_layout
     }
 
@@ -215,21 +217,22 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      * @param snackKey the snack bar key to display the corresponding message.
      */
     private fun handleButton(snackKey: Int) {
-        when(snackKey) {
-            END_FIND -> snackBar
-                ?.setAction(R.string.snack_bar_button_show) { mainInterface.showNewArticles() }
-                ?.setActionTextColor(ResourcesCompat.getColor(resources, android.R.color.holo_green_dark, null))
+        if (!isFirstStart)
+            when(snackKey) {
+                END_FIND -> snackBar
+                    ?.setAction(R.string.snack_bar_button_show) { mainInterface.showNewArticles() }
+                    ?.setActionTextColor(ResourcesCompat.getColor(resources, android.R.color.holo_green_dark, null))
 
-            END_NOT_FIND -> snackBar
-                ?.setAction(R.string.snack_bar_button_close) { snackBar?.dismiss() }
-                ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, R.color.list_item_bg_collapsed, null))
+                END_NOT_FIND -> snackBar
+                    ?.setAction(R.string.snack_bar_button_close) { snackBar?.dismiss() }
+                    ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, R.color.list_item_bg_collapsed, null))
 
-            END_ERROR -> snackBar
-                ?.setAction(R.string.snack_bar_button_retry) { retry() }
-                ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, android.R.color.holo_orange_dark, null))
+                END_ERROR -> snackBar
+                    ?.setAction(R.string.snack_bar_button_retry) { retry() }
+                    ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, android.R.color.holo_orange_dark, null))
 
-            else -> snackBar?.setAction(null, null)
-        }
+                else -> snackBar?.setAction(null, null)
+            }
     }
 
     /**
@@ -263,26 +266,14 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     // --------------
 
     /**
-     * Handle the ui of the snack bar, between first start and standard use.
+     * Handle the loading bar of the snack bar.
      *
      * @param snackKey the snack bar key used to handle ui.
      */
-    private fun handleUi(snackKey: Int) {
-        if (isFirstStart) setBackgroundColor()
-        else {
-            showLoadingBar(snackKey) // Call before init to hide at good time
-            if (loadingBar == null && snackKey < ERROR) initLoadingBar()
-            if (snackKey > ERROR) loadingBar = null
-        }
-    }
-
-    /**
-     * Set the background color for the view of the snack bar.
-     */
-    private fun setBackgroundColor() {
-        snackBar?.view?.setBackgroundColor(
-            ResourcesCompat.getColor(activity.resources, android.R.color.transparent, null)
-        )
+    private fun handleLoadingBar(snackKey: Int) {
+        showLoadingBar(snackKey) // Call before init to hide at good time
+        if (loadingBar == null && snackKey < ERROR) initLoadingBar()
+        if (snackKey > ERROR) loadingBar = null
     }
 
     /**

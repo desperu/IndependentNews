@@ -57,6 +57,11 @@
         <item name="colorAccent">@color/filter_pill_color</item>
     </style>
 
+    <!-- Snack Progress Bar Theme -->
+    <style name="SnackProgressBarTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
     <!-- Progress Bar First Start Theme -->
     <style name="ProgressBarFirstStartTheme" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/list_item_bg_collapsed</item>

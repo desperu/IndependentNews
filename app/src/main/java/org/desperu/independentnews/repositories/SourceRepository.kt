@@ -30,14 +30,14 @@ interface SourceRepository {
      *
      * @return the list of enabled sources from the database.
      */
-    suspend fun getEnabledSources(): List<Source>?
+    suspend fun getEnabledSources(): List<Source>
 
     /**
      * Returns the list of all sources with data from the database.
      *
      * @return the list of all sources with data from the database.
      */
-    suspend fun getAll(): List<SourceWithData>?
+    suspend fun getAll(): List<SourceWithData>
 
     /**
      * Set the enabled state of the source in the database.
@@ -64,6 +64,13 @@ interface SourceRepository {
      * @return the id list of inserted source pages.
      */
     suspend fun insertSourcePages(vararg sourcePages: SourcePage): List<Long>
+
+    /**
+     * Delete all source pages in database, for the given source ids.
+     *
+     * @param ids the unique identifier list of source.
+     */
+    suspend fun deleteAllSourcePages(ids: List<Long>)
 }
 
 /**
@@ -106,7 +113,7 @@ class SourceRepositoryImpl(
      *
      * @return the list of all sources with data from the database.
      */
-    override suspend fun getAll(): List<SourceWithData>? = withContext(Dispatchers.IO) {
+    override suspend fun getAll(): List<SourceWithData> = withContext(Dispatchers.IO) {
         return@withContext sourceWithDataDao.getAll()
     }
 
@@ -140,5 +147,14 @@ class SourceRepositoryImpl(
      */
     override suspend fun insertSourcePages(vararg sourcePages: SourcePage): List<Long> = withContext(Dispatchers.IO) {
         sourcePageDao.insertSourcePages(*sourcePages)
+    }
+
+    /**
+     * Delete all source pages in database, for the given source ids.
+     *
+     * @param ids the unique identifier list of source.
+     */
+    override suspend fun deleteAllSourcePages(ids: List<Long>) = withContext(Dispatchers.IO) {
+        ids.forEach { sourcePageDao.deleteSourcePage(it) }
     }
 }

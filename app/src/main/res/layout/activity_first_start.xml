@@ -6,7 +6,7 @@
     android:id="@+id/first_start_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainActivity">
+    tools:context=".ui.firstStart.FirstStartActivity">
 
     <org.desperu.independentnews.views.FontTextView
         android:id="@+id/first_start_who_owns_what"
@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true"
         android:textColor="@color/list_item_bg_collapsed"
         android:textSize="@dimen/appbar_title_text_size"
-        android:text="@string/fragment_first_start_button"
+        android:text="@string/activity_first_start_button"
         android:fontFamily="Annie_use_your_telescope"
         android:drawableEnd="@drawable/ic_outline_info_white_36"
         android:drawablePadding="@dimen/default_margin"
@@ -50,7 +50,7 @@
             android:layout_margin="@dimen/default_large_margin"
             android:textColor="@color/list_item_bg_collapsed"
             android:textSize="@dimen/appbar_title_text_size"
-            android:text="@string/fragment_first_start_text"
+            android:text="@string/activity_first_start_text"
             app:fontName="Annie_use_your_telescope"/>
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -72,7 +72,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textColor="@color/list_item_bg_collapsed"
-                android:text="@string/fragment_first_start_loading"/>
+                android:text="@string/activity_first_start_loading"/>
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -84,7 +84,7 @@
             android:layout_margin="@dimen/default_large_margin"
             android:textColor="@color/list_item_bg_collapsed"
             android:textSize="@dimen/default_title_size"
-            android:text="@string/fragment_first_start_fetch_time"
+            android:text="@string/activity_first_start_fetch_time"
             app:fontName="Annie_use_your_telescope"/>
 
     </LinearLayout>

@@ -29,7 +29,7 @@ val mainModule = module {
     /**
      * Provides a SnackBarHelper interface from the instance of MainActivity.
      */
-    single<SnackBarHelper> { (activity: BaseActivity) ->
+    single<SnackBarHelper>(override = true) { (activity: BaseActivity) ->
         SnackBarHelperImpl(
             activity
         )
@@ -38,7 +38,7 @@ val mainModule = module {
     /**
      * Provides a DialogHelper interface from the instance of MainActivity.
      */
-    single<DialogHelper> { (activity: BaseActivity) ->
+    single<DialogHelper>(override = true) { (activity: BaseActivity) ->
         DialogHelperImpl(
             activity
         )

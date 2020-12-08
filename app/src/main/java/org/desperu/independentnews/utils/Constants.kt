@@ -2,7 +2,7 @@ package org.desperu.independentnews.utils
 
 import org.desperu.independentnews.R
 
-// --- FOR MAIN ---
+// --- FOR UI ---
 
 // Fragment identifier
 // Main
@@ -19,11 +19,8 @@ const val FRAG_TODAY_ARTICLES = 7
 const val FRAG_SOURCES_LIST = 100
 const val FRAG_SOURCES_DETAIL = 101
 
-// View Pager
+// Filters View Pager
 const val numberOfPage = 4
-
-// Source activity request code
-const val RC_SOURCE = 1000
 
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
@@ -43,6 +40,12 @@ const val END_ERROR = 6
 // Alert Dialog Key
 const val ABOUT = 0
 const val CONNEXION = 1
+
+
+// FOR REQUEST CODE
+const val RC_FIRST_START = 1000 // First start activity
+const val RC_SOURCE = 2000 // Source activity
+const val RC_PERMS = 10000 // For permissions
 
 
 // --- FOR FILTERS ---

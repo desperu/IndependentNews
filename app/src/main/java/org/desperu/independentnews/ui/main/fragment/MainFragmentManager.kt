@@ -12,6 +12,7 @@ import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.articleList.TODAY_ARTICLES_FRAG
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.utils.FRAG_CATEGORY
+import org.desperu.independentnews.utils.FRAG_TOP_STORY
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
 import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
 import org.koin.core.KoinComponent
@@ -54,6 +55,10 @@ class MainFragmentManager(private val fm: FragmentManager,
 
             // Populate data to fragment with bundle.
             populateDataToFragment(fragment, articleList)
+
+            // Clear all back stack when recall top story Fragment,
+            // because it's the root fragment of this activity.
+            if (fragmentKey == FRAG_TOP_STORY) clearAllBackStack()
 
             // Apply the fragment transaction in the corresponding frame.
             fragmentTransaction(fragment)

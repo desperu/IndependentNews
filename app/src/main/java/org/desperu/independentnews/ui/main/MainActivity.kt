@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -31,14 +32,12 @@ import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
-import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
-import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
+import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.ui.settings.SettingsActivity
-import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
@@ -165,14 +164,18 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     override fun onResume() {
         super.onResume()
+        // TODO handle has new articles, NO_FRAG to force reload frag
         showFragment(fragmentKey, todayArticles)
         syncDrawerWithFrag()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        // Handle Sources Activity response on activity result.
-        handleSourceResponse(requestCode, resultCode, data)
+        // Dispatch Activity response on activity result.
+        when (requestCode) {
+            RC_FIRST_START -> handleFirstStartResponse(resultCode)
+            RC_SOURCE -> handleSourceResponse(resultCode, data)
+        }
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
@@ -180,7 +183,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_top_story -> showFragment(FRAG_TOP_STORY, null)
             R.id.activity_main_menu_drawer_categories -> showFragment(FRAG_CATEGORY, null)
             R.id.activity_main_menu_drawer_all_articles -> showFragment(FRAG_ALL_ARTICLES, null)
-            R.id.activity_main_menu_drawer_sources -> showSourcesActivity()
+            R.id.activity_main_menu_drawer_sources -> showActivityForResult(SourcesActivity::class.java, RC_SOURCE)
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
             R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
             R.id.activity_main_drawer_about -> dialogHelper.showDialog(ABOUT)
@@ -227,15 +230,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         startActivity(browserIntent)
     }
 
-    @Suppress("Unused_parameter", "Unchecked_cast")
-    fun onClickInfo(v: View) {
-        get<ImageRouter> { parametersOf(this) }
-            .openShowImages(WHO_OWNS_WHAT as ArrayList<Any>)
-    }
-
     // --------------
     // ACTIVITY
     // --------------
+
 
     /**
      * Start Settings activity.
@@ -244,40 +242,26 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         startActivity(Intent(this, SettingsActivity::class.java))
 
     /**
-     * Start Sources activity.
+     * Start activity for result, for the given class name.
+     *
+     * @param kClass the java class name.
+     * @param requestCode the request code for the result.
      */
-    private fun showSourcesActivity() =
-        startActivityForResult(Intent(this, SourcesActivity::class.java), RC_SOURCE)
+    private fun <T: Activity> showActivityForResult(kClass: Class<T>, requestCode: Int) =
+        startActivityForResult(Intent(this, kClass), requestCode)
+
+    // TODO to show image for first start use this activity.
 
     // -----------------
     // DATA
     // -----------------
 
     /**
-     * Set needed sources data, fetch data and alarm data at first start.
+     * Show First Start activity if it's the first apk start.
      */
-    private fun firstStart() = lifecycleScope.launch(Dispatchers.Main) {
-        if (isFirstTime) {
-            showFirstStart(true)
-            // TODO check internet state, if no connexion don't set first start to false,
-            //  disable menu drawer motion event detection ??
-            //  save state of each download to know and retry after
-            ideNewsRepository.createSourcesForFirstStart() // TODO check if there's in db
-            ideNewsRepository.fetchRssArticles()
-            setAlarmAtFirstStart()
-            isFirstTime = false
-            showFirstStart(false)
-            snackBarHelper.closeSnackBar()
-            ideNewsRepository.fetchCategories()
-        }
-    }
-
-    /**
-     * Set alarm data and notification at first apk start.
-     */
-    private fun setAlarmAtFirstStart() {
-        startAlarm(this, getAlarmTime(prefs.getInt(REFRESH_TIME, REFRESH_TIME_DEFAULT)), UPDATE_DATA)
-        startAlarm(this, getAlarmTime(prefs.getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT)), NOTIFICATION)
+    private fun firstStart() {
+        if (isFirstTime)
+            showActivityForResult(FirstStartActivity::class.java, RC_FIRST_START)
     }
 
     /**
@@ -304,23 +288,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // --------------
 
     /**
-     * Show first start layout and hide coordinator container.
-     * Show article list fragment when hide.
-     * @param toShow if true show first start, else hide.
-     */
-    private fun showFirstStart(toShow: Boolean) {
-        if (toShow) {
-            first_start_container.visibility = View.VISIBLE
-            coordinator_layout.visibility = View.INVISIBLE
-        } else {
-            coordinator_layout.visibility = View.VISIBLE
-            first_start_container.visibility = View.INVISIBLE
-            fragmentKey = NO_FRAG
-            if (coordinator_layout.isShown) showFragment(fragmentKey, todayArticles)
-        }
-    }
-
-    /**
      * Show new downloaded articles.
      */
     override fun showNewArticles() {
@@ -328,7 +295,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             fm.getCurrentArticleListFrag()?.showNewArticles()
         else {
             fragmentKey = NO_FRAG
-            onResume()
+            fm.configureAndShowFragment(FRAG_TOP_STORY, null)
         }
     }
 
@@ -378,15 +345,26 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // --------------
 
     /**
+     * Handle response when retrieve first start result, if a fetching properly finish
+     * show frag and do nothing here, else finish application.
+     * @param resultCode Result code of request.
+     */
+    private fun handleFirstStartResponse(resultCode: Int) {
+        when (resultCode) {
+            RESULT_OK -> lifecycleScope.launch { ideNewsRepository.fetchCategories() }
+            RESULT_CANCELED -> finishAffinity()
+        }
+    }
+
+    /**
      * Handle response when retrieve source result, if a source state has changed,
      * update the article list.
-     * @param requestCode Code of request.
      * @param resultCode Result code of request.
      * @param data Intent request result data.
      */
-    private fun handleSourceResponse(requestCode: Int, resultCode: Int, data: Intent?) {
+    private fun handleSourceResponse(resultCode: Int, data: Intent?) {
         // If result code and request code matches with source result.
-        if (resultCode == RESULT_OK && requestCode == RC_SOURCE) {
+        if (resultCode == RESULT_OK) {
             val hasChange: Boolean? = data?.getBooleanExtra(HAS_CHANGE, false)
 
             // If has change, refresh the article list

@@ -146,7 +146,7 @@ class IndependentNewsRepositoryImpl(
         val rssArticleList = mutableListOf<Article>()
 
         // TODO serialize with base (BaseNetworkRepo) and use when to get good repo
-        getSources()?.forEach { source ->
+        getSources().forEach { source ->
             when (source.name) {
                 BASTAMAG -> bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
                 REPORTERRE -> reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
@@ -166,7 +166,7 @@ class IndependentNewsRepositoryImpl(
     override suspend fun fetchCategories(): List<Long> = withContext(Dispatchers.IO) {
         val articleList = mutableListOf<Article>()
 
-        getSources()?.forEach { source ->
+        getSources().forEach { source ->
             when (source.name) {
                 BASTAMAG -> bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
                 REPORTERRE -> reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
@@ -198,16 +198,15 @@ class IndependentNewsRepositoryImpl(
     // -----------------
     // GET DATA (DATABASE)
     // -----------------
-// TODO for all db get, get only enabled sources.
+
     /**
      * Returns the top story list of articles from the database.
      *
      * @return the top story list of articles from the database.
      */
     override suspend fun getTopStory(): List<Article>? = withContext(Dispatchers.IO) {
-        getSources()?.let { sources ->
-            articleDao.getTopStory(sources.map { source -> source.id }).setSourceForEach(sources)
-        }
+        val sources = getSources()
+        articleDao.getTopStory(sources.map { source -> source.id }).setSourceForEach(sources)
     }
 
     /**
@@ -218,17 +217,16 @@ class IndependentNewsRepositoryImpl(
      * @return the category list of articles from the database.
      */
     override suspend fun getCategory(categories: List<String>): List<Article>? = withContext(Dispatchers.IO) {
+        val sources = getSources()
         val articleList = mutableListOf<Article>()
 
-        getSources()?.let { sources ->
-            categories.forEach { category ->
-                articleList.addAll(
-                    articleDao.getCategory("%$category%", sources.map { it.id } )
-                )
-            }
-
-            articleDao.getWhereUrlsInSorted(articleList.map { it.url }).setSourceForEach(sources)
+        categories.forEach { category ->
+            articleList.addAll(
+                articleDao.getCategory("%$category%", sources.map { it.id })
+            )
         }
+
+        articleDao.getWhereUrlsInSorted(articleList.map { it.url }).setSourceForEach(sources)
     }
 
     /**
@@ -237,9 +235,8 @@ class IndependentNewsRepositoryImpl(
      * @return the list of all articles from the database.
      */
     override suspend fun getAllArticles(): List<Article>? = withContext(Dispatchers.IO) {
-        getSources()?.let { sources ->
-            articleDao.getAll(sources.map { it.id }).setSourceForEach(sources)
-        }
+        val sources = getSources()
+        articleDao.getAll(sources.map { it.id }).setSourceForEach(sources)
     }
 
     /**
@@ -254,7 +251,7 @@ class IndependentNewsRepositoryImpl(
         selectedMap: Map<Int, MutableList<String>>,
         actualList: List<Article>
     ): List<Article>? = withContext(Dispatchers.IO) {
-        val sources = getSources() ?: emptyList()
+        val sources = getSources()
 
         val parsedMap = parseSelectedMap(selectedMap, sources)
 
@@ -292,10 +289,10 @@ class IndependentNewsRepositoryImpl(
      */
     override suspend fun getTodayArticles(): List<Article>? = withContext(Dispatchers.IO) {
         val todayStartMillis = millisToStartOfDay(Calendar.getInstance().timeInMillis)
-        getSources()?.let { source ->
-            articleDao.getTodayArticle(todayStartMillis, source.map { it.id } )
-                .setSourceForEach(source)
-        }
+        val sources = getSources()
+
+        articleDao.getTodayArticle(todayStartMillis, sources.map { it.id } )
+            .setSourceForEach(sources)
     }
 
     // -----------------
@@ -306,28 +303,34 @@ class IndependentNewsRepositoryImpl(
      * Get enabled sources from the database.
      * Get from database on each call to handle source state change, from a user action.
      */
-    private suspend fun getSources(): List<Source>? = withContext(Dispatchers.IO) {
+    private suspend fun getSources(): List<Source> = withContext(Dispatchers.IO) {
         sourceRepository.getEnabledSources()
     }
 
-    // TODO put into source repo ??
     /**
      * Create all sources in database for first apk start.
      *
      * @return the id list of inserted sources pages.
      */
-    override suspend fun createSourcesForFirstStart() = withContext(Dispatchers.IO) {
-        val sourceList = listOf(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
+    override suspend fun createSourcesForFirstStart(): List<Long> = withContext(Dispatchers.IO) {
+        val hasSource = sourceRepository.getAll().isNotEmpty()
+        val sourcePages = mutableListOf<SourcePage>()
+        val sourcesIds: List<Long>
 
-        val sourcesIds = sourceRepository.insertSources(*sourceList.toTypedArray())
+        // If has already sources in database, delete their source page to re-fetch.
+        if (hasSource) {
+            sourcesIds = sourceRepository.getAll().map { it.source.id }
+            sourceRepository.deleteAllSourcePages(sourcesIds)
+        } else
+            sourcesIds = sourceRepository.insertSources(*SOURCE_LIST.toTypedArray())
 
         // Fetch and store in database the source pages for each source.
-        val sourcePages = mutableListOf<SourcePage>()
-        sourceList.forEachIndexed { index, source ->
+        SOURCE_LIST.forEachIndexed { index, source ->
             val fetchedSourcePages = fetchSourcePages(source.name)
             fetchedSourcePages.forEach { it.sourceId = sourcesIds[index] }
             sourcePages.addAll(fetchedSourcePages)
         }
+
         sourceRepository.insertSourcePages(*sourcePages.toTypedArray())
     }
 

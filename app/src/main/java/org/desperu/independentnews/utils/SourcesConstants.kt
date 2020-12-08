@@ -36,6 +36,8 @@ const val RSS = " (RSS)"
 const val CATEGORY = " (Categories)"
 
 // Source for database
+val SOURCE_LIST: List<Source>
+    get() = listOf(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
 val BASTAMAG_SOURCE = Source(
     name = BASTAMAG,
     url = BASTAMAG_BASE_URL,

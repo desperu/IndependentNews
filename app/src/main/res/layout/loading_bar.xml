@@ -7,5 +7,5 @@
     android:layout_width="@dimen/loading_bar_width_height"
     android:layout_height="@dimen/loading_bar_width_height"
     android:forceHasOverlappingRendering="true"
-    android:theme="@style/ProgressBarTheme"
+    android:theme="@style/SnackProgressBarTheme"
     tools:ignore="UnusedAttribute" />
