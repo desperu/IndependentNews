@@ -35,7 +35,6 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
@@ -76,6 +75,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private val fm by lazy { MainFragmentManager(supportFragmentManager, this as MainInterface) }
     override val mainLifecycleScope: LifecycleCoroutineScope = lifecycleScope
     private val ideNewsRepository = get<IndependentNewsRepository>()
+    private lateinit var snackBarHelper: SnackBarHelper
 
     /**
      * Used to detect first apk start.
@@ -109,7 +109,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     private fun configureKoinDependency() {
         get<MainInterface> { parametersOf(this@MainActivity) }
-        get<SnackBarHelper> { parametersOf(this@MainActivity) }
+        snackBarHelper = get { parametersOf(this@MainActivity) }
         get<ArticleRouter> { parametersOf(this@MainActivity) }
     }
 
@@ -277,6 +277,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             setAlarmAtFirstStart()
             isFirstTime = false
             showFirstStart(false)
+            snackBarHelper.closeSnackBar()
             ideNewsRepository.fetchCategories()
         }
     }
@@ -331,8 +332,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Show new downloaded articles.
      */
     override fun showNewArticles() {
-        fragmentKey = NO_FRAG
-        onResume()
+        if (fragmentKey == FRAG_TOP_STORY)
+            fm.getCurrentArticleListFrag()?.showNewArticles()
+        else {
+            fragmentKey = NO_FRAG
+            onResume()
+        }
     }
 
     /**
@@ -399,7 +404,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
                 if (currentFrag is CategoriesFragment)
                     currentFrag = currentFrag.getCurrentFrag()
 
-                (currentFrag as ArticleListFragment).refreshList()
+                (currentFrag as ArticleListInterface).refreshList()
             }
         }
     }

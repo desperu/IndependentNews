@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.postOnAnimationDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_article_list.*
@@ -120,7 +121,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     override fun onResume() {
         super.onResume()
-        updateFiltersMotionState()
+        articleListAdapter?.isFiltered?.let { updateFiltersMotionState(it) }
     }
 
     // -----------------
@@ -150,10 +151,14 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     override fun refreshList() { viewModel.refreshList(fragKey) }
 
     /**
-     * Sync filters motion state with adapter state, when resume to fragment.
+     * Show the new articles.
      */
-    private fun updateFiltersMotionState() =
-        articleListAdapter?.isFiltered?.let { mainInterface.updateFiltersMotionState(it) }
+    internal fun showNewArticles() {
+        viewModel.showNewArticles()
+        recycler_view.postOnAnimationDelayed(300L) {
+            recycler_view.smoothScrollToPosition(0)
+        }
+    }
 
     // -----------------
     // UI

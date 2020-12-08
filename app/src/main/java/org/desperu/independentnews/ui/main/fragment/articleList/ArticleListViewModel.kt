@@ -88,6 +88,14 @@ class ArticleListViewModel(
         newArticles?.let { updateListWithAnim(it) }
     }
 
+    /**
+     * Show the new downloaded articles.
+     */
+    internal fun showNewArticles() = viewModelScope.launch(Dispatchers.IO) {
+        articleList = ideNewsRepository.getTopStory()
+        articleList?.let { updateListWithAnim(it) }
+    }
+
     // -----------------
     // FILTER
     // -----------------

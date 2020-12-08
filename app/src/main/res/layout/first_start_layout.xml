@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/first_start_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
     tools:context=".ui.main.MainActivity">
 
     <org.desperu.independentnews.views.FontTextView
+        android:id="@+id/first_start_who_owns_what"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_large_margin"
         android:layout_marginEnd="@dimen/default_margin"
-        android:layout_gravity="center_vertical|end"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:textColor="@color/list_item_bg_collapsed"
         android:textSize="@dimen/appbar_title_text_size"
         android:text="@string/fragment_first_start_button"
@@ -25,60 +25,68 @@
         android:drawablePadding="@dimen/default_margin"
         android:onClick="onClickInfo"/>
 
-    <org.desperu.independentnews.views.FontTextView
-        android:id="@+id/first_start_app_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/first_start_margin"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:gravity="center"
-        android:textColor="@color/list_item_bg_collapsed"
-        android:textSize="@dimen/no_article_find_text_size"
-        android:text="@string/app_name"
-        app:fontName="Annie_use_your_telescope"/>
+        android:layout_below="@id/first_start_who_owns_what">
 
-    <org.desperu.independentnews.views.FontTextView
-        android:id="@+id/first_start_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="@dimen/default_large_margin"
-        android:textColor="@color/list_item_bg_collapsed"
-        android:textSize="@dimen/appbar_title_text_size"
-        android:text="@string/fragment_first_start_text"
-        app:fontName="Annie_use_your_telescope"/>
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/first_start_loading_progress_bar"
-        style="?android:attr/progressBarStyleLargeInverse"
-        android:layout_width="@dimen/article_loading_progress_bar_width_height"
-        android:layout_height="@dimen/article_loading_progress_bar_width_height"
-        android:theme="@style/ProgressBarFirstStartTheme" />
-
-        <TextView
-            android:id="@+id/first_start_text_loading"
+        <org.desperu.independentnews.views.FontTextView
+            android:id="@+id/first_start_app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:gravity="center"
             android:textColor="@color/list_item_bg_collapsed"
-            android:text="@string/fragment_first_start_loading"/>
+            android:textSize="@dimen/no_article_find_text_size"
+            android:text="@string/app_name"
+            app:fontName="Annie_use_your_telescope"/>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <org.desperu.independentnews.views.FontTextView
+            android:id="@+id/first_start_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/default_large_margin"
+            android:textColor="@color/list_item_bg_collapsed"
+            android:textSize="@dimen/appbar_title_text_size"
+            android:text="@string/fragment_first_start_text"
+            app:fontName="Annie_use_your_telescope"/>
 
-    <org.desperu.independentnews.views.FontTextView
-        android:id="@+id/first_start_text_fetch_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_margin="@dimen/default_large_margin"
-        android:textColor="@color/list_item_bg_collapsed"
-        android:textSize="@dimen/default_title_size"
-        android:text="@string/fragment_first_start_fetch_time"
-        app:fontName="Annie_use_your_telescope"/>
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
-</LinearLayout>
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/first_start_loading_progress_bar"
+            style="?android:attr/progressBarStyleLargeInverse"
+            android:layout_width="@dimen/article_loading_progress_bar_width_height"
+            android:layout_height="@dimen/article_loading_progress_bar_width_height"
+            android:theme="@style/ProgressBarFirstStartTheme" />
+
+            <TextView
+                android:id="@+id/first_start_text_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@color/list_item_bg_collapsed"
+                android:text="@string/fragment_first_start_loading"/>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <org.desperu.independentnews.views.FontTextView
+            android:id="@+id/first_start_text_fetch_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="@dimen/default_large_margin"
+            android:textColor="@color/list_item_bg_collapsed"
+            android:textSize="@dimen/default_title_size"
+            android:text="@string/fragment_first_start_fetch_time"
+            app:fontName="Annie_use_your_telescope"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

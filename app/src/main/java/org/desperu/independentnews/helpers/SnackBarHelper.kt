@@ -1,9 +1,15 @@
 package org.desperu.independentnews.helpers
 
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.postOnAnimationDelayed
+import androidx.core.view.updateLayoutParams
+import androidx.core.widget.ContentLoadingProgressBar
 import com.google.android.material.behavior.SwipeDismissBehavior
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -13,6 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.R
 import org.desperu.independentnews.service.ResourceService
+import org.desperu.independentnews.service.SharedPrefService
+import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
@@ -31,6 +39,11 @@ interface SnackBarHelper {
      * @param data the data list to display to the user into the message.
      */
     suspend fun showMessage(snackKey: Int, data: List<String>): Unit?
+
+    /**
+     * Close the snack bar, hide with anim. Needed when hide first start.
+     */
+    suspend fun closeSnackBar()
 }
 
 /**
@@ -49,9 +62,17 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     // FOR DATA
     private val mainInterface: MainInterface = get()
     private val resource: ResourceService = get()
+    private val prefs: SharedPrefService = get()
     private var snackBar: Snackbar? = null
     private var hasError = false
     private var errorMessage = mutableListOf<String>()
+    private val isFirstStart get() = prefs.getPrefs().getBoolean(IS_FIRST_TIME, true)
+    private var loadingBar: ContentLoadingProgressBar? = null
+
+
+    // --------------
+    // CALL FUNCTION
+    // --------------
 
     /**
      * Show the message into the snack bar for the given key and data.
@@ -65,10 +86,20 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
         else
             updateSnackBar(snackKey, data)
 
+        handleUi(snackKey)
         handleButton(snackKey)
         handleError(snackKey, data)
         snackBar?.show()
     }
+
+    /**
+     * Close the snack bar, hide with anim. Needed when hide first start.
+     */
+    override suspend fun closeSnackBar(): Unit = withContext(Dispatchers.Main) { snackBar?.dismiss() }
+
+    // --------------
+    // CONFIGURATION
+    // --------------
 
     /**
      * Init the snack bar for the given key and data.
@@ -78,7 +109,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      */
     private fun initSnackBar(snackKey: Int, data: List<String>) {
         snackBar = Snackbar.make(
-            activity.coordinator_layout, // TODO work only for main activity, use when switch !!!
+            getRootView(),
             getMessage(snackKey, data),
             getDuration(snackKey)
         )
@@ -134,6 +165,17 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     // --------------
 
     /**
+     * Returns the view used as parent to display the snack bar.
+     *
+     * @return the view used as parent to display the snack bar.
+     */
+    private fun getRootView() = when {
+        isFirstStart -> activity.drawer_layout
+        activity is MainActivity -> activity.coordinator_layout
+        else -> activity.coordinator_layout
+    }
+
+    /**
      * Returns the corresponding message for the given snack key and data.
      *
      * @param snackKey the snack bar key to display the corresponding message.
@@ -176,7 +218,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     private fun handleButton(snackKey: Int) {
         when(snackKey) {
             END_FIND -> snackBar
-                ?.setAction(R.string.snack_bar_button_show) { mainInterface.showNewArticles() } // TODO for perfect anim use smooth scroll and DiffUtils
+                ?.setAction(R.string.snack_bar_button_show) { mainInterface.showNewArticles() }
                 ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, android.R.color.holo_green_dark, null))
 
             END_NOT_FIND -> snackBar
@@ -184,7 +226,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
                 ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, R.color.list_item_bg_collapsed, null))
 
             END_ERROR -> snackBar
-                ?.setAction(R.string.snack_bar_button_retry) { mainInterface.refreshData(); snackBar = null }
+                ?.setAction(R.string.snack_bar_button_retry) { retry() }
                 ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, android.R.color.holo_orange_dark, null))
 
             else -> snackBar?.setAction(null, null)
@@ -206,5 +248,64 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
             }
             in arrayOf(END_FIND, END_NOT_FIND, END_ERROR) -> hasError = false
         }
+    }
+
+    /**
+     * Retry to fetch data.
+     */
+    private fun retry() {
+        mainInterface.refreshData()
+        loadingBar = null
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) snackBar = null
+    }
+
+    // --------------
+    // UI
+    // --------------
+
+    /**
+     * Handle the ui of the snack bar, between first start and standard use.
+     *
+     * @param snackKey the snack bar key used to handle ui.
+     */
+    private fun handleUi(snackKey: Int) {
+        if (isFirstStart) setBackgroundColor()
+        else {
+            showLoadingBar(snackKey) // Call before init to hide at good time
+            if (loadingBar == null && snackKey < ERROR) initLoadingBar()
+            if (snackKey > ERROR) loadingBar = null
+        }
+    }
+
+    /**
+     * Set the background color for the view of the snack bar.
+     */
+    private fun setBackgroundColor() {
+        snackBar?.view?.setBackgroundColor(
+            ResourcesCompat.getColor(activity.resources, android.R.color.transparent, null)
+        )
+    }
+
+    /**
+     * Initialize the loading progress bar.
+     */
+    private fun initLoadingBar() {
+        val snackText = snackBar?.view?.findViewById<View>(com.google.android.material.R.id.snackbar_text)
+        val snackLayout = snackText?.parent as ViewGroup
+        val snackView = LayoutInflater.from(activity).inflate(R.layout.loading_bar, snackLayout)
+        loadingBar = snackView.findViewById(R.id.loading_bar)
+
+        loadingBar?.updateLayoutParams<LinearLayout.LayoutParams> {
+            gravity = Gravity.CENTER
+        }
+    }
+
+    /**
+     * Show or hide loading progress bar, depends of toShow value.
+     *
+     * @param snackKey the snack bar key to display loading bar.
+     */
+    private fun showLoadingBar(snackKey: Int) {
+        if (snackKey > ERROR) loadingBar?.hide() else loadingBar?.show()
     }
 }

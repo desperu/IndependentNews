@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.ContentLoadingProgressBar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/loading_bar"
+    style="?android:attr/progressBarStyleLargeInverse"
+    android:layout_width="@dimen/loading_bar_width_height"
+    android:layout_height="@dimen/loading_bar_width_height"
+    android:forceHasOverlappingRendering="true"
+    android:theme="@style/ProgressBarTheme"
+    tools:ignore="UnusedAttribute" />
