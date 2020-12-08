@@ -18,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.R
-import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.MainInterface
@@ -51,7 +50,7 @@ interface SnackBarHelper {
  * to display message into the snack bar.
  *
  * @property activity the Activity instance used to display the message.
- * @property mainInterface the
+ * @property mainInterface the interface of main activity.
  *
  * @constructor Instantiate a new SnackBarHelperImpl.
  *
@@ -61,8 +60,8 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
 
     // FOR DATA
     private val mainInterface: MainInterface = get()
-    private val resource: ResourceService = get()
     private val prefs: SharedPrefService = get()
+    private val resources = activity.resources
     private var snackBar: Snackbar? = null
     private var hasError = false
     private var errorMessage = mutableListOf<String>()
@@ -184,18 +183,18 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      * @return the corresponding message for the given snack key and data.
      */
     private fun getMessage(snackKey: Int, data: List<String>) = when(snackKey) {
-        SEARCH -> resource.getString(R.string.snack_bar_message_search_articles, data[0])
-        FIND -> resource.getString(R.string.snack_bar_message_find_articles, data[0], data[1])
-        FETCH -> resource.getString(
+        SEARCH -> resources.getString(R.string.snack_bar_message_search_articles, data[0])
+        FIND -> resources.getString(R.string.snack_bar_message_find_articles, data[0], data[1])
+        FETCH -> resources.getString(
             R.string.snack_bar_message_fetch_list,
             data[0],
             data[1],
             data[2]
         )
-        ERROR -> resource.getString(R.string.snack_bar_message_error, data[0])
-        END_FIND -> resource.getString(R.string.snack_bar_message_end, data[0])
-        END_NOT_FIND -> resource.getString(R.string.snack_bar_message_not_find)
-        END_ERROR -> resource.getString(R.string.snack_bar_message_error, data[0])
+        ERROR -> resources.getString(R.string.snack_bar_message_error, data[0])
+        END_FIND -> resources.getString(R.string.snack_bar_message_end, data[0])
+        END_NOT_FIND -> resources.getString(R.string.snack_bar_message_not_find)
+        END_ERROR -> resources.getString(R.string.snack_bar_message_error, data[0])
         else -> throw IllegalArgumentException("Snack key not found : $snackKey")
     }
 
@@ -219,7 +218,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
         when(snackKey) {
             END_FIND -> snackBar
                 ?.setAction(R.string.snack_bar_button_show) { mainInterface.showNewArticles() }
-                ?.setActionTextColor(ResourcesCompat.getColor(activity.resources, android.R.color.holo_green_dark, null))
+                ?.setActionTextColor(ResourcesCompat.getColor(resources, android.R.color.holo_green_dark, null))
 
             END_NOT_FIND -> snackBar
                 ?.setAction(R.string.snack_bar_button_close) { snackBar?.dismiss() }

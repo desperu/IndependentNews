@@ -214,6 +214,18 @@ internal object Utils {
     // -----------------
 
     /**
+     * Returns true if internet is connected.
+     * @param context Context from this function is called.
+     * @return true if internet is connected.
+     */
+    @Suppress("DEPRECATION")
+    internal fun isInternetAvailable(context: Context): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        return netInfo != null && netInfo.isConnected
+    }
+
+    /**
      * Returns if the wifi connexion is available.
      * @param context the context from this function is called.
      * @return true if the wifi is connected.

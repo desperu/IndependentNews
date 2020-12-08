@@ -14,6 +14,7 @@ import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
 import org.desperu.independentnews.utils.Utils.isImageUrl
+import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
@@ -341,6 +342,19 @@ class UtilsTest {
         }
     }
 
+    @Test
+    fun given_connectedNetwork_When_isWifiAvailable_Then_checkResult() {
+        every { mockNetworkInfo.isConnected } returns true
+        val output = isInternetAvailable(mockContext)
+        assertTrue(output)
+    }
+
+    @Test
+    fun given_disconnectedNetwork_When_isWifiAvailable_Then_checkFalse() {
+        every { mockNetworkInfo.isConnected } returns false
+        val output = isInternetAvailable(mockContext)
+        assertFalse(output)
+    }
 
     @Test
     fun given_connectedNetworkAndWifi_When_isWifiAvailable_Then_checkResult() {

@@ -6,12 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.text.method.LinkMovementMethod
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -24,11 +21,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.layout_filter_motion.*
 import kotlinx.android.synthetic.main.nav_drawer.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
@@ -43,6 +42,7 @@ import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
+import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
@@ -76,6 +76,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     override val mainLifecycleScope: LifecycleCoroutineScope = lifecycleScope
     private val ideNewsRepository = get<IndependentNewsRepository>()
     private lateinit var snackBarHelper: SnackBarHelper
+    private lateinit var dialogHelper: DialogHelper
 
     /**
      * Used to detect first apk start.
@@ -108,9 +109,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Configure koin dependency for main activity.
      */
     private fun configureKoinDependency() {
-        get<MainInterface> { parametersOf(this@MainActivity) }
-        snackBarHelper = get { parametersOf(this@MainActivity) }
-        get<ArticleRouter> { parametersOf(this@MainActivity) }
+        get<MainInterface> { parametersOf(this) }
+        snackBarHelper = get { parametersOf(this) }
+        dialogHelper = get { parametersOf(this) }
+        get<ArticleRouter> { parametersOf(this) }
     }
 
     /**
@@ -181,7 +183,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_sources -> showSourcesActivity()
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
             R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
-            R.id.activity_main_drawer_about -> showAboutDialog()
+            R.id.activity_main_drawer_about -> dialogHelper.showDialog(ABOUT)
             R.id.activity_main_drawer_help -> showHelpDocumentation()
             else -> {}
         }
@@ -215,18 +217,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // --------------
     // ACTION
     // --------------
-
-    /**
-     * Show about dialog.
-     */
-    private fun showAboutDialog() {
-        val dialog: AlertDialog = AlertDialog.Builder(this)
-            .setTitle("${getString(R.string.activity_main_dialog_about_title)} ${getString(R.string.app_name)}")
-            .setMessage(R.string.activity_main_dialog_about_message)
-            .setPositiveButton(R.string.activity_main_dialog_about_positive_button, null)
-            .show()
-        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod = LinkMovementMethod.getInstance()
-    }
 
     /**
      * Show help documentation.
@@ -295,8 +285,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * into the database.
      */
     override fun refreshData() {
-        // TODO check connexion and show dialog of not available
-        lifecycleScope.launch(Dispatchers.IO) { ideNewsRepository.refreshData() }
+        if (isInternetAvailable(this))
+            lifecycleScope.launch(Dispatchers.IO) { ideNewsRepository.refreshData() }
+        else
+            dialogHelper.showDialog(CONNEXION)
     }
 
     /**

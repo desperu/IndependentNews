@@ -40,6 +40,10 @@ const val END_FIND = 4
 const val END_NOT_FIND = 5
 const val END_ERROR = 6
 
+// Alert Dialog Key
+const val ABOUT = 0
+const val CONNEXION = 1
+
 
 // --- FOR FILTERS ---
 

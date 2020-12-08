@@ -2,6 +2,8 @@ package org.desperu.independentnews.di.module.ui
 
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
+import org.desperu.independentnews.helpers.DialogHelper
+import org.desperu.independentnews.helpers.DialogHelperImpl
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.helpers.SnackBarHelperImpl
 import org.desperu.independentnews.ui.main.MainInterface
@@ -29,6 +31,15 @@ val mainModule = module {
      */
     single<SnackBarHelper> { (activity: BaseActivity) ->
         SnackBarHelperImpl(
+            activity
+        )
+    }
+
+    /**
+     * Provides a DialogHelper interface from the instance of MainActivity.
+     */
+    single<DialogHelper> { (activity: BaseActivity) ->
+        DialogHelperImpl(
             activity
         )
     }
