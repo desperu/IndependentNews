@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -25,6 +26,7 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.SystemUiHelper
@@ -273,6 +275,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Animate view when activity appear when display an article.
      */
     private fun animateViews() {
+        val animator = getValueAnimator(true, 300L, DecelerateInterpolator(), {})
+        animator.startDelay = 3000L
+
         if (article.id != 0L) { // TODO use value animator and sync all for perf and correct bug
             fromSideAnimation(this, listOf(article_source_name, article_source_image), 50, true)
 //            fromSideAnimation(this, article_source_image, 50, true)
@@ -286,7 +291,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 article_title.setScale(1f) // To prevent anim error...
                 article_title.clearAnimation() // Re set here because override clear anim in helper
             }
-            alphaViewAnimation(listOf(web_view), -50)
+            alphaViewAnimation(listOf(web_view), -50, true)
             fromBottomAnimation(web_view, -50)
         }
     }

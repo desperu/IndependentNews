@@ -37,14 +37,18 @@ object AnimHelper {
      *
      * @param views         the given list of views to animate.
      * @param startDelay    the start delay of the animation.
+     * @param toShow        true to fade in, false to fade out.
      */
-    internal fun alphaViewAnimation(views: List<View>, startDelay: Long) {
-        val animation: Animation = AlphaAnimation(0f, 1f)
+    internal fun alphaViewAnimation(views: List<View>, startDelay: Long, toShow: Boolean) {
+        val animation: Animation = if (toShow) AlphaAnimation(0f, 1f) else AlphaAnimation(1f, 0f)
         animation.duration = 500L
         animation.interpolator = AccelerateInterpolator()
         animation.startOffset = startDelay
-        views.forEach { it.startAnimation(animation) }
         clearAnimAfterPlaying(views, startDelay + animation.duration)
+        views.forEach {
+            it.postOnAnimation { it.visibility = if (toShow) View.VISIBLE else View.INVISIBLE }
+            it.startAnimation(animation)
+        }
     }
 
     /**
@@ -96,6 +100,10 @@ object AnimHelper {
      */
     private fun clearAnimAfterPlaying(views: List<View>, delay: Long) {
         val fullDelay = delay + 500L
-        views.forEach { it.postOnAnimationDelayed(fullDelay) { it.clearAnimation() } }
+        views.forEach {
+            it.postOnAnimationDelayed(fullDelay) {
+                it.clearAnimation()
+            }
+        }
     }
 }

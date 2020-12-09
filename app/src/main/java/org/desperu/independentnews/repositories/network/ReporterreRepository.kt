@@ -76,7 +76,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Reporterre.
      */
-override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(REPORTERRE + RSS) {
+    override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(REPORTERRE + RSS) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
@@ -85,6 +85,8 @@ override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(REPO
 
             val newArticles = articleRepository.getNewArticles(articleList)
             snackBarHelper?.showMessage(FIND, listOf(REPORTERRE + RSS, newArticles.size.toString()))
+
+            // Limit size for first start, but need to automatic inject in ui
 
             fetchArticleList(newArticles, RSS)
         } else

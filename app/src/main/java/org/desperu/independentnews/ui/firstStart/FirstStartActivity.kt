@@ -11,10 +11,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
+import kotlinx.android.synthetic.main.activity_first_start.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
+import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.firstStartModule
 import org.desperu.independentnews.di.module.ui.mainModule
@@ -65,6 +67,7 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
         configureKoinDependency()
         askForPermissions()
         handleFetchData()
+        animateViews()
     }
 
     // -----------------
@@ -237,5 +240,19 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
     private fun firstStartFinish(resultCode: Int) {
         setResult(resultCode, Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    // -----------------
+    // ANIMATION
+    // -----------------
+
+    /**
+     * Animate views for better user experience.
+     */
+    private fun animateViews() {
+        alphaViewAnimation(listOf(first_start_text), 1000L, true)
+        alphaViewAnimation(listOf(first_start_who_owns_what), 3000L, true)
+        alphaViewAnimation(listOf(first_start_text), 5000L, false)
+        alphaViewAnimation(listOf(first_start_text_fetch_time), 10000L, true)
     }
 }

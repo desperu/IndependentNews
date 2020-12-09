@@ -8,7 +8,7 @@
     <string name="activity_first_start_button">Who owns what ?</string>
     <string name="activity_first_start_text">First Start !</string>
     <string name="activity_first_start_loading">fetching\narticle list…</string>
-    <string name="activity_first_start_fetch_time">This could take a few minutes to fetch data, depends of your network connection !</string>
+    <string name="activity_first_start_fetch_time">This could take a few minutes to fetch data, depends of your network connection !\nLooks for who owns what !</string>
     <string name="activity_first_start_ask_permissions">This application need permissions to properly work !\n\n- Network state (to know if there\'s an available connexion)\n- Internet (to access network)\n- Boot complete (for notifications and refresh data)</string>
     <string name="activity_first_start_ask_permissions_oreo">This application need permissions to properly work !\n\n- Network state (to know if there\'s an available connexion)\n- Internet (to access network)\n- Boot complete (for notifications and refresh data)\n- Background data (for automatic refresh data)</string>
     <string name="activity_first_start_toast_perm_refused">Permissions refused !!</string>
@@ -81,7 +81,7 @@
     <string name="activity_settings_text_refresh_article_list">Refresh articles list every days</string>
     <string name="activity_settings_text_refresh_article_list_description">Refresh article list every days, at the specified time.</string>
     <string name="activity_settings_text_refresh_article_list_time">Refresh article list time</string>
-    <string name="activity_settings_text_refresh_article_list_time_description">Set refresh article list time (default is 9am).</string>
+    <string name="activity_settings_text_refresh_article_list_time_description">Set refresh article list time (default is 11am).</string>
     <string name="activity_settings_text_refresh_only_wifi">Refresh article list only on Wifi</string>
     <string name="activity_settings_text_refresh_only_wifi_description">Refresh article list only on Wifi network connexion. If checked and there no Wifi connexion established at the refresh article list time, the application can\'t refresh article list data.</string>
     <string name="activity_settings_text_article_store_delay">Article store delay</string>
