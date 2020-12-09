@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.models.SourceWithData
-import org.desperu.independentnews.repositories.SourceRepository
+import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.utils.EQUALS
 
 /**
@@ -23,9 +23,10 @@ import org.desperu.independentnews.utils.EQUALS
  * @param sourcesInterface          the sources interface witch provide activity interface to set.
  * @param router                    the source router interface witch provide user redirection to set.
  */
-class SourcesListViewModel(private val sourceRepository: SourceRepository,
-                           private val sourcesInterface: SourceListInterface,
-                           private val router: SourceRouter
+class SourcesListViewModel(
+    private val sourceRepository: SourceRepository,
+    private val sourcesInterface: SourceListInterface,
+    private val router: SourceRouter
 ) : ViewModel() {
 
     // FOR DATA

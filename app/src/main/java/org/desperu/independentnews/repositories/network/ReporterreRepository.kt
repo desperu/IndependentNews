@@ -1,4 +1,4 @@
-package org.desperu.independentnews.repositories
+package org.desperu.independentnews.repositories.network
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,6 +12,7 @@ import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
 import org.desperu.independentnews.models.web.reporterre.ReporterreSourcePage
 import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
+import org.desperu.independentnews.repositories.database.ArticleRepository
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.koin.java.KoinJavaComponent.getKoin

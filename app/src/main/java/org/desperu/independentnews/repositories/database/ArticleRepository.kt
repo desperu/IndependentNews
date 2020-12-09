@@ -1,4 +1,4 @@
-package org.desperu.independentnews.repositories
+package org.desperu.independentnews.repositories.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

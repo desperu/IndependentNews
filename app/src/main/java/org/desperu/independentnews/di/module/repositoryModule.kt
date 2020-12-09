@@ -1,6 +1,14 @@
 package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.repositories.*
+import org.desperu.independentnews.repositories.database.ArticleRepository
+import org.desperu.independentnews.repositories.database.ArticleRepositoryImpl
+import org.desperu.independentnews.repositories.database.SourceRepository
+import org.desperu.independentnews.repositories.database.SourceRepositoryImpl
+import org.desperu.independentnews.repositories.network.BastamagRepository
+import org.desperu.independentnews.repositories.network.BastamagRepositoryImpl
+import org.desperu.independentnews.repositories.network.ReporterreRepository
+import org.desperu.independentnews.repositories.network.ReporterreRepositoryImpl
 import org.koin.dsl.module
 
 /**
@@ -31,9 +39,7 @@ val repositoryModule = module {
      */
     single<SourceRepository> {
         SourceRepositoryImpl(
-            get(),
-            get(),
-            get()
+            get(), get(), get()
         )
     }
 

@@ -19,7 +19,15 @@ class IndependentNews : Application() {
             startKoin {
                 androidLogger()
                 androidContext(this@IndependentNews)
-                modules(listOf(dbModule, networkModule, repositoryModule, viewModelModule, serviceModule))
+                modules(
+                    listOf(
+                        dbModule,
+                        networkModule,
+                        repositoryModule,
+                        viewModelModule,
+                        serviceModule
+                    )
+                )
             }
         }
 

@@ -1,4 +1,4 @@
-package org.desperu.independentnews.repositories
+package org.desperu.independentnews.repositories.network
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,6 +12,7 @@ import org.desperu.independentnews.models.web.bastamag.BastamagCategory
 import org.desperu.independentnews.models.web.bastamag.BastamagSourcePage
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
+import org.desperu.independentnews.repositories.database.ArticleRepository
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.koin.java.KoinJavaComponent.getKoin

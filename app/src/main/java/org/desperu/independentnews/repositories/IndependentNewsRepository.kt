@@ -9,6 +9,10 @@ import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.Source
 import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.repositories.database.ArticleRepository
+import org.desperu.independentnews.repositories.database.SourceRepository
+import org.desperu.independentnews.repositories.network.BastamagRepository
+import org.desperu.independentnews.repositories.network.ReporterreRepository
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.FilterUtils.parseSelectedMap
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
