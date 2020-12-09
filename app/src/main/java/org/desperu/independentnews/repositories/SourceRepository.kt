@@ -67,10 +67,8 @@ interface SourceRepository {
 
     /**
      * Delete all source pages in database, for the given source ids.
-     *
-     * @param ids the unique identifier list of source.
      */
-    suspend fun deleteAllSourcePages(ids: List<Long>)
+    suspend fun deleteAllSourcePages()
 }
 
 /**
@@ -151,10 +149,9 @@ class SourceRepositoryImpl(
 
     /**
      * Delete all source pages in database, for the given source ids.
-     *
-     * @param ids the unique identifier list of source.
      */
-    override suspend fun deleteAllSourcePages(ids: List<Long>) = withContext(Dispatchers.IO) {
+    override suspend fun deleteAllSourcePages() = withContext(Dispatchers.IO) {
+        val ids = sourcePageDao.getAll().map { it.id }
         ids.forEach { sourcePageDao.deleteSourcePage(it) }
     }
 }

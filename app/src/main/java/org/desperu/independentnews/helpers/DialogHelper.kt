@@ -5,7 +5,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import org.desperu.independentnews.R
-import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.ui.firstStart.FirstStartInterface
+import org.desperu.independentnews.utils.ABOUT
+import org.desperu.independentnews.utils.CONNEXION
+import org.desperu.independentnews.utils.CONNEXION_START
+import org.desperu.independentnews.utils.FIRST_START_ERROR
+import org.koin.java.KoinJavaComponent.getKoin
 
 /**
  * DialogHelper witch provide functions to display messages into alert dialog.
@@ -33,6 +38,7 @@ interface DialogHelper {
 class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
 
     // FOR DATA
+    private val firstStartInterface: FirstStartInterface? = getKoin().getOrNull()
     private val resources = activity.resources
 
     // --------------
@@ -77,7 +83,28 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
                 R.string.activity_main_dialog_about_positive_button,
                 null
             )
+
+            CONNEXION_START -> configureFirstStartButton(builder)
+
+            FIRST_START_ERROR -> configureFirstStartButton(builder)
         }
+    }
+
+    /**
+     * Configure buttons for the first start alert dialog builder.
+     *
+     * @param builder the dialog builder to add buttons.
+     */
+    private fun configureFirstStartButton(builder: AlertDialog.Builder) {
+        builder
+            .setPositiveButton(R.string.dialog_cant_start_retry) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                firstStartInterface?.retryFetchData()
+            }
+            .setNegativeButton(R.string.dialog_cant_start_quit) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                firstStartInterface?.closeApplication()
+            }
     }
 
     /**
@@ -88,10 +115,30 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
      */
     private fun configureAdditionalFeatures(dialogKey: Int, dialog: AlertDialog) {
         when (dialogKey) {
-            ABOUT ->
-                dialog.findViewById<TextView>(android.R.id.message)?.movementMethod =
-                    LinkMovementMethod.getInstance()
+            ABOUT -> setMovementMethod(dialog)
+            CONNEXION_START -> { setMovementMethod(dialog); setUnCancellable(dialog) }
+            FIRST_START_ERROR -> setUnCancellable(dialog)
         }
+    }
+
+    /**
+     * Set movement method for the message text of the alert dialog.
+     *
+     * @param dialog the dialog to add features.
+     */
+    private fun setMovementMethod(dialog: AlertDialog) {
+        dialog.findViewById<TextView>(android.R.id.message)?.movementMethod =
+            LinkMovementMethod.getInstance()
+    }
+
+    /**
+     * Set the alert dialog not cancellable.
+     *
+     * @param dialog the dialog to add features.
+     */
+    private fun setUnCancellable(dialog: AlertDialog) {
+        dialog.setCancelable(false)
+        dialog.setCanceledOnTouchOutside(false)
     }
 
     // --------------
@@ -108,6 +155,8 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
     private fun getTitle(dialogKey: Int) = when(dialogKey) {
         ABOUT -> "${resources.getString(R.string.activity_main_dialog_about_title)} ${resources.getString(R.string.app_name)}"
         CONNEXION -> resources.getString(R.string.dialog_no_connexion_title)
+        CONNEXION_START -> resources.getString(R.string.dialog_no_connexion_title)
+        FIRST_START_ERROR -> resources.getString(R.string.dialog_fetch_source_error_title)
         else -> throw IllegalArgumentException("Dialog key not found : $dialogKey")
     }
 
@@ -121,6 +170,8 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
     private fun getMessage(dialogKey: Int) = when(dialogKey) {
         ABOUT -> R.string.activity_main_dialog_about_message
         CONNEXION -> R.string.dialog_no_connexion_message
+        CONNEXION_START -> R.string.dialog_cant_start_message
+        FIRST_START_ERROR -> R.string.dialog_fetch_source_error_message
         else -> throw IllegalArgumentException("Dialog key not found : $dialogKey")
     }
 }

@@ -1,5 +1,6 @@
 package org.desperu.independentnews.helpers
 
+import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -42,9 +43,9 @@ interface SnackBarHelper {
     suspend fun showMessage(snackKey: Int, data: List<String>): Unit?
 
     /**
-     * Close the snack bar, hide with anim. Needed when hide first start.
+     * Used to hide snack bar during loading.
      */
-    suspend fun closeSnackBar()
+    var userDismiss: Boolean
 }
 
 /**
@@ -65,6 +66,8 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     private val prefs: SharedPrefService = get()
     private val resources = activity.resources
     private var snackBar: Snackbar? = null
+    private var snackKey = 0
+    override var userDismiss = false
     private var hasError = false
     private var errorMessage = mutableListOf<String>()
     private val isFirstStart get() = prefs.getPrefs().getBoolean(IS_FIRST_TIME, true)
@@ -82,21 +85,19 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      * @param data the data list to display to the user into the message.
      */
     override suspend fun showMessage(snackKey: Int, data: List<String>) = withContext(Dispatchers.Main) {
+        handleUserDismiss(snackKey)
+        if (userDismiss && snackKey < END_FIND) return@withContext
+
         if (snackBar == null)
             initSnackBar(snackKey, data)
         else
             updateSnackBar(snackKey, data)
 
-        handleLoadingBar(snackKey)
+        handleUi(snackKey)
         handleButton(snackKey)
         handleError(snackKey, data)
         snackBar?.show()
     }
-
-    /**
-     * Close the snack bar, hide with anim. Needed when hide first start.
-     */
-    override suspend fun closeSnackBar(): Unit = withContext(Dispatchers.Main) { snackBar?.dismiss() }
 
     // --------------
     // CONFIGURATION
@@ -131,6 +132,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
 
         override fun onViewDetachedFromWindow(v: View?) {
             snackBar = null
+            if (snackKey < END_FIND) userDismiss = true
         }
     }
 
@@ -212,6 +214,16 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     }
 
     /**
+     * Handle user dismiss state, hide snackbar while fetching data not finish.
+     *
+     * @param snackKey the snack bar key to display the corresponding message.
+     */
+    private fun handleUserDismiss(snackKey: Int) {
+        this.snackKey = snackKey
+        if (userDismiss && snackKey >= END_FIND) userDismiss = false
+    }
+
+    /**
      * Handle snack bar button, show, configure and dismiss, depends of the snack key value.
      *
      * @param snackKey the snack bar key to display the corresponding message.
@@ -258,7 +270,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     private fun retry() {
         mainInterface.refreshData()
         loadingBar = null
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) snackBar = null
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) snackBar = null
     }
 
     // --------------
@@ -266,14 +278,25 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     // --------------
 
     /**
-     * Handle the loading bar of the snack bar.
+     * Handle the ui of the snack bar, between first start and standard use.
      *
      * @param snackKey the snack bar key used to handle ui.
      */
-    private fun handleLoadingBar(snackKey: Int) {
+    private fun handleUi(snackKey: Int) {
+        if (isFirstStart) setBackgroundColor()
+
         showLoadingBar(snackKey) // Call before init to hide at good time
         if (loadingBar == null && snackKey < ERROR) initLoadingBar()
         if (snackKey > ERROR) loadingBar = null
+    }
+
+    /**
+     * Set the background color for the view of the snack bar.
+     */
+    private fun setBackgroundColor() {
+        snackBar?.view?.setBackgroundColor(
+            ResourcesCompat.getColor(activity.resources, android.R.color.transparent, null)
+        )
     }
 
     /**

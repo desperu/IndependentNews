@@ -30,7 +30,7 @@ object FetchHelper : KoinComponent {
         try {
             snackBarHelper?.showMessage(SEARCH, listOf(sourceName))
 
-            withContext(Dispatchers.IO) { block() }
+            withContext(Dispatchers.IO) { return@withContext block() }
         } catch (e: Exception) {
             snackBarHelper?.showMessage(ERROR, listOf(sourceName))
 

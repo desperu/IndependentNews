@@ -40,6 +40,8 @@ const val END_ERROR = 6
 // Alert Dialog Key
 const val ABOUT = 0
 const val CONNEXION = 1
+const val CONNEXION_START = 10
+const val FIRST_START_ERROR = 20
 
 
 // FOR REQUEST CODE
@@ -93,7 +95,9 @@ const val NOTIFICATION = 1
 const val INDEPENDENT_NEWS_PREFS = "IndependentNewsPrefs"
 
 // Shared preferences keys
+// global use
 const val IS_FIRST_TIME = "isFirstTime"
+// settings
 const val NOTIFICATION_ENABLED = "notificationEnabled"
 const val NOTIFICATION_TIME = "notificationTime"
 const val TEXT_SIZE = "textSize"
@@ -103,6 +107,9 @@ const val REFRESH_ONLY_WIFI = "refreshOnlyWifi"
 const val STORE_DELAY = "storeDelay"
 
 // Settings default value
+// global use
+const val FIRST_TIME_DEFAULT = true
+// settings
 const val NOTIFICATION_DEFAULT = true
 const val NOTIFICATION_TIME_DEFAULT = 12
 const val TEXT_SIZE_DEFAULT = 100

@@ -83,7 +83,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private val prefs: SharedPreferences
         get() = getSharedPreferences(INDEPENDENT_NEWS_PREFS, Context.MODE_PRIVATE)
     private var isFirstTime: Boolean
-        get() = prefs.getBoolean(IS_FIRST_TIME, true)
+        get() = prefs.getBoolean(IS_FIRST_TIME, FIRST_TIME_DEFAULT)
         set(value) = prefs.edit { putBoolean(IS_FIRST_TIME, value) }
 
     // --------------
@@ -250,8 +250,6 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private fun <T: Activity> showActivityForResult(kClass: Class<T>, requestCode: Int) =
         startActivityForResult(Intent(this, kClass), requestCode)
 
-    // TODO to show image for first start use this activity.
-
     // -----------------
     // DATA
     // -----------------
@@ -272,7 +270,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         if (isInternetAvailable(this))
             lifecycleScope.launch(Dispatchers.IO) { ideNewsRepository.refreshData() }
         else
-            dialogHelper.showDialog(CONNEXION)
+            dialogHelper.showDialog(CONNEXION) // Mistake on retry, no shown
     }
 
     /**
@@ -351,7 +349,12 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      */
     private fun handleFirstStartResponse(resultCode: Int) {
         when (resultCode) {
-            RESULT_OK -> lifecycleScope.launch { ideNewsRepository.fetchCategories() }
+            RESULT_OK -> lifecycleScope.launch {
+                fragmentKey = NO_FRAG // Force to reload
+                snackBarHelper.userDismiss = true // Used to no display fetch result to user
+                ideNewsRepository.fetchCategories()
+                snackBarHelper.userDismiss = false
+            }
             RESULT_CANCELED -> finishAffinity()
         }
     }

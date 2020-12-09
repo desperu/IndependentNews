@@ -111,7 +111,6 @@ interface IndependentNewsRepository {
  * @property articleDao                     the database access object for article.
  * @property snackBarHelper                 the helper to display fetch messages to the user
  *                                          with the snack bar.
- * @property newArticles                    the number of new articles find.
  *
  * @constructor Instantiates a new IndependentNewsRepositoryImpl.
  * @param articleRepository                 the repository access for article database to set.
@@ -130,7 +129,6 @@ class IndependentNewsRepositoryImpl(
 
     // FOR DATA
     private val snackBarHelper: SnackBarHelper? get() = getKoin().getOrNull()
-    private var newArticles = 0
 
     // -----------------
     // FETCH DATA (WEB)
@@ -153,8 +151,7 @@ class IndependentNewsRepositoryImpl(
             }
         }
 
-        newArticles = rssArticleList.size // Reset new articles value in same time.
-        articleRepository.persist(rssArticleList)
+        return@withContext articleRepository.persist(rssArticleList)
     }
 
     /**
@@ -173,8 +170,7 @@ class IndependentNewsRepositoryImpl(
             }
         }
 
-        newArticles += articleList.size
-        articleRepository.persist(articleList)
+        return@withContext articleRepository.persist(articleList)
     }
 
     /**
@@ -184,8 +180,9 @@ class IndependentNewsRepositoryImpl(
      * @return the number of row affected for removed articles.
      */
     override suspend fun refreshData(): Int = withContext(Dispatchers.IO) {
-        fetchRssArticles()
-        fetchCategories()
+        var newArticles = 0
+        newArticles += fetchRssArticles().size
+        newArticles += fetchCategories().size
 
         snackBarHelper?.showMessage(
             if (newArticles > 0) END_FIND else END_NOT_FIND,
@@ -313,49 +310,47 @@ class IndependentNewsRepositoryImpl(
      * @return the id list of inserted sources pages.
      */
     override suspend fun createSourcesForFirstStart(): List<Long> = withContext(Dispatchers.IO) {
-        val hasSource = sourceRepository.getAll().isNotEmpty()
-        val sourcePages = mutableListOf<SourcePage>()
-        val sourcesIds: List<Long>
+        val sourceList = sourceRepository.getAll()
+        val sourceIds: List<Long>
 
         // If has already sources in database, delete their source page to re-fetch.
-        if (hasSource) {
-            sourcesIds = sourceRepository.getAll().map { it.source.id }
-            sourceRepository.deleteAllSourcePages(sourcesIds)
+        if (sourceList.isNotEmpty()) {
+            sourceIds = sourceList.map { it.source.id }
+            sourceRepository.deleteAllSourcePages()
         } else
-            sourcesIds = sourceRepository.insertSources(*SOURCE_LIST.toTypedArray())
+            sourceIds = sourceRepository.insertSources(*SOURCE_LIST.toTypedArray())
 
-        // Fetch and store in database the source pages for each source.
-        SOURCE_LIST.forEachIndexed { index, source ->
-            val fetchedSourcePages = fetchSourcePages(source.name)
-            fetchedSourcePages.forEach { it.sourceId = sourcesIds[index] }
-            sourcePages.addAll(fetchedSourcePages)
-        }
-
-        sourceRepository.insertSourcePages(*sourcePages.toTypedArray())
+        return@withContext fetchSourcePages(sourceIds)
     }
 
     /**
-     * Returns the source pages of the given source.
+     * Fetch and store in database the source pages for each source.
      *
-     * @param sourceName the name of the source.
+     * @param sourceIds the list of source unique identifier.
      *
-     * @return the source pages of the given source.
+     * @return the id list of inserted source pages.
      */
-    private suspend fun fetchSourcePages(sourceName: String): List<SourcePage> = withContext(Dispatchers.IO) {
+    private suspend fun fetchSourcePages(sourceIds: List<Long>): List<Long> = withContext(Dispatchers.IO) {
         val sourcePages = mutableListOf<SourcePage>()
 
         try { // TODO handle all try / catch in the child repo (basta, reporterre...)
-            sourcePages.addAll(
-                when (sourceName) {
+            //
+            SOURCE_LIST.forEachIndexed { index, source ->
+
+                val fetchedSourcePages = when (source.name) {
                     BASTAMAG -> bastamagRepository.fetchSourcePages()
                     REPORTERRE -> reporterreRepository.fetchSourcePages()
                     else -> listOf()
                 }
-            )
+
+                fetchedSourcePages.forEach { it.sourceId = sourceIds[index] }
+
+                sourcePages.addAll(fetchedSourcePages)
+            }
         } catch (e: Exception) {
             Log.e("IdeRepo-fetchSrcPages", e.message.toString())
         }
 
-        sourcePages
+        return@withContext sourceRepository.insertSourcePages(*sourcePages.toTypedArray())
     }
 }

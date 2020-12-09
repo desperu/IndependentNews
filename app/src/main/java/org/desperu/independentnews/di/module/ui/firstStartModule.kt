@@ -5,12 +5,20 @@ import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.DialogHelperImpl
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.helpers.SnackBarHelperImpl
+import org.desperu.independentnews.ui.firstStart.FirstStartInterface
 import org.koin.dsl.module
 
 /**
  * Koin module which provide dependencies related to first start activity.
  */
 val firstStartModule = module {
+
+    /**
+     * Provides a FirstStartInterface from the instance of FirstStartActivity.
+     */
+    single { (activity: BaseActivity) ->
+        activity as FirstStartInterface
+    }
 
     /**
      * Provides a SnackBarHelper interface from the instance of FirstStartActivity.

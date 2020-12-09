@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
@@ -45,12 +46,13 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
     private val ideNewsRepository = get<IndependentNewsRepository>()
     private lateinit var snackBarHelper: SnackBarHelper
     private lateinit var dialogHelper: DialogHelper
+    private var resultOk = false
 
     /** Used to handle first apk start. */
     private val prefs: SharedPreferences
         get() = getSharedPreferences(INDEPENDENT_NEWS_PREFS, Context.MODE_PRIVATE)
     private var isFirstTime: Boolean
-        get() = prefs.getBoolean(IS_FIRST_TIME, true)
+        get() = prefs.getBoolean(IS_FIRST_TIME, FIRST_TIME_DEFAULT)
         set(value) = prefs.edit { putBoolean(IS_FIRST_TIME, value) }
 
     // --------------
@@ -73,6 +75,7 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
      * Configure koin dependency for main activity.
      */
     private fun configureKoinDependency() {
+        get<FirstStartInterface> { parametersOf(this) }
         snackBarHelper = get { parametersOf(this) }
         dialogHelper = get { parametersOf(this) }
     }
@@ -81,7 +84,7 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
      * Ask for permission at first application start.
      */
     @SuppressLint("InlinedApi")
-    private fun askForPermissions() {// Seems to do nothing...
+    private fun askForPermissions() { // Seems to do nothing...
         val isOreoOrUpper = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
         val permissions = mutableListOf(ACCESS_NETWORK_STATE, INTERNET, RECEIVE_BOOT_COMPLETED)
         if (isOreoOrUpper) permissions.add(REQUEST_COMPANION_USE_DATA_IN_BACKGROUND)
@@ -130,42 +133,57 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
      * fetch articles and set alarms, data for automatic refresh, and for notifications.
      */
     private fun handleFetchData() = lifecycleScope.launch(Dispatchers.Main) {
-        checkConnectivity()
-        fetchSources()
-        //  save state of each download to know and retry after
-        ideNewsRepository.createSourcesForFirstStart()
-        ideNewsRepository.fetchRssArticles()
-        setAlarmAtFirstStart()
-        isFirstTime = false
-//        showFirstStart(false)
-//        snackBarHelper.closeSnackBar()
-        ideNewsRepository.fetchCategories() // Do in main on result ok
-        fetchFinish()
+        if (checkConnectivity()) {
+
+            resultOk = false
+            fetchData { ideNewsRepository.createSourcesForFirstStart() }.join() // Wait job finish to handle result
+            if (resultOk) {
+                //  save state of each download to know and retry after
+
+                resultOk = false
+                fetchData { ideNewsRepository.fetchRssArticles() }.join()
+                if (resultOk) {
+                    setAlarmAtFirstStart()
+                    isFirstTime = false
+                    firstStartFinish(RESULT_OK)
+                }
+            }
+        }
     }
 
-    private suspend fun fetchSources() = ideNewsRepository.createSourcesForFirstStart()
-
     /**
-     * Retry to fetch data.
+     * Fetch data wrapper in coroutine, to await complete from parent Job,
+     * and store result to handle it.
+     *
+     * @param block the suspend block to execute.
+     *
+     * @return the job that is used to run the fetch functions.
      */
-    override fun retryFetchData() { handleFetchData() }
+    private suspend inline fun fetchData(
+        crossinline block: suspend () -> List<Long>
+    ): Job = lifecycleScope.launch(Dispatchers.Main) {
+
+        resultOk = block().isNotEmpty()
+        if (!resultOk)
+            dialogHelper.showDialog(FIRST_START_ERROR)
+    }
 
     // --------------
     // ACTION
     // --------------
 
     @Suppress("Unused_parameter")
-    fun onClickInfo(v: View) {
-        startShowImagesActivity()
-    }
+    fun onClickInfo(v: View) { startShowImagesActivity() }
+
+    /**
+     * Retry to fetch data.
+     */
+    override fun retryFetchData() { handleFetchData() }
 
     /**
      * Close the application.
      */
-    override fun closeApplication() {
-        setResult(RESULT_CANCELED, Intent(this, MainActivity::class.java))
-        finishAffinity()
-    }
+    override fun closeApplication() { firstStartFinish(RESULT_CANCELED) }
 
     // --------------
     // ACTIVITY
@@ -177,7 +195,6 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
     @Suppress("Unchecked_cast")
     private fun startShowImagesActivity() =
         ShowImagesActivity.routeFromActivity(this, WHO_OWNS_WHAT as ArrayList<Any>, 0)
-        // TODO use main to open show image and clean error so
 
     // -----------------
     // UTILS
@@ -203,16 +220,22 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
     /**
      * Check the connectivity before try to download. If no connection display message
      * and prompt user.
+     *
+     * @return true if a connexion is available, false otherwise.
      */
-    private fun checkConnectivity() {
-        if (!isInternetAvailable(baseContext)) dialogHelper.showDialog(CONNEXION)
-    }
+    private fun checkConnectivity(): Boolean =
+        if (isInternetAvailable(baseContext)) {
+            true
+        } else {
+            dialogHelper.showDialog(CONNEXION_START)
+            false
+        }
 
     /**
-     * Fetch properly finish, so send result to the parent activity, and finish this one.
+     * First Start finish, so send result to the parent activity, and finish this one.
      */
-    private fun fetchFinish() {
-        setResult(RESULT_OK, Intent(this, MainActivity::class.java))
-        finishAffinity()
+    private fun firstStartFinish(resultCode: Int) {
+        setResult(resultCode, Intent(this, MainActivity::class.java))
+        finish()
     }
 }

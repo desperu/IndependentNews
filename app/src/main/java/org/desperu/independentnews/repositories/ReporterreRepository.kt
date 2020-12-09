@@ -128,7 +128,7 @@ class ReporterreRepositoryImpl(
             sourcePages.add(ReporterreSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
-        sourcePages
+        return@withContext sourcePages
     }
 
     /**
@@ -153,6 +153,6 @@ class ReporterreRepositoryImpl(
             )
         }
 
-        articleList
+        return@withContext articleList
     }
 }

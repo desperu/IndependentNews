@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.core.widget.NestedScrollView
+import androidx.core.widget.NestedScrollView.OnScrollChangeListener
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.fragment_source_detail.*
 import org.desperu.independentnews.R
@@ -13,6 +13,7 @@ import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
 import org.desperu.independentnews.anim.AnimHelper.scaleViewAnimation
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.databinding.FragmentSourceDetailBinding
+import org.desperu.independentnews.extension.design.dp
 import org.desperu.independentnews.models.SourceWithData
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -122,9 +123,10 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     /**
      * Scroll listener, to show recycler animation each time it appear on user screen.
      */
-    private val scrollListener = NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ ->
         source_detail_nested_scroll?.let {
-            val recyclerTop = source_detail_recycler.top - v.measuredHeight
+            val safeMarge = 50.dp // Safe marge to prevent ui mistake
+            val recyclerTop = source_detail_recycler.top - v.measuredHeight - safeMarge
             source_detail_recycler.adapter =
                 if (recyclerTop < scrollY)
                     if (source_detail_recycler.adapter == null)

@@ -12,9 +12,11 @@
     <string name="activity_first_start_ask_permissions">This application need permissions to properly work !\n\n- Network state (to know if there\'s an available connexion)\n- Internet (to access network)\n- Boot complete (for notifications and refresh data)</string>
     <string name="activity_first_start_ask_permissions_oreo">This application need permissions to properly work !\n\n- Network state (to know if there\'s an available connexion)\n- Internet (to access network)\n- Boot complete (for notifications and refresh data)\n- Background data (for automatic refresh data)</string>
     <string name="activity_first_start_toast_perm_refused">Permissions refused !!</string>
-    <string name="dialog_cant_start_message">This application need internet connexion for it\'s first start, check your connexion and retry, or try later if you can\'t get a connexion for now.</string>
+    <string name="dialog_cant_start_message">This application need internet connexion for it\'s first start. Check your connexion and retry, or try later if you can\'t get a connexion for now.</string>
     <string name="dialog_cant_start_retry">Retry</string>
     <string name="dialog_cant_start_quit">Quit</string>
+    <string name="dialog_fetch_source_error_title">Error !</string>
+    <string name="dialog_fetch_source_error_message">An error happened while fetching data. This application need theses data to properly work. Try again, if the problem persist, <a href="https://github.com/desperu/IndependentNews/issues">open an issue on github.com</a>.</string>
     <!-- Main Activity -->
     <!-- Article List Fragment -->
     <string name="fragment_article_list_no_article">No article find !</string>

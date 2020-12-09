@@ -131,7 +131,7 @@ class BastamagRepositoryImpl(
             sourcePages.add(BastamagSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
-        sourcePages
+        return@withContext sourcePages
     }
 
     /**
@@ -156,6 +156,6 @@ class BastamagRepositoryImpl(
             )
         }
 
-        articleList
+        return@withContext articleList
     }
 }

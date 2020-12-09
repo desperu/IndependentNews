@@ -14,6 +14,7 @@ import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.utils.*
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.getKoin
 import org.koin.core.parameter.parametersOf
 
 /**
@@ -37,7 +38,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     private lateinit var binding: FragmentArticleListBinding
     private val viewModel = get<ArticleListViewModel> { parametersOf(this) }
     private var articleListAdapter: ArticleListAdapter? = null
-    private val mainInterface = get<MainInterface>()
+    private val mainInterface get() = getKoin().getOrNull<MainInterface>()
     private val loadingDuration: Long
         get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
 
@@ -176,14 +177,15 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * Show or hide filter motion, depends of toShow value.
      * @param toShow true to show filter motion, false to hide.
      */
-    override fun showFilterMotion(toShow: Boolean) = mainInterface.showFilterMotion(toShow)
+    override fun showFilterMotion(toShow: Boolean) { mainInterface?.showFilterMotion(toShow) }
 
     /**
      * Update filters motion state adapter state, when switch fragment.
      * @param isFiltered true if the adapter is filtered, false otherwise.
      */
-    override fun updateFiltersMotionState(isFiltered: Boolean) =
-        mainInterface.updateFiltersMotionState(isFiltered)
+    override fun updateFiltersMotionState(isFiltered: Boolean) {
+        mainInterface?.updateFiltersMotionState(isFiltered)
+    }
 
     // --- GETTERS ---
 
