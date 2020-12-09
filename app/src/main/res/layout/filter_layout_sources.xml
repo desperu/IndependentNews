@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_layout_sources_bastamag"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
 
             <TextView
                 android:id="@+id/filter_reporterre"
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/filter_layout_sources_reporterre"
                 android:layout_alignParentEnd="true"
-                style="@style/FilterPillTheme"
+                style="@style/FilterPillStyle"
                 tools:ignore="RelativeOverlap" />
 
         </RelativeLayout>
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_layout_sources_multinational"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
 
         </LinearLayout>
 

@@ -80,7 +80,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
      * @param observable the observable value to get and set.
      */
     override fun alertDialog(dialogKey: Int, observable: ObservableInt?) {
-        val dialog: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        val dialog: AlertDialog.Builder = AlertDialog.Builder(this, R.style.AlertDialogStyle)
         // Create dialog for zoom level
         dialog.setTitle(getDialogTitle(baseContext, dialogKey))
         dialog.setMessage(getDialogMessage(baseContext, dialogKey))

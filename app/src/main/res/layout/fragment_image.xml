@@ -20,7 +20,7 @@
             android:layout_width="@dimen/article_loading_progress_bar_width_height"
             android:layout_height="@dimen/article_loading_progress_bar_width_height"
             android:layout_gravity="center"
-            android:theme="@style/ProgressBarTheme" />
+            android:theme="@style/ProgressBarStyle" />
 
         <org.desperu.independentnews.views.GestureImageView
             android:id="@+id/show_image_view"

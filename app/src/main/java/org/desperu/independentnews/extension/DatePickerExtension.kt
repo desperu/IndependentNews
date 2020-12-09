@@ -28,7 +28,7 @@ internal fun createDatePickerDialog(context: Context, pickerView: TextView, date
 
     DatePickerDialog(
         context,
-        R.style.DatePickerDialogTheme,
+        R.style.DatePickerDialogStyle,
         getOnDateSetListener(context, pickerView, date),
         year,
         monthOfYear,

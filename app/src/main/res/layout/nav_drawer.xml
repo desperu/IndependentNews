@@ -11,7 +11,7 @@
         android:fitsSystemWindows="true"
         android:background="@color/colorPrimary"
         android:visibility="visible"
-        android:theme="@style/NavigationDrawerTheme"
+        android:theme="@style/NavigationDrawerStyle"
         app:itemTextColor="@color/list_item_bg_collapsed"
         app:itemIconTint="@color/list_item_bg_collapsed"
         app:headerLayout="@layout/nav_header"

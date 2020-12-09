@@ -17,6 +17,6 @@
         android:text="@{viewModel.sourcePage.buttonName}"
         android:onClick="@{viewModel.onClickButton}"
         app:myBackgroundColor="@{viewModel.sourceWithData}"
-        style="@style/AppButton" />
+        style="@style/AppButtonStyle" />
 
 </layout>

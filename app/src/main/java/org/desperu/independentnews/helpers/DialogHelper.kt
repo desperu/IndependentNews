@@ -51,7 +51,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
      * @param dialogKey the dialog key to display the corresponding message.
      */
     override fun showDialog(dialogKey: Int) {
-        val builder: AlertDialog.Builder = AlertDialog.Builder(activity, R.style.AlertDialogTheme)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(activity, R.style.AlertDialogStyle)
             .setTitle(getTitle(dialogKey))
             .setMessage(getMessage(dialogKey))
 

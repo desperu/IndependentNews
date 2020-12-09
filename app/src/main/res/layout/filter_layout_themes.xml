@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:tag="filter_ecology"
                 android:text="@string/filter_layout_themes_ecology"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
 
             <TextView
                 android:id="@+id/filter_social"
@@ -35,7 +35,7 @@
                 android:layout_marginStart="@dimen/filter_pill_margin_start"
                 android:tag="filter_social"
                 android:text="@string/filter_layout_themes_social"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
         </LinearLayout>
 
         <LinearLayout
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_layout_themes_economy"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
 
             <TextView
                 android:id="@+id/filter_politic"
@@ -57,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/filter_pill_margin_start"
                 android:text="@string/filter_layout_themes_politic"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
         </LinearLayout>
 
         <LinearLayout
@@ -71,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_layout_themes_international"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
 
             <TextView
                 android:id="@+id/filter_energy"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/filter_pill_margin_start"
                 android:text="@string/filter_layout_themes_energy"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
         </LinearLayout>
 
         <LinearLayout
@@ -93,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_layout_themes_agriculture"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
 
             <TextView
                 android:id="@+id/filter_health"
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/filter_pill_margin_start"
                 android:text="@string/filter_layout_themes_health"
-                style="@style/FilterPillTheme"/>
+                style="@style/FilterPillStyle"/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

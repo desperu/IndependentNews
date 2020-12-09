@@ -18,7 +18,7 @@
 
     <!-- LAYOUTS -->
 
-    <!-- First Start Activity -->
+    <!-- First Start Activity --> <!-- TODO support size screen -->
     <dimen name="first_start_logo_width_height">100dp</dimen>
     <dimen name="first_start_app_text_size">40sp</dimen>
     <dimen name="first_start_sub_text_size">24sp</dimen>

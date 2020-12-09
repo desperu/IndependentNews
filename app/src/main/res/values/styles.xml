@@ -45,30 +45,30 @@
     <!-- //////////////////////////////////////////////////////////
     //////////////////////   ***STYLES***   //////////////////////
    ////////////////////////////////////////////////////////// -->
-<!-- TODO rename to styles... -->
-    <!-- NAVIGATION VIEW THEME -->
-    <style name="NavigationDrawerTheme">
+
+    <!-- Navigation View Style -->
+    <style name="NavigationDrawerStyle">
         <item name="android:textSize">@dimen/nav_drawer_text_item_text_size_theme</item>
         <item name="android:textColorSecondary">@color/filter_pill_color</item>
     </style>
 
-    <!-- Progress Bar Theme -->
-    <style name="ProgressBarTheme" parent="Theme.AppCompat.Light">
+    <!-- Progress Bar Style -->
+    <style name="ProgressBarStyle" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/filter_pill_color</item>
     </style>
 
-    <!-- Snack Progress Bar Theme -->
-    <style name="SnackProgressBarTheme" parent="Theme.AppCompat.Light">
+    <!-- Snack Progress Bar Style -->
+    <style name="SnackProgressBarStyle" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@android:color/white</item>
     </style>
 
-    <!-- Progress Bar First Start Theme -->
-    <style name="ProgressBarFirstStartTheme" parent="Theme.AppCompat.Light">
+    <!-- Progress Bar First Start Style -->
+    <style name="ProgressBarFirstStartStyle" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/list_item_bg_collapsed</item>
     </style>
 
-    <!-- Filter Pill Theme -->
-    <style name="FilterPillTheme">
+    <!-- Filter Pill Style -->
+    <style name="FilterPillStyle">
         <item name="android:gravity">center</item>
         <item name="android:paddingStart">@dimen/filter_pill_padding_horizontal</item>
         <item name="android:paddingEnd">@dimen/filter_pill_padding_horizontal</item>
@@ -81,20 +81,20 @@
         <item name="android:textSize">@dimen/default_text_size</item>
     </style>
 
-    <!-- Date Picker Dialog Theme -->
-    <style name="DatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+    <!-- Date Picker Dialog Style -->
+    <style name="DatePickerDialogStyle" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/filter_seek_bar_color</item>
     </style>
 
-    <!-- ALERT DIALOG -->
-    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <!-- Alert Dialog -->
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- BUTTON -->
-    <style name="AppButton" parent="Widget.AppCompat.Button.Colored">
+    <!-- Button -->
+    <style name="AppButtonStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">@dimen/default_edit_text_size</item>
         <item name="android:padding">@dimen/default_margin</item>

@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/article_scroll_progress_bar_height"
             android:max="100"
-            android:theme="@style/ProgressBarTheme"
+            android:theme="@style/ProgressBarStyle"
             app:layout_anchor="@+id/appbar"
             app:layout_anchorGravity="bottom"/>
 
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="invisible"
-            android:theme="@style/ProgressBarTheme"/>
+            android:theme="@style/ProgressBarStyle"/>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/article_scroll_view"
