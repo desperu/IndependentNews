@@ -26,9 +26,13 @@
     <string name="activity_main_dialog_about_message">"<p>This application is developed by Desperu.\nSource code on <a href="https://github.com/desperu/IndependentNews">github.com</a>.\n\nIf you have an issue with this application, please search <a href="https://github.com/desperu/IndependentNews/issues">here</a>", create a new issue if there isn't yours. \nYou must create an account if you haven't.\n\nYou need help to use IndependentNews application?\nFind the documentation "<a href="https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf">here</a>.</p>"</string>
     <string name="activity_main_dialog_about_positive_button">OK</string>
     <!-- Snack Bar -->
+    <!-- sources -->
+    <string name="snack_bar_message_source_fetch">Fetching informations for source : %1$s</string>
+    <string name="snack_bar_message_source_error">Error while fetching informations for source : %1$s</string>
+    <!-- articles -->
     <string name="snack_bar_message_search_articles">Search new articles for : %1$s</string>
     <string name="snack_bar_message_find_articles">%1$s new articles find : %2$s</string>
-    <string name="snack_bar_message_fetch_list">Fetching %1$s article list : (%2$s/%3$s)</string>
+    <string name="snack_bar_message_fetch_list">Fetching %1$s articles : (%2$s/%3$s)</string>
     <string name="snack_bar_message_end">Find %1$s new articles !</string>
     <string name="snack_bar_message_not_find">No new article find !</string>
     <string name="snack_bar_message_error">Error while fetching articles for : %1$s</string>

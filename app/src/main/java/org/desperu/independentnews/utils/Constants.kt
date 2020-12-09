@@ -29,13 +29,18 @@ const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/m
 internal val WHO_OWNS_WHAT = arrayListOf(R.drawable.who_owns_what_2019, R.drawable.who_owns_what_2016)
 
 // SnackBar Keys
-const val SEARCH = 0
-const val FIND = 1
-const val FETCH = 2
-const val ERROR = 3
-const val END_FIND = 4
-const val END_NOT_FIND = 5
-const val END_ERROR = 6
+const val SOURCE_FETCH = 0
+const val SOURCE_ERROR = 1
+const val SEARCH = 2
+const val FIND = 3
+const val FETCH = 4
+const val ERROR = 5
+const val END_FIND = 6
+const val END_NOT_FIND = 7
+const val END_ERROR = 8
+
+// For retry snack bar
+const val PRE_DELAY = 500L
 
 // Alert Dialog Key
 const val ABOUT = 0

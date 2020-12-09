@@ -153,8 +153,8 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      * @param snackKey the snack bar key to display the corresponding message.
      */
     private fun showError(snackKey: Int) {
-        if (hasError && (snackKey == END_NOT_FIND || snackKey == END_FIND)) {
-            snackBar?.view?.postOnAnimationDelayed(getDuration(snackKey) - 500L) {
+        if (hasError && (snackKey == END_FIND || snackKey == END_NOT_FIND)) {
+            snackBar?.view?.postOnAnimationDelayed(getDuration(snackKey) - PRE_DELAY) {
                 mainInterface.mainLifecycleScope.launch {
                     showMessage(END_ERROR, listOf(concatenateStringFromMutableList(errorMessage)))
                     errorMessage.clear()
@@ -186,7 +186,9 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      *
      * @return the corresponding message for the given snack key and data.
      */
-    private fun getMessage(snackKey: Int, data: List<String>) = when(snackKey) {
+    private fun getMessage(snackKey: Int, data: List<String>): String = when(snackKey) {
+        SOURCE_FETCH -> resources.getString(R.string.snack_bar_message_source_fetch, data[0])
+        SOURCE_ERROR -> resources.getString(R.string.snack_bar_message_source_error, data[0])
         SEARCH -> resources.getString(R.string.snack_bar_message_search_articles, data[0])
         FIND -> resources.getString(R.string.snack_bar_message_find_articles, data[0], data[1])
         FETCH -> resources.getString(

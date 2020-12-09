@@ -3,7 +3,8 @@ package org.desperu.independentnews.repositories.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.helpers.FetchHelper.catchException
+import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
+import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourcePage
@@ -43,7 +44,7 @@ interface ReporterreRepository {
      *
      * @return the source page list of Reporterre from it's Web site.
      */
-    suspend fun fetchSourcePages(): List<SourcePage>
+    suspend fun fetchSourcePages(): List<SourcePage>?
 }
 
 /**
@@ -75,7 +76,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Reporterre.
      */
-    override suspend fun fetchRssArticles(): List<Article>? = catchException(REPORTERRE + RSS) {
+override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(REPORTERRE + RSS) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
@@ -95,7 +96,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the categories list of articles from the Web site of Reporterre.
      */
-    override suspend fun fetchCategories(): List<Article>? = catchException(REPORTERRE + CATEGORY) {
+    override suspend fun fetchCategories(): List<Article>? = catchFetchArticle(REPORTERRE + CATEGORY) {
         val categories = listOf(REPORT_SEC_DECRYPTER, REPORT_SEC_RESISTER, REPORT_SEC_INVENTER)
         val articleList = mutableListOf<Article>()
 
@@ -115,7 +116,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the source page list of Reporterre from it's Web site.
      */
-    override suspend fun fetchSourcePages(): List<SourcePage> = withContext(Dispatchers.IO) {
+    override suspend fun fetchSourcePages(): List<SourcePage>? = catchFetchSource(REPORTERRE) {
         val sourcePages = mutableListOf<SourcePage>()
 
         val responseBody = webService.getArticle(REPORTERRE_EDITO_URL)
@@ -129,7 +130,7 @@ class ReporterreRepositoryImpl(
             sourcePages.add(ReporterreSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
-        return@withContext sourcePages
+        sourcePages
     }
 
     /**

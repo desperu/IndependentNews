@@ -1,6 +1,5 @@
 package org.desperu.independentnews.repositories
 
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
@@ -337,8 +336,6 @@ class IndependentNewsRepositoryImpl(
     private suspend fun fetchSourcePages(sourceIds: List<Long>): List<Long> = withContext(Dispatchers.IO) {
         val sourcePages = mutableListOf<SourcePage>()
 
-        try { // TODO handle all try / catch in the child repo (basta, reporterre...)
-            //
             SOURCE_LIST.forEachIndexed { index, source ->
 
                 val fetchedSourcePages = when (source.name) {
@@ -347,13 +344,10 @@ class IndependentNewsRepositoryImpl(
                     else -> listOf()
                 }
 
-                fetchedSourcePages.forEach { it.sourceId = sourceIds[index] }
+                fetchedSourcePages?.forEach { it.sourceId = sourceIds[index] }
 
-                sourcePages.addAll(fetchedSourcePages)
+                fetchedSourcePages?.let { sourcePages.addAll(it) }
             }
-        } catch (e: Exception) {
-            Log.e("IdeRepo-fetchSrcPages", e.message.toString())
-        }
 
         return@withContext sourceRepository.insertSourcePages(*sourcePages.toTypedArray())
     }

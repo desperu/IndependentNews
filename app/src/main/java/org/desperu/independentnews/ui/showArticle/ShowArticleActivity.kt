@@ -273,7 +273,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Animate view when activity appear when display an article.
      */
     private fun animateViews() {
-        if (article.id != 0L) {
+        if (article.id != 0L) { // TODO use value animator and sync all for perf and correct bug
             fromSideAnimation(this, listOf(article_source_name, article_source_image), 50, true)
 //            fromSideAnimation(this, article_source_image, 50, true)
             fromSideAnimation(this, listOf(article_subtitle), 100, false)

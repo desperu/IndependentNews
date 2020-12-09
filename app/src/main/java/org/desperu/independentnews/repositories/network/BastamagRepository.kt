@@ -3,7 +3,8 @@ package org.desperu.independentnews.repositories.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.helpers.FetchHelper.catchException
+import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
+import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourcePage
@@ -43,7 +44,7 @@ interface BastamagRepository {
      *
      * @return the source page list of Basta ! from it's Web site.
      */
-    suspend fun fetchSourcePages(): List<SourcePage>
+    suspend fun fetchSourcePages(): List<SourcePage>?
 }
 
 /**
@@ -75,7 +76,7 @@ class BastamagRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    override suspend fun fetchRssArticles(): List<Article>? = catchException(BASTAMAG + RSS) {
+    override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(BASTAMAG + RSS) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
@@ -95,7 +96,7 @@ class BastamagRepositoryImpl(
      *
      * @return the categories list of articles from the Web site of Bastamag.
      */
-    override suspend fun fetchCategories(): List<Article>? = catchException(BASTAMAG + CATEGORY) {
+    override suspend fun fetchCategories(): List<Article>? = catchFetchArticle(BASTAMAG + CATEGORY) {
         val categories = listOf(BASTA_SEC_DECRYPTER, BASTA_SEC_RESISTER, BASTA_SEC_INVENTER)
         val number = listOf(0, 10, 20, 30, 40)
         val articleList = mutableListOf<Article>()
@@ -118,7 +119,7 @@ class BastamagRepositoryImpl(
      *
      * @return the source page list of Basta ! from it's Web site.
      */
-    override suspend fun fetchSourcePages(): List<SourcePage> = withContext(Dispatchers.IO) {
+    override suspend fun fetchSourcePages(): List<SourcePage>? = catchFetchSource(BASTAMAG) {
         val sourcePages = mutableListOf<SourcePage>()
 
         val responseBody = webService.getArticle(BASTAMAG_EDITO_URL)
@@ -132,7 +133,7 @@ class BastamagRepositoryImpl(
             sourcePages.add(BastamagSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
-        return@withContext sourcePages
+        sourcePages
     }
 
     /**
