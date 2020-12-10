@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableInt
 import androidx.databinding.ViewDataBinding
 import kotlinx.android.synthetic.main.alert_dialog.*
+import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.di.module.ui.settingsModule
@@ -42,13 +43,14 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
     override fun getBindingView(): View = configureDataBinding()
 
     override fun configureDesign() {
-        configureAppBar()
+        configAppBar()
         showAppBarIcon(listOf(R.id.back_arrow_icon))
     }
 
     // --------------
     // CONFIGURATION
     // --------------
+
     /**
      * Configure data binding and return the root view.
      * @return the binding root view.
@@ -57,6 +59,15 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_settings)
         binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
         return binding.root
+    }
+
+    /**
+     * Configure app bar, show icons, and set title.
+     */
+    private fun configAppBar() {
+        configureAppBar()
+        showAppBarIcon(listOf(R.id.back_arrow_icon))
+        toolbar_title.text = getString(R.string.navigation_drawer_settings)
     }
 
     // --------------

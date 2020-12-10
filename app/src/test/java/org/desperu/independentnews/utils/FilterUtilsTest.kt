@@ -50,7 +50,7 @@ class FilterUtilsTest {
             Pair(SOURCES, mutableListOf(filterBastamag, REPORTERRE)),
             Pair(THEMES, mutableListOf(filterEcology.toList(), filterInternational.toList()).flatten()),
             Pair(SECTIONS, mutableListOf(filterResist.toList(), filterDiscuss.toList()).flatten()),
-            Pair(DATES, mutableListOf("1602626400000", "1602799200000")),
+            Pair(DATES, mutableListOf("1602626400000", "1602885600000")),
             Pair(CATEGORIES, mutableListOf(
                 filterEcologyCorrected.toList(),
                 filterInternational.toList(),

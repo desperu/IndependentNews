@@ -9,5 +9,5 @@ interface SourceDetailInterface {
      * Return the source page list adapter instance.
      * @return the source page list adapter instance.
      */
-    fun getRecyclerAdapter(): SourceDetailAdapter? // TODO to remove ??
+    fun getRecyclerAdapter(): SourceDetailAdapter?
 }

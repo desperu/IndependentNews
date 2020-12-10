@@ -16,7 +16,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
+import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.isSourceUrl
 import org.koin.core.KoinComponent

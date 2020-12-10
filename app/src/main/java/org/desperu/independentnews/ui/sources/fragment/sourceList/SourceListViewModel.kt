@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.repositories.database.SourceRepository
+import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.EQUALS
 
 /**

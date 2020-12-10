@@ -1,15 +1,22 @@
 package org.desperu.independentnews.utils
 
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import org.desperu.independentnews.R
+import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
+import org.koin.core.KoinComponent
+import org.koin.core.get
 
 /**
  * MainUtils object witch provide utils functions for main activity.
  */
-object MainUtils {
+object MainUtils : KoinComponent{
+
+    // FOR DATA
+    private val resources: ResourceService get() = get()
 
     // -----------------
     // FRAGMENT
@@ -37,6 +44,28 @@ object MainUtils {
         is CategoriesFragment -> FRAG_CATEGORY
         else -> fragment.arguments?.getInt(FRAG_KEY)
             ?: throw IllegalArgumentException("Fragment class not found : ${fragment.javaClass.simpleName}")
+    }
+
+    // -----------------
+    // UI
+    // -----------------
+
+    /**
+     * Set the title activity name for the asked fragment.
+     *
+     * @param titleView     the text view to set title.
+     * @param fragmentKey   the key of the asked fragment.
+     */
+    internal fun setTitle(titleView: TextView, fragmentKey: Int) { // TODO to test
+        titleView.text =
+            resources.getString(
+                when (fragmentKey) {
+                    FRAG_TOP_STORY -> R.string.navigation_drawer_top_story
+                    FRAG_ALL_ARTICLES -> R.string.navigation_drawer_all_articles
+                    FRAG_TODAY_ARTICLES -> R.string.fragment_today_articles
+                    else -> R.string.app_name
+                }
+            )
     }
 
     // -----------------

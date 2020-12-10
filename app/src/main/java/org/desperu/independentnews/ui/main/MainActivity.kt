@@ -4,11 +4,9 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -42,6 +40,7 @@ import org.desperu.independentnews.ui.settings.SettingsActivity
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
+import org.desperu.independentnews.utils.MainUtils.setTitle
 import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
@@ -80,14 +79,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     private lateinit var snackBarHelper: SnackBarHelper
     private lateinit var dialogHelper: DialogHelper
 
-    /**
-     * Used to detect first apk start.
-     */
-    private val prefs: SharedPreferences
+    /** Used to detect first apk start. */
+    private val isFirstTime: Boolean
         get() = getSharedPreferences(INDEPENDENT_NEWS_PREFS, Context.MODE_PRIVATE)
-    private var isFirstTime: Boolean
-        get() = prefs.getBoolean(IS_FIRST_TIME, FIRST_TIME_DEFAULT)
-        set(value) = prefs.edit { putBoolean(IS_FIRST_TIME, value) }
+            .getBoolean(IS_FIRST_TIME, FIRST_TIME_DEFAULT)
 
     // --------------
     // BASE METHODS
@@ -161,6 +156,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             articleList
         )
         showTabLayout()
+        setTitle(toolbar_title, this.fragmentKey)
     }
 
     // -----------------
@@ -203,8 +199,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             drawerLayout.closeDrawer(GravityCompat.START)
 
         // If filter motion is expended, collapse it.
-        view_pager.isVisible ->
-        { close_icon.performClick(); Unit }
+        view_pager.isVisible -> { close_icon.performClick(); Unit }
 
         // If current fragment is Top Story, remove it and call super to finish activity.
         fragmentKey == FRAG_TOP_STORY -> {
@@ -215,6 +210,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         else -> {
             fm.fragmentBack { super.onBackPressed() }
             showTabLayout()
+            setTitle(toolbar_title, fragmentKey)
         }
     }
 

@@ -4,8 +4,8 @@ import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ImageRouterImpl
 import org.desperu.independentnews.ui.sources.SourcesInterface
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouterImpl
+import org.desperu.independentnews.ui.sources.fragment.SourceRouter
+import org.desperu.independentnews.ui.sources.fragment.SourceRouterImpl
 import org.koin.dsl.module
 
 /**

@@ -2,6 +2,7 @@
 
     <!-- ACTIVITY AND FRAGMENT NAMES -->
     <string name="app_name">Independent News</string>
+    <string name="fragment_today_articles">Today Articles</string>
 
     <!-- LAYOUT -->
     <!-- First Start Activity -->

@@ -1,6 +1,5 @@
 package org.desperu.independentnews.helpers
 
-import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View

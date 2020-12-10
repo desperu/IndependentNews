@@ -9,6 +9,7 @@ import androidx.transition.Fade
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
 import icepick.State
+import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
@@ -19,7 +20,7 @@ import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListFragment
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceRouter
+import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.FRAG_SOURCES_DETAIL
 import org.desperu.independentnews.utils.FRAG_SOURCES_LIST
 import org.desperu.independentnews.utils.NO_FRAG
@@ -50,8 +51,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
 
     override fun configureDesign() {
         configureKoinDependency()
-        configureAppBar()
-        showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.info_icon))
+        configAppBar()
         configureAndShowFragment(FRAG_SOURCES_LIST, null, null, -1)
     }
 
@@ -66,6 +66,15 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         get<SourcesInterface> { parametersOf(this) }
         get<SourceRouter> { parametersOf(this) }
         imageRouter = get { parametersOf(this) }
+    }
+
+    /**
+     * Configure app bar, show icons, and set title.
+     */
+    private fun configAppBar() {
+        configureAppBar()
+        showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.info_icon))
+        toolbar_title.text = getString(R.string.navigation_drawer_sources)
     }
 
     /**

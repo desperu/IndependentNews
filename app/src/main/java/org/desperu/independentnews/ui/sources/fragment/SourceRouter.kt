@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.sources.fragment.sourceList
+package org.desperu.independentnews.ui.sources.fragment
 
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,7 @@ import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
 import org.desperu.independentnews.ui.sources.SourcesInterface
-// TODO to move with activity, use in the two fragments.
+
 /**
  * The source router that allows redirection of the user.
  */

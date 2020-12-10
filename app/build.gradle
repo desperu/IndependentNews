@@ -167,4 +167,7 @@ dependencies {
 
     // BetterLinkMovementMethod
     implementation 'me.saket:better-link-movement-method:2.2.0'
+
+    // Leak Canary
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
 }
