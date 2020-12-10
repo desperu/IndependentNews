@@ -2,11 +2,9 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -28,6 +26,9 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.showActivity
+import org.desperu.independentnews.extension.showActivityForResult
+import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.Article
@@ -51,6 +52,7 @@ var animationPlaybackSpeed: Double = 0.8
  */
 const val TODAY_ARTICLES: String = "todayArticles"  // For today article list
 const val HAS_CHANGE: String = "hasChange"          // For source state change
+const val NEW_ARTICLES: String = "newArticles"      // For new article find
 
 /**
  * Main Activity root activity of the application.
@@ -63,6 +65,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     // FROM INTENT
     private val todayArticles: List<Article>? get() = intent?.getParcelableArrayListExtra(TODAY_ARTICLES)
+    private val newArticles: Int get() = intent.getIntExtra(NEW_ARTICLES, 0)
 
     // FOR UI
     @JvmField @State var fragmentKey: Int = NO_FRAG
@@ -148,7 +151,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * @param fragmentKey the asked fragment key.
      * @param articleList the article list to show in fragment.
      */
-    private fun showFragment(fragmentKey: Int, articleList: List<Article>?) =
+    private fun showFragment(fragmentKey: Int, articleList: List<Article>?) {
         fm.configureAndShowFragment(
             when {
                 articleList != null -> FRAG_TODAY_ARTICLES
@@ -157,6 +160,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             },
             articleList
         )
+        showTabLayout()
+    }
 
     // -----------------
     // METHODS OVERRIDE
@@ -164,9 +169,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
 
     override fun onResume() {
         super.onResume()
-        // TODO handle has new articles, NO_FRAG to force reload frag
-        showFragment(fragmentKey, todayArticles)
-        syncDrawerWithFrag()
+        handleOnResume()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -185,12 +188,11 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_all_articles -> showFragment(FRAG_ALL_ARTICLES, null)
             R.id.activity_main_menu_drawer_sources -> showActivityForResult(SourcesActivity::class.java, RC_SOURCE)
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
-            R.id.activity_main_menu_drawer_settings -> showSettingsActivity()
+            R.id.activity_main_menu_drawer_settings -> showActivity(SettingsActivity::class.java)
             R.id.activity_main_drawer_about -> dialogHelper.showDialog(ABOUT)
-            R.id.activity_main_drawer_help -> showHelpDocumentation()
+            R.id.activity_main_drawer_help -> showInBrowser(DOCUMENTATION_URL)
             else -> {}
         }
-        showTabLayout()
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
@@ -213,44 +215,10 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         else -> {
             fm.fragmentBack { super.onBackPressed() }
             showTabLayout()
-            syncDrawerWithFrag()
         }
     }
 
     override fun onUserInteraction() { super.onUserInteraction(); syncDrawerWithFrag() }
-
-    // --------------
-    // ACTION
-    // --------------
-
-    /**
-     * Show help documentation.
-     */
-    private fun showHelpDocumentation() {
-        val browserIntent = Intent(Intent.ACTION_VIEW)
-        browserIntent.setDataAndType(Uri.parse(DOCUMENTATION_URL), "text/html")
-        startActivity(browserIntent)
-    }
-
-    // --------------
-    // ACTIVITY
-    // --------------
-
-
-    /**
-     * Start Settings activity.
-     */
-    private fun showSettingsActivity() =
-        startActivity(Intent(this, SettingsActivity::class.java))
-
-    /**
-     * Start activity for result, for the given class name.
-     *
-     * @param kClass the java class name.
-     * @param requestCode the request code for the result.
-     */
-    private fun <T: Activity> showActivityForResult(kClass: Class<T>, requestCode: Int) =
-        startActivityForResult(Intent(this, kClass), requestCode)
 
     // -----------------
     // DATA
@@ -291,11 +259,13 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * Show new downloaded articles.
      */
     override fun showNewArticles() {
+        intent.removeExtra(NEW_ARTICLES)
+
         if (fragmentKey == FRAG_TOP_STORY)
             fm.getCurrentArticleListFrag()?.showNewArticles()
         else {
             fragmentKey = NO_FRAG
-            fm.configureAndShowFragment(FRAG_TOP_STORY, null)
+            showFragment(FRAG_TOP_STORY, null)
         }
     }
 
@@ -382,5 +352,18 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
                 (currentFrag as ArticleListInterface).refreshList()
             }
         }
+    }
+
+    /**
+     * Handle on resume activity, prompt user to show new articles if there's
+     * and resume previous fragment previous fragment.
+     */
+    private fun handleOnResume() {
+        if (newArticles != 0)
+            lifecycleScope.launch {
+                snackBarHelper.showMessage(END_FIND, listOf(newArticles.toString()))
+            }
+
+        showFragment(fragmentKey, todayArticles)
     }
 }

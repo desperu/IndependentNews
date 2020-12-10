@@ -1,27 +1,25 @@
 package org.desperu.independentnews.ui.showArticle
 
+import android.animation.ValueAnimator
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.view.View
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
-import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
-import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
-import org.desperu.independentnews.anim.AnimHelper.fromSideAnimation
-import org.desperu.independentnews.anim.AnimHelper.scaleViewAnimation
+import org.desperu.independentnews.anim.AnimHelper.animatedValue
+import org.desperu.independentnews.anim.AnimHelper.fromSideAnimator
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
@@ -71,6 +69,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private var noteScrollPosition = -1
     private var isWebViewDesigned = false
     private var navigationCount = 0
+    private lateinit var animator: ValueAnimator
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -114,9 +113,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         configureWebView()
         configureAppBar()
         showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
+        configureViewAnimations()
         postponeSceneTransition()
         scheduleStartPostponedTransition(article_image)
-        animateViews()
         setActivityTransition()
         setupProgressBarWithScrollView()
     }
@@ -264,37 +263,47 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Schedules the shared element transition to be started immediately
      * after the shared element has been measured and laid out within the
      * activity's view hierarchy.
+     * Start custom enter animations together with scene transition.
      *
      * @param sharedElement the shared element to animate for the transition.
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
-        sharedElement.doOnPreDraw { supportStartPostponedEnterTransition() }
+        sharedElement.doOnPreDraw { supportStartPostponedEnterTransition(); startAnimations() }
     }
 
     /**
-     * Animate view when activity appear when display an article.
+     * Configure views animation when activity appear (enter animation).
      */
-    private fun animateViews() {
-//        val animator = getValueAnimator(true, 300L, DecelerateInterpolator(), {})
-//        animator.startDelay = 3000L
+    private fun configureViewAnimations() {
+        if (article.id != 0L) {
+            animator =
+                getValueAnimator(
+                    true,
+                    resources.getInteger(R.integer.enter_anim_duration).toLong(),
+                    AccelerateInterpolator(),
+                    { progress ->
 
-        if (article.id != 0L) { // TODO use value animator and sync all for perf and correct bug
-            fromSideAnimation(this, listOf(article_source_name, article_source_image), 50, true)
-//            fromSideAnimation(this, article_source_image, 50, true)
-            fromSideAnimation(this, listOf(article_subtitle), 100, false)
-            fromSideAnimation(this, listOf(article_author), 200, true)
-            fromSideAnimation(this, listOf(article_date), 200, false)
-
-//            alphaViewAnimation(article_title, 0)
-            scaleViewAnimation(article_title, 150)
-            article_title.postOnAnimationDelayed(500) {
-                article_title.setScale(1f) // To prevent anim error...
-                article_title.clearAnimation() // Re set here because override clear anim in helper
-            }
-            alphaViewAnimation(listOf(web_view), -50, true)
-            fromBottomAnimation(web_view, -50)
+                        article_source_name.apply { // From left
+                            translationX = animatedValue(-right, progress)
+                            article_source_image.translationX = translationX // to sync with name anim
+                        }
+                        fromSideAnimator(listOf(article_subtitle, article_date), progress, false)
+                        fromSideAnimator(listOf(article_author), progress, true)
+                        article_title.setScale(progress)
+                        web_view.apply {
+                            alpha = progress//(progress - 0.8f) / 0.2f // not shown because css update
+                            translationY = animatedValue(sv.bottom - web_view.top, progress)//100.dp - 100.dp * progress
+                        }
+//                        article_root_view.alpha = progress // create anim mistake
+                    }
+                )
         }
     }
+
+    /**
+     * Animate view when activity appear to display an article.
+     */
+    private fun startAnimations() = animator.start()
 
     /**
      * Set custom activity transition, only for source detail to source page transition.

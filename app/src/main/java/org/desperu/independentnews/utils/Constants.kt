@@ -37,7 +37,7 @@ const val FETCH = 4
 const val ERROR = 5
 const val END_FIND = 6
 const val END_NOT_FIND = 7
-const val END_ERROR = 8
+const val END_ERROR = 8 // Not used ...
 
 // For retry snack bar
 const val PRE_DELAY = 500L

@@ -12,6 +12,9 @@
 
     <integer name="toggleAnimDuration">100</integer>
 
+    <!-- Show Article Activity Animation Duration -->
+    <integer name="enter_anim_duration">400</integer>
+
     <!-- Source Activity Animation Duration -->
     <integer name="item_anim_duration">300</integer>
 

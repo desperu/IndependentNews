@@ -11,6 +11,10 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
  */
 object AnimHelper {
 
+    // --------------
+    // SINGLE ANIMATION
+    // --------------
+
     /**
      * Set scale animation for the given view.
      *
@@ -100,10 +104,35 @@ object AnimHelper {
      */
     private fun clearAnimAfterPlaying(views: List<View>, delay: Long) {
         val fullDelay = delay + 500L
+        views.forEach { it.postOnAnimationDelayed(fullDelay) { it.clearAnimation() } }
+    }
+
+    // --------------
+    // SYNCHRONISED ANIMATION
+    // --------------
+
+    /**
+     * Apply from side animation for the given views.
+     *
+     * @param views         the given list of views to animate.
+     * @param progress      the value animator, used to animate views.
+     * @param fromLeft      if true animate the view from the left, else animate from the right.
+     */
+    internal fun fromSideAnimator(views: List<View>, progress: Float, fromLeft: Boolean) {
         views.forEach {
-            it.postOnAnimationDelayed(fullDelay) {
-                it.clearAnimation()
-            }
+            val value = if (fromLeft) -it.right else it.left
+            it.translationX = animatedValue(value, progress)
         }
     }
+
+    /**
+     * Returns the animated value.
+     *
+     * @param value         the value to animate.
+     * @param progress      the value animator, used to animate views.
+     *
+     * @return the animated value.
+     */
+    internal fun animatedValue(value: Int, progress: Float): Float =
+        value - (value * progress)
 }

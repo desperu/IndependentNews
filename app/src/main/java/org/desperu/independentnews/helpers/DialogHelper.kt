@@ -1,15 +1,16 @@
 package org.desperu.independentnews.helpers
 
-import android.content.Intent
-import android.net.Uri
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.ui.firstStart.FirstStartInterface
-import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.ABOUT
+import org.desperu.independentnews.utils.CONNEXION
+import org.desperu.independentnews.utils.CONNEXION_START
+import org.desperu.independentnews.utils.FIRST_START_ERROR
 import org.koin.java.KoinJavaComponent.getKoin
 
 /**
@@ -135,7 +136,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
                 setOnLinkClickListener { _, url ->
 
                     if (url.endsWith(".pdf")) {
-                        showHelpDocumentation()
+                        activity.showInBrowser(url)
                         true
                     } else
                         false
@@ -145,15 +146,6 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
                     true // to lock the action
                 }
             }
-    }
-
-    /**
-     * Show help documentation.
-     */
-    private fun showHelpDocumentation() { // TODO to serialize
-        val browserIntent = Intent(Intent.ACTION_VIEW)
-        browserIntent.setDataAndType(Uri.parse(DOCUMENTATION_URL), "text/html")
-        ContextCompat.startActivity(activity, browserIntent, null)
     }
 
     /**

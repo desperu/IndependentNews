@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.isDigitsOnly
 import androidx.core.view.postOnAnimationDelayed
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.ContentLoadingProgressBar
@@ -24,6 +25,7 @@ import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.MainInterface
+import org.desperu.independentnews.ui.main.NEW_ARTICLES
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.koin.core.KoinComponent
@@ -96,6 +98,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
         handleUi(snackKey)
         handleButton(snackKey)
         handleError(snackKey, data)
+        sendResult(snackKey, data)
         snackBar?.show()
     }
 
@@ -147,6 +150,10 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
         snackBar?.duration = getDuration(snackKey)
     }
 
+    // --------------
+    // RESULT
+    // --------------
+
     /**
      * Show error snackbar message if there's one.
      * 
@@ -160,6 +167,22 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
                     errorMessage.clear()
                 }
             }
+        }
+    }
+
+    /**
+     * Send result to the parent activity.
+     *
+     * @param snackKey the snack bar key to handle send result.
+     */
+    private fun sendResult(snackKey: Int, data: List<String>) {
+        if (snackKey > ERROR) {
+            val newArticles =
+                if (data.isNotEmpty() && data[0].isDigitsOnly()) data[0].toInt()
+                else 0
+
+            if (newArticles > 0)
+                activity.intent.putExtra(NEW_ARTICLES, newArticles)
         }
     }
 
@@ -271,8 +294,8 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      */
     private fun retry() {
         mainInterface.refreshData()
-        loadingBar = null
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) snackBar = null
+//        loadingBar = null
+        snackBar = null
     }
 
     // --------------
