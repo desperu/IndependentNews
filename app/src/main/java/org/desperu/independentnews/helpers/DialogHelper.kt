@@ -1,15 +1,15 @@
 package org.desperu.independentnews.helpers
 
-import android.text.method.LinkMovementMethod
+import android.content.Intent
+import android.net.Uri
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.firstStart.FirstStartInterface
-import org.desperu.independentnews.utils.ABOUT
-import org.desperu.independentnews.utils.CONNEXION
-import org.desperu.independentnews.utils.CONNEXION_START
-import org.desperu.independentnews.utils.FIRST_START_ERROR
+import org.desperu.independentnews.utils.*
 import org.koin.java.KoinJavaComponent.getKoin
 
 /**
@@ -123,12 +123,37 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
 
     /**
      * Set movement method for the message text of the alert dialog.
+     * Use custom library to handle link redirect, because there's
+     * an error for .pdf web url redirect in api 29.
      *
      * @param dialog the dialog to add features.
      */
     private fun setMovementMethod(dialog: AlertDialog) {
         dialog.findViewById<TextView>(android.R.id.message)?.movementMethod =
-            LinkMovementMethod.getInstance()
+            BetterLinkMovementMethod.newInstance().apply {
+
+                setOnLinkClickListener { _, url ->
+
+                    if (url.endsWith(".pdf")) {
+                        showHelpDocumentation()
+                        true
+                    } else
+                        false
+                }
+
+                setOnLinkLongClickListener { _, _ ->
+                    true // to lock the action
+                }
+            }
+    }
+
+    /**
+     * Show help documentation.
+     */
+    private fun showHelpDocumentation() { // TODO to serialize
+        val browserIntent = Intent(Intent.ACTION_VIEW)
+        browserIntent.setDataAndType(Uri.parse(DOCUMENTATION_URL), "text/html")
+        ContextCompat.startActivity(activity, browserIntent, null)
     }
 
     /**

@@ -17,8 +17,8 @@
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/progress_loading_bar"
             style="?android:attr/progressBarStyleLargeInverse"
-            android:layout_width="@dimen/article_loading_progress_bar_width_height"
-            android:layout_height="@dimen/article_loading_progress_bar_width_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:theme="@style/ProgressBarStyle" />
 

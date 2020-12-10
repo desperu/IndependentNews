@@ -217,6 +217,8 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         }
     }
 
+    override fun onUserInteraction() { super.onUserInteraction(); syncDrawerWithFrag() }
+
     // --------------
     // ACTION
     // --------------

@@ -81,7 +81,6 @@
 
     <!-- Show Article Activity -->
     <dimen name="article_scroll_progress_bar_height">4dp</dimen>
-    <dimen name="article_loading_progress_bar_width_height">150dp</dimen>
     <dimen name="article_scroll_margin_top">2dp</dimen>
     <dimen name="article_image_source_width_height">16dp</dimen>
     <dimen name="article_title_text_size">23sp</dimen>

@@ -162,6 +162,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     androidTestImplementation "androidx.room:room-testing:$room_version"
 
-    //EASY PERMISSIONS
+    // Easy Permissions
     implementation "pub.devrel:easypermissions:$easypermission_version"
+
+    // BetterLinkMovementMethod
+    implementation 'me.saket:better-link-movement-method:2.2.0'
 }
