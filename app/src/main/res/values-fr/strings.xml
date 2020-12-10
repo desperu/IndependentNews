@@ -1,7 +1,7 @@
 <resources>
 
     <!-- ACTIVITY AND FRAGMENT NAMES -->
-    <string name="fragment_today_articles">Articles du jour</string>
+    <string name="fragment_today_articles">Articles du Jour</string>
 
     <!-- LAYOUT -->
     <!-- First Start Activity -->
@@ -31,7 +31,7 @@
     <string name="snack_bar_message_find_articles">%1$s nouveaux articles trouvés : %2$s</string>
     <string name="snack_bar_message_fetch_list">%1$s, récupération des articles : (%2$s/%3$s)</string>
     <string name="snack_bar_message_end">%1$s nouveaux articles trouvés !</string>
-    <string name="snack_bar_message_not_find">Pas de nouvel article trouvé !</string>
+    <string name="snack_bar_message_not_find">Aucun nouvel article trouvé !</string>
     <string name="snack_bar_message_error">Erreur lors de la récupération des articles pour : %1$s</string>
     <string name="snack_bar_button_show">Afficher</string>
     <string name="snack_bar_button_close">Fermer</string>
@@ -69,7 +69,7 @@
     <string name="activity_settings_text_notifications_state">Activer les notifications</string>
     <string name="activity_settings_text_notifications_description">Envoie une notification chaque jour, pour afficher le nombre de nouveaux articles, à l\'heure choisi.</string>
     <string name="activity_settings_text_notifications_time">Heure de la notification</string>
-    <string name="activity_settings_text_notifications_time_description">Choisir l\'heure de la notification (par défault 12h)</string>
+    <string name="activity_settings_text_notifications_time_description">Choisir l\'heure de la notification (par défault 12h).</string>
     <string name="activity_settings_text_category_article">Article</string>
     <string name="activity_settings_text_article_text_size">Taille du texte des articles</string>
     <string name="activity_settings_text_article_text_size_description">Choisir la taille du texte des articles, par défault 100, min 1, max 200.</string>
@@ -79,7 +79,7 @@
     <string name="activity_settings_text_refresh_article_list_time">Heure de la recherche</string>
     <string name="activity_settings_text_refresh_article_list_time_description">Choisir l\'heure à laquelle rechercher de nouveaux articles (par défault 11h).</string>
     <string name="activity_settings_text_refresh_only_wifi">Rechercher de nouveaux articles uniquement sur la Wifi</string>
-    <string name="activity_settings_text_refresh_only_wifi_description">Rechercher de nouveaux articles seulement si une connexion Wifi est disponible. Si cette option est activée et qu\'aucune connexion Wifi n'est active à l\'heure de recherche choisi, l\'application ne pourra pas mettre à jour la liste d\'articles.</string>
+    <string name="activity_settings_text_refresh_only_wifi_description">Rechercher de nouveaux articles seulement si une connexion Wifi est disponible. Si cette option est activée et qu\'aucune connexion Wifi n\'est active à l\'heure de recherche choisi, l\'application ne pourra pas mettre à jour la liste d\'articles.</string>
     <string name="activity_settings_text_article_store_delay">Durée de stockage des articles</string>
     <string name="activity_settings_text_article_store_delay_description">Choisir la durée de stockage des articles dans l\'application, en mois, par défault 6, min 1, max 24.</string>
     <string name="activity_settings_text_category_reset_settings">Réinitialiser les Paramètres</string>
@@ -96,13 +96,13 @@
 
     <!-- MENU -->
     <!-- Nav Drawer -->
-    <string name="navigation_drawer_top_story">À la une</string>
+    <string name="navigation_drawer_top_story">À la Une</string>
     <string name="navigation_drawer_categories">Catégories</string>
     <string name="navigation_drawer_all_articles">Tous les Articles</string>
     <string name="navigation_drawer_category_utilities">Utilitaires</string>
     <string name="navigation_drawer_search">Recherche</string>
     <string name="navigation_drawer_sources">Sources</string>
-    <string name="navigation_drawer_refresh_data">Rafraîchissement des données</string>
+    <string name="navigation_drawer_refresh_data">Rafraîchir</string>
     <string name="navigation_drawer_notification">Notification</string>
     <string name="navigation_drawer_category_parameter">Paramètres</string>
     <string name="navigation_drawer_settings">Paramètres</string>
