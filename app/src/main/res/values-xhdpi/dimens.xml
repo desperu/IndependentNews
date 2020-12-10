@@ -18,6 +18,11 @@
 
     <!-- LAYOUTS -->
 
+    <!-- First Start Activity -->
+    <dimen name="first_start_logo_width_height">100dp</dimen>
+    <dimen name="first_start_app_text_size">39sp</dimen>
+    <dimen name="first_start_sub_text_size">23sp</dimen>
+
     <!-- Main Activity -->
     <!-- Fragment Article List -->
     <dimen name="recycler_view_padding_top">18dp</dimen>
@@ -99,6 +104,9 @@
     <dimen name="activity_settings_text_settings_description_text_size">13sp</dimen>
     <dimen name="activity_settings_text_zoom_value_margin_end">15dp</dimen>
     <dimen name="activity_settings_text_zoom_value_text_size">17sp</dimen>
+
+    <!-- Loading Bar -->
+    <dimen name="loading_bar_width_height">30dp</dimen>
 
     <!-- MENU -->
     <!-- Toolbar -->
