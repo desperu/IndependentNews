@@ -303,7 +303,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     /**
      * Animate view when activity appear to display an article.
      */
-    private fun startAnimations() = animator.start()
+    private fun startAnimations() { if (::animator.isInitialized) animator.start() }
 
     /**
      * Set custom activity transition, only for source detail to source page transition.

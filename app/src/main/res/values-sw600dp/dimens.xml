@@ -89,7 +89,7 @@
     <dimen name="article_scroll_margin_top">2dp</dimen>
     <dimen name="article_image_source_width_height">16dp</dimen>
     <dimen name="article_title_text_size">26sp</dimen>
-    <dimen name="article_image_min_width_height">300dp</dimen>
+    <dimen name="article_image_min_width_height">600dp</dimen>
 
     <!-- Sources Activity -->
     <dimen name="fragment_source_drawable_size">250dp</dimen>

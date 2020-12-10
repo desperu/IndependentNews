@@ -1,0 +1,124 @@
+<resources>
+
+    <!-- ACTIVITY AND FRAGMENT NAMES -->
+    <string name="fragment_today_articles">Articles du jour</string>
+
+    <!-- LAYOUT -->
+    <!-- First Start Activity -->
+    <string name="activity_first_start_button">Qui possède quoi ?</string>
+    <string name="activity_first_start_text">Premier Démarrage !</string>
+    <string name="activity_first_start_fetch_time">Récupération des données, cela peux prendre quelques minutes, selon votre connexion internet !\nRegardez Qui Possède Quoi !</string>
+    <string name="activity_first_start_ask_permissions">Cette application a besoin de permissions pour fonctionner correctement !\n\n- Status de la connexion internet (pour savoir si une connexion est disponible)\n- Internet (pour accèder au web)\n- Démarrage terminé (pour les notifications et rafraîchir les données)</string>
+    <string name="activity_first_start_ask_permissions_oreo">Cette application a besoin de permissions pour fonctionner correctement !\n\n- Status de la connexion internet (pour savoir si une connexion est disponible)\n- Internet (pour accèder au web)\n- Démarrage terminé (pour les notifications et rafraîchir les données)\n- Données en arrière plan (pour rafraîchir automatiquement les données)</string>
+    <string name="activity_first_start_toast_perm_refused">Permissions refusée !!</string>
+    <string name="dialog_cant_start_message">Cette application a besoin d\'une connexion internet lors de son premier démarrage. Vérifiez votre connexion internet et réessayez, ou réessayez plus tard si vous ne pouvez pas avoir de connexion pour l\'instant.</string>
+    <string name="dialog_cant_start_retry">Réessayer</string>
+    <string name="dialog_cant_start_quit">Quitter</string>
+    <string name="dialog_fetch_source_error_title">Erreur !</string>
+    <string name="dialog_fetch_source_error_message">Une erreur est survenu lors du téléchargement des données. Cette application a besoin de ces données pour fonctionner correctement. Essayez de nouveau, si le problème persiste, <a href="https://github.com/desperu/IndependentNews/issues">ouvrez une "issue" (problème) sur github.com</a>.</string>
+    <!-- Main Activity -->
+    <!-- Article List Fragment -->
+    <string name="fragment_article_list_no_article">Pas d\'article trouvé !</string>
+    <!-- Dialog About -->
+    <string name="activity_main_dialog_about_title">À propos</string>
+    <string name="activity_main_dialog_about_message">"<p>Cette application est développé par Desperu.\nLe code source est disponible sur <a href="https://github.com/desperu/IndependentNews">github.com</a>.\n\nSi vous rencontrez un problème avec cette application, vous pouvez chercher <a href="https://github.com/desperu/IndependentNews/issues">ici</a>", créez une nouvelle "issue" (problème), s\il n\'y a pas la vôtre. \nVous devrez créer un compte si vous n'en avez pas déjà un.\n\nSi vous avez besoin d'aide pour utiliser Independent News?\nVous trouverez la documentation "<a href="https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf">ici</a>.</p>"</string>
+    <!-- Snack Bar -->
+    <!-- sources -->
+    <string name="snack_bar_message_source_fetch">Téléchargement des informations pour la source : %1$s</string>
+    <string name="snack_bar_message_source_error">Erreur lors du téléchargement des informations pour la source : %1$s</string>
+    <!-- articles -->
+    <string name="snack_bar_message_search_articles">Recherche de nouveaux articles pour : %1$s</string>
+    <string name="snack_bar_message_find_articles">%1$s nouveaux articles trouvés : %2$s</string>
+    <string name="snack_bar_message_fetch_list">%1$s, récupération des articles : (%2$s/%3$s)</string>
+    <string name="snack_bar_message_end">%1$s nouveaux articles trouvés !</string>
+    <string name="snack_bar_message_not_find">Pas de nouvel article trouvé !</string>
+    <string name="snack_bar_message_error">Erreur lors de la récupération des articles pour : %1$s</string>
+    <string name="snack_bar_button_show">Afficher</string>
+    <string name="snack_bar_button_close">Fermer</string>
+    <string name="snack_bar_button_retry">Réessayer</string>
+
+    <!-- Show Article Activity -->
+    <string name="show_article_activity_article_error">Erreur, impossible de retrouver l\'article !</string>
+    <string name="show_article_activity_share_chooser_title">Partager l\'article !</string>
+
+    <!-- FILTER LAYOUT -->
+    <!-- Filter Layout Sources -->
+    <string name="filter_layout_sources_bastamag">Basta !</string>
+    <string name="filter_layout_sources_reporterre">Reporterre</string>
+    <string name="filter_layout_sources_multinational">Observatoire des Multinationales</string>
+    <!-- Filter Layout Themes -->
+    <string name="filter_layout_themes_ecology">Ecologie</string>
+    <string name="filter_layout_themes_social">Social</string>
+    <string name="filter_layout_themes_economy">Économie</string>
+    <string name="filter_layout_themes_politic">Politique</string>
+    <string name="filter_layout_themes_international">International</string>
+    <string name="filter_layout_themes_energy">Énergie</string>
+    <string name="filter_layout_themes_agriculture">Agriculture</string>
+    <string name="filter_layout_themes_health">Santé</string>
+    <!-- Filter Layout Sections -->
+    <string name="filter_layout_sections_alternatives">Alternatives</string>
+    <string name="filter_layout_sections_decrypt">Décrypter</string>
+    <string name="filter_layout_sections_resist">Resister</string>
+    <string name="filter_layout_sections_discuss">Débattre</string>
+    <string name="filter_layout_sections_chronicle">Chronique</string>
+    <!-- Filter Layout Dates -->
+    <string name="filter_layout_dates_text_begin">Date de début</string>
+    <string name="filter_layout_dates_text_end">Date de fin</string>
+
+    <!-- SETTINGS ACTIVITY -->
+    <string name="activity_settings_text_notifications_state">Activer les notifications</string>
+    <string name="activity_settings_text_notifications_description">Envoie une notification chaque jour, pour afficher le nombre de nouveaux articles, à l\'heure choisi.</string>
+    <string name="activity_settings_text_notifications_time">Heure de la notification</string>
+    <string name="activity_settings_text_notifications_time_description">Choisir l\'heure de la notification (par défault 12h)</string>
+    <string name="activity_settings_text_category_article">Article</string>
+    <string name="activity_settings_text_article_text_size">Taille du texte des articles</string>
+    <string name="activity_settings_text_article_text_size_description">Choisir la taille du texte des articles, par défault 100, min 1, max 200.</string>
+    <string name="activity_settings_text_category_data_management">Gestion des Données</string>
+    <string name="activity_settings_text_refresh_article_list">Rechercher de nouveaux articles tous les jours.</string>
+    <string name="activity_settings_text_refresh_article_list_description">Recherche de nouveaux articles tous les jours, à l\'heure choisi.</string>
+    <string name="activity_settings_text_refresh_article_list_time">Heure de la recherche</string>
+    <string name="activity_settings_text_refresh_article_list_time_description">Choisir l\'heure à laquelle rechercher de nouveaux articles (par défault 11h).</string>
+    <string name="activity_settings_text_refresh_only_wifi">Rechercher de nouveaux articles uniquement sur la Wifi</string>
+    <string name="activity_settings_text_refresh_only_wifi_description">Rechercher de nouveaux articles seulement si une connexion Wifi est disponible. Si cette option est activée et qu\'aucune connexion Wifi n'est active à l\'heure de recherche choisi, l\'application ne pourra pas mettre à jour la liste d\'articles.</string>
+    <string name="activity_settings_text_article_store_delay">Durée de stockage des articles</string>
+    <string name="activity_settings_text_article_store_delay_description">Choisir la durée de stockage des articles dans l\'application, en mois, par défault 6, min 1, max 24.</string>
+    <string name="activity_settings_text_category_reset_settings">Réinitialiser les Paramètres</string>
+    <string name="activity_settings_text_reset_settings">Réinitialiser les paramètres</string>
+    <string name="activity_settings_text_reset_settings_description">Réinitialiser les paramètres à leur valeur par défault.</string>
+    <!-- Alert Dialog -->
+    <string name="activity_settings_dialog_reset_settings_message">Êtes-vous sûr de vouloir réinitialiser les paramètres?</string>
+    <string name="activity_settings_dialog_negative_button">Annuler</string>
+    <!-- Toast -->
+    <string name="activity_settings_toast_time_wrong_value">%1$s doit être entre 0 et 24 !</string>
+    <string name="activity_settings_toast_text_size_wrong_value">La taille du texte doit être entre 1 et 200 !</string>
+    <string name="activity_settings_toast_store_delay_wrong_value">La durée de stockage des articles doit être entre 1 et 24 !</string>
+    <string name="activity_settings_toast_reset_settings_default">Paramètres réinitialisés à leur valeur par défault !</string>
+
+    <!-- MENU -->
+    <!-- Nav Drawer -->
+    <string name="navigation_drawer_top_story">À la une</string>
+    <string name="navigation_drawer_categories">Catégories</string>
+    <string name="navigation_drawer_all_articles">Tous les Articles</string>
+    <string name="navigation_drawer_category_utilities">Utilitaires</string>
+    <string name="navigation_drawer_search">Recherche</string>
+    <string name="navigation_drawer_sources">Sources</string>
+    <string name="navigation_drawer_refresh_data">Rafraîchissement des données</string>
+    <string name="navigation_drawer_notification">Notification</string>
+    <string name="navigation_drawer_category_parameter">Paramètres</string>
+    <string name="navigation_drawer_settings">Paramètres</string>
+    <string name="navigation_drawer_about">À propos</string>
+    <string name="navigation_drawer_help">Aide</string>
+    <!-- Search View -->
+    <string name="activity_main_search_view_hint">Rechercher des articles</string>
+
+    <!-- ALERT DIALOG -->
+    <!-- Dialog No Internet Connexion -->
+    <string name="dialog_no_connexion_title">Pas de Connexion</string>
+    <string name="dialog_no_connexion_message">Pas de connexion internet disponible. Vérifiez votre connexion internet.</string>
+
+    <!-- NOTIFICATION -->
+    <string name="notification_title">Articles du jour !</string>
+    <string name="notification_text">%1$s articles publiés aujourd\'hui !</string>
+    <string name="notification_text_no_today_articles">Pas d\'article publié aujourd\'hui…</string>
+
+</resources>
