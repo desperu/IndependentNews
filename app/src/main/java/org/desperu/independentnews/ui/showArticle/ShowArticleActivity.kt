@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.view.View
 import android.view.animation.AccelerateInterpolator
@@ -14,6 +13,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_show_article.*
@@ -27,6 +27,7 @@ import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
@@ -212,7 +213,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onStop() {
         super.onStop()
         if (inCustomView) hideCustomView()
-        web_view.onFinishTemporaryDetach()
+//        web_view.onFinishTemporaryDetach()
         mWebChromeClient = null
     }
 
@@ -268,7 +269,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * @param sharedElement the shared element to animate for the transition.
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
-        sharedElement.doOnPreDraw { supportStartPostponedEnterTransition(); startAnimations() }
+        sharedElement.doOnPreDraw { supportStartPostponedEnterTransition() }
     }
 
     /**
@@ -297,13 +298,22 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //                        article_root_view.alpha = progress // create anim mistake
                     }
                 )
+
+            article_image.postOnAnimation { animator.start() }
+            article_image.postOnAnimationDelayed(animator.duration * 2) { clearAnimations() }
         }
     }
 
     /**
-     * Animate view when activity appear to display an article.
+     * Clear all animated value for each views. Needed to prevent ui mistake,
+     * when not play anim until it's end.
      */
-    private fun startAnimations() { if (::animator.isInitialized) animator.start() }
+    private fun clearAnimations() {
+        val views = listOf(article_source_image, article_source_name, article_subtitle, article_author)
+        views.forEach { it.translationX = 0f }
+        article_title.setScale(1f)
+        web_view.apply { alpha = 1f; translationY = 0f }
+    }
 
     /**
      * Set custom activity transition, only for source detail to source page transition.
@@ -427,12 +437,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             true
         }
         isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
-        url.endsWith(".pdf") -> {
-            val browserIntent = Intent(Intent.ACTION_VIEW)
-            browserIntent.setDataAndType(Uri.parse(url), "text/html")
-            startActivity(browserIntent)
-            true
-        }
+        url.endsWith(".pdf") -> { showInBrowser(url); true }
         else -> {
             if (!isSourceUrl(url) && url.isNotBlank()) saveScrollPosition()
             if (noteScrollPosition == -1) isNoteRedirect = false

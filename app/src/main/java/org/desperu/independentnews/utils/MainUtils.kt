@@ -78,6 +78,7 @@ object MainUtils : KoinComponent{
      * @return the corresponding item id.
      */
     internal fun getDrawerItemIdFromFragKey(fragmentKey: Int) = when(fragmentKey) {
+        NO_FRAG -> 0
         FRAG_TOP_STORY -> R.id.activity_main_menu_drawer_top_story
         FRAG_CATEGORY -> R.id.activity_main_menu_drawer_categories
         FRAG_ALL_ARTICLES -> R.id.activity_main_menu_drawer_all_articles

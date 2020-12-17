@@ -89,7 +89,7 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
     @SuppressLint("InlinedApi")
     private fun askForPermissions() { // Seems to do nothing...
         val isOreoOrUpper = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        val permissions = mutableListOf(ACCESS_NETWORK_STATE, INTERNET, RECEIVE_BOOT_COMPLETED)
+        val permissions = mutableListOf(ACCESS_NETWORK_STATE, INTERNET, RECEIVE_BOOT_COMPLETED, WAKE_LOCK)
         if (isOreoOrUpper) permissions.add(REQUEST_COMPANION_USE_DATA_IN_BACKGROUND)
 
         val message = getString(

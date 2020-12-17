@@ -111,7 +111,8 @@
                         android:maxLines="2"
                         android:ellipsize="end"
                         android:textStyle="bold"
-                        android:text="@{viewModel.article.title}" />
+                        android:text="@{viewModel.article.title}"
+                        android:onClick="@{viewModel.onClickTitle}" />
 
                     <TextView
                         android:id="@+id/author"

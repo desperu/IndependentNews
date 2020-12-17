@@ -63,7 +63,7 @@ interface SnackBarHelper {
 class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelper, KoinComponent {
 
     // FOR DATA
-    private val mainInterface: MainInterface = get()
+    private val mainInterface: MainInterface? get() = getKoin().getOrNull()
     private val prefs: SharedPrefService = get()
     private val resources = activity.resources
     private var snackBar: Snackbar? = null
@@ -161,7 +161,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     private fun showError(snackKey: Int) {
         if (hasError && (snackKey == END_FIND || snackKey == END_NOT_FIND)) {
             snackBar?.view?.postOnAnimationDelayed(getDuration(snackKey) - PRE_DELAY) {
-                mainInterface.mainLifecycleScope.launch {
+                mainInterface?.mainLifecycleScope?.launch {
                     showMessage(END_ERROR, listOf(concatenateStringFromMutableList(errorMessage)))
                     errorMessage.clear()
                 }
@@ -256,7 +256,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
         if (!isFirstStart)
             when(snackKey) {
                 END_FIND -> snackBar
-                    ?.setAction(R.string.snack_bar_button_show) { mainInterface.showNewArticles() }
+                    ?.setAction(R.string.snack_bar_button_show) { mainInterface?.showNewArticles() }
                     ?.setActionTextColor(ResourcesCompat.getColor(resources, android.R.color.holo_green_dark, null))
 
                 END_NOT_FIND -> snackBar
@@ -292,7 +292,7 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
      * Retry to fetch data.
      */
     private fun retry() {
-        mainInterface.refreshData()
+        mainInterface?.refreshData()
 //        loadingBar = null
         snackBar = null
     }

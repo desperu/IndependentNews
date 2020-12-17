@@ -43,38 +43,38 @@ class NoScrollWebView @JvmOverloads constructor(
     private var margins = 0
 
     init {
-        setWebContentsDebuggingEnabled(true) // TODO needed ??
+//        setWebContentsDebuggingEnabled(true) // TODO needed ??
     }
 
     // --------------
     // METHODS OVERRIDE
     // --------------
 
-    override fun overScrollBy(
-        deltaX: Int,
-        deltaY: Int,
-        scrollX: Int,
-        scrollY: Int,
-        scrollRangeX: Int,
-        scrollRangeY: Int,
-        maxOverScrollX: Int,
-        maxOverScrollY: Int,
-        isTouchEvent: Boolean
-    ): Boolean {
-
-        // Consume only horizontal event (X axe).
-        return super.overScrollBy(
-            deltaX,
-            0,
-            scrollX,
-            0,
-            scrollRangeX,
-            0,
-            maxOverScrollX,
-            0,
-            isTouchEvent
-        )
-    }
+//    override fun overScrollBy(
+//        deltaX: Int,
+//        deltaY: Int,
+//        scrollX: Int,
+//        scrollY: Int,
+//        scrollRangeX: Int,
+//        scrollRangeY: Int,
+//        maxOverScrollX: Int,
+//        maxOverScrollY: Int,
+//        isTouchEvent: Boolean
+//    ): Boolean {
+//
+//        // Consume only horizontal event (X axe).
+//        return super.overScrollBy(
+//            deltaX,
+//            0,
+//            scrollX,
+//            0,
+//            scrollRangeX,
+//            0,
+//            maxOverScrollX,
+//            0,
+//            isTouchEvent
+//        )
+//    }
 
     // --------------
     // CONFIGURATION

@@ -360,6 +360,9 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
                 snackBarHelper.showMessage(END_FIND, listOf(newArticles.toString()))
             }
 
-        showFragment(fragmentKey, todayArticles)
+        if (!isFirstTime){
+            showFragment(fragmentKey, todayArticles)
+            intent?.removeExtra(TODAY_ARTICLES)
+        }
     }
 }

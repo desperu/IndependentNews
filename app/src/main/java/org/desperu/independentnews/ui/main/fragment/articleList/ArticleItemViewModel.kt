@@ -11,13 +11,12 @@ import org.koin.core.get
 /**
  * View Model witch provide data for article item.
  *
- * @param article the given article data for this view model.
- * @param router the router that allows redirection of the user.
+ * @property article    the given article data for this view model.
+ * @property router     the router that allows redirection of the user.
  *
  * @constructor Instantiates a new ArticleItemViewModel.
  *
- * @property article the given article data for this view model to set.
- * @property router the router that allows redirection of the user to set.
+ * @param article       the given article data for this view model to set.
  */
 class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
 
@@ -33,6 +32,13 @@ class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
      */
     val onClickImage = OnClickListener {
         router.openShowArticle(article, it)
+    }
+
+    /**
+     * On click title listener.
+     */
+    val onClickTitle = OnClickListener {
+        router.openShowArticle(article, (it.parent as View).findViewById(R.id.image))
     }
 
     /**
