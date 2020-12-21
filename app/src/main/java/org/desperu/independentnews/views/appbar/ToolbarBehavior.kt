@@ -1,4 +1,4 @@
-package org.desperu.independentnews.views
+package org.desperu.independentnews.views.appbar
 
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -12,8 +12,8 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.getValueAnimator
 
 /**
- * This behavior animates the toolbar elements (toolbarTitle and icons) as
- * the child scrollable scrolls.
+ * This behavior animates the toolbar (frame appbar_container) and it's elements
+ * (toolbarTitle and icons) as the child scrollable owner scrolls.
  */
 class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
 
@@ -57,8 +57,11 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     /**
      * Consume if vertical scroll because we don't care about other scrolls
      */
-    override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout, child: AppBarLayout, directTargetChild: View,
-                                     target: View, axes: Int, type: Int): Boolean {
+    override fun onStartNestedScroll(
+        coordinatorLayout: CoordinatorLayout, child: AppBarLayout, directTargetChild: View,
+        target: View, axes: Int, type: Int
+    ): Boolean {
+
         getViews(child)
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
                 super.onStartNestedScroll(coordinatorLayout, child, directTargetChild, target, axes, type)
@@ -67,21 +70,22 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     /**
      * Perform actual animation by determining the dY amount
      */
-    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout, child: AppBarLayout, target: View,
-                                dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
-                                type: Int, consumed: IntArray) {
-        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
+    override fun onNestedScroll(
+        coordinatorLayout: CoordinatorLayout, child: AppBarLayout, target: View,
+        dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
+        type: Int, consumed: IntArray
+    ) {
+        super.onNestedScroll(coordinatorLayout, child, target, dxConsumed,
+            dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
 
         if (dyConsumed > 0) {
-
             // scroll up:
             if (toolbar.layoutParams.height > toolbarCollapsedHeight) {
 
                 //--- shrink toolbar
                 handleAppBarAnim(dyConsumed, false)
             }
-        } else if (dyConsumed < 0) {
-
+        } else if (dyConsumed < -10) { // Use -10 here to allow little scroll without expand
             // scroll down
             if (toolbar.layoutParams.height < toolbarOriginalHeight) {
 
@@ -217,12 +221,12 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     }
 
     /**
-     * Finish the animation, shrink or expand, if the user event not finish it.
+     * Finish the animation, shrink or expand, if the user event not finished it.
      */
     internal fun finishAnimation() {
         val currentHeight = toolbar.layoutParams.height
-        val isCollapsed = currentHeight != toolbarCollapsedHeight.toInt()
-        val isExpanded = currentHeight != toolbarOriginalHeight.toInt()
+        val isCollapsed = currentHeight == toolbarCollapsedHeight.toInt()
+        val isExpanded = currentHeight == toolbarOriginalHeight.toInt()
 
         // If current height is not in end state (collapsed or expanded),
         // anim app bar to the nearly state

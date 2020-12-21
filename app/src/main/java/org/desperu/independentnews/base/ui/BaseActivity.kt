@@ -1,11 +1,7 @@
 package org.desperu.independentnews.base.ui
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import kotlinx.android.synthetic.main.app_bar.*
-import org.desperu.independentnews.views.ToolbarBehavior
 import icepick.Icepick
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.unloadKoinModules
@@ -50,29 +46,4 @@ abstract class BaseActivity(private vararg val module: Module): AppCompatActivit
         unloadKoinModules(module.toList())
         super.onDestroy()
     }
-
-    // --------------------
-    // UI
-    // --------------------
-
-    /**
-     * Configure App Bar.
-     */
-    protected fun configureAppBar() {
-        (appbar.layoutParams as CoordinatorLayout.LayoutParams).behavior = ToolbarBehavior()
-    }
-
-    /**
-     * Show App Bar Icon for the given list.
-     */
-    protected fun showAppBarIcon(iconList: List<Int>) {
-        iconList.forEach { findViewById<View>(it).visibility = View.VISIBLE }
-    }
-
-    // --- MENU ACTION ---
-
-    /**
-     * Onc click on back arrow finish the child activity.
-     */
-    protected fun onClickBackArrow() = onBackPressed()
 }

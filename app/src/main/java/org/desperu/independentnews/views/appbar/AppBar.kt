@@ -1,4 +1,4 @@
-package org.desperu.independentnews.views
+package org.desperu.independentnews.views.appbar
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +9,10 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.extension.design.findSuitableScrollable
 
+/**
+ * A custom [AppBarLayout] that support collapse and expand animations implementation.
+ * Works with [ToolbarBehavior] to perform animations.
+ */
 class AppBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
     : AppBarLayout(context, attrs, defStyleAttr) {
 

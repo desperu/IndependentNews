@@ -93,8 +93,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     override fun configureDesign() {
         firstStart()
         configureKoinDependency()
-        configureAppBar()
-        showAppBarIcon(listOf(R.id.drawer_icon))
+        appbar.showAppBarIcon(listOf(R.id.drawer_icon))
         configureDrawerLayout()
     }
 

@@ -44,7 +44,6 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
 
     override fun configureDesign() {
         configAppBar()
-        showAppBarIcon(listOf(R.id.back_arrow_icon))
     }
 
     // --------------
@@ -65,8 +64,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
      * Configure app bar, show icons, and set title.
      */
     private fun configAppBar() {
-        configureAppBar()
-        showAppBarIcon(listOf(R.id.back_arrow_icon))
+        appbar.showAppBarIcon(listOf(R.id.back_arrow_icon))
         toolbar_title.text = getString(R.string.navigation_drawer_settings)
     }
 
@@ -78,7 +76,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
      * On click back arrow icon menu.
      */
     @Suppress("unused_parameter")
-    fun onClickBackArrow(v: View) = onClickBackArrow()
+    fun onClickBackArrow(v: View) = onBackPressed()
 
     // --------------
     // UI

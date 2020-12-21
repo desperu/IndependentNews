@@ -72,8 +72,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      * Configure app bar, show icons, and set title.
      */
     private fun configAppBar() {
-        configureAppBar()
-        showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.info_icon))
+        appbar.showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.info_icon))
         toolbar_title.text = getString(R.string.navigation_drawer_sources)
     }
 
@@ -174,7 +173,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      * On click back arrow icon menu.
      */
     @Suppress("unused_parameter")
-    fun onClickBackArrow(v: View) = onClickBackArrow()
+    fun onClickBackArrow(v: View) = onBackPressed()
 
     /**
      * On click info icon menu.

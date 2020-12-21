@@ -17,6 +17,7 @@ import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_show_article.*
+import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.animatedValue
 import org.desperu.independentnews.anim.AnimHelper.fromSideAnimator
@@ -112,8 +113,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun configureDesign() {
         configureKoinDependency()
         configureWebView()
-        configureAppBar()
-        showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
+        appbar.showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
         configureViewAnimations()
         postponeSceneTransition()
         scheduleStartPostponedTransition(article_image)
@@ -242,7 +242,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * On click back arrow icon menu.
      */
     @Suppress("unused_parameter")
-    fun onClickBackArrow(v: View) = onClickBackArrow()
+    fun onClickBackArrow(v: View) = onBackPressed()
 
     /**
      * On click share icon menu.

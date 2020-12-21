@@ -43,7 +43,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
 
     // FROM BUNDLE
     private val imageList: List<Any>? get() = intent.getParcelableArrayListExtra(IMAGE_LIST)
-    private val position: Int? get() = intent.getIntExtra(POSITION, 0)
+    private val position: Int get() = intent.getIntExtra(POSITION, 0)
 
     // FOR DATA
     private lateinit var viewPager: ViewPager
@@ -91,7 +91,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
         configureKoinDependency()
         configureSystemDesign()
         configureAppBarDesign()
-        showAppBarIcon(listOf(R.id.back_arrow_icon))
+        appbar.showAppBarIcon(listOf(R.id.back_arrow_icon))
         configureViewPager()
         updateViewPager()
     }
@@ -161,7 +161,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
      * On click back arrow icon menu.
      */
     @Suppress("unused_parameter")
-    override fun onClickBackArrow(v: View) = onClickBackArrow()
+    override fun onClickBackArrow(v: View) = onBackPressed()
 
     /**
      * Dispatch the motion event to the view pager to consume it.
@@ -182,7 +182,7 @@ class ShowImagesActivity: BaseActivity(showImagesModule), ShowImagesInterface {
     private fun updateViewPager() {
         imageList?.let { mAdapter.updateImageList(it) }
         mAdapter.notifyDataSetChanged()
-        position?.let { viewPager.currentItem = it }
+        position.let { viewPager.currentItem = it }
     }
 
     /**
