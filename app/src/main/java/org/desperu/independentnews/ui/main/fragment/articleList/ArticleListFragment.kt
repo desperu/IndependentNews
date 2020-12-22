@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_article_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
-import org.desperu.independentnews.databinding.FragmentArticleListBinding
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
@@ -35,7 +34,7 @@ const val TODAY_ARTICLES_FRAG: String = "todayArticlesFrag"
 class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     // FOR DATA
-    private lateinit var binding: FragmentArticleListBinding
+    private val binding get() = viewBinding!!
     private val viewModel = get<ArticleListViewModel> { parametersOf(this) }
     private var articleListAdapter: ArticleListAdapter? = null
     private val mainInterface get() = getKoin().getOrNull<MainInterface>()
@@ -86,8 +85,8 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * Configure data binding, recycler view and view model.
      */
     private fun configureViewModel(): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_article_list, container, false)
-        binding.viewModel = viewModel
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_article_list, container, false)
+        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
         return binding.root
     }
 

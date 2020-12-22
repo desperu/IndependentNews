@@ -9,9 +9,7 @@ import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showImages.fragment.ImageViewModel
-import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailInterface
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailViewModel
-import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListInterface
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourcesListViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.parameter.parametersOf
@@ -48,7 +46,7 @@ val viewModelModule = module {
     viewModel { (fragment: BaseBindingFragment) ->
         SourcesListViewModel(
             get(),
-            fragment as SourceListInterface,
+            get { parametersOf(fragment) },
             get()
         )
     }
@@ -59,7 +57,7 @@ val viewModelModule = module {
     viewModel { (sourceWithData: SourceWithData, fragment: BaseBindingFragment) ->
         SourceDetailViewModel(
             sourceWithData,
-            fragment as SourceDetailInterface
+            get { parametersOf(fragment) }
         )
     }
 

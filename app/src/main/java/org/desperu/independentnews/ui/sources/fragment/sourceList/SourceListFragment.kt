@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_source_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
-import org.desperu.independentnews.databinding.FragmentSourceListBinding
-import org.desperu.independentnews.di.module.ui.sourceListModule
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,13 +21,13 @@ import org.koin.core.parameter.parametersOf
  *
  * @constructor Instantiates a new SourceListFragment.
  */
-class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInterface {
+class SourceListFragment : BaseBindingFragment(), SourceListInterface {
 
     // FROM BUNDLE
     private val sourcePosition get() = arguments?.getInt(SOURCE_POSITION) ?: -1
 
     // FOR DATA
-    private lateinit var binding: FragmentSourceListBinding
+    private val binding get() = viewBinding!!
     private val viewModel: SourcesListViewModel by viewModel { parametersOf(this) }
     private var sourceListAdapter: SourceListAdapter? = null
     private lateinit var controller: LayoutAnimationController
@@ -59,8 +57,8 @@ class SourceListFragment : BaseBindingFragment(sourceListModule), SourceListInte
      * Configure data binding and view model.
      */
     private fun configureViewModel(): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_source_list, container, false)
-        binding.viewModel = viewModel
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_source_list, container, false)
+        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
         return binding.root
     }
 

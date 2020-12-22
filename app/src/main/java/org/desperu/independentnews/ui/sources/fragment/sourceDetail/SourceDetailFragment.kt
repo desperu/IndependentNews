@@ -12,7 +12,6 @@ import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
 import org.desperu.independentnews.anim.AnimHelper.scaleViewAnimation
 import org.desperu.independentnews.base.ui.BaseBindingFragment
-import org.desperu.independentnews.databinding.FragmentSourceDetailBinding
 import org.desperu.independentnews.extension.design.dp
 import org.desperu.independentnews.models.SourceWithData
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -39,7 +38,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     private val sourcePosition: Int get() = arguments?.getInt(SOURCE_POSITION) ?: -1
 
     // FOR DATA
-    private lateinit var binding: FragmentSourceDetailBinding
+    private val binding get() = viewBinding!!
     private val viewModel: SourceDetailViewModel by viewModel { parametersOf(sourceWithData, this) }
     private var sourceDetailAdapter: SourceDetailAdapter? = null
 
@@ -88,8 +87,8 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
      * Configure data binding, recycler view and view model.
      */
     private fun configureViewModel(): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_source_detail, container, false)
-        binding.viewModel = viewModel
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_source_detail, container, false)
+        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
         return binding.root
     }
 

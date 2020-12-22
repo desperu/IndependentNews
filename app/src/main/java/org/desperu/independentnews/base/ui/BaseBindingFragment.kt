@@ -4,23 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.unloadKoinModules
-import org.koin.core.module.Module
-
-//import icepick.Icepick
 
 /**
  * Abstract base activity class witch provide standard functions for binding fragment.
- *
- * @param module the koin module to load for the corresponding fragment.
  */
-abstract class BaseBindingFragment(private vararg val module: Module): Fragment() {
+abstract class BaseBindingFragment : Fragment() {
 
     // FOR DATA
     protected lateinit var inflater: LayoutInflater
     protected var container: ViewGroup? = null
+    protected var viewBinding: ViewDataBinding? = null
 
     // --------------
     // BASE METHODS
@@ -40,7 +35,6 @@ abstract class BaseBindingFragment(private vararg val module: Module): Fragment(
         super.onCreateView(inflater, container, savedInstanceState)
         this.inflater = inflater
         this.container = container
-        loadKoinModules(module.toList())
         return getBindingView()
     }
 
@@ -56,13 +50,13 @@ abstract class BaseBindingFragment(private vararg val module: Module): Fragment(
         retainInstance = true
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
 //        Icepick.saveInstanceState(this, outState)
-    }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        unloadKoinModules(module.toList())
+        viewBinding = null
     }
 }

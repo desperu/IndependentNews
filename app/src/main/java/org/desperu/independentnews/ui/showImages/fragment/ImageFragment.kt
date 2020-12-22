@@ -16,7 +16,6 @@ import kotlinx.android.synthetic.main.fragment_image.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.base.ui.BaseBindingFragment
-import org.desperu.independentnews.databinding.FragmentImageBinding
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.ui.showImages.ShowImagesInterface
@@ -53,7 +52,7 @@ private const val SHOW_DELAY = 4000L
 class ImageFragment: BaseBindingFragment() {
 
     // FOR DATA
-    private lateinit var binding: FragmentImageBinding
+    private val binding get() = viewBinding!!
     private val viewModel: ImageViewModel by viewModel { parametersOf(imageData) }
     private val imageData: Any
         get() = arguments?.getString(IMAGE_URL) ?: arguments?.getInt(IMAGE_ID) ?: ""
@@ -143,8 +142,8 @@ class ImageFragment: BaseBindingFragment() {
      * Configure data binding with view model.
      */
     private fun configureViewModel(): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_image, container, false)
-        binding.viewModel = viewModel
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_image, container, false)
+        binding.setVariable(org.desperu.independentnews.BR.viewModel, viewModel)
         return binding.root
     }
 
