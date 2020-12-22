@@ -185,6 +185,8 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
         override fun onPageFinished(view: WebView?, url: String?) {
             url?.let { if (it == actualUrl) updateDesign(it, false) }
+            article_scroll_progress_bar.visibility = View.VISIBLE
+            appbar_loading_progress_bar.visibility = View.INVISIBLE
             super.onPageFinished(view, url)
         }
 
@@ -460,7 +462,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 article_scroll_view.visibility = View.INVISIBLE
 
             scrollTo(0)
+            article_scroll_progress_bar.visibility = View.INVISIBLE
             article_loading_progress_bar.apply { visibility = View.VISIBLE; show() }
+            appbar_loading_progress_bar.visibility = View.VISIBLE
         } else
             navigationCount = 0
     }

@@ -52,19 +52,28 @@
         <item name="android:textColorSecondary">@color/filter_pill_color</item>
     </style>
 
-    <!-- Progress Bar Style -->
-    <style name="ProgressBarStyle" parent="Theme.AppCompat.Light">
+    <!-- Scroll Progress Bar Style -->
+    <style name="ScrollProgressBarStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:progressTint" tools:targetApi="lollipop">@color/filter_pill_color</item>
+        <item name="colorAccent">@color/filter_pill_color</item>
+    </style>
+
+    <!-- Loading Progress Bar Style -->
+    <style name="LoadingProgressBarStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:progressTint" tools:targetApi="lollipop">@color/colorTransBlue</item>
+        <item name="colorAccent">@color/colorTransBlue</item>
+    </style>
+
+    <!-- Round Loading Progress Bar Style -->
+    <style name="RoundLoadingProgressBarStyle" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/filter_pill_color</item>
     </style>
 
     <!-- Snack Progress Bar Style -->
     <style name="SnackProgressBarStyle" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@android:color/white</item>
-    </style>
-
-    <!-- Progress Bar First Start Style -->
-    <style name="ProgressBarFirstStartStyle" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/list_item_bg_collapsed</item>
     </style>
 
     <!-- Filter Pill Style -->

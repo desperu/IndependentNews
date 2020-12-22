@@ -43,6 +43,7 @@
     <color name="colorTransWhite">#CDEEEEEE</color>
     <color name="colorTransGrey">#974D4D4D</color>
     <color name="colorTransDark">#43000000</color>
+    <color name="colorTransBlue">#4D0F6088</color>
 
     <!-- Sources Background color -->
     <color name="bastamag_background">#f78c11</color>

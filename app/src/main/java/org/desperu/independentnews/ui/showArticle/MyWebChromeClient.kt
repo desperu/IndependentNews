@@ -6,6 +6,7 @@ import android.view.WindowManager
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.FrameLayout
+import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.utils.FULL_USER
@@ -83,6 +84,7 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
+        activity.appbar_loading_progress_bar.progress = newProgress
         // Update web view margins...
         if (newProgress < 50) showArticleInterface?.updateWebViewMargins()
         // Update web view design.

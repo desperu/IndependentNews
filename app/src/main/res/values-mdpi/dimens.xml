@@ -85,8 +85,6 @@
     <dimen name="bottom_bar_height">@dimen/fab_size</dimen>
 
     <!-- Show Article Activity -->
-    <dimen name="article_scroll_progress_bar_height">4dp</dimen>
-    <dimen name="article_scroll_margin_top">2dp</dimen>
     <dimen name="article_image_source_width_height">16dp</dimen>
     <dimen name="article_title_text_size">26sp</dimen>
     <dimen name="article_image_min_width_height">300dp</dimen>

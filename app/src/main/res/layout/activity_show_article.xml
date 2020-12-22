@@ -19,16 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ProgressBar
-            android:id="@+id/article_scroll_progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/article_scroll_progress_bar_height"
-            android:max="100"
-            android:theme="@style/ProgressBarStyle"
-            app:layout_anchor="@+id/appbar"
-            app:layout_anchorGravity="bottom"/>
-
         <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/article_loading_progress_bar"
             style="?android:attr/progressBarStyleLargeInverse"
@@ -36,13 +26,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="invisible"
-            android:theme="@style/ProgressBarStyle"/>
+            android:theme="@style/RoundLoadingProgressBarStyle"/>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/article_scroll_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/article_scroll_margin_top"
             android:isScrollContainer="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -154,6 +143,16 @@
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+        <ProgressBar
+            android:id="@+id/article_scroll_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:scaleY="1.5"
+            app:layout_anchor="@+id/appbar"
+            app:layout_anchorGravity="bottom"
+            style="@style/ScrollProgressBarStyle"/>
 
         <FrameLayout
             android:id="@+id/video_container"

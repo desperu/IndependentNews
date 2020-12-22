@@ -16,6 +16,15 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize">
 
+        <ProgressBar
+            android:id="@+id/appbar_loading_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="100"
+            android:scaleY="20"
+            android:visibility="invisible"
+            style="@style/LoadingProgressBarStyle"/>
+
         <ImageView
             android:id="@+id/drawer_icon"
             android:layout_width="wrap_content"
