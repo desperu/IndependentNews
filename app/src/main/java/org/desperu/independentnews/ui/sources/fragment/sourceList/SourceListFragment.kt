@@ -28,7 +28,7 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
 
     // FOR DATA
     private val binding get() = viewBinding!!
-    private val viewModel: SourcesListViewModel by viewModel { parametersOf(this) }
+    private val viewModel: SourcesListViewModel by viewModel()
     private var sourceListAdapter: SourceListAdapter? = null
     private lateinit var controller: LayoutAnimationController
     private var fromDetail: Boolean? = null

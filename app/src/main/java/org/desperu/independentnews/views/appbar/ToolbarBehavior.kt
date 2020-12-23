@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.descendants
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.design.findSuitableScrollable
 import org.desperu.independentnews.extension.design.getValueAnimator
 
 /**
@@ -192,12 +193,22 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     // CONVENIENCE CALLS
     // -----------------
 
-//    internal fun syncAppBar() {
-//
-//    }
+    /**
+     * Synchronize the app bar size with the size of the previous activity.
+     *
+     * @param toExpand  true to expand, false to collapse.
+     * @param appBar    the app bar layout to synchronize.
+     */
+    internal fun syncAppBarSize(appBar: AppBarLayout, toExpand: Boolean) {
+        val dyConsumed = 100 * if (toExpand) -1 else 1
+
+        getViews(appBar)
+        animAppBar(dyConsumed, toExpand)
+    }
 
     /**
-     * Expand App Bar with value animator support.
+     * Expand App Bar with value animator support, and synchronously correct scrollable position
+     * when the app bar size change.
      *
      * @param toExpand true to expand, false to collapse.
      */
@@ -209,10 +220,13 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                 LinearInterpolator(),
                 { progress ->
 
-                    val dyConsumed = (progress * 100 * if (toExpand) -1 else 1).toInt()
-                    // TODO try again to correct content scroll when full implement
-//                    if (toolbar.layoutParams.height == toolbarCollapsedHeight.toInt())
-//                        toolbar.findSuitableScroll()?.scrollBy(0, dyConsumed)
+                    val amount = if (toExpand) toolbar.layoutParams.height - toolbarOriginalHeight
+                                 else toolbar.layoutParams.height - toolbarCollapsedHeight
+                    val dyConsumed = (progress * amount).toInt()
+
+                    // Correct scrollable position
+                    toolbar.findSuitableScrollable()?.scrollBy(0, -dyConsumed)
+                    // Animate the app bar
                     animAppBar(dyConsumed, toExpand)
                 }
             )
@@ -236,4 +250,12 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
             expandAppBar(isMoreMiddle)
         }
     }
+
+    // --- GETTERS ---
+
+    /**
+     * Returns true if the app bar is expanded, false if is collapsed.
+     */
+    internal val isExpanded: Boolean get() =
+        toolbar.layoutParams.height == toolbarOriginalHeight.toInt()
 }

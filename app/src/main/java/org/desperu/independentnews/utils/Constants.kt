@@ -50,9 +50,10 @@ const val FIRST_START_ERROR = 20
 
 
 // FOR REQUEST CODE
-const val RC_FIRST_START = 1000 // First start activity
-const val RC_SOURCE = 2000 // Source activity
-const val RC_PERMS = 10000 // For permissions
+const val RC_FIRST_START = 1000     // First start activity
+const val RC_SOURCE = 2000          // Source activity
+const val RC_SHOW_ARTICLE = 3000    // Back from Show Article to Sources
+const val RC_PERMS = 10000          // For permissions
 
 
 // --- FOR FILTERS ---

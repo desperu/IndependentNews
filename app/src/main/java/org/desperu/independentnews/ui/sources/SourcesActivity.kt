@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.core.view.doOnAttach
 import androidx.fragment.app.Fragment
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
@@ -21,14 +22,20 @@ import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSIT
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListFragment
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
-import org.desperu.independentnews.utils.FRAG_SOURCES_DETAIL
-import org.desperu.independentnews.utils.FRAG_SOURCES_LIST
-import org.desperu.independentnews.utils.NO_FRAG
+import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.WHO_OWNS_WHAT
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
+/**
+ * Fade default time animation for fragment transition.
+ */
 private const val FADE_DEFAULT_TIME: Long = 300L
+
+/**
+ * The name of the intent extra to received app bar size to this Activity.
+ */
+const val WAS_EXPANDED: String = "wasExpanded"
 
 /**
  * Activity to manages and present the sources medias of the application.
@@ -101,9 +108,15 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         }
     }
 
-    // --------------
+    // -----------------
     // METHODS OVERRIDE
-    // --------------
+    // -----------------
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Handle activity result on show article response.
+        handleShowArticleResponse(requestCode, resultCode, data)
+    }
 
     override fun onResume() {
         super.onResume()
@@ -112,11 +125,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
 
     override fun onBackPressed() {
         if (fragmentKey == FRAG_SOURCES_LIST) {
-            setResult(
-                RESULT_OK,
-                Intent(baseContext, MainActivity::class.java)
-                    .putExtra(HAS_CHANGE, sourceListFrag?.hasChange())
-            )
+            sendResult()
             while (fm.backStackEntryCount > 0) fm.popBackStackImmediate()
             super.onBackPressed()
         } else {
@@ -223,6 +232,41 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
+    // --------------
+    // UTILS
+    // --------------
+
+    /**
+     * Send result for MainActivity, to synchronize sources state.
+     */
+    private fun sendResult() {
+        setResult(
+            RESULT_OK,
+            Intent(baseContext, MainActivity::class.java)
+                .putExtra(HAS_CHANGE, sourceListFrag?.hasChange())
+        )
+    }
+
+    /**
+     * Handle result when retrieve show article response, to synchronize the app bar size.
+     *
+     * @param requestCode   the request code of the activity result.
+     * @param resultCode    the result code of the request.
+     * @param data          the intent request result data.
+     */
+    private fun handleShowArticleResponse(requestCode: Int, resultCode: Int, data: Intent?) {
+        // If result code and request code matches with show article result.
+        if (resultCode == RESULT_OK && requestCode == RC_SHOW_ARTICLE) {
+            val wasExpanded = data?.getBooleanExtra(WAS_EXPANDED, true) ?: true
+
+            // Synchronize the app bar state with the child activity app bar state.
+            appbar.doOnAttach {
+                appbar.syncAppBarSize(appbar, wasExpanded)
+                intent.removeExtra(WAS_EXPANDED)
+            }
+        }
+    }
+
     // --- GETTERS ---
 
     /**
@@ -235,4 +279,9 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      */
     private val sourceListFrag get() =
         fm.findFragmentByTag(SourceListFragment().javaClass.simpleName) as SourceListFragment?
+
+    /**
+     * Returns true if the app bar is expanded, false if is collapsed.
+     */
+    override val isExpanded: Boolean get() = appbar.isExpanded
 }

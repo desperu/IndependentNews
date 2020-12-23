@@ -16,6 +16,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.models.Article
 import org.desperu.independentnews.service.SharedPrefService
+import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.isSourceUrl
@@ -36,15 +37,16 @@ class NoScrollWebView @JvmOverloads constructor(
 ) : WebView(context, attrs, defStyleAttr), KoinComponent {
 
     // FOR DATA
+    private val sourcesInterface: SourcesInterface? get() = getKoin().getOrNull()
     private val router: SourceRouter by inject()
     private val prefs: SharedPrefService by inject()
     private var cssUrl: String by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
     private var margins = 0
 
-    init {
+//    init {
 //        setWebContentsDebuggingEnabled(true) // TODO needed ??
-    }
+//    }
 
     // --------------
     // METHODS OVERRIDE
@@ -165,7 +167,8 @@ class NoScrollWebView @JvmOverloads constructor(
                     Article(
                         url = request?.url.toString(),
                         sourceName = sourceName
-                    )
+                    ),
+                    sourcesInterface?.isExpanded ?: true
                 )
                 true
             } else

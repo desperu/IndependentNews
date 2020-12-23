@@ -81,15 +81,20 @@ class AppBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
         iconList.forEach { findViewById<View>(it).visibility = View.VISIBLE }
     }
 
+    /**
+     * Synchronize the app bar size with the size of the previous activity.
+     *
+     * @param toExpand  true to expand, false to collapse.
+     * @param appBar    the app bar layout to synchronize.
+     */
+    internal fun syncAppBarSize(appBar: AppBarLayout, toExpand: Boolean) {
+        toolbarBehavior.syncAppBarSize(appBar, toExpand)
+    }
+
     // --- GETTERS ---
 
     /**
-     * Returns the current app bar height.
+     * Returns true if the app bar is expanded, false if is collapsed.
      */
-    internal val currentHeight get() = layoutParams.height
-
-    /**
-     * Returns the current suitable scroll.
-     */
-    internal val getSuitableScroll get() = suitableScroll
+    internal val isExpanded: Boolean get() = toolbarBehavior.isExpanded
 }

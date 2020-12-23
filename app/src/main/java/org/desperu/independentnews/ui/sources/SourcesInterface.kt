@@ -16,4 +16,9 @@ interface SourcesInterface {
      * @param itemPosition the position of the source item in the recycler view.
      */
     fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int)
+
+    /**
+     * Returns true if the app bar is expanded, false if is collapsed.
+     */
+    val isExpanded: Boolean
 }

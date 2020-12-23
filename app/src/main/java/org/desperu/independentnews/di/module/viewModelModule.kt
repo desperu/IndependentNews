@@ -40,13 +40,13 @@ val viewModelModule = module {
         )
     }
 
+    // TODO which is the better way ? interface as param in vm or only property ??
     /**
      * Provides the SourceListViewModel instance.
      */
-    viewModel { (fragment: BaseBindingFragment) ->
+    viewModel {
         SourcesListViewModel(
             get(),
-            get { parametersOf(fragment) },
             get()
         )
     }

@@ -8,30 +8,31 @@ import org.desperu.independentnews.models.SourceWithData
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.EQUALS
+import org.koin.core.KoinComponent
+import org.koin.core.get
 
 /**
  * View Model witch provide data for sources list.
  *
  * @property sourceRepository       the source repository interface witch provide database and
  *                                  network access.
- * @property sourcesInterface       the sources interface witch provide activity interface.
+ * @property sourceListInterface    the sources interface witch provide activity interface.
  * @property router                 the source router interface witch provide user redirection.
  *
  * @constructor Instantiates a new SourcesViewModel.
  *
  * @param sourceRepository          the source repository interface witch provide database and
  *                                  network access to set.
- * @param sourcesInterface          the sources interface witch provide activity interface to set.
  * @param router                    the source router interface witch provide user redirection to set.
  */
 class SourcesListViewModel(
     private val sourceRepository: SourceRepository,
-    private val sourcesInterface: SourceListInterface,
     private val router: SourceRouter
-) : ViewModel() {
+) : ViewModel(), KoinComponent {
 
     // FOR DATA
-    val recyclerAdapter get() = sourcesInterface.getRecyclerAdapter()
+    private val sourceListInterface: SourceListInterface get() = get()
+    val recyclerAdapter get() = sourceListInterface.getRecyclerAdapter()
     private var sourceList: List<SourceWithData>? = null
         set(value) {
             field = value

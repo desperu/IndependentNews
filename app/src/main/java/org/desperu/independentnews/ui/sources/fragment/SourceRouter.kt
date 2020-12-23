@@ -15,17 +15,19 @@ interface SourceRouter {
     /**
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
-     * @param sourceWithData the source with data to show in the fragment.
-     * @param imageView the image view to animate.
-     * @param itemPosition the position of the source item in the recycler view.
+     * @param sourceWithData    the source with data to show in the fragment.
+     * @param imageView         the image view to animate.
+     * @param itemPosition      the position of the source item in the recycler view.
      */
     fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int)
 
     /**
      * Redirects the user to the ShowArticle Activity to show sources.
-     * @param article the article to show in the Activity.
+     *
+     * @param article       the article to show in the Activity.
+     * @param isExpanded    true if the app bar is expanded, false if is collapsed.
      */
-    fun openShowArticle(article: Article)
+    fun openShowArticle(article: Article, isExpanded: Boolean)
 }
 
 /**
@@ -42,17 +44,19 @@ class SourceRouterImpl(private val activity: AppCompatActivity): SourceRouter {
     /**
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
-     * @param sourceWithData the source with data to show in the fragment.
-     * @param imageView the image view to animate.
-     * @param itemPosition the position of the source item in the recycler view.
+     * @param sourceWithData    the source with data to show in the fragment.
+     * @param imageView         the image view to animate.
+     * @param itemPosition      the position of the source item in the recycler view.
      */
     override fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int) =
         (activity as SourcesInterface).showSourceDetail(sourceWithData, imageView, itemPosition)
 
     /**
      * Redirects the user to the Sources Activity to manage sources.
-     * @param article the article to show in the Activity.
+     *
+     * @param article       the article to show in the Activity.
+     * @param isExpanded    true if the app bar is expanded, false if is collapsed.
      */
-    override fun openShowArticle(article: Article) =
-        ShowArticleActivity.routeFromActivity(activity, article, null)
+    override fun openShowArticle(article: Article, isExpanded: Boolean) =
+        ShowArticleActivity.routeFromActivity(activity, article, null, isExpanded)
 }

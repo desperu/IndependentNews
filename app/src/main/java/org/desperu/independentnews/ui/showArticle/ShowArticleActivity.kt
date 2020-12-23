@@ -12,6 +12,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.doOnAttach
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView
@@ -31,6 +32,9 @@ import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.ui.sources.SourcesActivity
+import org.desperu.independentnews.ui.sources.WAS_EXPANDED
+import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
@@ -40,9 +44,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 /**
- * The name of the argument to received article for this Activity.
+ * The name of the arguments to received data for this Activity.
  */
-const val ARTICLE: String = "article"
+const val ARTICLE: String = "article"           // For article
+const val IS_EXPANDED: String = "isExpanded"    // For app bar size
 
 /**
  * Activity to show articles list.
@@ -55,6 +60,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private val article: Article
         get() = intent.getParcelableExtra(ARTICLE)
             ?: Article(title = getString(R.string.show_article_activity_article_error))
+    private val isExpanded: Boolean get() = intent.getBooleanExtra(IS_EXPANDED, true)
 
     // FOR DATA
     private lateinit var binding: ActivityShowArticleBinding
@@ -80,27 +86,34 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         /**
          * Redirects from an Activity to this Activity with transition animation.
          *
-         * @param activity the activity use to perform redirection.
-         * @param article the article to show in this activity.
-         * @param imageView the image view to animate.
+         * @param activity      the activity use to perform redirection.
+         * @param article       the article to show in this activity.
+         * @param imageView     the image view to animate.
+         * @param isExpanded    true if the app bar is expanded, false if is collapsed.
          */
         fun routeFromActivity(activity: AppCompatActivity,
                               article: Article,
-                              imageView: View?) {
+                              imageView: View?,
+                              isExpanded: Boolean) {
             val intent = Intent(activity, ShowArticleActivity::class.java)
                 .putExtra(ARTICLE, article)
+                .putExtra(IS_EXPANDED, isExpanded)
 
-            // Start Animation
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && imageView != null) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(
-                    activity,
-                    imageView,
-                    activity.getString(R.string.animation_main_to_show_article)
-                )
-                activity.startActivity(intent, options.toBundle())
-            } else {
-                activity.startActivity(intent)
-            }
+            // Create animation transition scene
+            val options =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && imageView != null) {
+                    ActivityOptions.makeSceneTransitionAnimation(
+                        activity,
+                        imageView,
+                        activity.getString(R.string.animation_main_to_show_article)
+                    )
+                } else
+                    null
+
+            if (activity is SourcesActivity) // To synchronize app bar size
+                activity.startActivityForResult(intent, RC_SHOW_ARTICLE, options?.toBundle())
+            else
+                activity.startActivity(intent, options?.toBundle())
         }
     }
 
@@ -113,7 +126,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun configureDesign() {
         configureKoinDependency()
         configureWebView()
-        appbar.showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
+        configureAppBar()
         configureViewAnimations()
         postponeSceneTransition()
         scheduleStartPostponedTransition(article_image)
@@ -166,6 +179,14 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
         mWebChromeClient = MyWebChromeClient(web_view)
         web_view.webChromeClient = mWebChromeClient
+    }
+
+    /**
+     * Configure the appbar and show icons.
+     */
+    private fun configureAppBar() {
+        appbar.showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
+        appbar.doOnAttach { appbar.syncAppBarSize(appbar, isExpanded) }
     }
 
     /**
@@ -233,7 +254,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //            web_view.stopLoading()
 //        }
 //        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
-        else -> super.onBackPressed()
+        else -> { sendResult(); super.onBackPressed() }
     }
 
     // --------------
@@ -494,5 +515,16 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         }
 
         startActivity(Intent.createChooser(share, getString(R.string.show_article_activity_share_chooser_title)))
+    }
+
+    /**
+     * Send result for SourcesActivity, to synchronize app bar size.
+     */
+    private fun sendResult() {
+        setResult(
+            RESULT_OK,
+            Intent(this, SourcesActivity::class.java)
+                .putExtra(WAS_EXPANDED, appbar.isExpanded)
+        )
     }
 }

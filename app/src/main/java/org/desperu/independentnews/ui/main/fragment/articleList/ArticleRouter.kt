@@ -13,8 +13,8 @@ interface ArticleRouter {
     /**
      * Redirects the user to the ShowArticle Activity to show articles.
      *
-     * @param article the article to show in the Activity.
-     * @param imageView the image view to animate.
+     * @param article       the article to show in the Activity.
+     * @param imageView     the image view to animate.
      */
     fun openShowArticle(article: Article, imageView: View)
 }
@@ -32,9 +32,10 @@ class ArticleRouterImpl(private val activity: AppCompatActivity): ArticleRouter 
 
     /**
      * Redirects the user to the Show Article Activity to show article.
-     * @param article the article to show in the Activity.
-     * @param imageView the image view to animate.
+     *
+     * @param article       the article to show in the Activity.
+     * @param imageView     the image view to animate.
      */
     override fun openShowArticle(article: Article, imageView: View) =
-        ShowArticleActivity.routeFromActivity(activity, article, imageView)
+        ShowArticleActivity.routeFromActivity(activity, article, imageView, true)
 }

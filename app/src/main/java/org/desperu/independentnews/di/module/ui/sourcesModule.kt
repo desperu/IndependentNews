@@ -49,7 +49,7 @@ val sourcesModule = module {
     /**
      * Provides a SourceDetailInterface from the instance of SourceDetailFragment.
      */
-    single { (fragment: BaseBindingFragment) ->
+    factory { (fragment: BaseBindingFragment) ->
         fragment as SourceDetailInterface
     }
 }
