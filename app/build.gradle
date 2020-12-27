@@ -35,9 +35,13 @@ android {
     }
 
     buildTypes {
+
+        // Keep the release build type at the end of the list to override 'archivesBaseName' of
+        // debug build. This seems to be a Gradle bug, therefore try to update Gradle
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            archivesBaseName = "Independent-News" + "-v." + defaultConfig.versionName
         }
     }
 
@@ -111,7 +115,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     //noinspection GradleDependency
-    implementation 'androidx.core:core-ktx:1.5.0-alpha01'
+    implementation 'androidx.core:core-ktx:1.5.0-alpha05'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     // Animation mistake with 2.0.0-beta6 and higher
     //noinspection GradleDependency
@@ -169,5 +173,7 @@ dependencies {
     implementation 'me.saket:better-link-movement-method:2.2.0'
 
     // Leak Canary
-//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
+//    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
+//    implementation "com.squareup.leakcanary:leakcanary-object-watcher-android:$leak_canary_version"
+//    implementation "com.squareup.leakcanary:plumber-android:$leak_canary_version"
 }

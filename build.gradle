@@ -8,9 +8,10 @@ buildscript {
     ext.retrofit_version = '2.9.0'
     ext.tikxml_version = '0.8.13'
     ext.glide_version = '4.11.0'
-    ext.room_version = '2.2.5'
+    ext.room_version = '2.2.6'
     ext.easypermission_version = '1.1.1'
     ext.icepick_version = '3.2.0'
+    ext.leak_canary_version = '2.6'
 
     repositories {
         google()

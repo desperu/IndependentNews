@@ -27,7 +27,7 @@
     <string name="snack_bar_message_source_fetch">Téléchargement des informations pour la source : %1$s</string>
     <string name="snack_bar_message_source_error">Erreur lors du téléchargement des informations pour la source : %1$s</string>
     <!-- articles -->
-    <string name="snack_bar_message_search_articles">Recherche de nouveaux articles pour : %1$s</string>
+    <string name="snack_bar_message_search_articles">Recherche d\'articles pour : %1$s</string>
     <string name="snack_bar_message_find_articles">%1$s nouveaux articles trouvés : %2$s</string>
     <string name="snack_bar_message_fetch_list">%1$s, récupération des articles : (%2$s/%3$s)</string>
     <string name="snack_bar_message_end">%1$s nouveaux articles trouvés !</string>

@@ -40,7 +40,7 @@ class ReporterreRssServiceTest : KoinTest {
         assertTrue(!rssArticle?.url.isNullOrBlank())
         assertTrue(!rssArticle?.permUrl.isNullOrBlank())
         assertTrue(!rssArticle?.publishedDate.isNullOrBlank())
-        assertTrue(rssArticle?.author.isNullOrBlank())
+//        assertTrue(!rssArticle?.author.isNullOrBlank()) // Not always set
         assertTrue(!rssArticle?.categoryList.isNullOrEmpty())
         assertTrue(!rssArticle?.description.isNullOrBlank())
     }

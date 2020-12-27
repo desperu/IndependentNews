@@ -16,8 +16,8 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragm
 class CategoriesFragment: BaseFragment() {
 
     // FOR DATA
-    private lateinit var viewPager: ViewPager
-    private val tabLayout: TabLayout? by lazy { view?.rootView?.findViewById<TabLayout>(R.id.app_bar_tab_layout) }
+    private var viewPager: ViewPager? = null
+    private var tabLayout: TabLayout? = null
 
     // --------------
     // BASE METHODS
@@ -40,10 +40,22 @@ class CategoriesFragment: BaseFragment() {
      */
     private fun configureViewPagerAndTabs() {
         viewPager = categories_view_pager
-        viewPager.adapter = CategoriesAdapter(requireContext(), childFragmentManager,
+        viewPager?.adapter = CategoriesAdapter(requireContext(), childFragmentManager,
             FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+
+        tabLayout = view?.rootView?.findViewById(R.id.app_bar_tab_layout)
         tabLayout?.setupWithViewPager(viewPager)
         tabLayout?.tabMode = TabLayout.MODE_FIXED
+    }
+
+    // -----------------
+    // METHODS OVERRIDE
+    // -----------------
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        tabLayout = null
+        viewPager = null
     }
 
     // --- GETTERS ---
@@ -53,5 +65,5 @@ class CategoriesFragment: BaseFragment() {
      * @return the current fragment instance from the view pager.
      */
     internal fun getCurrentFrag(): ArticleListFragment =
-        viewPager.adapter?.instantiateItem(viewPager, viewPager.currentItem) as ArticleListFragment
+        viewPager?.adapter?.instantiateItem(viewPager!!, viewPager!!.currentItem) as ArticleListFragment
 }
