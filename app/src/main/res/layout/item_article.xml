@@ -43,6 +43,14 @@
                 scale_container scales the inside views to make it look natural
                 -->
 
+                <View
+                    android:id="@+id/read_fg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorRead"
+                    app:toShow="@{viewModel.isRead()}"
+                    tools:visibility="gone" />
+
                 <RelativeLayout
                     android:id="@+id/scale_container"
                     android:layout_width="match_parent"
