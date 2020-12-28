@@ -86,7 +86,7 @@ class ReporterreRepositoryImpl(
             val newArticles = articleRepository.getNewArticles(articleList)
             snackBarHelper?.showMessage(FIND, listOf(REPORTERRE + RSS, newArticles.size.toString()))
 
-            // Limit size for first start, but need to automatic inject in ui
+            // Limit size for first start, but need to automatic inject in ui when all list is fetched
 
             fetchArticleList(newArticles, RSS)
         } else

@@ -34,7 +34,7 @@ interface ArticleRepository {
     suspend fun updateTopStory(rssArticleList: List<Article>)
 
     /**
-     * Delete the older articles than the limit millis, in the database.
+     * Delete the older articles than the millis limit, in the database.
      *
      * @return the number of row affected.
      */
@@ -96,7 +96,6 @@ interface ArticleRepository {
  * @param articleDao                the database access object for article to set.
  * @param prefs                     the shared preferences service interface witch provide access
  *                                  to the app shared preferences to set.
- *
  */
 class ArticleRepositoryImpl(
     private val sourceRepository: SourceRepository,
@@ -114,7 +113,7 @@ class ArticleRepositoryImpl(
      *
      * @param articleList the articles list to persist.
      *
-     * @return the id list of inserted sources.
+     * @return the id list of persisted articles.
      */
     override suspend fun persist(articleList: List<Article>): List<Long> = withContext(Dispatchers.IO) {
         val urlsToUpdate = getExistingUrls(articleList)
@@ -122,6 +121,9 @@ class ArticleRepositoryImpl(
         val articleListPair = articleList.partition { article -> urlsToUpdate.contains(article.url) }
         val articlesToUpdate = articleListPair.first
         val articlesToInsert = articleListPair.second
+
+        // To prevent duplicate if an article's url was updated
+        removeExistingTitles(articlesToInsert)
 
         articlesToUpdate.forEachIndexed { index, article ->
             val categories = if (article.isTopStory) article.categories
@@ -160,11 +162,10 @@ class ArticleRepositoryImpl(
             val rssUrls = rssArticleList.map { it.url }
             articleDao.markIsTopStory(*rssUrls.toTypedArray())
 
-            val sourceName = rssArticleList[0].sourceName
-            val sourceId = rssArticleList[0].sourceId
-            val topStoryDB =
-                articleDao.getTopStory(listOf(sourceId)).filter { it.sourceName == sourceName }
-            val notTopStory = topStoryDB.filter { !rssUrls.contains(it.url) }
+            setSources()
+            val sourceId = sources?.find { it.name == rssArticleList[0].sourceName }?.id
+            val topStoryDB = sourceId?.let { articleDao.getTopStory(listOf(it)) }
+            val notTopStory = topStoryDB?.filter { !rssUrls.contains(it.url) }
 
             if (!notTopStory.isNullOrEmpty())
                 articleDao.markIsNotTopStory(*notTopStory.map { it.id }.toLongArray())
@@ -172,7 +173,7 @@ class ArticleRepositoryImpl(
     }
 
     /**
-     * Delete the older articles than the limit millis, in the database.
+     * Delete the older articles than the millis limit, in the database.
      *
      * @return the number of row affected.
      */
@@ -279,9 +280,21 @@ class ArticleRepositoryImpl(
      * @return the url of the articles from the given list that already exists in database.
      */
     private suspend fun getExistingUrls(articleList: List<Article>): List<String> = withContext(Dispatchers.IO) {
-        val url = articleList.map { article -> article.url }
-        val listToUpdate = articleDao.getWhereUrlsIn(url)
+        val urls = articleList.map { article -> article.url }
+        val listToUpdate = articleDao.getWhereUrlsIn(urls)
         listToUpdate.map { article -> article.url }
+    }
+
+    /**
+     * Remove the articles from the given list to insert that already exists in database.
+     * Needed in case of the url have changed, to prevent duplicates.
+     *
+     * @param articlesToInsert the articles to insert from which check existing title in database.
+     */
+    private suspend fun removeExistingTitles(articlesToInsert: List<Article>) = withContext(Dispatchers.IO) {
+        val titles = articlesToInsert.map { article -> article.title }
+        val listToRemove = articleDao.getWhereTitlesIn(titles)
+        listToRemove.forEach { articleDao.deleteArticle(it.id) }
     }
 
     /**

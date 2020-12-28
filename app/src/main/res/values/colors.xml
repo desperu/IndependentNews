@@ -44,10 +44,10 @@
     <color name="colorTransGrey">#974D4D4D</color>
     <color name="colorTransDark">#43000000</color>
     <color name="colorTransBlue">#4D0F6088</color>
-    <color name="colorRead">#4D7BC3D1</color>
+    <color name="colorRead">#8069E7FF</color>
 
     <!-- Sources Background color -->
-    <color name="bastamag_background">#e64e39</color>
+    <color name="bastamag_background">#f78c11</color>
     <color name="reporterre_background">#f5f5f5</color>
 
     <!-- Sources Buttons Links color -->

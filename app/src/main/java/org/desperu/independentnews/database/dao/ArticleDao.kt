@@ -81,6 +81,17 @@ interface ArticleDao {
     suspend fun getWhereUrlsIn(urls: List<String>): List<Article>
 
     /**
+     * Returns the articles for which the title are in the given list.
+     *
+     * @param titles the list of titles of the articles to return.
+     *
+     * @return the articles for which the title are in the given list.
+     */
+    @Transaction
+    @Query("SELECT * FROM article WHERE title IN (:titles)")
+    suspend fun getWhereTitlesIn(titles: List<String>): List<Article>
+
+    /**
      * Returns the articles for which the url are in the given list ordered from the most recent to the oldest.
      *
      * @param urls the list of urls of the articles to return.

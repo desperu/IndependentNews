@@ -114,6 +114,15 @@ class ArticleDaoTest {
     }
 
     @Test
+    fun getWhereTitlesIn() = articleListTest {
+        // Try to get All Articles in the database in the given title list
+        val titlesIn = mDatabase.articleDao().getWhereTitlesIn(articleList.map { it.title })
+
+        // Then check that the list isn't empty
+        assertTrue(titlesIn.isNotEmpty())
+    }
+
+    @Test
     fun getWhereUrlsInSorted() = articleListTest {
         // Try to get All Articles in the database in the given url list
         val urlsInSorted = mDatabase.articleDao().getWhereUrlsInSorted(articleList.map { it.url })
