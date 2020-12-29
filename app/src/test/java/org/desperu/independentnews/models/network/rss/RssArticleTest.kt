@@ -1,6 +1,7 @@
 package org.desperu.independentnews.models.network.rss
 
 import org.desperu.independentnews.utils.REPORTERRE
+import org.desperu.independentnews.utils.Utils.stringToDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -15,7 +16,7 @@ class RssArticleTest {
     private val url = "an url"
     private val permUrl = "a perm url"
     private val publishedDate = "2020-10-13T09:40:19Z"
-    private val publishedDateLong = 1602574819000L
+    private val publishedDateLong = stringToDate(publishedDate)?.time
     private val author = "an author"
     private val categoryList = listOf(Category("a category"))
     private val categories = "a category"

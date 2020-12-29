@@ -155,7 +155,7 @@ class UtilsTest {
     fun given_date_When_dateToString_Then_checkResult() {
         val expected = "2020-09-04T19:22:56+0200"
 
-        val cal = Calendar.getInstance()
+        val cal = Calendar.getInstance(Locale.FRANCE)
         cal.set(Calendar.MILLISECOND, 0)
         cal.set(Calendar.SECOND, 56)
         cal.set(Calendar.MINUTE, 22)
@@ -219,7 +219,7 @@ class UtilsTest {
     fun given_storeDelay_When_storeDelayMillis_Then_checkResult() {
         val expected = 1585951200000
 
-        val cal = Calendar.getInstance()
+        val cal = Calendar.getInstance(Locale.FRANCE)
         cal.set(2020, 9, 1, 0, 0, 0)
         cal.set(Calendar.MILLISECOND, 0)
         val givenMillis = cal.timeInMillis

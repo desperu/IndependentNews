@@ -7,6 +7,7 @@ import kotlinx.coroutines.runBlocking
 import org.desperu.independentnews.R
 import org.desperu.independentnews.utils.FilterUtils.getFilterValue
 import org.desperu.independentnews.utils.FilterUtils.parseSelectedMap
+import org.desperu.independentnews.utils.Utils.intStringToDate
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -27,6 +28,8 @@ class FilterUtilsTest {
     private val resistString = "reportage, résister"
     private val filterDiscuss = arrayOf("etretient", "débattre")
     private val discussString = "etretient, débattre"
+    private val startDate = "14/10/2020"
+    private val endDate = "16/10/2020"
 
     @Before
     fun before() {
@@ -50,7 +53,10 @@ class FilterUtilsTest {
             Pair(SOURCES, mutableListOf(filterBastamag, REPORTERRE)),
             Pair(THEMES, mutableListOf(filterEcology.toList(), filterInternational.toList()).flatten()),
             Pair(SECTIONS, mutableListOf(filterResist.toList(), filterDiscuss.toList()).flatten()),
-            Pair(DATES, mutableListOf("1602626400000", "1602885600000")),
+            Pair(DATES, mutableListOf(
+                intStringToDate(startDate)?.time.toString(),
+                intStringToDate(endDate)?.time?.plus(86400000L).toString())
+            ),
             Pair(CATEGORIES, mutableListOf(
                 filterEcologyCorrected.toList(),
                 filterInternational.toList(),
@@ -62,7 +68,7 @@ class FilterUtilsTest {
             Pair(SOURCES, mutableListOf(filterBastamag, REPORTERRE)),
             Pair(THEMES, mutableListOf(ecologyString, internationalString)),
             Pair(SECTIONS, mutableListOf(resistString, discussString)),
-            Pair(DATES, mutableListOf("14/10/2020", "16/10/2020")),
+            Pair(DATES, mutableListOf(startDate, endDate)),
             Pair(CATEGORIES, mutableListOf(ecologyString, internationalString, resistString, discussString))
         )
 
