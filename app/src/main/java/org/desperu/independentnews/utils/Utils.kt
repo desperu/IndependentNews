@@ -79,16 +79,6 @@ internal object Utils {
     }
 
     /**
-     * Convert date object to string format "yyyy-MM-dd'T'HH:mm:ssZ".
-     * @param givenDate Given date object.
-     * @return String date with good format.
-     */
-    internal fun dateToString(givenDate: Date): String {
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.FRANCE)
-        return simpleDateFormat.format(givenDate)
-    }
-
-    /**
      * Convert time in millis to string date with pattern "dd/MM/yyyy".
      * @param millis the time in millis to convert.
      * @return the time converted to string format.
@@ -128,9 +118,14 @@ internal object Utils {
      * @return the store delay day in millis.
      */
     internal fun storeDelayMillis(nowMillis: Long, storeDelay: Int): Long {
-        val monthMillis = 2592000000 // 30 * 24 * 60 * 60 * 1000
-        val storeDelayMillis = storeDelay * monthMillis
-        return nowMillis - storeDelayMillis
+        // Set a calendar at the start of the given day millis
+        val cal = Calendar.getInstance()
+        cal.timeInMillis = millisToStartOfDay(nowMillis)
+
+        val month = cal.get(Calendar.MONTH)
+        cal.set(Calendar.MONTH, month - storeDelay)
+
+        return cal.timeInMillis
     }
 
     // -----------------

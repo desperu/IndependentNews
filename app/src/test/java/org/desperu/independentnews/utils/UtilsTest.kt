@@ -8,7 +8,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
-import org.desperu.independentnews.utils.Utils.dateToString
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
@@ -152,23 +151,6 @@ class UtilsTest {
     }
 
     @Test
-    fun given_date_When_dateToString_Then_checkResult() {
-        val expected = "2020-09-04T19:22:56+0200"
-
-        val cal = Calendar.getInstance(Locale.FRANCE)
-        cal.set(Calendar.MILLISECOND, 0)
-        cal.set(Calendar.SECOND, 56)
-        cal.set(Calendar.MINUTE, 22)
-        cal.set(Calendar.HOUR_OF_DAY, 19)
-        cal.set(Calendar.DAY_OF_MONTH, 4)
-        cal.set(Calendar.MONTH, 8)
-        cal.set(Calendar.YEAR, 2020)
-        output = dateToString(cal.time)
-
-        assertEquals(expected, output)
-    }
-
-    @Test
     fun given_millis_When_millisToString_Then_checkResult() {
         val expected = "5/9/2020"
 
@@ -216,15 +198,33 @@ class UtilsTest {
     }
 
     @Test
-    fun given_storeDelay_When_storeDelayMillis_Then_checkResult() {
-        val expected = 1585951200000
-
-        val cal = Calendar.getInstance(Locale.FRANCE)
-        cal.set(2020, 9, 1, 0, 0, 0)
+    fun given_monthMoreThanStoreDelay_When_storeDelayMillis_Then_checkResult() {
+        val cal = Calendar.getInstance()
+        cal.set(2020, 3, 1, 0, 0, 0)
         cal.set(Calendar.MILLISECOND, 0)
+        val expected = cal.timeInMillis
+
+        cal.set(Calendar.MONTH, 9)
         val givenMillis = cal.timeInMillis
 
         val storeDelay = 6
+
+        val output = storeDelayMillis(givenMillis, storeDelay)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_monthLessThanStoreDelay_When_storeDelayMillis_Then_checkResult() {
+        val cal = Calendar.getInstance()
+        cal.set(2018, 11, 1, 0, 0, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        val expected = cal.timeInMillis
+
+        cal.set(Calendar.YEAR, 2020)
+        val givenMillis = cal.timeInMillis
+
+        val storeDelay = 24
 
         val output = storeDelayMillis(givenMillis, storeDelay)
 
