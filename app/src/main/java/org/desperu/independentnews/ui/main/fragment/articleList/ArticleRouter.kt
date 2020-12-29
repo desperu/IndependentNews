@@ -2,7 +2,7 @@ package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
 
 /**

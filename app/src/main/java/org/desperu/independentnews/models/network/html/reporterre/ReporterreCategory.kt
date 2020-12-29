@@ -1,10 +1,10 @@
-package org.desperu.independentnews.models.web.reporterre
+package org.desperu.independentnews.models.network.html.reporterre
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlCategory
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 

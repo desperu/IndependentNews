@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models
+package org.desperu.independentnews.models.database
 
 import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
 import org.desperu.independentnews.utils.EQUALS

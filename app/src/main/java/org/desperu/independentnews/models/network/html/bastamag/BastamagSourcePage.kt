@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.web.bastamag
+package org.desperu.independentnews.models.network.html.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlSourcePage
@@ -9,7 +9,7 @@ import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -39,7 +39,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     override fun getBody(): String? =
         findData(DIV, CLASS, MAIN, 0)?.outerHtml().updateBody()
 
-    override fun getCssUrl(): String? =
+    override fun getCssUrl(): String =
         findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
 
     override fun getPageUrlList(): List<String> = pageUrlList

@@ -31,7 +31,7 @@ import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.helpers.SystemUiHelper
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.ui.sources.WAS_EXPANDED
 import org.desperu.independentnews.utils.RC_SHOW_ARTICLE

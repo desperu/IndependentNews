@@ -2,9 +2,9 @@ package org.desperu.independentnews.network.reporterre
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.web.reporterre.ReporterreArticle
-import org.desperu.independentnews.models.web.reporterre.ReporterreCategory
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.network.html.reporterre.ReporterreArticle
+import org.desperu.independentnews.models.network.html.reporterre.ReporterreCategory
 import org.desperu.independentnews.utils.REPORT_SEC_RESISTER
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertTrue

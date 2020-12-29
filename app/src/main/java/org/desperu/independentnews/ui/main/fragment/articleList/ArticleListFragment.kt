@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_article_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 import org.desperu.independentnews.utils.*

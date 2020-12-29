@@ -1,6 +1,6 @@
 package org.desperu.independentnews.network.bastamag
 
-import org.desperu.independentnews.models.rss.RssResponse
+import org.desperu.independentnews.models.network.rss.RssResponse
 import retrofit2.http.GET
 
 /**

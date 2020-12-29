@@ -1,7 +1,7 @@
 package org.desperu.independentnews.database.dao
 
 import androidx.room.*
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.database.Source
 
 /**
  * The database access object for source.

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.koin.core.KoinComponent
 import org.koin.core.get

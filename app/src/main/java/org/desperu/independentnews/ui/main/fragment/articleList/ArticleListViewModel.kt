@@ -7,7 +7,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.toArticleItemVMList
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.utils.*

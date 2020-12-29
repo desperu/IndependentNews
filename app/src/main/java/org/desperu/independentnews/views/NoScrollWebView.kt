@@ -14,7 +14,7 @@ import android.widget.ScrollView
 import androidx.core.view.setMargins
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter

@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.ui.main.HAS_CHANGE
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.showArticle.ImageRouter

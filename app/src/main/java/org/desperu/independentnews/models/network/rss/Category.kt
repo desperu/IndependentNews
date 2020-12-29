@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.rss
+package org.desperu.independentnews.models.network.rss
 
 import com.tickaroo.tikxml.annotation.TextContent
 import com.tickaroo.tikxml.annotation.Xml

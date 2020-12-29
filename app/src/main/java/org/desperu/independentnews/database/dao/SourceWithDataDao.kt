@@ -3,7 +3,7 @@ package org.desperu.independentnews.database.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.SourceWithData
 
 /**
  * The database access object for source with all data.

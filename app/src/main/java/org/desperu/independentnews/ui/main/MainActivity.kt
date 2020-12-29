@@ -29,7 +29,7 @@ import org.desperu.independentnews.extension.showActivityForResult
 import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SnackBarHelper
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager

@@ -6,7 +6,7 @@ import androidx.annotation.IdRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.R
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.intStringToDate

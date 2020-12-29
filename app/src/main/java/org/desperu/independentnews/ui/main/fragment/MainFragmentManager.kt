@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import org.desperu.independentnews.R
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY

@@ -1,7 +1,7 @@
 package org.desperu.independentnews.ui.sources
 
 import android.view.View
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.SourceWithData
 
 /**
  * Interface that's allow communication with it's activity.

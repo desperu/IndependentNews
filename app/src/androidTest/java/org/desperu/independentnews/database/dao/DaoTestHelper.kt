@@ -3,9 +3,9 @@ package org.desperu.independentnews.database.dao
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import org.desperu.independentnews.database.ArticleDatabase
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
 

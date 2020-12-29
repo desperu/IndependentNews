@@ -1,6 +1,6 @@
 package org.desperu.independentnews.utils
 
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.database.Source
 
 // --- FOR RETROFIT REQUEST ---
 

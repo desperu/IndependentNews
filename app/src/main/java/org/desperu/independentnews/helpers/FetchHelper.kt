@@ -3,7 +3,7 @@ package org.desperu.independentnews.helpers
 import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.ERROR
 import org.desperu.independentnews.utils.SEARCH
 import org.desperu.independentnews.utils.SOURCE_ERROR

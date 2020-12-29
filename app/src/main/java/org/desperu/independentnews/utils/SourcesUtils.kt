@@ -1,8 +1,8 @@
 package org.desperu.independentnews.utils
 
 import org.desperu.independentnews.R
-import org.desperu.independentnews.models.SourcePage
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.SourcePage
+import org.desperu.independentnews.models.database.SourceWithData
 
 /**
  * SourceUtils object witch provide utils functions for sources.

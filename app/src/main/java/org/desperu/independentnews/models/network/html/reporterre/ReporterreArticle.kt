@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.web.reporterre
+package org.desperu.independentnews.models.network.html.reporterre
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
@@ -8,7 +8,7 @@ import org.desperu.independentnews.extension.parseHtml.correctUrlLink
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.getAuthor
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.jsoup.nodes.Document

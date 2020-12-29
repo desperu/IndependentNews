@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.rss
+package org.desperu.independentnews.models.network.rss
 
 import org.desperu.independentnews.utils.REPORTERRE
 import org.junit.Assert.assertEquals

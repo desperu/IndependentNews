@@ -1,7 +1,7 @@
 package org.desperu.independentnews.network.reporterre
 
 import kotlinx.coroutines.runBlocking
-import org.desperu.independentnews.models.rss.RssResponse
+import org.desperu.independentnews.models.network.rss.RssResponse
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertTrue
 import org.junit.Test

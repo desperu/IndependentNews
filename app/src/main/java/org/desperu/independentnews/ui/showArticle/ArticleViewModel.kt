@@ -2,7 +2,7 @@ package org.desperu.independentnews.ui.showArticle
 
 import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 
 /**
  * View Model witch provide data for Show Article Activity.

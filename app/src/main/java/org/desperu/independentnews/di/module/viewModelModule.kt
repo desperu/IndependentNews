@@ -2,8 +2,8 @@ package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.settings.SettingsViewModel
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel

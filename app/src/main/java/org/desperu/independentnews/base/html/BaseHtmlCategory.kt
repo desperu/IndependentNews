@@ -1,7 +1,7 @@
 package org.desperu.independentnews.base.html
 
 import okhttp3.ResponseBody
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 
 /**
  * Abstract base html category class witch provide standard functions to parse data from category's html page.

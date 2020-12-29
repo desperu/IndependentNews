@@ -6,11 +6,11 @@ import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
 import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
 import org.desperu.independentnews.helpers.SnackBarHelper
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.SourcePage
-import org.desperu.independentnews.models.web.bastamag.BastamagArticle
-import org.desperu.independentnews.models.web.bastamag.BastamagCategory
-import org.desperu.independentnews.models.web.bastamag.BastamagSourcePage
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.SourcePage
+import org.desperu.independentnews.models.network.html.bastamag.BastamagArticle
+import org.desperu.independentnews.models.network.html.bastamag.BastamagCategory
+import org.desperu.independentnews.models.network.html.bastamag.BastamagSourcePage
 import org.desperu.independentnews.network.bastamag.BastamagRssService
 import org.desperu.independentnews.network.bastamag.BastamagWebService
 import org.desperu.independentnews.repositories.database.ArticleRepository

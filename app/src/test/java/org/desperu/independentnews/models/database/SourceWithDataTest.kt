@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models
+package org.desperu.independentnews.models.database
 
 import org.desperu.independentnews.utils.*
 import org.junit.Assert.assertEquals

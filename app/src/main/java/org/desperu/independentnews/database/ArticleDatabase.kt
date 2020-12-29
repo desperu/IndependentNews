@@ -6,9 +6,9 @@ import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.database.dao.SourcePageDao
 import org.desperu.independentnews.database.dao.SourceWithDataDao
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.models.database.SourcePage
 
 /**
  * The database class of the application.

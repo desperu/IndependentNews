@@ -5,9 +5,9 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.extension.setSourceForEach
 import org.desperu.independentnews.helpers.SnackBarHelper
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.models.SourcePage
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.repositories.database.ArticleRepository
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.repositories.network.BastamagRepository

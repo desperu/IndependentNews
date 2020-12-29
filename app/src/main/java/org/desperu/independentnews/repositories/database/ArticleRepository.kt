@@ -3,8 +3,8 @@ package org.desperu.independentnews.repositories.database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.storeDelayMillis

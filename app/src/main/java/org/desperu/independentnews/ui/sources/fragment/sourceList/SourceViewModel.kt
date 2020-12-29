@@ -2,7 +2,7 @@ package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 
 /**

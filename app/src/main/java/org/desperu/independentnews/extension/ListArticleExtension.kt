@@ -2,8 +2,8 @@ package org.desperu.independentnews.extension
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleItemViewModel
 
 /**

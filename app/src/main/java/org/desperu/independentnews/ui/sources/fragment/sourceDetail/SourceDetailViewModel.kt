@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.service.ResourceService
 import org.koin.core.KoinComponent

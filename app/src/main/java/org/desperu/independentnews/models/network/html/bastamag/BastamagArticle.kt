@@ -1,11 +1,11 @@
-package org.desperu.independentnews.models.web.bastamag
+package org.desperu.independentnews.models.network.html.bastamag
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
 import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.jsoup.nodes.Document

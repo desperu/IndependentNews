@@ -2,9 +2,9 @@ package org.desperu.independentnews.network.bastamag
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
-import org.desperu.independentnews.models.Article
-import org.desperu.independentnews.models.web.bastamag.BastamagArticle
-import org.desperu.independentnews.models.web.bastamag.BastamagCategory
+import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.network.html.bastamag.BastamagArticle
+import org.desperu.independentnews.models.network.html.bastamag.BastamagCategory
 import org.desperu.independentnews.utils.BASTA_SEC_DECRYPTER
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertEquals

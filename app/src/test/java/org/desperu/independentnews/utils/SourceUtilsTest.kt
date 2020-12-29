@@ -1,9 +1,9 @@
 package org.desperu.independentnews.utils
 
 import org.desperu.independentnews.R
-import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.models.SourcePage
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.models.database.SourcePage
+import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.utils.SourcesUtils.getBackgroundColorId
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.SourcesUtils.getLogoId

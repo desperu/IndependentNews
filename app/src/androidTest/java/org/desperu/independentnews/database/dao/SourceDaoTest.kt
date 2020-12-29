@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.desperu.independentnews.database.ArticleDatabase
-import org.desperu.independentnews.models.Source
+import org.desperu.independentnews.models.database.Source
 import org.junit.*
 import org.junit.Assert.*
 

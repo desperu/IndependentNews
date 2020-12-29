@@ -5,9 +5,9 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.SourceDao
 import org.desperu.independentnews.database.dao.SourcePageDao
 import org.desperu.independentnews.database.dao.SourceWithDataDao
-import org.desperu.independentnews.models.Source
-import org.desperu.independentnews.models.SourcePage
-import org.desperu.independentnews.models.SourceWithData
+import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.models.database.SourcePage
+import org.desperu.independentnews.models.database.SourceWithData
 
 /**
  * Source Repository interface to get data from Source database.

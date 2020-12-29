@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models.rss
+package org.desperu.independentnews.models.network.rss
 
 import com.tickaroo.tikxml.annotation.Element
 import com.tickaroo.tikxml.annotation.PropertyElement
@@ -6,7 +6,7 @@ import com.tickaroo.tikxml.annotation.Xml
 import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 import org.desperu.independentnews.extension.parseHtml.getIndex
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.models.Article
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.utils.P
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.stringToDate

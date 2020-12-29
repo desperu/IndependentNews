@@ -1,4 +1,4 @@
-package org.desperu.independentnews.models
+package org.desperu.independentnews.models.database
 
 import android.os.Parcelable
 import androidx.room.Entity
