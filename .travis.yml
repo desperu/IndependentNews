@@ -3,6 +3,17 @@ dist: trusty
 jdk: oraclejdk12
 sudo: false
 
+# require the branch name to be master (note for PRs this is the base branch name)
+notifications:
+  email:
+    on_success: never # default: change
+    on_failure: always # default: always
+
+  slack:
+    if: branch = master
+    on_success: change # default: always
+    on_failure: always # default: always
+
 android:
   components:
     - platform-tools

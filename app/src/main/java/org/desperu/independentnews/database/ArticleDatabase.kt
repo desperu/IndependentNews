@@ -2,19 +2,24 @@ package org.desperu.independentnews.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import org.desperu.independentnews.database.dao.ArticleDao
-import org.desperu.independentnews.database.dao.SourceDao
-import org.desperu.independentnews.database.dao.SourcePageDao
-import org.desperu.independentnews.database.dao.SourceWithDataDao
-import org.desperu.independentnews.models.database.Article
-import org.desperu.independentnews.models.database.Source
-import org.desperu.independentnews.models.database.SourcePage
+import org.desperu.independentnews.database.dao.*
+import org.desperu.independentnews.models.database.*
 
 /**
  * The database class of the application.
  */
-@Database(entities = [Article::class, Source::class, SourcePage::class], version = 1)
+@Database(
+    entities = [Article::class, Css::class, Source::class, SourcePage::class],
+    version = 1
+)
 abstract class ArticleDatabase: RoomDatabase() {
+
+    /**
+     * Returns the database access object for article with data.
+     *
+     * @return the database access object for article with data.
+     */
+    abstract fun articleWithDataDao(): ArticleWithDataDao
 
     /**
      * Returns the database access object for articles.
@@ -22,6 +27,13 @@ abstract class ArticleDatabase: RoomDatabase() {
      * @return the database access object for articles.
      */
     abstract fun articleDao(): ArticleDao
+
+    /**
+     * Returns the database access object for css.
+     *
+     * @return the database access object for css.
+     */
+    abstract fun cssDao(): CssDao
 
     /**
      * Returns the database access object for sources with data.

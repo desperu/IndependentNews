@@ -4,6 +4,7 @@ import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import org.desperu.independentnews.database.ArticleDatabase
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.BASTAMAG
@@ -76,6 +77,37 @@ class DaoTestHelper {
     }
 
     // -----------------
+    // CSS
+    // -----------------
+
+    /**
+     * Css object for dao test.
+     *
+     * @param articleId the article id to set.
+     *
+     * @return the created css object.
+     */
+    internal fun getCss(articleId: Long) = Css(
+        1000000000000000L,
+        articleId,
+        "a css url",
+        "a ccs style"
+    )
+
+    /**
+     * Get css list for DB test.
+     *
+     * @param articleId the article id to set.
+     *
+     * @return the created css list.
+     */
+    internal fun getCssList(articleId: Long): List<Css> =
+        listOf(
+            getCss(articleId),
+            Css(1000000000000002L, articleId, "a css url 2", "a ccs style 2")
+        )
+
+    // -----------------
     // SOURCE
     // -----------------
 
@@ -141,8 +173,4 @@ class DaoTestHelper {
                 true
             )
         )
-
-    // -----------------
-    // SOURCE WITH DATA
-    // -----------------
 }

@@ -23,10 +23,24 @@ val dbModule = module{
     }
 
     /**
+     * Provides the database access object for article with data.
+     */
+    single{
+        (get() as ArticleDatabase).articleWithDataDao()
+    }
+
+    /**
      * Provides the database access object for articles.
      */
     single{
         (get() as ArticleDatabase).articleDao()
+    }
+
+    /**
+     * Provides the database access object for css.
+     */
+    single{
+        (get() as ArticleDatabase).cssDao()
     }
 
     /**
