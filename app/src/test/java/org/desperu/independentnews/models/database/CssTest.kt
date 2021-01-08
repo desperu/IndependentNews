@@ -1,11 +1,22 @@
 package org.desperu.independentnews.models.database
 
+import android.content.ContentValues
+import org.desperu.independentnews.utils.CSS_ARTICLE_ID
+import org.desperu.independentnews.utils.CSS_CONTENT
+import org.desperu.independentnews.utils.CSS_ID
+import org.desperu.independentnews.utils.CSS_URL
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
 /**
  * Simple model class test, for Css data class that's check setter, getter and default parameters.
  */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [28], manifest= Config.NONE)
 class CssTest {
 
     private val id: Long = 1L
@@ -14,7 +25,7 @@ class CssTest {
     private val content: String = "a css style"
 
     @Test
-    fun given_emptyCss_When_createCss_Then_checkDefaultValues() {
+    fun given_EmptyCss_When_createCss_Then_checkDefaultValues() {
         val css = Css()
 
         assertEquals(0L, css.id)
@@ -24,7 +35,7 @@ class CssTest {
     }
 
     @Test
-    fun given_css_When_createCss_Then_checkValues() {
+    fun given_Css_When_createCss_Then_checkValues() {
         val css = Css(id, articleId, url, content)
 
         assertEquals(id, css.id)
@@ -34,11 +45,51 @@ class CssTest {
     }
 
     @Test
-    fun given_emptyCss_When_setCssValues_Then_checkValues() {
-        val css = Css()
+    fun given_EmptyCss_When_setCssValues_Then_checkValues() {
+        val expected = Css(id, articleId, url, content)
 
+        val css = Css()
+        css.id = id
+        css.articleId = articleId
+        css.url = url
         css.content = content
 
-        assertEquals(content, css.content)
+        assertEquals(expected, css)
+    }
+
+    @Test
+    fun given_ContentValues_When_fromContentValues_Then_checkCssFields() {
+        val expected = Css(id, articleId, url, content)
+
+        val values = ContentValues()
+
+        assertNotNull(values)
+
+        values.put(CSS_ID, id)
+        values.put(CSS_ARTICLE_ID, articleId)
+        values.put(CSS_URL, url)
+        values.put(CSS_CONTENT, content)
+
+        val output = Css().fromContentValues(values)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_Css_When_toContentValues_Then_checkResult() {
+        val expected = ContentValues()
+
+        assertNotNull(expected)
+
+        expected.put(CSS_ID, id)
+        expected.put(CSS_ARTICLE_ID, articleId)
+        expected.put(CSS_URL, url)
+        expected.put(CSS_CONTENT, content)
+
+        val css = Css(id, articleId, url, content)
+
+        val output = Css().toContentValues(css)
+
+        assertEquals(expected, output)
     }
 }

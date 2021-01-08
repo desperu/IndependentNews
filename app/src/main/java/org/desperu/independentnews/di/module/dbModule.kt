@@ -2,13 +2,9 @@ package org.desperu.independentnews.di.module
 
 import androidx.room.Room
 import org.desperu.independentnews.database.ArticleDatabase
+import org.desperu.independentnews.utils.DATABASE_NAME
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
-
-/**
- * The database name of the application.
- */
-private const val DATABASE_NAME = "article"
 
 /**
  * Koin module which provides dependency related to database.

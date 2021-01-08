@@ -9,11 +9,6 @@ notifications:
     on_success: never # default: change
     on_failure: always # default: always
 
-  slack:
-    if: branch = master
-    on_success: change # default: always
-    on_failure: always # default: always
-
 android:
   components:
     - platform-tools

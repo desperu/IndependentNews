@@ -4,13 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import org.desperu.independentnews.database.dao.*
 import org.desperu.independentnews.models.database.*
+import org.desperu.independentnews.utils.DATABASE_VERSION
 
 /**
  * The database class of the application.
  */
 @Database(
     entities = [Article::class, Css::class, Source::class, SourcePage::class],
-    version = 1
+    version = DATABASE_VERSION
 )
 abstract class ArticleDatabase: RoomDatabase() {
 

@@ -70,7 +70,7 @@ class CssDaoTest {
     }
 
     @Test
-    fun getArticleCssList() = oneCssTest {
+    fun getArticleCss() = oneCssTest {
         // When getting Article Css via the DAO
         val articleCss = mDatabase.cssDao().getArticleCss(articleId)
 
@@ -106,7 +106,7 @@ class CssDaoTest {
     }
 
     @Test
-    fun deleteCssAndCheckDb() = runBlockingTest {
+    fun deleteArticleCssAndCheckDb() = runBlockingTest {
         // Insert a Css in database for the test
         mDatabase.cssDao().insertCss(css)
 
@@ -137,7 +137,7 @@ class CssDaoTest {
      */
     private inline fun oneCssTest(crossinline block: suspend () -> Unit) = runBlockingTest {
         // Insert a css in database for the test
-        mDatabase.cssDao().insertCss(css)
+        css.id = mDatabase.cssDao().insertCss(css)[0]
 
         // Execute the test
         block()
