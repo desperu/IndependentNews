@@ -1,9 +1,6 @@
 package org.desperu.independentnews.di.module
 
-import org.desperu.independentnews.service.ResourceService
-import org.desperu.independentnews.service.ResourceServiceImpl
-import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.service.SharedPrefServiceImpl
+import org.desperu.independentnews.service.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -13,7 +10,7 @@ import org.koin.dsl.module
 val serviceModule = module {
 
     /**
-     * Provides an SharedPrefService instance.
+     * Provides a SharedPrefService instance.
      */
     single<SharedPrefService> {
         SharedPrefServiceImpl(
@@ -22,10 +19,19 @@ val serviceModule = module {
     }
 
     /**
-     * Provides an ResourceService instance.
+     * Provides a ResourceService instance.
      */
     single<ResourceService> {
         ResourceServiceImpl(
+            androidContext()
+        )
+    }
+
+    /**
+     * Provides a ContentService instance.
+     */
+    single<ContentService> {
+        ContentServiceImpl(
             androidContext()
         )
     }

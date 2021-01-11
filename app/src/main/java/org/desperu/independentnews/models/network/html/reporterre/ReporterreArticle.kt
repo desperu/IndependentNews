@@ -10,6 +10,7 @@ import org.desperu.independentnews.extension.parseHtml.sources.getAuthor
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.jsoup.nodes.Document
 
@@ -71,7 +72,14 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     }
 
     override fun getCssUrl(): String =
-        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
+        concatenateStringFromMutableList(
+            getTagList(LINK)
+                .getMatchAttr(REL, STYLE_SHEET)
+                .map { it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL) }
+//                .map { it.attr(HREF) }
+                .toMutableList()
+        )
+//        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
     // -----------------
     // CONVERT

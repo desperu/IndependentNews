@@ -22,6 +22,7 @@ class BastamagWebServiceTest : KoinTest {
     // FOR DATA
     private val bastamagWebService = get<BastamagWebService>()
     private val articleUrl = "Sympathies-fascistes-oppression-coloniale-brutalites-anti-ouvrieres-Michelin-caoutchouc"
+    private val cssUrl = "https://www.bastamag.net/local/cache-css/1253c746a35e95af461d518688c9dd5b.css?1610170708"
 
     @Test
     fun fetchArticle() = runBlocking {
@@ -70,5 +71,12 @@ class BastamagWebServiceTest : KoinTest {
     private fun checkParsingCategory(responseBody: ResponseBody) {
         val bastaCategory = BastamagCategory(responseBody)
         assertEquals(10, bastaCategory.getArticleList().size)
+    }
+
+    @Test
+    fun fetchCss() = runBlocking {
+        val cssStyle = bastamagWebService.getCss(cssUrl).string()
+
+        assertThat("Something was downloaded !", cssStyle.isNotBlank())
     }
 }

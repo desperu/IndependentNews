@@ -15,6 +15,7 @@ import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
 import org.desperu.independentnews.repositories.database.ArticleRepository
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.koin.java.KoinJavaComponent.getKoin
 
@@ -135,6 +136,10 @@ class ReporterreRepositoryImpl(
         sourcePages
     }
 
+    // -----------------
+    // UTILS
+    // -----------------
+
     /**
      * Fetch article html page for each article in the given list.
      *
@@ -151,6 +156,9 @@ class ReporterreRepositoryImpl(
             val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             reporterreArticle.toArticle(article)
 
+            // Fetch the css style too.
+            article.cssStyle = fetchArticleCss(article)
+
             snackBarHelper?.showMessage(
                 FETCH,
                 listOf(REPORTERRE + type, (index + 1).toString(), articleList.size.toString())
@@ -158,5 +166,24 @@ class ReporterreRepositoryImpl(
         }
 
         return@withContext articleList
+    }
+
+    /**
+     * Fetch article css style, for each css url, and concatenate fetched css style.
+     *
+     * @param article the article for which fetch css.
+     *
+     * @return the concatenated css styles in string.
+     */
+    private suspend fun fetchArticleCss(article: Article): String {
+        val cssUrls = deConcatenateStringToMutableList(article.cssUrl)
+        var cssStyle = String()
+
+        cssUrls.forEachIndexed { index, cssUrl ->
+            if (index != 0) cssStyle += " "
+            cssStyle += webService.getCss(cssUrl).string()
+        }
+
+        return cssStyle
     }
 }

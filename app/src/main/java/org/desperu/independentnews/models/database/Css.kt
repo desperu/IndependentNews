@@ -37,7 +37,7 @@ import org.desperu.independentnews.utils.CSS_URL
 data class Css(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
-    var articleId: Long = 0L,
+    var articleId: Long = 0L, // TODO remove FK because same css for all basta articles
     var url: String = "",
     var content: String = ""
 ): Parcelable {

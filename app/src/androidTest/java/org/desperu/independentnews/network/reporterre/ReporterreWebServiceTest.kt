@@ -20,7 +20,8 @@ class ReporterreWebServiceTest : KoinTest {
 
     // FOR DATA
     private val reporterreWebService = get<ReporterreWebService>()
-    private val articleUrl = "Les-scientifiques-francais-entament-leur-mue-ecologique"
+    private val articleUrl = "Declaration-pour-la-vie-les-zapatistes-annoncent-leur-venue-en-Europe"
+    private val cssUrl = "https://reporterre.net/plugins-dist/mediabox/colorbox/black-striped/colorbox.css"
 
     @Test
     fun fetchArticle() = runBlocking {
@@ -70,5 +71,12 @@ class ReporterreWebServiceTest : KoinTest {
         val reporterreCategory = ReporterreCategory(responseBody)
         val reportCatSize = reporterreCategory.getArticleList().size
         assertTrue((reportCatSize) >= 50)
+    }
+
+    @Test
+    fun fetchCss() = runBlocking {
+        val cssStyle = reporterreWebService.getCss(cssUrl).string()
+
+        assertThat("Something was downloaded !", cssStyle.isNotBlank())
     }
 }

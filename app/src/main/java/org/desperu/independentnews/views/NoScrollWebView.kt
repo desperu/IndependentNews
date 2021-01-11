@@ -102,14 +102,19 @@ class NoScrollWebView @JvmOverloads constructor(
      * Update the design of the web view on loading start.
      * Set the text margin, size and background.
      *
-     * @param sourceName        the name of the source of the page.
      * @param url               the url of the page.
+     * @param sourceName        the name of the source of the page.
+     * @param cssStyle          the css style of the web view content.
      */
-    internal fun updateWebViewStart(sourceName: String, url: String?) {
+    internal fun updateWebViewStart(url: String?, sourceName: String, cssStyle: String) {
         url?.let {
             updateMargins(it, sourceName)
             updateTextSize(it, sourceName)
             updateBackground(it, sourceName)
+            injectCssCode(resizeMedia)
+            if (cssStyle.isNotBlank()) injectCssCode(cssStyle)
+            else injectCssUrl(it, cssUrl)
+//            zoomOut()
         }
     }
 
@@ -121,8 +126,10 @@ class NoScrollWebView @JvmOverloads constructor(
      */
     internal fun updateWebViewFinish(url: String?, cssUrl: String?) {
         url?.let {
-            injectCssCode(resizeMedia)
-            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
+
+//            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
+            cssUrl?.let { cssStyle -> injectCssCode(cssStyle) }
+            // TODO use to correct zoom mistake ??
         }
     }
 

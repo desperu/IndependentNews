@@ -27,6 +27,7 @@ class ArticleTest {
     private val isTopStory: Boolean = false
     private val read: Boolean = false
     private val source: Source = Source()
+    private val cssStyle = "a css style"
 
     @Test
     fun given_emptyArticle_When_createArticle_Then_checkDefaultValues() {
@@ -49,13 +50,14 @@ class ArticleTest {
         assertEquals(false, article.isTopStory)
         assertEquals(false, article.read)
         assertEquals(Source(), article.source)
+        assertEquals("", article.cssStyle)
     }
 
     @Test
     fun given_article_When_createArticle_Then_checkValues() {
         val articleSet = Article(
-            id, sourceId, sourceName, url, title, section, theme, author, publishedDate,
-            article, categories, description, imageUrl, cssUrl, isTopStory, read, source
+            id, sourceId, sourceName, url, title, section, theme, author, publishedDate, article,
+            categories, description, imageUrl, cssUrl, isTopStory, read, source, cssStyle
         )
 
         assertEquals(id, articleSet.id)
@@ -75,6 +77,7 @@ class ArticleTest {
         assertEquals(isTopStory, articleSet.isTopStory)
         assertEquals(read, articleSet.read)
         assertEquals(source, articleSet.source)
+        assertEquals(cssStyle, articleSet.cssStyle)
     }
 
     @Test
@@ -98,6 +101,7 @@ class ArticleTest {
         articleEmpty.isTopStory = isTopStory
         articleEmpty.read = read
         articleEmpty.source = source
+        articleEmpty.cssStyle = cssStyle
 
         assertEquals(id, articleEmpty.id)
         assertEquals(sourceId, articleEmpty.sourceId)
@@ -116,5 +120,6 @@ class ArticleTest {
         assertEquals(isTopStory, articleEmpty.isTopStory)
         assertEquals(read, articleEmpty.read)
         assertEquals(sourceId, articleEmpty.sourceId)
+        assertEquals(cssStyle, articleEmpty.cssStyle)
     }
 }

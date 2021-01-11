@@ -17,8 +17,10 @@ import androidx.core.view.doOnPreDraw
 import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.animatedValue
 import org.desperu.independentnews.anim.AnimHelper.fromSideAnimator
@@ -192,7 +194,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     /**
      * Web view client for the web view.
      */
-    private val webViewClient = object : WebViewClient() {
+    private var webViewClient: WebViewClient? = object : WebViewClient() {
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
@@ -200,12 +202,14 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 actualUrl = it
                 isWebViewDesigned = false
                 handleNavigation(it)
-                web_view.updateWebViewStart(article.sourceName, it)
+                lifecycleScope.launch {
+                    web_view.updateWebViewStart(it, article.sourceName, viewModel.getCssStyle())
+                }
             }
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-            url?.let { if (it == actualUrl) updateDesign(it, false) }
+//            url?.let { if (it == actualUrl) updateDesign(it, false) }
             article_scroll_progress_bar.visibility = View.VISIBLE
             appbar_loading_progress_bar.visibility = View.INVISIBLE
             super.onPageFinished(view, url)
@@ -237,7 +241,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         super.onStop()
         if (inCustomView) hideCustomView()
 //        web_view.onFinishTemporaryDetach()
-        mWebChromeClient = null
+//        mWebChromeClient = null
     }
 
     override fun onBackPressed() = when {
@@ -255,6 +259,12 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //        }
 //        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
         else -> { sendResult(); super.onBackPressed() }
+    }
+
+    override fun onDestroy() {
+        webViewClient = null
+        mWebChromeClient = null
+        super.onDestroy()
     }
 
     // --------------
@@ -315,7 +325,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                         fromSideAnimator(listOf(article_author), progress, true)
                         article_title.setScale(progress)
                         web_view.apply {
-                            alpha = progress//(progress - 0.8f) / 0.2f // not shown because css update
+                            alpha = (progress - 0.65f) / 0.35f // (progress - 0.8f) / 0.2f // not shown because css update
                             translationY = animatedValue(sv.bottom - web_view.top, progress)//100.dp - 100.dp * progress
                         }
 //                        article_root_view.alpha = progress // create anim mistake
@@ -332,7 +342,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * when not play anim until it's end.
      */
     private fun clearAnimations() {
-        val views = listOf(article_source_image, article_source_name, article_subtitle, article_author)
+        val views = listOf(article_source_image, article_source_name, article_subtitle, article_date, article_author)
         views.forEach { it.translationX = 0f }
         article_title.setScale(1f)
         web_view.apply { alpha = 1f; translationY = 0f }
@@ -380,18 +390,20 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * @param fromProgress true if call from onProgressChanged, false otherwise.
      */
     private fun updateDesign(url: String, fromProgress: Boolean) {
-        if (fromProgress && !isSourceUrl(url)) return
+//        if (fromProgress && !isSourceUrl(url)) return
 
-        if (!isWebViewDesigned)
-            web_view.updateWebViewFinish(actualUrl, article.cssUrl)
+//        if (!isWebViewDesigned)
+//            lifecycleScope.launch { web_view.updateWebViewFinish(actualUrl, viewModel.getCssStyle()) }
 //            web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
         article_loading_progress_bar.hide()
         article_scroll_view.visibility = View.VISIBLE
 //        web_view.zoomOut()
 //        web_view.settings.textZoom = web_view.settings.textZoom
         if (isSourceUrl(url) && scrollPosition > -1 && !isWebViewDesigned)
-            restoreScrollPosition()
-        isWebViewDesigned = true
+            sv.scrollTo(sv.scrollX, scrollPosition)
+        else if (!isSourceUrl(url))
+            sv.scrollTo(sv.scrollX, 0)
+//        isWebViewDesigned = true
     }
 
     /**
@@ -482,7 +494,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             if (navigationCount == 1)
                 article_scroll_view.visibility = View.INVISIBLE
 
-            scrollTo(0)
             article_scroll_progress_bar.visibility = View.INVISIBLE
             article_loading_progress_bar.apply { visibility = View.VISIBLE; show() }
             appbar_loading_progress_bar.visibility = View.VISIBLE

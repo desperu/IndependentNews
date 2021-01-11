@@ -23,6 +23,7 @@ import kotlinx.android.parcel.Parcelize
  * @property isTopStory         whether the article is top story.
  * @property read               whether the article has been read or not.
  * @property source             the source of the article.
+ * @property cssStyle           the css style of the article.
  *
  * @constructor Sets all properties of the article.
  *
@@ -42,16 +43,19 @@ import kotlinx.android.parcel.Parcelize
  * @param isTopStory            whether the article is top story to set.
  * @param read                  whether the article has been read or not to set.
  * @param source                the source of the article to set.
+ * @param cssStyle              the css style of the article to set.
  */
 @Parcelize
 @Entity(foreignKeys = [ForeignKey(entity = Source::class,
     parentColumns = ["id"],
-    childColumns = ["sourceId"])],
+    childColumns = ["sourceId"],
+    onUpdate = ForeignKey.CASCADE,
+    onDelete = ForeignKey.CASCADE)],
     indices = [Index(name = "article_sourceId_index", value = ["sourceId"])])
 data class Article(@PrimaryKey(autoGenerate = true)
                    var id: Long = 0L,
                    var sourceId: Long = 0L,
-                   var sourceName: String = "",
+                   var sourceName: String = "", // TODO to remove, use source.name
                    var url: String = "",
                    var title: String = "",
                    var section: String = "",
@@ -66,6 +70,12 @@ data class Article(@PrimaryKey(autoGenerate = true)
                    var isTopStory: Boolean = false,
                    var read: Boolean = false,
 //                   var scrollPosition: Int = 0,
+
+                   // Should use ArticleWithData instead
                    @Ignore
-                   var source: Source = Source()
+                   var source: Source = Source(),
+                   @Ignore
+                   var cssStyle: String = ""
 ): Parcelable
+
+// TODO export body and remove unused param

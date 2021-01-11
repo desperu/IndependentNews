@@ -76,8 +76,9 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         // Configure Ui for full screen video
         sysUiHelper.setDecorUiVisibility(SYS_UI_FULL_HIDE)
         sysUiHelper.setOrientation(LANDSCAPE) // Not needed for new api
-        activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)// TODO disable auto screen off, need to check, and if good serialize
-        showArticleInterface?.saveScrollPosition()                              //  not good ... find another way !!
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // TODO on test, should be good, remove with clearFlags()
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON) //  disable auto screen off, need to check, and if good serialize
+        showArticleInterface?.saveScrollPosition()                               //  not good ... find another way !!
 
         showArticleInterface?.inCustomView = true
     }

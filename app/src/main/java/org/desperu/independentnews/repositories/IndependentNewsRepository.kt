@@ -109,8 +109,8 @@ interface IndependentNewsRepository {
  *
  * @property articleRepository              the repository access for article database.
  * @property sourceRepository               the repository access for source database.
- * @property reporterreRepository           the repository access for reporterre services.
- * @property bastamagRepository             the repository access for bastamag services.
+ * @property reporterreRepository           the repository access for reporterre network.
+ * @property bastamagRepository             the repository access for bastamag network.
  * @property articleDao                     the database access object for article.
  * @property snackBarHelper                 the helper to display fetch messages to the user
  *                                          with the snack bar.
@@ -118,8 +118,8 @@ interface IndependentNewsRepository {
  * @constructor Instantiates a new IndependentNewsRepositoryImpl.
  * @param articleRepository                 the repository access for article database to set.
  * @param sourceRepository                  the repository access for source database to set.
- * @param reporterreRepository              the repository access for reporterre services to set.
- * @param bastamagRepository                the repository access for bastamag services to set.
+ * @param reporterreRepository              the repository access for reporterre network to set.
+ * @param bastamagRepository                the repository access for bastamag network to set.
  * @param articleDao                        the database access object for article to set.
  */
 class IndependentNewsRepositoryImpl(

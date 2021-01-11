@@ -1,10 +1,7 @@
 package org.desperu.independentnews.di.module
 
 import org.desperu.independentnews.repositories.*
-import org.desperu.independentnews.repositories.database.ArticleRepository
-import org.desperu.independentnews.repositories.database.ArticleRepositoryImpl
-import org.desperu.independentnews.repositories.database.SourceRepository
-import org.desperu.independentnews.repositories.database.SourceRepositoryImpl
+import org.desperu.independentnews.repositories.database.*
 import org.desperu.independentnews.repositories.network.BastamagRepository
 import org.desperu.independentnews.repositories.network.BastamagRepositoryImpl
 import org.desperu.independentnews.repositories.network.ReporterreRepository
@@ -30,8 +27,15 @@ val repositoryModule = module {
      */
     single<ArticleRepository> {
         ArticleRepositoryImpl(
-            get(), get(), get()
+            get(), get(), get(), get()
         )
+    }
+
+    /**
+     * Provides a CssRepository instance.
+     */
+    single<CssRepository> {
+        CssRepositoryImpl(get())
     }
 
     /**

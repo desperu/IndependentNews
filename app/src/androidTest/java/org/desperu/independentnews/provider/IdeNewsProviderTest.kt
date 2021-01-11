@@ -63,7 +63,6 @@ class IdeNewsProviderTest {
         // Set Article for foreign keys matches
         article = DaoTestHelper().getArticle(sourceId)
         runBlockingTest { articleId = mDatabase.articleDao().insertArticles(article)[0] }
-        articleId = 1L
 
         // Set content resolver
         mContentResolver = InstrumentationRegistry.getInstrumentation().context.contentResolver
@@ -104,14 +103,16 @@ class IdeNewsProviderTest {
             mContentResolver.query(it, null, null, null, null)
         }
 
-        assertThat(cursor, notNullValue())
-        assertThat(cursor?.count, `is`(1))
-        assertThat(cursor?.moveToFirst(), `is`(true))
+        cursor?.let {
+            assertThat(cursor, notNullValue())
+            assertThat(cursor.count, `is`(1))
+            assertThat(cursor.moveToFirst(), `is`(true))
 
-        assertEquals(cursor?.getLong(cursor.getColumnIndexOrThrow(CSS_ID)), cssId)
-        assertThat(cursor?.getLong(cursor.getColumnIndexOrThrow(CSS_ARTICLE_ID)), `is`(articleId))
-        assertThat(cursor?.getString(cursor.getColumnIndexOrThrow(CSS_URL)), `is` (url))
-        assertThat(cursor?.getString(cursor.getColumnIndexOrThrow(CSS_CONTENT)), `is` (content))
+            assertEquals(cursor.getLong(cursor.getColumnIndexOrThrow(CSS_ID)), cssId)
+            assertThat(cursor.getLong(cursor.getColumnIndexOrThrow(CSS_ARTICLE_ID)), `is`(articleId))
+            assertThat(cursor.getString(cursor.getColumnIndexOrThrow(CSS_URL)), `is` (url))
+            assertThat(cursor.getString(cursor.getColumnIndexOrThrow(CSS_CONTENT)), `is` (content))
+        }
 
         // Delete created css after test
         cssUri?.let { mContentResolver.delete(it, null, null) }

@@ -152,6 +152,10 @@ class BastamagRepositoryImpl(
             val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             bastamagArticle.toArticle(article)
 
+            // Fetch the css style too.
+            // TODO check if css url already exist in the database, if not fetch it
+            article.cssStyle = webService.getCss(article.cssUrl).string()
+
             snackBarHelper?.showMessage(
                 FETCH,
                 listOf(BASTAMAG + type, (index + 1).toString(), articleList.size.toString())
