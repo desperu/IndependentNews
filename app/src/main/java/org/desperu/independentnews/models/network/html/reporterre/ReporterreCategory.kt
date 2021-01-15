@@ -5,6 +5,7 @@ import org.desperu.independentnews.base.html.BaseHtmlCategory
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 
@@ -23,7 +24,7 @@ data class ReporterreCategory(private val htmlPage: ResponseBody): BaseHtmlCateg
         val articleList = mutableListOf<Article>()
 
         // Get top story article.
-        val topStory = Article(sourceName = REPORTERRE)
+        val topStory = Article(source = Source(name = REPORTERRE))
         topStory.url =
             getTagList(A)
                 .getMatchAttr(CLASS, BLOC_ARTICLE)
@@ -33,7 +34,7 @@ data class ReporterreCategory(private val htmlPage: ResponseBody): BaseHtmlCateg
 
         // Get all articles.
         getTagList(A).getMatchAttr(CLASS, LIEN_ARTICLE).forEach { element ->
-            val article = Article(sourceName = REPORTERRE)
+            val article = Article(source = Source(name = REPORTERRE))
 
             article.url = element.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 

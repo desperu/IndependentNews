@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
  * Class witch provides a model for an article.
  *
  * @property id                 the unique identifier of the article.
- * @property sourceName         the source name of the article.
+ * @property sourceId           the unique identifier of the article source.
  * @property url                the url of the article.
  * @property title              the title of the article.
  * @property section            the section of the article.
@@ -23,12 +23,11 @@ import kotlinx.android.parcel.Parcelize
  * @property isTopStory         whether the article is top story.
  * @property read               whether the article has been read or not.
  * @property source             the source of the article.
- * @property cssStyle           the css style of the article.
  *
  * @constructor Sets all properties of the article.
  *
  * @param id                    the unique identifier of the article to set.
- * @param sourceName            the source name of the article to set.
+ * @param sourceId              the unique identifier of the article source to set.
  * @param url                   the url of the article to set.
  * @param title                 the title of the article to set.
  * @param section               the section of the article to set.
@@ -43,19 +42,23 @@ import kotlinx.android.parcel.Parcelize
  * @param isTopStory            whether the article is top story to set.
  * @param read                  whether the article has been read or not to set.
  * @param source                the source of the article to set.
- * @param cssStyle              the css style of the article to set.
  */
 @Parcelize
-@Entity(foreignKeys = [ForeignKey(entity = Source::class,
-    parentColumns = ["id"],
-    childColumns = ["sourceId"],
-    onUpdate = ForeignKey.CASCADE,
-    onDelete = ForeignKey.CASCADE)],
-    indices = [Index(name = "article_sourceId_index", value = ["sourceId"])])
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Source::class,
+            parentColumns = ["id"],
+            childColumns = ["sourceId"],
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(name = "article_sourceId_index", value = ["sourceId"])]
+)
 data class Article(@PrimaryKey(autoGenerate = true)
                    var id: Long = 0L,
                    var sourceId: Long = 0L,
-                   var sourceName: String = "", // TODO to remove, use source.name
                    var url: String = "",
                    var title: String = "",
                    var section: String = "",
@@ -73,9 +76,7 @@ data class Article(@PrimaryKey(autoGenerate = true)
 
                    // Should use ArticleWithData instead
                    @Ignore
-                   var source: Source = Source(),
-                   @Ignore
-                   var cssStyle: String = ""
+                   var source: Source = Source()
 ): Parcelable
 
 // TODO export body and remove unused param

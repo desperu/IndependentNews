@@ -10,9 +10,9 @@ import org.junit.Test
  */
 class ArticleTest {
 
+    // FOR DATA
     private val id: Long = 1L
     private val sourceId: Long = 2L
-    private val sourceName: String = BASTAMAG
     private val url: String = BASTAMAG_BASE_URL
     private val title: String = "A title"
     private val section: String = "a section"
@@ -26,8 +26,7 @@ class ArticleTest {
     private val cssUrl: String = "an css url"
     private val isTopStory: Boolean = false
     private val read: Boolean = false
-    private val source: Source = Source()
-    private val cssStyle = "a css style"
+    private val source: Source = Source(name = BASTAMAG)
 
     @Test
     fun given_emptyArticle_When_createArticle_Then_checkDefaultValues() {
@@ -35,7 +34,6 @@ class ArticleTest {
 
         assertEquals(0L, article.id)
         assertEquals(0L, article.sourceId)
-        assertEquals("", article.sourceName)
         assertEquals("", article.url)
         assertEquals("", article.title)
         assertEquals("", article.section)
@@ -50,19 +48,17 @@ class ArticleTest {
         assertEquals(false, article.isTopStory)
         assertEquals(false, article.read)
         assertEquals(Source(), article.source)
-        assertEquals("", article.cssStyle)
     }
 
     @Test
     fun given_article_When_createArticle_Then_checkValues() {
         val articleSet = Article(
-            id, sourceId, sourceName, url, title, section, theme, author, publishedDate, article,
-            categories, description, imageUrl, cssUrl, isTopStory, read, source, cssStyle
+            id, sourceId, url, title, section, theme, author, publishedDate, article,
+            categories, description, imageUrl, cssUrl, isTopStory, read, source
         )
 
         assertEquals(id, articleSet.id)
         assertEquals(sourceId, articleSet.sourceId)
-        assertEquals(sourceName, articleSet.sourceName)
         assertEquals(url, articleSet.url)
         assertEquals(title, articleSet.title)
         assertEquals(section, articleSet.section)
@@ -77,7 +73,6 @@ class ArticleTest {
         assertEquals(isTopStory, articleSet.isTopStory)
         assertEquals(read, articleSet.read)
         assertEquals(source, articleSet.source)
-        assertEquals(cssStyle, articleSet.cssStyle)
     }
 
     @Test
@@ -86,7 +81,6 @@ class ArticleTest {
 
         articleEmpty.id = id
         articleEmpty.sourceId = sourceId
-        articleEmpty.sourceName = sourceName
         articleEmpty.url = url
         articleEmpty.title = title
         articleEmpty.section = section
@@ -101,11 +95,9 @@ class ArticleTest {
         articleEmpty.isTopStory = isTopStory
         articleEmpty.read = read
         articleEmpty.source = source
-        articleEmpty.cssStyle = cssStyle
 
         assertEquals(id, articleEmpty.id)
         assertEquals(sourceId, articleEmpty.sourceId)
-        assertEquals(sourceName, articleEmpty.sourceName)
         assertEquals(url, articleEmpty.url)
         assertEquals(title, articleEmpty.title)
         assertEquals(section, articleEmpty.section)
@@ -119,7 +111,6 @@ class ArticleTest {
         assertEquals(cssUrl, articleEmpty.cssUrl)
         assertEquals(isTopStory, articleEmpty.isTopStory)
         assertEquals(read, articleEmpty.read)
-        assertEquals(sourceId, articleEmpty.sourceId)
-        assertEquals(cssStyle, articleEmpty.cssStyle)
+        assertEquals(source, articleEmpty.source)
     }
 }

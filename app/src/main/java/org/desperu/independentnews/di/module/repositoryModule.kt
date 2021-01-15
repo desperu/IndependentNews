@@ -18,7 +18,7 @@ val repositoryModule = module {
      */
     single<IndependentNewsRepository> {
         IndependentNewsRepositoryImpl(
-            get(), get(), get(), get(), get()
+            get(), get(), get(), get(), get(), get()
         )
     }
 

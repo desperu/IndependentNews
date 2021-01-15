@@ -42,7 +42,6 @@ class BastamagWebServiceTest : KoinTest {
         val article = Article()
         BastamagArticle(responseBody).toArticle(article)
 
-        assertTrue(article.sourceName.isNotBlank())
         assertTrue(article.title.isNotBlank())
         assertTrue(article.section.isNotBlank())
         assertTrue(article.theme.isNotBlank())
@@ -52,6 +51,7 @@ class BastamagWebServiceTest : KoinTest {
         assertTrue(article.description.isNotBlank())
         assertTrue(article.imageUrl.isNotBlank())
         assertTrue(article.cssUrl.isNotBlank())
+        assertTrue(article.source.name.isNotBlank())
     }
 
     @Test

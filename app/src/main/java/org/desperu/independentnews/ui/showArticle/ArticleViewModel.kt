@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.repositories.database.CssRepository
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -35,12 +36,11 @@ class ArticleViewModel(
     val onClickImage = OnClickListener { router.openShowImages(arrayListOf(article.imageUrl)) }
 
     /**
-     * Returns the css style of the current article.
+     * Returns the css of the current article.
      *
-     * @return the css style of the current article.
+     * @return the css of the current article.
      */
-    internal suspend fun getCssStyle(): String = withContext(Dispatchers.IO) {
-        return@withContext cssRepository.getArticleCss(article.id).content
+    internal suspend fun getCss(): Css = withContext(Dispatchers.IO) {
+        return@withContext cssRepository.getCssStyle(article.cssUrl)
     }
-
 }

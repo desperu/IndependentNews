@@ -7,10 +7,11 @@ import org.desperu.independentnews.extension.parseHtml.sources.correctRepoMediaU
 import org.desperu.independentnews.extension.parseHtml.correctUrlLink
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.getAuthor
+import org.desperu.independentnews.extension.parseHtml.sources.getCssUrl
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.jsoup.nodes.Document
 
@@ -71,15 +72,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         )
     }
 
-    override fun getCssUrl(): String =
-        concatenateStringFromMutableList(
-            getTagList(LINK)
-                .getMatchAttr(REL, STYLE_SHEET)
-                .map { it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL) }
-//                .map { it.attr(HREF) }
-                .toMutableList()
-        )
-//        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
+    override fun getCssUrl(): String = getTagList(LINK).getCssUrl()
 
     // -----------------
     // CONVERT
@@ -95,7 +88,6 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         val publishedDate = getPublishedDate()?.let { literalDateToMillis(it) }
         val description = getDescription()
         article.apply {
-            sourceName = this@ReporterreArticle.sourceName
             title = getTitle().mToString()
             section = getSection().mToString()
             theme = getTheme().mToString()
@@ -105,6 +97,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].mToString()
             cssUrl = getCssUrl()
+            source = Source(name = this@ReporterreArticle.sourceName)
         }
 
         return article

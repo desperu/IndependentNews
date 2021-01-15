@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.service.ResourceService
 import org.koin.core.KoinComponent
@@ -34,6 +37,7 @@ class SourceDetailViewModel(
     // FOR DATA
     private val resourceService: ResourceService = get()
     private val sourceRepository: SourceRepository = get()
+    private val cssRepository: CssRepository = get()
     private val sourcePageAdapter: SourceDetailAdapter?
         get() = sourceDetailInterface.getRecyclerAdapter() // TODO WeakReference or MutableLiveData but here to save adapter instance....gahfy
     val isEnabled = ObservableBoolean(sourceWithData.source.isEnabled)
@@ -66,5 +70,14 @@ class SourceDetailViewModel(
         val originalState = sourceRepository.getSource(sourceWithData.source.id).isEnabled
         sourceRepository.setEnabled(sourceWithData.source.id, !originalState)
         isEnabled.set(!originalState)
+    }
+
+    /**
+     * Returns the css of the current article.
+     *
+     * @return the css of the current article.
+     */
+    internal suspend fun getCss(): Css? = withContext(Dispatchers.IO) {
+        return@withContext primaryPage?.cssUrl?.let { cssRepository.getCssStyle(it) }
     }
 }

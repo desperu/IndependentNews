@@ -82,11 +82,11 @@ object FilterUtils {
         concatenateStringFromMutableList(context.resources.getStringArray(arrayId).toMutableList())
 
     /**
-     * Return the parsed select map, for each filters.
+     * Return the parsed selected map, for each filters.
      *
      * @param selectedMap the selected map to parse.
      *
-     * @return the parsed select map filters.
+     * @return the parsed selected map filters.
      */
     internal suspend fun parseSelectedMap(
         selectedMap: Map<Int, MutableList<String>>,
@@ -96,7 +96,11 @@ object FilterUtils {
         val parsedMap = mutableMapOf<Int, List<String>>().withDefault { listOf() }
 
         val sourcesList = selectedMap[SOURCES]
-        parsedMap[SOURCES] = if (!sourcesList.isNullOrEmpty()) sourcesList else sources.map { it.name }
+        parsedMap[SOURCES] =
+            if (!sourcesList.isNullOrEmpty())
+                sources.filter { sourcesList.contains(it.name) }.map { it.id.toString() }
+            else
+                sources.map { it.id.toString() }
 
         parsedMap[THEMES] =
             deConcatenateStringToMutableList(

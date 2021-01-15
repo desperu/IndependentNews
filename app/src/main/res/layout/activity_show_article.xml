@@ -68,7 +68,7 @@
                             android:layout_marginStart="@dimen/default_little_margin"
                             android:layout_toEndOf="@id/article_source_image"
                             android:textStyle="italic"
-                            android:text="@{viewModel.article.sourceName}"/>
+                            android:text="@{viewModel.article.source.name}"/>
 
                         <TextView
                             android:id="@+id/article_subtitle"

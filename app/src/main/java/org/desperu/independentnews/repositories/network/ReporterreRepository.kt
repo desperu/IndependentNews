@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
 import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
+import org.desperu.independentnews.helpers.FetchHelper.fetchAndPersistCssList
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.SourcePage
@@ -15,7 +16,6 @@ import org.desperu.independentnews.network.reporterre.ReporterreRssService
 import org.desperu.independentnews.network.reporterre.ReporterreWebService
 import org.desperu.independentnews.repositories.database.ArticleRepository
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.koin.java.KoinJavaComponent.getKoin
 
@@ -53,15 +53,15 @@ interface ReporterreRepository {
  *
  * @author Desperu
  *
- * @property rssService                     the service to request the Reporterre Rss Service.
- * @property webService                     the service to request the Reporterre Web Site.
- * @property articleRepository              the repository access for article database.
+ * @property rssService             the service to request the Reporterre Rss Service.
+ * @property webService             the service to request the Reporterre Web Site.
+ * @property articleRepository      the repository access for article database.
  *
  * @constructor Instantiates a new ReporterreRepositoryImpl.
  *
- * @param rssService                        the service to request the Reporterre Rss Service to set.
- * @param webService                        the service to request the Reporterre Web Site to set.
- * @param articleRepository                 the repository access for article database to set.
+ * @param rssService                the service to request the Reporterre Rss Service to set.
+ * @param webService                the service to request the Reporterre Web Site to set.
+ * @param articleRepository         the repository access for article database to set.
  */
 class ReporterreRepositoryImpl(
     private val rssService: ReporterreRssService,
@@ -133,6 +133,9 @@ class ReporterreRepositoryImpl(
             sourcePages.add(ReporterreSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
+        // Fetch the css style for the source page list.
+        fetchAndPersistCssList(sourcePages) { cssUrl -> webService.getCss(cssUrl).charStream().readText() }
+
         sourcePages
     }
 
@@ -156,34 +159,15 @@ class ReporterreRepositoryImpl(
             val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             reporterreArticle.toArticle(article)
 
-            // Fetch the css style too.
-            article.cssStyle = fetchArticleCss(article)
-
             snackBarHelper?.showMessage(
                 FETCH,
                 listOf(REPORTERRE + type, (index + 1).toString(), articleList.size.toString())
             )
         }
 
+        // Fetch and persist the css style for the article list.
+        fetchAndPersistCssList(articleList) { cssUrl -> webService.getCss(cssUrl).charStream().readText() }
+
         return@withContext articleList
-    }
-
-    /**
-     * Fetch article css style, for each css url, and concatenate fetched css style.
-     *
-     * @param article the article for which fetch css.
-     *
-     * @return the concatenated css styles in string.
-     */
-    private suspend fun fetchArticleCss(article: Article): String {
-        val cssUrls = deConcatenateStringToMutableList(article.cssUrl)
-        var cssStyle = String()
-
-        cssUrls.forEachIndexed { index, cssUrl ->
-            if (index != 0) cssStyle += " "
-            cssStyle += webService.getCss(cssUrl).string()
-        }
-
-        return cssStyle
     }
 }

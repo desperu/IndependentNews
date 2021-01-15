@@ -1,10 +1,7 @@
 package org.desperu.independentnews.models.database
 
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import kotlinx.android.parcel.Parcelize
 import org.desperu.independentnews.utils.EQUALS
 import org.desperu.independentnews.utils.NOT_EQUALS
@@ -35,10 +32,18 @@ import org.desperu.independentnews.utils.NOT_EQUALS
  * @param isPrimary                 true if it's the primary source page to set.
  */
 @Parcelize
-@Entity(foreignKeys = [ForeignKey(entity = Source::class,
-    parentColumns = ["id"],
-    childColumns = ["sourceId"])],
-    indices = [Index(name = "sourcePage_sourceId_index", value = ["sourceId"])])
+@Entity(
+    foreignKeys = [
+        ForeignKey(
+            entity = Source::class,
+            parentColumns = ["id"],
+            childColumns = ["sourceId"],
+            onUpdate = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(name = "sourcePage_sourceId_index", value = ["sourceId"])]
+)
 data class SourcePage(@PrimaryKey(autoGenerate = true)
                       val id: Long = 0L,
                       var sourceId: Long = 0L,

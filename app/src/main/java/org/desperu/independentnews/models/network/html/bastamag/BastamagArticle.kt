@@ -6,6 +6,7 @@ import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
 import org.jsoup.nodes.Document
@@ -73,7 +74,6 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         val publishedDate = getPublishedDate()?.let { stringToDate(it)?.time }
         val description = getDescription()
         article.apply {
-            sourceName = this@BastamagArticle.sourceName
             title = getTitle().mToString()
             section = getSection().mToString()
             theme = getTheme().mToString()
@@ -83,6 +83,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].mToString()
             cssUrl = getCssUrl()
+            source = Source(name = this@BastamagArticle.sourceName)
         }
 
         return article

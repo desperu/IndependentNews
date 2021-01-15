@@ -79,7 +79,7 @@
                         android:layout_marginStart="@dimen/default_little_margin"
                         android:textStyle="italic"
                         android:textSize="@dimen/item_article_source_section_theme_text_size"
-                        android:text="@{viewModel.article.sourceName}"/>
+                        android:text="@{viewModel.article.source.name}"/>
 
                     <TextView
                         android:id="@+id/section_and_theme"

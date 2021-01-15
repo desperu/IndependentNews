@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.widget.NestedScrollView.OnScrollChangeListener
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.fragment_source_detail.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.alphaViewAnimation
 import org.desperu.independentnews.anim.AnimHelper.fromBottomAnimation
@@ -97,13 +100,13 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
      */
     @SuppressLint("SetJavaScriptEnabled")
     private fun configureWebView() {
-        val sourcePage = sourceWithData.sourcePages.find { it.isPrimary }
-
         source_detail_web_view.settings.javaScriptEnabled = true
-        source_detail_web_view.updateWebViewDesign(
-            sourceWithData.source.name,
-            sourcePage?.cssUrl
-        )
+        lifecycleScope.launch(Dispatchers.Main) {
+            source_detail_web_view.updateWebViewDesign(
+                sourceWithData.source.name,
+                viewModel.getCss()
+            )
+        }
     }
 
     /**
@@ -122,7 +125,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     /**
      * Scroll listener, to show recycler animation each time it appear on user screen.
      */
-    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ ->
+    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ -> // TODO to perfect, not remove the adapter, just re-play anim
         source_detail_nested_scroll?.let {
             val safeMarge = 50.dp // Safe marge to prevent ui mistake
             val recyclerTop = source_detail_recycler.top - v.measuredHeight - safeMarge

@@ -63,7 +63,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
             url = url.toFullUrl(BASTAMAG_BASE_URL),
             title = getTitle().mToString(),
             body = getBody().mToString(),
-            cssUrl = getCssUrl().mToString(),
+            cssUrl = getCssUrl(),
             isPrimary = true
         )
     }
@@ -83,7 +83,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
             buttonName = buttonName,
             title = getTitle().mToString(),
             body = getBody().mToString(),
-            cssUrl = getCssUrl().mToString(),
+            cssUrl = getCssUrl(),
             position = position
         )
 

@@ -118,7 +118,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
         when (dialogKey) {
             ABOUT -> setMovementMethod(dialog)
             CONNEXION_START -> { setMovementMethod(dialog); setUnCancellable(dialog) }
-            FIRST_START_ERROR -> setUnCancellable(dialog)
+            FIRST_START_ERROR -> { setMovementMethod(dialog); setUnCancellable(dialog) }
         }
     }
 

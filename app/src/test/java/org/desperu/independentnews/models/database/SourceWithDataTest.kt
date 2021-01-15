@@ -12,10 +12,15 @@ class SourceWithDataTest {
     // FOR DATA
     private val source = Source(1L, BASTAMAG, BASTAMAG_BASE_URL, false)
 
-    private val sourcePage1 = SourcePage(1L, 2L, BASTAMAG_BASE_URL, "a button name",
-        "a title", "a body", "a css url",0,  true)
-    private val sourcePage2 = SourcePage(2L, 2L, REPORTERRE_BASE_URL, "a button name 2",
-        "a title2", "a body2", "a css url2",1,  false)
+    private val url = BASTAMAG_EDITO_URL
+    private val title = "a title"
+    private val body = "a source page body"
+    private val cssUrl = "a css url"
+
+    private val sourcePage1 = SourcePage(1L, 2L, url, "a button name",
+        title, body, cssUrl, 0,  true)
+    private val sourcePage2 = SourcePage(2L, 4L, REPORTERRE_EDITO_URL, "a button name 2",
+        "a title2", "a body2","a css url 2", 1,  false)
 
     private val sourcePages = listOf(sourcePage1, sourcePage2)
 
@@ -59,11 +64,10 @@ class SourceWithDataTest {
     @Test
     fun given_sourceWithData_When_toArticle_Then_checkArticleValues() {
         val expected = Article(
-            sourceName = BASTAMAG,
-            url = BASTAMAG_BASE_URL,
-            title = "a title",
-            article = "a body",
-            cssUrl = "a css url",
+            url = url,
+            title = title,
+            article = body,
+            cssUrl = cssUrl,
             source = source
         )
 

@@ -132,8 +132,8 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(section) IN (:sections) AND LOWER(theme) IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
-    suspend fun getFilteredListWithAll(sources: List<String>,
+    @Query("SELECT * FROM article WHERE sourceId IN (:sources) AND LOWER(section) IN (:sections) AND LOWER(theme) IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithAll(sources: List<Long>,
                                        sections: List<String>,
                                        themes: List<String>,
                                        startDate: Long,
@@ -154,8 +154,8 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(theme) IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
-    suspend fun getFilteredListWithThemes(sources: List<String>,
+    @Query("SELECT * FROM article WHERE sourceId IN (:sources) AND LOWER(theme) IN (:themes) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithThemes(sources: List<Long>,
                                           themes: List<String>,
                                           startDate: Long,
                                           endDate: Long,
@@ -175,8 +175,8 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(section) IN (:sections) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
-    suspend fun getFilteredListWithSections(sources: List<String>,
+    @Query("SELECT * FROM article WHERE sourceId IN (:sources) AND LOWER(section) IN (:sections) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithSections(sources: List<Long>,
                                             sections: List<String>,
                                             startDate: Long,
                                             endDate: Long,
@@ -196,8 +196,8 @@ interface ArticleDao {
      * @return the category only article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND LOWER(categories) LIKE :category AND id IN (:ids) AND (publishedDate BETWEEN :startDate AND :endDate) ORDER BY publishedDate DESC")
-    suspend fun getFilteredListWithCategory(sources: List<String>,
+    @Query("SELECT * FROM article WHERE sourceId IN (:sources) AND LOWER(categories) LIKE :category AND id IN (:ids) AND (publishedDate BETWEEN :startDate AND :endDate) ORDER BY publishedDate DESC")
+    suspend fun getFilteredListWithCategory(sources: List<Long>,
                                             category: String,
                                             startDate: Long,
                                             endDate: Long,
@@ -215,8 +215,8 @@ interface ArticleDao {
      * @return the filtered article list from database ordered from the most recent to the oldest.
      */
     @Transaction
-    @Query("SELECT * FROM article WHERE sourceName IN (:sources) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
-    suspend fun getFilteredList(sources: List<String>,
+    @Query("SELECT * FROM article WHERE sourceId IN (:sources) AND (publishedDate BETWEEN :startDate AND :endDate) AND url IN (:urls) ORDER BY publishedDate DESC")
+    suspend fun getFilteredList(sources: List<Long>,
                                 startDate: Long,
                                 endDate: Long,
                                 urls: List<String>
@@ -276,10 +276,9 @@ interface ArticleDao {
      * @param categories     the categories of the article.
      * @param description    the description of the article.
      * @param imageUrl       the image url of the article.
-     * @param cssUrl         the css url of the article.
      * @param url            the url of the article
      */
-    @Query("UPDATE article SET title=:title, section=:section, theme=:theme, author=:author, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl, cssUrl=:cssUrl WHERE url=:url")
+    @Query("UPDATE article SET title=:title, section=:section, theme=:theme, author=:author, publishedDate=:publishedDate, article=:article, categories=:categories, description=:description, imageUrl=:imageUrl WHERE url=:url")
     suspend fun update(title: String,
                        section: String,
                        theme: String,
@@ -289,7 +288,6 @@ interface ArticleDao {
                        categories: String,
                        description: String,
                        imageUrl: String,
-                       cssUrl: String,
                        url: String)
 
     /**

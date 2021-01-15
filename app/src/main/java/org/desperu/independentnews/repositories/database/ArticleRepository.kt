@@ -1,15 +1,10 @@
 package org.desperu.independentnews.repositories.database
 
-import android.content.ContentUris
-import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.ArticleDao
-import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
-import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
-import org.desperu.independentnews.provider.IdeNewsProvider
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.storeDelayMillis
@@ -56,7 +51,7 @@ interface ArticleRepository {
      *
      * @return the list of filtered articles from the database.
      */
-    suspend fun getFilteredListFromDB(sources: List<String>,
+    suspend fun getFilteredListFromDB(sources: List<Long>,
                                       themes: List<String>?,
                                       sections: List<String>?,
                                       dates: List<Long>,
@@ -136,17 +131,7 @@ class ArticleRepositoryImpl(
 
         updateArticles(articlesToUpdate, urlsToUpdate)
 
-        val ids = insertArticles(articlesToInsert)
-        articlesToInsert.forEachIndexed { index, article ->
-            article.id = ids[index] // Needed to set css article id.
-            article.cssUrl = insertArticleCss(article).mToString()
-        }
-
-        // Needed to update the css url to uri
-        val urlsToInsert = articlesToInsert.map { it.url }
-        updateArticles(articlesToInsert, urlsToInsert)
-
-        ids
+        insertArticles(articlesToInsert)
     }
 
     /**
@@ -160,7 +145,7 @@ class ArticleRepositoryImpl(
             val rssUrls = rssArticleList.map { it.url }
             articleDao.markIsTopStory(*rssUrls.toTypedArray())
 
-            val sourceId = getSources().find { it.name == rssArticleList[0].sourceName }?.id
+            val sourceId = getSources().find { it.name == rssArticleList[0].source.name }?.id
             val topStoryDB = sourceId?.let { articleDao.getTopStory(listOf(it)) }
             val notTopStory = topStoryDB?.filter { !rssUrls.contains(it.url) }
 
@@ -189,11 +174,11 @@ class ArticleRepositoryImpl(
      *
      * @return the list of filtered articles from the database.
      */
-    override suspend fun getFilteredListFromDB(sources: List<String>,
-                                                themes: List<String>?,
-                                                sections: List<String>?,
-                                                dates: List<Long>,
-                                                urls: List<String>
+    override suspend fun getFilteredListFromDB(sources: List<Long>,
+                                               themes: List<String>?,
+                                               sections: List<String>?,
+                                               dates: List<Long>,
+                                               urls: List<String>
     ): List<Article> = withContext(Dispatchers.IO) {
         when {
             !themes.isNullOrEmpty() && !sections.isNullOrEmpty() ->
@@ -226,7 +211,7 @@ class ArticleRepositoryImpl(
         parsedMap.getValue(CATEGORIES).forEach { category ->
             filterCategories.addAll(
                 articleDao.getFilteredListWithCategory(
-                    parsedMap.getValue(SOURCES),
+                    parsedMap.getValue(SOURCES).map { it.toLong() },
                     "%$category%",
                     dates[0],
                     dates[1],
@@ -294,7 +279,6 @@ class ArticleRepositoryImpl(
                 categories,
                 article.description,
                 article.imageUrl,
-                article.cssUrl,
                 article.url
             )
         }
@@ -309,28 +293,11 @@ class ArticleRepositoryImpl(
      */
     private suspend fun insertArticles(articlesToInsert: List<Article>): List<Long> = withContext(Dispatchers.IO) {
         articlesToInsert.forEach { article ->
-            val sourceId = getSources().find { it.name == article.sourceName }?.id
+            val sourceId = getSources().find { it.name == article.source.name }?.id
             sourceId?.let { article.sourceId = it }
         }
 
         return@withContext articleDao.insertArticles(*articlesToInsert.toTypedArray())
-    }
-
-    /**
-     * Insert the css of the article in the database, with content provider support,
-     * to return the uri of this new css to use in the web view.
-     *
-     * @param article the article for which save the css style in the database.
-     *
-     * @return the uri of the inserted css.
-     */
-    private suspend fun insertArticleCss(article: Article): Uri = withContext(Dispatchers.IO) {
-        val css = Css(articleId = article.id, url = article.cssUrl, content = article.cssStyle)
-        val id = cssRepository.insertCss(css)
-        return@withContext ContentUris.withAppendedId(
-            IdeNewsProvider.URI_CSS,
-            if (id.isNotEmpty()) id[0] else 0
-        )
     }
 
     // -----------------

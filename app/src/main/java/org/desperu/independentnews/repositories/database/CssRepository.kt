@@ -4,9 +4,12 @@ import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.CssDao
+import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.provider.IdeNewsProvider
 import org.desperu.independentnews.service.ContentService
+import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -18,22 +21,31 @@ import org.koin.core.get
 interface CssRepository {
 
     /**
-     * Return the cs with it's unique identifier.
+     * Return the css with it's unique identifier.
      *
-     * @param id the unique identifier of the cs.
+     * @param id the unique identifier of the css.
      *
-     * @return the cs with it's unique identifier.
+     * @return the css with it's unique identifier.
      */
     suspend fun getCss(id: Long): Css
 
     /**
-     * Returns the list of enabled css from the database.
+     * Return the css with it's url.
      *
-     * @param articleId the article id to get the corresponding css from database.
+     * @param url the url of the css.
      *
-     * @return the list of enabled css from the database.
+     * @return the css with it's url, null if not find.
      */
-    suspend fun getArticleCss(articleId: Long): Css
+    suspend fun getCssForUrl(url: String): Css?
+
+    /**
+     * Returns the css for the given url, concatenate css style if there's multiples urls.
+     *
+     * @param url the css url for which get the style.
+     *
+     * @return the css style, concatenated if needed.
+     */
+    suspend fun getCssStyle(url: String): Css
 
     /**
      * Returns the list of all css with data from the database.
@@ -43,11 +55,11 @@ interface CssRepository {
     suspend fun getAll(): List<Css>
 
     /**
-     * Insert the given css pages in database.
+     * Insert the given css in the database.
      *
-     * @param css the css pages to insert.
+     * @param css the css to insert.
      *
-     * @return the id list of inserted css pages.
+     * @return the row id of inserted css.
      */
     suspend fun insertCss(vararg css: Css): List<Long>
 
@@ -70,13 +82,13 @@ interface CssRepository {
     suspend fun updateCss(css: Css): Int
 
     /**
-     * Delete article css in database, for the given article id.
+     * Remove unused css from the database.
      *
-     * @param articleId the article id to delete the corresponding css from database.
+     * @param articleList the article list actually in the database.
      *
      * @return the number of row affected.
      */
-    suspend fun deleteArticleCss(articleId: Long): Int
+    suspend fun removeOldCss(articleList: List<Article>): Int
 }
 
 /**
@@ -93,7 +105,7 @@ interface CssRepository {
 class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponent {
 
     /**
-     * Return the css with it's unique identifier.
+     * Returns the css with it's unique identifier.
      *
      * @return the css with it's unique identifier.
      */
@@ -102,12 +114,37 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
     }
 
     /**
-     * Returns the list of enabled css.
+     * Returns the css with it's url.
      *
-     * @return the list of enabled css.
+     * @param url the url of the css.
+     *
+     * @return the css with it's url, null if not find.
      */
-    override suspend fun getArticleCss(articleId: Long): Css = withContext(Dispatchers.IO) {
-        return@withContext cssDao.getArticleCss(articleId)
+    override suspend fun getCssForUrl(url: String): Css? = withContext(Dispatchers.IO) {
+        return@withContext cssDao.getCssForUrl(url)
+    }
+
+    /**
+     * Returns the css for the given url, concatenate css style if there's multiples urls.
+     *
+     * @param url the css url for which get the style.
+     *
+     * @return the css style, concatenated if needed.
+     */
+    override suspend fun getCssStyle(url: String): Css = withContext(Dispatchers.IO) {
+        var cssStyle = String()
+
+        if (url.contains(",")) {
+            val urls = deConcatenateStringToMutableList(url)
+
+            urls.forEachIndexed { index, url ->
+                if (index != 0) cssStyle += " "
+                cssStyle += cssDao.getCssForUrl(url)?.style
+            }
+        } else
+            cssStyle = cssDao.getCssForUrl(url)?.style.mToString()
+
+        return@withContext Css(url = url, style = cssStyle)
     }
 
     /**
@@ -120,14 +157,14 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
     }
 
     /**
-     * Insert the given css in the database.
+     * Insert the given css style in the database.
      *
      * @param css the css to insert.
      *
-     * @return the id list of inserted css.
+     * @return the row id of the inserted css.
      */
     override suspend fun insertCss(vararg css: Css): List<Long> = withContext(Dispatchers.IO) {
-        cssDao.insertCss(*css)
+        return@withContext cssDao.insertCss(*css)
     }
 
     /**
@@ -152,13 +189,27 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
     }
 
     /**
-     * Delete article css in database, for the given article id.
+     * Remove unused css from the database.
      *
-     * @param articleId the article id to delete the corresponding css from database.
+     * @param articleList the article list actually in the database.
      *
      * @return the number of row affected.
      */
-    override suspend fun deleteArticleCss(articleId: Long): Int = withContext(Dispatchers.IO) {
-        cssDao.deleteArticleCss(articleId)
+    override suspend fun removeOldCss(articleList: List<Article>): Int = withContext(Dispatchers.IO) {
+        val cssList = cssDao.getAll()
+        val articleCssUrls = mutableListOf<String>()
+
+        articleList.forEach { article ->
+            val urls = deConcatenateStringToMutableList(article.cssUrl)
+
+            urls.forEach {
+                if (!articleCssUrls.contains(it))
+                    articleCssUrls.add(it)
+            }
+        }
+
+        val cssToRemove = cssList.filter { !articleCssUrls.contains(it.url) }
+
+        cssDao.deleteCss(*cssToRemove.toTypedArray())
     }
 }

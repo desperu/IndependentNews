@@ -82,7 +82,7 @@ class SourcePageDaoTest {
     @Test
     fun updateAndGetSourcePage() = oneSourcePageTest {
         // Change some data to update them in database
-        val newSourcePage = SourcePage(sourcePage.id, sourceId, "a new url")
+        val newSourcePage = SourcePage(sourcePage.id, sourceId)
 
         // Given a Source that has been updated into the DB
         val rowAffected = mDatabase.sourcePageDao().updateSourcePage(newSourcePage)

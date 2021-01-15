@@ -9,6 +9,7 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.repositories.database.ArticleRepository
+import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.repositories.network.BastamagRepository
 import org.desperu.independentnews.repositories.network.ReporterreRepository
@@ -109,6 +110,7 @@ interface IndependentNewsRepository {
  *
  * @property articleRepository              the repository access for article database.
  * @property sourceRepository               the repository access for source database.
+ * @property cssRepository                  the repository access for css database.
  * @property reporterreRepository           the repository access for reporterre network.
  * @property bastamagRepository             the repository access for bastamag network.
  * @property articleDao                     the database access object for article.
@@ -118,6 +120,7 @@ interface IndependentNewsRepository {
  * @constructor Instantiates a new IndependentNewsRepositoryImpl.
  * @param articleRepository                 the repository access for article database to set.
  * @param sourceRepository                  the repository access for source database to set.
+ * @param cssRepository                     the repository access for css database to set.
  * @param reporterreRepository              the repository access for reporterre network to set.
  * @param bastamagRepository                the repository access for bastamag network to set.
  * @param articleDao                        the database access object for article to set.
@@ -125,6 +128,7 @@ interface IndependentNewsRepository {
 class IndependentNewsRepositoryImpl(
     private val articleRepository: ArticleRepository,
     private val sourceRepository: SourceRepository,
+    private val cssRepository: CssRepository,
     private val reporterreRepository: ReporterreRepository,
     private val bastamagRepository: BastamagRepository,
     private val articleDao: ArticleDao
@@ -193,6 +197,7 @@ class IndependentNewsRepositoryImpl(
         )
 
         articleRepository.removeOldArticles()
+        cssRepository.removeOldCss(articleDao.getAll(getSources().map { it.id }))
     }
 
     // -----------------
@@ -256,7 +261,7 @@ class IndependentNewsRepositoryImpl(
         val parsedMap = parseSelectedMap(selectedMap, sources)
 
         val filteredList = articleRepository.getFilteredListFromDB(
-            parsedMap.getValue(SOURCES),
+            parsedMap.getValue(SOURCES).map { it.toLong() },
             parsedMap[THEMES],
             parsedMap[SECTIONS],
             parsedMap.getValue(DATES).map { it.toLong() },
@@ -270,7 +275,7 @@ class IndependentNewsRepositoryImpl(
 
         articleDao
             .getWhereUrlsInSorted(filteredList.map { it.url })
-            .setSourceForEach(sources)
+            .setSourceForEach(sources)//?.sortedByDescending { it.publishedDate }
     }
 
     /**

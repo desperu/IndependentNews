@@ -15,6 +15,8 @@ import androidx.core.view.setMargins
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Css
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
@@ -40,7 +42,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private val sourcesInterface: SourcesInterface? get() = getKoin().getOrNull()
     private val router: SourceRouter by inject()
     private val prefs: SharedPrefService by inject()
-    private var cssUrl: String by Delegates.notNull()
+    private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
     private var margins = 0
 
@@ -87,34 +89,31 @@ class NoScrollWebView @JvmOverloads constructor(
      * and force to redirect link to another activity.
      *
      * @param sourceName        the name of the source of the page.
-     * @param cssUrl            the css url to apply to the web view.
+     * @param css               the css to apply to the web view content.
      */
-    internal fun updateWebViewDesign(sourceName: String, cssUrl: String?) {
+    internal fun updateWebViewDesign(sourceName: String, css: Css?) {
         this.sourceName = sourceName
 
-        cssUrl?.let {
-            this.cssUrl = cssUrl
+        css?.let {
+            this.css = css
             this.webViewClient = myWebViewClient
         }
     }
 
     /**
      * Update the design of the web view on loading start.
-     * Set the text margin, size and background.
+     * Set the margins, text size, background color and apply css style.
      *
      * @param url               the url of the page.
      * @param sourceName        the name of the source of the page.
-     * @param cssStyle          the css style of the web view content.
+     * @param css               the css of the web view content.
      */
-    internal fun updateWebViewStart(url: String?, sourceName: String, cssStyle: String) {
+    internal fun updateWebViewStart(url: String?, sourceName: String, css: Css) {
         url?.let {
-            updateMargins(it, sourceName)
+            updateMargins(it, sourceName) // Update web view margins, needed for Reporterre pages
             updateTextSize(it, sourceName)
             updateBackground(it, sourceName)
-            injectCssCode(resizeMedia)
-            if (cssStyle.isNotBlank()) injectCssCode(cssStyle)
-            else injectCssUrl(it, cssUrl)
-//            zoomOut()
+            applyCssStyle(it, css)
         }
     }
 
@@ -139,28 +138,8 @@ class NoScrollWebView @JvmOverloads constructor(
     private val myWebViewClient = object : WebViewClient() {
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-            url?.let {
-                // Update web view margins, needed for Reporterre pages
-                updateMargins(it, sourceName)
-
-                // Update the text size, needed for Bastamag pages
-                updateTextSize(it, sourceName)
-
-                // Update background color, needed for Reporterre pages
-                updateBackground(it, sourceName)
-            }
+            url?.let { updateWebViewStart(it, sourceName, css) }
             super.onPageStarted(view, url, favicon)
-        }
-
-        override fun onPageFinished(view: WebView?, url: String?) {
-            url?.let {
-                // Force to resize medias
-                injectCssCode(resizeMedia)
-
-                // Apply css style with JavaScript support
-                injectCssUrl(it, cssUrl)
-            }
-            super.onPageFinished(view, url)
         }
 
         override fun shouldOverrideUrlLoading(
@@ -173,7 +152,7 @@ class NoScrollWebView @JvmOverloads constructor(
                 router.openShowArticle(
                     Article(
                         url = request?.url.toString(),
-                        sourceName = sourceName
+                        source = Source(name = sourceName)
                     ),
                     sourcesInterface?.isExpanded ?: true
                 )
@@ -185,6 +164,21 @@ class NoScrollWebView @JvmOverloads constructor(
     // --------------
     // CSS STYLE
     // --------------
+
+    /**
+     * Apply the css style to the web view content.
+     *
+     * @param url   the actual url of the web view.
+     * @param css   the css of the web view content.
+     */
+    private fun applyCssStyle(url: String, css: Css) {
+        injectCssCode(resizeMedia)
+        if (isSourceUrl(url)) {
+            if (css.style.isNotBlank()) injectCssCode(css.style)
+            else injectCssUrl(url, css.url)
+//            zoomOut()
+        }
+    }
 
     /**
      * Inject the css style to the content of the web view, with JavaScript.

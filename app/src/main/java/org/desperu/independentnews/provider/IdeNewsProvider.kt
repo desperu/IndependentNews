@@ -28,8 +28,9 @@ class IdeNewsProvider : ContentProvider() {
     private lateinit var db: SQLiteDatabase
 
     override fun onCreate(): Boolean {
-        db = DatabaseHelper(context).writableDatabase
-        return ::db.isInitialized
+//        db = DatabaseHelper(context).writableDatabase
+//        return ::db.isInitialized
+        return true
     }
 
     private val values: HashMap<String, String>? = null
@@ -121,19 +122,19 @@ class IdeNewsProvider : ContentProvider() {
     /**
      * Database helper which provide support to create and upgrade database.
      */
-    private class DatabaseHelper constructor(context: Context?)
-        : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-
-        // creating all table in the database
-        override fun onCreate(db: SQLiteDatabase) {
-            CREATE_DB.forEach { db.execSQL(it) }
-        }
-
-        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-            // sql query to drop a table
-            // having similar name
-            db.execSQL("DROP TABLE IF EXISTS $CSS_TABLE_NAME")
-            onCreate(db)
-        }
-    }
+//    private class DatabaseHelper constructor(context: Context?)
+//        : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+//
+//        // creating all table in the database
+//        override fun onCreate(db: SQLiteDatabase) {
+//            CREATE_DB.forEach { db.execSQL(it) }
+//        }
+//
+//        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+//            // sql query to drop a table
+//            // having similar name
+//            db.execSQL("DROP TABLE IF EXISTS $CSS_TABLE_NAME")
+//            onCreate(db)
+//        }
+//    }
 }

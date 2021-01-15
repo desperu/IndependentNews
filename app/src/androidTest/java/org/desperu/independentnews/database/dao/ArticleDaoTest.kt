@@ -6,8 +6,6 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.desperu.independentnews.database.ArticleDatabase
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
-import org.desperu.independentnews.utils.BASTAMAG
-import org.desperu.independentnews.utils.REPORTERRE
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.junit.After
 import org.junit.Assert.*
@@ -152,7 +150,7 @@ class ArticleDaoTest {
     fun getFilteredListWithAll() = articleListTest {
         // Try to get filtered Articles list from the database in the given url list
         val withAllFilters = mDatabase.articleDao().getFilteredListWithAll(
-            listOf(BASTAMAG, REPORTERRE),
+            listOf(sourceId),
             listOf(article.section),
             listOf(article.theme),
             Long.MIN_VALUE,
@@ -167,7 +165,7 @@ class ArticleDaoTest {
     fun getFilteredListWithThemes() = articleListTest {
         // Try to get filtered Articles list from the database in the given url list
         val withThemeFilters = mDatabase.articleDao().getFilteredListWithThemes(
-            listOf(BASTAMAG, REPORTERRE),
+            listOf(sourceId),
             listOf(article.theme),
             Long.MIN_VALUE,
             Long.MAX_VALUE,
@@ -181,7 +179,7 @@ class ArticleDaoTest {
     fun getFilteredListWithSections() = articleListTest {
         // Try to get filtered Articles list from the database in the given url list
         val withSectionFilters = mDatabase.articleDao().getFilteredListWithSections(
-            listOf(BASTAMAG, REPORTERRE),
+            listOf(sourceId),
             listOf(article.section),
             Long.MIN_VALUE,
             Long.MAX_VALUE,
@@ -195,7 +193,7 @@ class ArticleDaoTest {
     fun getFilteredListWithCategory() = articleListTest {
         // Try to get filtered Articles list from the database in the given url list
         val withCategoryFilters = mDatabase.articleDao().getFilteredListWithCategory(
-            listOf(BASTAMAG, REPORTERRE),
+            listOf(sourceId),
             article.categories,
             Long.MIN_VALUE,
             Long.MAX_VALUE,
@@ -209,7 +207,7 @@ class ArticleDaoTest {
     fun getFilteredList() = articleListTest {
         // Try to get filtered Articles list from the database in the given url list
         val withFilters = mDatabase.articleDao().getFilteredList(
-            listOf(BASTAMAG, REPORTERRE),
+            listOf(sourceId),
             Long.MIN_VALUE,
             Long.MAX_VALUE,
             listOf(article.url)
@@ -266,7 +264,6 @@ class ArticleDaoTest {
         article.categories = "categories"
         article.description = "description"
         article.imageUrl = "imageUrl"
-        article.cssUrl = "cssUrl"
 
         // Given an Article that has been updated into the DB
         mDatabase.articleDao().update(
@@ -279,7 +276,6 @@ class ArticleDaoTest {
             article.categories,
             article.description,
             article.imageUrl,
-            article.cssUrl,
             article.url
         )
 
@@ -294,7 +290,6 @@ class ArticleDaoTest {
     fun updateAndGetArticle() = oneArticleTest {
         // Change some data to update them in database
         article.publishedDate = 222L
-        article.cssUrl = "https....."
         article.article = "Viva la liberta !"
 
         // Given an Article that has been updated into the DB

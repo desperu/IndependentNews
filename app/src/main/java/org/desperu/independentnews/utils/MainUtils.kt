@@ -56,7 +56,7 @@ object MainUtils : KoinComponent{
      * @param titleView     the text view to set title.
      * @param fragmentKey   the key of the asked fragment.
      */
-    internal fun setTitle(titleView: TextView, fragmentKey: Int) { // TODO to test
+    internal fun setTitle(titleView: TextView, fragmentKey: Int) {
         titleView.text =
             resources.getString(
                 when (fragmentKey) {

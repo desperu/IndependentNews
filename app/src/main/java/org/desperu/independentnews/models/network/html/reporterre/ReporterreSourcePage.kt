@@ -7,6 +7,7 @@ import org.desperu.independentnews.extension.parseHtml.sources.correctRepoMediaU
 import org.desperu.independentnews.extension.parseHtml.correctUrlLink
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.parseHtml.sources.getCssUrl
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.*
@@ -34,8 +35,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
     override fun getBody(): String? =
         findData(DIV, CLASS, TEXTE, null)?.outerHtml().updateBody()
 
-    override fun getCssUrl(): String =
-        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
+    override fun getCssUrl(): String = getTagList(LINK).getCssUrl()
 
     override fun getPageUrlList(): List<String> = pageUrlList
 
@@ -58,7 +58,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             url = url.toFullUrl(REPORTERRE_BASE_URL),
             title = getTitle().mToString(),
             body = getBody().mToString(),
-            cssUrl = getCssUrl().mToString(),
+            cssUrl = getCssUrl(),
             isPrimary = true
         )
     }
@@ -78,7 +78,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             buttonName = buttonName,
             title = getTitle().mToString(),
             body = if (position != 4) getBody().mToString() else "", // For Men and Women of Reporterre
-            cssUrl = getCssUrl().mToString(),
+            cssUrl = getCssUrl(),
             position = position
         )
 

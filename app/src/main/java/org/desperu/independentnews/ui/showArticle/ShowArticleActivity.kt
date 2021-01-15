@@ -20,6 +20,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.animatedValue
@@ -177,7 +178,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //        web_view.settings.defaultZoom = WebSettings.ZoomDensity.MEDIUM
 //        web_view.settings.useWideViewPort = true
 
-        web_view.webViewClient = webViewClient
+        web_view.webViewClient = webViewClient!!
 
         mWebChromeClient = MyWebChromeClient(web_view)
         web_view.webChromeClient = mWebChromeClient
@@ -200,10 +201,10 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             super.onPageStarted(view, url, favicon)
             url?.let {
                 actualUrl = it
-                isWebViewDesigned = false
+//                isWebViewDesigned = false
                 handleNavigation(it)
-                lifecycleScope.launch {
-                    web_view.updateWebViewStart(it, article.sourceName, viewModel.getCssStyle())
+                lifecycleScope.launch(Dispatchers.Main) {
+                    web_view.updateWebViewStart(it, article.source.name, viewModel.getCss())
                 }
             }
         }
@@ -450,7 +451,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      */
     override fun updateWebViewMargins() {
         if (!::actualUrl.isInitialized) return
-        web_view.updateMargins(actualUrl, article.sourceName)
+        web_view.updateMargins(actualUrl, article.source.name)
     }
 
     // --------------

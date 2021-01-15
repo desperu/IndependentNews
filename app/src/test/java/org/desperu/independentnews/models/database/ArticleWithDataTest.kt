@@ -12,13 +12,12 @@ class ArticleWithDataTest {
 
     // FOR DATA
     private val article = Article(
-        1L, 2L, BASTAMAG, "an article url", "a title", "a section",
+        1L, 2L, "an article url", "a title", "a section",
         "a theme", "an author", 150000000L, "a body",
         "a category", "a description", "an image url",
         "a css url", isTopStory = false, read = false
     )
 
-    private val css = Css(10L, 1L, "a css url", "a css style")
     private val source =  Source(2L, BASTAMAG, BASTAMAG_BASE_URL, false)
 
     @Test
@@ -26,16 +25,14 @@ class ArticleWithDataTest {
         val articleWithData = ArticleWithData()
 
         assertEquals(Article(), articleWithData.article)
-        assertEquals(Css(), articleWithData.css)
         assertEquals(Source(), articleWithData.source)
     }
 
     @Test
     fun given_sourceWithData_When_createSource_Then_checkValues() {
-        val articleWithData = ArticleWithData(article, css, source)
+        val articleWithData = ArticleWithData(article, source)
 
         assertEquals(article, articleWithData.article)
-        assertEquals(css, articleWithData.css)
         assertEquals(source, articleWithData.source)
     }
 }

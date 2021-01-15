@@ -1,6 +1,5 @@
 package org.desperu.independentnews.models.database
 
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
 import org.desperu.independentnews.utils.EQUALS
 import org.desperu.independentnews.utils.NOT_EQUALS
 import org.junit.Assert.assertEquals
@@ -13,7 +12,7 @@ class SourcePageTest {
 
     private val id: Long = 1L
     private val sourceId: Long = 2L
-    private val url: String = BASTAMAG_BASE_URL
+    private val url = "a source page url"
     private val buttonName: String = "a button name"
     private val title: String = "a title"
     private val body: String = "a body"
@@ -29,15 +28,15 @@ class SourcePageTest {
     fun given_emptySourcePage_When_createEmptySourcePage_Then_checkDefaultValues() {
         val sourcePage = SourcePage()
 
-        assertEquals(sourcePage.id, 0L)
-        assertEquals(sourcePage.sourceId, 0L)
-        assertEquals(sourcePage.url, "")
-        assertEquals(sourcePage.buttonName, "")
-        assertEquals(sourcePage.title, "")
-        assertEquals(sourcePage.body, "")
-        assertEquals(sourcePage.cssUrl, "")
-        assertEquals(sourcePage.position, -1)
-        assertEquals(sourcePage.isPrimary, false)
+        assertEquals(0L, sourcePage.id)
+        assertEquals(0L, sourcePage.sourceId)
+        assertEquals("", sourcePage.url)
+        assertEquals("", sourcePage.buttonName)
+        assertEquals("", sourcePage.title)
+        assertEquals("", sourcePage.body)
+        assertEquals("", sourcePage.cssUrl)
+        assertEquals(-1, sourcePage.position)
+        assertEquals(false, sourcePage.isPrimary)
     }
 
     @Test
@@ -46,15 +45,15 @@ class SourcePageTest {
             id, sourceId, url, buttonName, title, body, cssUrl, position, isPrimary
         )
 
-        assertEquals(sourcePage.id, id)
-        assertEquals(sourcePage.sourceId, sourceId)
-        assertEquals(sourcePage.url, url)
-        assertEquals(sourcePage.buttonName, buttonName)
-        assertEquals(sourcePage.title, title)
-        assertEquals(sourcePage.body, body)
-        assertEquals(sourcePage.cssUrl, cssUrl)
-        assertEquals(sourcePage.position, position)
-        assertEquals(sourcePage.isPrimary, isPrimary)
+        assertEquals(id, sourcePage.id)
+        assertEquals(sourceId, sourcePage.sourceId)
+        assertEquals(url, sourcePage.url)
+        assertEquals(buttonName, sourcePage.buttonName)
+        assertEquals(title, sourcePage.title)
+        assertEquals(body, sourcePage.body)
+        assertEquals(cssUrl, sourcePage.cssUrl)
+        assertEquals(position, sourcePage.position)
+        assertEquals(isPrimary, sourcePage.isPrimary)
     }
 
     @Test
@@ -62,8 +61,10 @@ class SourcePageTest {
         val sourcePage = SourcePage()
 
         sourcePage.sourceId = sourceId
+        sourcePage.body = body
 
-        assertEquals(sourcePage.sourceId, sourceId)
+        assertEquals(sourceId, sourcePage.sourceId)
+        assertEquals(body, sourcePage.body)
     }
 
     @Test

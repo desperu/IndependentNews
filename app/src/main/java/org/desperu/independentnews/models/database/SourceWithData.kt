@@ -21,6 +21,7 @@ import org.desperu.independentnews.utils.NOT_EQUALS
 data class SourceWithData(
     @Embedded val source: Source = Source(),
     @Relation(
+        entity = SourcePage::class,
         parentColumn = "id",
         entityColumn = "sourceId"
     )
@@ -53,13 +54,11 @@ data class SourceWithData(
             else SourcePage()
 
         return Article(
-            sourceName = source.name,
             url = sourcePage.url,
             title = sourcePage.title,
             article = sourcePage.body,
             cssUrl = sourcePage.cssUrl,
             source = source
-
         )
     }
 

@@ -5,6 +5,7 @@ import org.desperu.independentnews.base.html.BaseHtmlCategory
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
 
@@ -23,7 +24,7 @@ data class BastamagCategory(private val htmlPage: ResponseBody): BaseHtmlCategor
         val articleList = mutableListOf<Article>()
 
         getTagList(ARTICLE).getMatchAttr(CLASS, ARTICLE_ENTRY).forEach { element ->
-            val article = Article(sourceName = BASTAMAG)
+            val article = Article(source = Source(name = BASTAMAG))
 
             // Set the published date of the article
             element.select(TIME).getMatchAttr(PUBDATE, PUBDATE).forEach {

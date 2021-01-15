@@ -1,8 +1,10 @@
 package org.desperu.independentnews.extension.parseHtml.sources
 
 import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
+import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -50,3 +52,15 @@ internal fun Document?.correctRepoMediaUrl(): Document? =
         select(AUDIO).forEach { it.attrToFullUrl(SRC, REPORTERRE_BASE_URL) }
         this
     }
+
+/**
+ * Returns the concatenated css url list into the elements.
+ *
+ * @return the concatenated css url list into the elements.
+ */
+internal fun Elements.getCssUrl(): String =
+    concatenateStringFromMutableList(
+        this.getMatchAttr(REL, STYLE_SHEET)
+            .map { it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL) }
+            .toMutableList()
+    )

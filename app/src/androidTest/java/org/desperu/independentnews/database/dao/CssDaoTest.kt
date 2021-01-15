@@ -4,11 +4,13 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.desperu.independentnews.database.ArticleDatabase
-import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
-import org.desperu.independentnews.models.database.Source
-import org.junit.*
-import org.junit.Assert.*
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 
 /**
  * Simple dao class test, for Css Dao Interface that check CRUD functions.
@@ -18,14 +20,9 @@ class CssDaoTest {
 
     // FOR DATA
     private lateinit var mDatabase: ArticleDatabase
-    // Create a Source for foreign key
-    private lateinit var source: Source
-    private var sourceId = 0L
-    // Create an Article for foreign key
-    private lateinit var article: Article
-    private var articleId = 0L
     // Create a Css and css list for Db test
     private lateinit var css: Css
+    private var cssId = 0L
     private lateinit var cssList: List<Css>
 
     @get:Rule
@@ -37,17 +34,9 @@ class CssDaoTest {
         // init Db for test
         mDatabase = DaoTestHelper().initDb()
 
-        // Set Source for foreign keys matches
-        source = DaoTestHelper().source
-        runBlockingTest { sourceId = mDatabase.sourceDao().insertSources(source)[0] }
-
-        // Set Article for foreign keys matches
-        article = DaoTestHelper().getArticle(sourceId)
-        runBlockingTest { articleId = mDatabase.articleDao().insertArticles(article)[0] }
-
         // Set css and css list data for Db test
-        css = DaoTestHelper().getCss(articleId)
-        cssList = DaoTestHelper().getCssList(articleId)
+        css = DaoTestHelper().css
+        cssList = DaoTestHelper().cssList
     }
 
     @After
@@ -70,12 +59,12 @@ class CssDaoTest {
     }
 
     @Test
-    fun getArticleCss() = oneCssTest {
-        // When getting Article Css via the DAO
-        val articleCss = mDatabase.cssDao().getArticleCss(articleId)
+    fun getCssForUrl() = oneCssTest {
+        // When getting Css via the DAO
+        val cssDb = mDatabase.cssDao().getCssForUrl(css.url)
 
-        // Then the retrieved Article Css match the original css object
-        assertEquals(css, articleCss)
+        // Then the retrieved Css match the original css object
+        assertEquals(css, cssDb)
     }
 
     @Test
@@ -90,7 +79,7 @@ class CssDaoTest {
     @Test
     fun updateAndGetCss() = oneCssTest {
         // Change some data to update them in database
-        css.content = "a new content"
+        css.style = "a new css style"
 
         // Given a Css that has been updated into the DB
         val rowAffected = mDatabase.cssDao().updateCss(css)
@@ -99,7 +88,7 @@ class CssDaoTest {
         assertEquals(1, rowAffected)
 
         // When getting the Css via the DAO
-        val cssDb = mDatabase.cssDao().getCss(css.id)
+        val cssDb = mDatabase.cssDao().getCss(cssId)
 
         // Then the retrieved Css match the updated css object
         assertEquals(css, cssDb)
@@ -108,10 +97,10 @@ class CssDaoTest {
     @Test
     fun deleteArticleCssAndCheckDb() = runBlockingTest {
         // Insert a Css in database for the test
-        mDatabase.cssDao().insertCss(css)
+        mDatabase.cssDao().insertCss(css)[0]
 
         // Given a Css that has been inserted into the DB
-        val rowAffected = mDatabase.cssDao().deleteArticleCss(css.articleId)
+        val rowAffected = mDatabase.cssDao().deleteCss(css)
 
         // Check that's there only row affected when deleting
         assertEquals(1, rowAffected)
@@ -137,13 +126,13 @@ class CssDaoTest {
      */
     private inline fun oneCssTest(crossinline block: suspend () -> Unit) = runBlockingTest {
         // Insert a css in database for the test
-        css.id = mDatabase.cssDao().insertCss(css)[0]
+        cssId = mDatabase.cssDao().insertCss(css)[0]
 
         // Execute the test
         block()
 
         // Delete inserted css for test
-        mDatabase.cssDao().deleteArticleCss(css.articleId)
+        mDatabase.cssDao().deleteCss(css)
 
         // Clean up coroutines
         cleanupTestCoroutines()
@@ -162,9 +151,7 @@ class CssDaoTest {
         block()
 
         // Delete inserted css list for test
-        cssList.forEach {
-            mDatabase.cssDao().deleteArticleCss(it.articleId)
-        }
+        mDatabase.cssDao().deleteCss(*cssList.toTypedArray())
 
         // Clean up coroutines
         cleanupTestCoroutines()

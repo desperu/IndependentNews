@@ -7,6 +7,7 @@ import com.tickaroo.tikxml.converter.htmlescape.HtmlEscapeStringConverter
 import org.desperu.independentnews.extension.parseHtml.getIndex
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.P
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.stringToDate
@@ -67,12 +68,12 @@ data class RssArticle(
      */
     internal fun toArticle(sourceName: String): Article {
         val article = Article(
-            sourceName = sourceName,
             url = url.mToString(),
             title = title.mToString(),
             author = author.mToString(),
             description = Jsoup.parse(description.mToString()).select(P).getIndex(0)?.ownText().mToString(),
-            isTopStory = true
+            isTopStory = true,
+            source = Source(name = sourceName)
         )
 
         if (!categoryList.isNullOrEmpty())

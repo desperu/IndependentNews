@@ -5,6 +5,7 @@ import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
 import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
+import org.desperu.independentnews.helpers.FetchHelper.fetchAndPersistCssList
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.SourcePage
@@ -52,15 +53,15 @@ interface BastamagRepository {
  *
  * @author Desperu
  *
- * @property rssService                     the service to request the Bastamag Rss Service.
- * @property webService                     the service to request the Bastamag Web Site.
- * @property articleRepository              the repository access for article database.
+ * @property rssService             the service to request the Bastamag Rss Service.
+ * @property webService             the service to request the Bastamag Web Site.
+ * @property articleRepository      the repository access for article database.
  *
  * @constructor Instantiates a new BastamagRepositoryImpl.
  *
- * @param rssService                        the service to request the Bastamag Rss Service to set.
- * @param webService                        the service to request the Bastamag Web Site to set.
- * @param articleRepository                 the repository access for article database to set.
+ * @param rssService                the service to request the Bastamag Rss Service to set.
+ * @param webService                the service to request the Bastamag Web Site to set.
+ * @param articleRepository         the repository access for article database to set.
  */
 class BastamagRepositoryImpl(
     private val rssService: BastamagRssService,
@@ -133,8 +134,15 @@ class BastamagRepositoryImpl(
             sourcePages.add(BastamagSourcePage(response).toSourcePage(pageUrl, buttonName, index))
         }
 
+        // Fetch the css style for the source page list.
+        fetchAndPersistCssList(sourcePages) { cssUrl -> webService.getCss(cssUrl).charStream().readText() }
+
         sourcePages
     }
+
+    // -----------------
+    // UTILS
+    // -----------------
 
     /**
      * Fetch article html page for each article in the given list.
@@ -152,16 +160,19 @@ class BastamagRepositoryImpl(
             val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             bastamagArticle.toArticle(article)
 
-            // Fetch the css style too.
-            // TODO check if css url already exist in the database, if not fetch it
-            article.cssStyle = webService.getCss(article.cssUrl).string()
-
             snackBarHelper?.showMessage(
                 FETCH,
                 listOf(BASTAMAG + type, (index + 1).toString(), articleList.size.toString())
             )
         }
 
+        // Fetch the css style for the article list.
+        fetchAndPersistCssList(articleList) { cssUrl -> webService.getCss(cssUrl).charStream().readText() }
+
         return@withContext articleList
     }
+
+//    override fun fetchArticle(article: Article): Article {
+//
+//    }
 }

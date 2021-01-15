@@ -18,12 +18,12 @@ interface CssDao {
     suspend fun getCss(id: Long): Css
 
     /**
-     * Returns the css from database ordered for the given article id.
-     * @param articleId the unique identifier of the article for which get the css from database.
+     * Returns the css from database ordered for the given css url.
+     * @param url the url of the css to get from database.
      * @return the corresponding css.
      */
-    @Query("SELECT * FROM css WHERE articleId=:articleId")
-    suspend fun getArticleCss(articleId: Long): Css
+    @Query("SELECT * FROM css WHERE url=:url")
+    suspend fun getCssForUrl(url: String): Css?
 
     /**
      * Returns the css list from database.
@@ -49,10 +49,10 @@ interface CssDao {
     suspend fun updateCss(css: Css): Int
 
     /**
-     * Delete the css in database for the given article id.
-     * @param articleId the unique identifier of the article for which delete the css in database.
+     * Delete the given css in the database.
+     * @param css the css to delete in database.
      * @return the number of row affected.
      */
-    @Query("DELETE FROM css WHERE articleId=:articleId")
-    suspend fun deleteArticleCss(articleId: Long): Int
+    @Delete
+    suspend fun deleteCss(vararg css: Css): Int
 }

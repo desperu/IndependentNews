@@ -45,7 +45,6 @@ class DaoTestHelper {
     internal fun getArticle(sourceId: Long) = Article(
         100000000000000000L,
         sourceId,
-        BASTAMAG,
         BASTAMAG_BASE_URL,
         "A title",
         "a section",
@@ -83,13 +82,10 @@ class DaoTestHelper {
     /**
      * Css object for dao test.
      *
-     * @param articleId the article id to set.
-     *
      * @return the created css object.
      */
-    internal fun getCss(articleId: Long) = Css(
+    internal val css = Css(
         1000000000000000L,
-        articleId,
         "a css url",
         "a ccs style"
     )
@@ -97,14 +93,12 @@ class DaoTestHelper {
     /**
      * Get css list for DB test.
      *
-     * @param articleId the article id to set.
-     *
      * @return the created css list.
      */
-    internal fun getCssList(articleId: Long): List<Css> =
+    internal val cssList: List<Css> =
         listOf(
-            getCss(articleId),
-            Css(1000000000000002L, articleId, "a css url 2", "a ccs style 2")
+            css,
+            Css(1000000000000002L, "a css url 2", "a ccs style 2")
         )
 
     // -----------------
@@ -142,11 +136,15 @@ class DaoTestHelper {
 
     /**
      * Source Page object for dao test.
+     *
+     * @param sourceId the source id to set.
+     *
+     * @return the created source page.
      */
     internal fun sourcePage(sourceId: Long) = SourcePage(
         200000000000000000L,
         sourceId,
-        BASTAMAG_BASE_URL + "test",
+        "a source page url",
         "a button name",
         "a title",
         "a body",
@@ -157,6 +155,10 @@ class DaoTestHelper {
 
     /**
      * Source Page List for dao test.
+     *
+     * @param sourceId the source id to set.
+     *
+     * @return the create source page list.
      */
     internal fun getSourcePageList(sourceId: Long): List<SourcePage> =
         listOf(
@@ -164,7 +166,7 @@ class DaoTestHelper {
             SourcePage(
                 200000000000000001L,
                 sourceId,
-                BASTAMAG_BASE_URL + "test2",
+                "a source page url",
                 "a button name 2",
                 "a title 2",
                 "a body 2",

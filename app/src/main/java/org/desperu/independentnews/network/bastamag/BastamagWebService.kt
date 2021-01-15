@@ -37,9 +37,9 @@ interface BastamagWebService {
     /**
      * Returns the css style from the Bastamag Web Site.
      *
-     * @param cssUrl the url of the article to get.
+     * @param cssUrl the url of the css to get.
      *
-     * @return the article from the Bastamag Web Site.
+     * @return the css from the Bastamag Web Site.
      */
     @GET
     suspend fun getCss(@Url cssUrl: String): ResponseBody
