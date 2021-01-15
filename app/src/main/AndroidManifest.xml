@@ -69,14 +69,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- DATABASE CONTENT PROVIDER -->
-        <provider
-            android:name=".provider.IdeNewsProvider"
-            android:authorities="org.desperu.independentnews.provider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            android:enabled="true"/>
-
     </application>
 
 </manifest>

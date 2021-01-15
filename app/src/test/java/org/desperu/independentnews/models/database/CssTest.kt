@@ -1,11 +1,6 @@
 package org.desperu.independentnews.models.database
 
-import android.content.ContentValues
-import org.desperu.independentnews.utils.CSS_STYLE
-import org.desperu.independentnews.utils.CSS_ID
-import org.desperu.independentnews.utils.CSS_URL
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -51,39 +46,5 @@ class CssTest {
         css.style = cssStyle
 
         assertEquals(expected, css)
-    }
-
-    @Test
-    fun given_ContentValues_When_fromContentValues_Then_checkCssFields() {
-        val expected = Css(id, url, cssStyle)
-
-        val values = ContentValues()
-
-        assertNotNull(values)
-
-        values.put(CSS_ID, id)
-        values.put(CSS_URL, url)
-        values.put(CSS_STYLE, cssStyle)
-
-        val output = Css().fromContentValues(values)
-
-        assertEquals(expected, output)
-    }
-
-    @Test
-    fun given_Css_When_toContentValues_Then_checkResult() {
-        val expected = ContentValues()
-
-        assertNotNull(expected)
-
-        expected.put(CSS_ID, id)
-        expected.put(CSS_URL, url)
-        expected.put(CSS_STYLE, cssStyle)
-
-        val css = Css(id, url, cssStyle)
-
-        val output = Css().toContentValues(css)
-
-        assertEquals(expected, output)
     }
 }

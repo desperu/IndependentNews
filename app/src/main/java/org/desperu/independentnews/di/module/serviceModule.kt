@@ -26,13 +26,4 @@ val serviceModule = module {
             androidContext()
         )
     }
-
-    /**
-     * Provides a ContentService instance.
-     */
-    single<ContentService> {
-        ContentServiceImpl(
-            androidContext()
-        )
-    }
 }

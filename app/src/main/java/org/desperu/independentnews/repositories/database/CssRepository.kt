@@ -1,17 +1,13 @@
 package org.desperu.independentnews.repositories.database
 
-import android.net.Uri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.database.dao.CssDao
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
-import org.desperu.independentnews.provider.IdeNewsProvider
-import org.desperu.independentnews.service.ContentService
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.koin.core.KoinComponent
-import org.koin.core.get
 
 /**
  * Css Repository interface to get data from Css database.
@@ -62,15 +58,6 @@ interface CssRepository {
      * @return the row id of inserted css.
      */
     suspend fun insertCss(vararg css: Css): List<Long>
-
-    /**
-     * Insert the given css in the database, with the content provider and cursor support.
-     *
-     * @param css the css to insert in the database.
-     *
-     * @return the uri of the inserted css.
-     */
-    fun insertCssWithProvider(css: Css): Uri?
 
     /**
      * Update the given css in database.
@@ -166,16 +153,6 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
     override suspend fun insertCss(vararg css: Css): List<Long> = withContext(Dispatchers.IO) {
         return@withContext cssDao.insertCss(*css)
     }
-
-    /**
-     * Insert the given css in the database, with the content provider and cursor support.
-     *
-     * @param css the css to insert in the database.
-     *
-     * @return the uri of the inserted css.
-     */
-    override fun insertCssWithProvider(css: Css): Uri? = // TODO to remove
-        get<ContentService>().insertData(IdeNewsProvider.URI_CSS, css.toContentValues(css))
 
     /**
      * Insert the given css in database.
