@@ -1,9 +1,8 @@
 language: android
 dist: trusty
-jdk: oraclejdk12
+jdk: oraclejdk15
 sudo: false
 
-# require the branch name to be master (note for PRs this is the base branch name)
 notifications:
   email:
     on_success: never # default: change

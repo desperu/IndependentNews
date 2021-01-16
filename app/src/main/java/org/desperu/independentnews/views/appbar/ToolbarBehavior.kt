@@ -28,6 +28,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     private var minScale = 0.6f
     private var isShrinking = false
     private var isExpanding = false
+    private var dyAmount = 0
 
     // -----------------
     // CONFIGURATION
@@ -86,7 +87,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                 //--- shrink toolbar
                 handleAppBarAnim(dyConsumed, false)
             }
-        } else if (dyConsumed < -10) { // Use -10 here to allow little scroll without expand
+        } else if (dyConsumed < 0) {
             // scroll down
             if (toolbar.layoutParams.height < toolbarOriginalHeight) {
 
@@ -118,8 +119,8 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
      * @param toExpand      true to expand, false to collapse.
      */
     private fun handleAppBarAnim(dyConsumed: Int, toExpand: Boolean) {
-        // prevent reverse event at end of user event
-        // set animating to false
+        // Prevent reverse event at end of user event
+        // don't animate in this case
         if (toExpand && isShrinking) {
             isShrinking = false
             return
@@ -130,6 +131,14 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
 
         isShrinking = !toExpand
         isExpanding = toExpand
+
+        // Delay expand animation to allow user to scroll down,
+        // just a little bit (one or two lines), without expand app bar.
+        if (toExpand) {
+            dyAmount += dyConsumed
+            if (dyAmount > -150) return
+        } else
+            dyAmount = 0
 
         animAppBar(dyConsumed, toExpand)
     }

@@ -55,8 +55,7 @@ class AppBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
      */
     @SuppressLint("ClickableViewAccessibility")
     private fun configureOnTouch() {
-        suitableScroll = findSuitableScrollable()
-        suitableScroll?.setOnTouchListener { _, ev ->
+        findSuitableScrollable()?.setOnTouchListener { _, ev ->
             if (ev.action == MotionEvent.ACTION_UP)
                 toolbarBehavior.finishAnimation()
             false
