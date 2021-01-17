@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.graphics.drawable.Animatable
 import android.os.Build
 import android.view.View
 import android.widget.Toast
@@ -255,6 +254,6 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
         alphaViewAnimation(listOf(first_start_who_owns_what), 3000L, true)
         alphaViewAnimation(listOf(first_start_text), 5000L, false)
         alphaViewAnimation(listOf(first_start_text_fetch_time), 10000L, true)
-        (first_start_app_logo.drawable as Animatable).start()
+//        (first_start_app_logo.drawable as Animatable).start()
     }
 }

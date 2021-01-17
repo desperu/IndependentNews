@@ -17,10 +17,12 @@ android:
     - android-30
     - sys-img-armeabi-v7a-android-22
     - extra-android-m2repository
-  licenses:
-    - 'android-sdk-preview-license-84831b9409646a918e30573bab4c9c91346d8abd'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
+
+# Should accept all licences if not configured
+#  licenses:
+#    - 'android-sdk-preview-license-84831b9409646a918e30573bab4c9c91346d8abd'
+#    - 'android-sdk-license-.+'
+#    - 'google-gdk-license-.+'
 
 before_script:
   # Create and start emulator
