@@ -1,41 +1,42 @@
-package org.desperu.independentnews.models.network.html.bastamag
+package org.desperu.independentnews.models.network.html.multinationales
 
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
 import org.desperu.independentnews.extension.parseHtml.*
+import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.addNotes
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
+import org.desperu.independentnews.extension.parseHtml.toDocument
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
 
 /**
- * Class which provides a model to parse bastamag article html page.
+ * Class which provides a model to parse multinationales article html page.
  *
- * @property htmlPage the bastamag article html page.
+ * @property htmlPage the multinationales article html page.
  *
- * @constructor Instantiate a new BastamagArticle.
+ * @constructor Instantiate a new MultinationalesArticle.
  *
- * @param htmlPage the bastamag article html page to set.
+ * @param htmlPage the multinationales article html page to set.
  */
-data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(htmlPage) {
+data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(htmlPage) {
 
     // FOR DATA
-    override val sourceName = BASTAMAG
+    override val sourceName = MULTINATIONALES
 
     // --- GETTERS ---
 
     override fun getTitle(): String? =
-        findData(H1, ITEMPROP, HEADLINE, null).getChild(0)?.text()
+        getTagList(H1).getContainsAttr(CLASS, H1_MULTI)?.text()
 
-    override fun getSection(): String? =
-        findData(SPAN, CLASS, DIVIDER, 1)?.parent().getChild(0)?.ownText()
+    override fun getSection(): String? = null // No data in the web page ...
 
     override fun getTheme(): String? =
         getTagList(P).getContainsAttr(CLASS, SURTITRE)?.ownText()
 
-    override fun getAuthor() : String? =
+    override fun getAuthor(): String? =
         findData(SPAN, CLASS, AUTHOR, null).getChild(0)?.text()
 
     override fun getPublishedDate(): String? =
@@ -45,25 +46,25 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         findData(DIV, CLASS, MAIN, null)?.outerHtml().updateArticleBody()
 
     override fun getDescription(): String? =
-        findData(DIV, ITEMPROP, DESCRIPTION, null).getChild(0)?.text()
+        getTagList(DIV).getContainsAttr(CLASS, CHAPO_MULTI)?.text()
 
     override fun getImage(): List<String?> {
-        val element = findData(IMG, ITEMPROP, IMAGE, null)
+        val element = findData(IMG, CLASS, IMAGE_SPIP, null)
         return listOf(
-            element?.attr(SRC).toFullUrl(BASTAMAG_BASE_URL),
+            element?.attr(SRC).toFullUrl(MULTINATIONALES_BASE_URL),
             element?.attr(WIDTH),
             element?.attr(HEIGHT)
         )
     }
 
-    override fun getCssUrl(): String = getTagList(LINK).getCssUrl(BASTAMAG_BASE_URL)
+    override fun getCssUrl(): String = getTagList(LINK).getCssUrl(MULTINATIONALES_BASE_URL)
 
     // -----------------
     // CONVERT
     // -----------------
 
     /**
-     * Convert BastamagArticle to Article.
+     * Convert MultinationalesArticle to Article.
      * @param article the article to set data.
      * @return article with all data set.
      */
@@ -81,7 +82,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
             if (!description.isNullOrBlank()) this.description = description
             imageUrl = getImage()[0].mToString()
             cssUrl = getCssUrl()
-            source = Source(name = this@BastamagArticle.sourceName)
+            source = Source(name = this@MultinationalesArticle.sourceName)
         }
 
         return article
@@ -100,8 +101,8 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
         this?.let {
             it.toDocument()
                 .addNotes()
-                .correctUrlLink(BASTAMAG_BASE_URL)
-                .correctBastaMediaUrl(BASTAMAG_BASE_URL)
+                .correctUrlLink(MULTINATIONALES_BASE_URL)
+                .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
                 .setMainCssId(CLASS, MAIN_CONTAINER)
                 .mToString()
                 .forceHttps()

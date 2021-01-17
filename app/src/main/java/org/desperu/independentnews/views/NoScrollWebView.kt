@@ -247,6 +247,8 @@ class NoScrollWebView @JvmOverloads constructor(
         }
     }
 
+    // TODO useless, now with css properly set the color is blank too, so remove
+    //  *** but add bottom margin for reporterre only !! ***
     /**
      * Update the background for reporterre page.
      *

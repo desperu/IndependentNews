@@ -6,12 +6,11 @@ import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.getChild
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.parseHtml.sources.addNotes
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
-import org.desperu.independentnews.extension.parseHtml.sources.setMainCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.*
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
 /**
@@ -39,8 +38,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     override fun getBody(): String? =
         findData(DIV, CLASS, MAIN, 0)?.outerHtml().updateBody()
 
-    override fun getCssUrl(): String =
-        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(BASTAMAG_BASE_URL)
+    override fun getCssUrl(): String = getTagList(LINK).getCssUrl(BASTAMAG_BASE_URL)
 
     override fun getPageUrlList(): List<String> = pageUrlList
 
@@ -101,24 +99,11 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
             it.toDocument()
                 .addNotes()
                 .correctUrlLink(BASTAMAG_BASE_URL)
-                .correctBastaMediaUrl()
-                .setMainCssId()
+                .correctBastaMediaUrl(BASTAMAG_BASE_URL)
+                .setMainCssId(CLASS, MAIN_CONTAINER)
                 .mToString()
                 .escapeHashtag()
                 .forceHttps()
-        }
-
-    /**
-     * Add notes at the end of the article body.
-     *
-     * @return the article body with notes at the end.
-     */
-    private fun Document?.addNotes(): Document? = // Duplicate in BastamagArticle
-        this?.let {
-            val notes = findData(DIV, CLASS, NOTES, null)?.outerHtml()
-
-            notes?.let { select(BODY).append(it) }
-            this
         }
 
     /**

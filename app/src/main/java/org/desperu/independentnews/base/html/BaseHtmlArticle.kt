@@ -31,4 +31,6 @@ abstract class BaseHtmlArticle(private val htmlPage: ResponseBody): BaseHtml(htm
     internal abstract fun getImage(): List<String?>
 
     internal abstract fun getCssUrl(): String?
+
+    // TODO use var instead of functions, and write toArticle() here, same for all. Could crash memory with var !!!!
 }

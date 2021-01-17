@@ -19,9 +19,9 @@
 
 -> Create retrofit request, koin module
 
--> Create network repo
-
 -> Create network models
+
+-> Create network repo
 
 -> Implement in fetch switch (rss, categories and source pages)
 

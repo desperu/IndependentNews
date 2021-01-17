@@ -3,7 +3,17 @@ package org.desperu.independentnews.extension.parseHtml
 import org.desperu.independentnews.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import java.lang.StringBuilder
+
+/**
+ * Return the list of element that match the given tag.
+ *
+ * @param tag the tag value to search for.
+ *
+ * @return the list of element that match the given tag.
+ */
+internal fun Document.getTagList(tag: String): Elements = this.select(tag)
 
 /**
  * Returns the string convert to Jsoup document.
@@ -45,6 +55,20 @@ internal fun Document?.correctUrlLink(baseUrl: String): Document? =
             }
         }
 
+        this
+    }
+
+/**
+ * Set main css id to apply css style to the article body.
+ *
+ * @param attr      the attribute to set.
+ * @param value     the value of the attribute to set.
+ *
+ * @return the article with main css id set.
+ */
+internal fun Document?.setMainCssId(attr:String, value: String): Document? =
+    this?.let {
+        select(BODY).getIndex(0)?.attr(attr, value)
         this
     }
 

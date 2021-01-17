@@ -7,8 +7,6 @@ import org.desperu.independentnews.extension.parseHtml.sources.correctRepoMediaU
 import org.desperu.independentnews.extension.parseHtml.correctUrlLink
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.getAuthor
-import org.desperu.independentnews.extension.parseHtml.sources.getCssUrl
-import org.desperu.independentnews.extension.parseHtml.sources.setContainerCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
@@ -65,7 +63,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     override fun getDescription(): String? = findData(DIV, CLASS, CHAPO, null)?.text()
 
     override fun getImage(): List<String?> {
-        val element = findData(IMG, CLASS, REPO_IMAGE_CLASS, null)
+        val element = findData(IMG, CLASS, IMAGE_SPIP, null)
         return listOf(
             element?.attr(SRC).toFullUrl(REPORTERRE_BASE_URL),
             element?.attr(WIDTH),
@@ -73,7 +71,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         )
     }
 
-    override fun getCssUrl(): String = getTagList(LINK).getCssUrl()
+    override fun getCssUrl(): String = getTagList(LINK).getCssUrl(REPORTERRE_BASE_URL)
 
     // -----------------
     // CONVERT
@@ -120,7 +118,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
                 .addDonateCall()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
-                .setContainerCssId()
+                .setMainCssId(ID, CONTAINER)
                 .removeBottomLogo()
                 .mToString()
                 .escapeHashtag()

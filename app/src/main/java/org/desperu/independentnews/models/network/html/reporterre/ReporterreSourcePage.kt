@@ -4,12 +4,6 @@ import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlSourcePage
 import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.sources.correctRepoMediaUrl
-import org.desperu.independentnews.extension.parseHtml.correctUrlLink
-import org.desperu.independentnews.extension.parseHtml.getMatchAttr
-import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.extension.parseHtml.sources.getCssUrl
-import org.desperu.independentnews.extension.parseHtml.sources.setContainerCssId
-import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.*
 
@@ -36,7 +30,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
     override fun getBody(): String? =
         findData(DIV, CLASS, TEXTE, null)?.outerHtml().updateBody()
 
-    override fun getCssUrl(): String = getTagList(LINK).getCssUrl()
+    override fun getCssUrl(): String = getTagList(LINK).getCssUrl(REPORTERRE_BASE_URL)
 
     override fun getPageUrlList(): List<String> = pageUrlList
 
@@ -97,7 +91,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             it.toDocument()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
-                .setContainerCssId()
+                .setMainCssId(ID, CONTAINER)
                 .mToString()
                 .forceHttps()
                 .escapeHashtag()

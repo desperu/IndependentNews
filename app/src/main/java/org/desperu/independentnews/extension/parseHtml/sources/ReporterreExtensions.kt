@@ -1,11 +1,8 @@
 package org.desperu.independentnews.extension.parseHtml.sources
 
 import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
-import org.desperu.independentnews.extension.parseHtml.getIndex
-import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -24,18 +21,6 @@ internal fun Elements?.getAuthor(): String? {
     }
     return null
 }
-
-/**
- * Returns the concatenated css url list into the elements.
- *
- * @return the concatenated css url list into the elements.
- */
-internal fun Elements.getCssUrl(): String =
-    concatenateStringFromMutableList(
-        this.getMatchAttr(REL, STYLE_SHEET)
-            .map { it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL) }
-            .toMutableList()
-    )
 
 /**
  * Correct all media url's with their full url's in the given html code.
@@ -63,16 +48,5 @@ internal fun Document?.correctRepoMediaUrl(): Document? =
         toRemove.forEach { it.remove() }
 
         select(AUDIO).forEach { it.attrToFullUrl(SRC, REPORTERRE_BASE_URL) }
-        this
-    }
-
-/**
- * Set container css id to apply css style to the article body.
- *
- * @return the article with container css id set.
- */
-internal fun Document?.setContainerCssId(): Document? =
-    this?.let {
-        select(BODY).getIndex(0)?.attr(ID, CONTAINER)
         this
     }
