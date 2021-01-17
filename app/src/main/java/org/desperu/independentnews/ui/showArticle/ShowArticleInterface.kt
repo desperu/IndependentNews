@@ -24,9 +24,4 @@ interface ShowArticleInterface {
      * Update web view design, css style and margins.
      */
     fun updateWebViewDesign()
-
-    /**
-     * Update web view margins.
-     */
-    fun updateWebViewMargins()
 }

@@ -34,9 +34,10 @@
         android:layout_below="@id/first_start_who_owns_what">
 
         <ImageView
+            android:id="@+id/first_start_app_logo"
             android:layout_width="@dimen/first_start_logo_width_height"
             android:layout_height="@dimen/first_start_logo_width_height"
-            android:src="@drawable/app_logo"/>
+            app:srcCompat="@drawable/app_logo_move_anim"/>
 
         <org.desperu.independentnews.views.FontTextView
             android:id="@+id/first_start_app_name"

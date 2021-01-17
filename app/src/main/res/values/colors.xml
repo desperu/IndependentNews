@@ -45,6 +45,8 @@
     <color name="colorTransDark">#43000000</color>
     <color name="colorTransBlue">#4D0F6088</color>
     <color name="colorRead">#8069E7FF</color>
+    <color name="colorRead2">#8018BDD6</color>
+    <color name="colorRead3">#806AC5F6</color>
 
     <!-- Sources Background color -->
     <color name="bastamag_background">#f78c11</color>

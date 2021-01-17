@@ -109,7 +109,7 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
         }
 
     /**
-     * Add notes at the end of the article body?
+     * Add notes at the end of the article body.
      *
      * @return the article body with notes at the end.
      */

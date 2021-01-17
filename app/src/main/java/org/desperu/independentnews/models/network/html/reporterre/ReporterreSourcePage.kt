@@ -8,6 +8,7 @@ import org.desperu.independentnews.extension.parseHtml.correctUrlLink
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.getCssUrl
+import org.desperu.independentnews.extension.parseHtml.sources.setContainerCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.*
@@ -94,11 +95,12 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
     private fun String?.updateBody(): String? =
         this?.let {
             it.toDocument()
-            .correctUrlLink(REPORTERRE_BASE_URL)
-            .correctRepoMediaUrl()
-            .mToString()
-            .forceHttps()
-            .escapeHashtag()
+                .correctUrlLink(REPORTERRE_BASE_URL)
+                .correctRepoMediaUrl()
+                .setContainerCssId()
+                .mToString()
+                .forceHttps()
+                .escapeHashtag()
         }
 
     /**

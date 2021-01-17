@@ -8,6 +8,7 @@ import org.desperu.independentnews.extension.parseHtml.correctUrlLink
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.parseHtml.sources.getAuthor
 import org.desperu.independentnews.extension.parseHtml.sources.getCssUrl
+import org.desperu.independentnews.extension.parseHtml.sources.setContainerCssId
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
@@ -119,6 +120,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
                 .addDonateCall()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
+                .setContainerCssId()
                 .removeBottomLogo()
                 .mToString()
                 .escapeHashtag()

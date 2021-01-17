@@ -76,9 +76,9 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         // Configure Ui for full screen video
         sysUiHelper.setDecorUiVisibility(SYS_UI_FULL_HIDE)
         sysUiHelper.setOrientation(LANDSCAPE) // Not needed for new api
-        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // TODO on test, should be good, remove with clearFlags()
-        activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON) //  disable auto screen off, need to check, and if good serialize
-        showArticleInterface?.saveScrollPosition()                               //  not good ... find another way !!
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) // TODO *** not good ***, remove with clearFlags()
+//        activity.window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON) //  disable auto screen off, need to check, and if good serialize
+        showArticleInterface?.saveScrollPosition()                               //  *** not good ... find another way !! ***
 
         showArticleInterface?.inCustomView = true
     }
@@ -86,10 +86,8 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
         activity.appbar_loading_progress_bar.progress = newProgress
-        // Update web view margins...
-        if (newProgress < 50) showArticleInterface?.updateWebViewMargins()
         // Update web view design.
-        else if (newProgress > 80) showArticleInterface?.updateWebViewDesign()
+        if (newProgress > 80) showArticleInterface?.updateWebViewDesign()
     }
 
     override fun onHideCustomView() {

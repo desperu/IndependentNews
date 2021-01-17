@@ -13,6 +13,20 @@ import java.lang.StringBuilder
 internal fun String?.toDocument(): Document? = this?.let { Jsoup.parse(this) }
 
 /**
+ * Add view port meta data in the head tag of the given html code.
+ *
+ * @return the html code with the view port.
+ */
+internal fun Document?.addViewPort(): Document? = // TODO seems to change nothing
+    this?.let {
+        select(HEAD).getIndex(0)
+            ?.appendElement(META)
+            ?.attr(NAME, "viewport")
+            ?.attr(CONTENT, "width=device-width, initial-scale=1, target-densitydpi=high-dpi")
+        this
+    }
+
+/**
  * Correct all url links with their full url in the given html code.
  *
  * @param baseUrl the base url of the link.

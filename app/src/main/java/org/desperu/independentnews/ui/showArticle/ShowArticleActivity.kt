@@ -168,7 +168,8 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         web_view.settings.apply {
             javaScriptEnabled = true
             javaScriptCanOpenWindowsAutomatically = true
-//            setSupportZoom(true) // TODO try to remove all zoom
+//            setSupportZoom(false) // TODO try to remove all zoom
+//            loadWithOverviewMode = true
 //            builtInZoomControls = true // It seems to be good
 //            displayZoomControls = false
         }
@@ -176,7 +177,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         // Test to fix zoom bug...
 //        web_view.setInitialScale(500)
 //        web_view.settings.defaultZoom = WebSettings.ZoomDensity.MEDIUM
-//        web_view.settings.useWideViewPort = true
+//        web_view.settings.useWideViewPort = true // Seems to work
 
         web_view.webViewClient = webViewClient!!
 
@@ -201,16 +202,19 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             super.onPageStarted(view, url, favicon)
             url?.let {
                 actualUrl = it
-//                isWebViewDesigned = false
+                isWebViewDesigned = false
                 handleNavigation(it)
                 lifecycleScope.launch(Dispatchers.Main) {
-                    web_view.updateWebViewStart(it, article.source.name, viewModel.getCss())
+                    if (!isWebViewDesigned)
+                        web_view.updateWebViewStart(it, article.source.name, viewModel.getCss())
+                    isWebViewDesigned = true
                 }
             }
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
 //            url?.let { if (it == actualUrl) updateDesign(it, false) }
+//            web_view.updateWebViewFinish("", "")
             article_scroll_progress_bar.visibility = View.VISIBLE
             appbar_loading_progress_bar.visibility = View.INVISIBLE
             super.onPageFinished(view, url)
@@ -400,7 +404,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         article_scroll_view.visibility = View.VISIBLE
 //        web_view.zoomOut()
 //        web_view.settings.textZoom = web_view.settings.textZoom
-        if (isSourceUrl(url) && scrollPosition > -1 && !isWebViewDesigned)
+        if (isSourceUrl(url) && scrollPosition > -1)// && !isWebViewDesigned)
             sv.scrollTo(sv.scrollX, scrollPosition)
         else if (!isSourceUrl(url))
             sv.scrollTo(sv.scrollX, 0)
@@ -444,14 +448,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun updateWebViewDesign() {
         if (!::actualUrl.isInitialized) return
         updateDesign(actualUrl, true)
-    }
-
-    /**
-     * Update web view margins.
-     */
-    override fun updateWebViewMargins() {
-        if (!::actualUrl.isInitialized) return
-        web_view.updateMargins(actualUrl, article.source.name)
     }
 
     // --------------
