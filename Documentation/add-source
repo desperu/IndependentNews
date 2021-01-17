@@ -1,0 +1,28 @@
+*** To add a new source ***
+
+-> Create constants in SourcesConstants
+    - base url
+    - edito url
+    - section names
+    - name
+    - source object and add to the source list
+
+-> Add logo and mini logo to drawables
+
+-> Add source color and button colors in colors.xml
+
+-> Add mini logo, logo, background color and button link color in SourceUtils switch
+
+-> Update filters binding in array // TODO to update for multinationales
+
+-> Update filter_layout_sources
+
+-> Create retrofit request, koin module
+
+-> Create network repo
+
+-> Create network models
+
+-> Implement in fetch switch (rss, categories and source pages)
+
+-> Write needed test(Unit & Instrumented)

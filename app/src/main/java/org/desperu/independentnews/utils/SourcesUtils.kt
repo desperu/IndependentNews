@@ -21,6 +21,7 @@ object SourcesUtils {
     internal fun getMiniLogoId(sourceName: String) = when(sourceName) {
         BASTAMAG -> R.drawable.logo_mini_bastamag
         REPORTERRE -> R.drawable.logo_mini_reporterre
+        MULTINATIONALES -> R.drawable.logo_mini_multinationales
         else -> throw IllegalArgumentException("Source name not found : $sourceName")
     }
 
@@ -32,6 +33,7 @@ object SourcesUtils {
     internal fun getLogoId(sourceName: String) = when(sourceName) {
         BASTAMAG -> R.drawable.logo_bastamag
         REPORTERRE -> R.drawable.logo_reporterre
+        MULTINATIONALES -> R.drawable.logo_multinationales
         else -> throw IllegalArgumentException("Source name not found : $sourceName")
     }
 
@@ -47,6 +49,7 @@ object SourcesUtils {
     internal fun getBackgroundColorId(sourceName: String) = when(sourceName) {
         BASTAMAG -> R.color.bastamag_background
         REPORTERRE -> R.color.reporterre_background
+        MULTINATIONALES -> R.color.multinationales_background
         else -> throw IllegalArgumentException("Source name not found : $sourceName")
     }
 

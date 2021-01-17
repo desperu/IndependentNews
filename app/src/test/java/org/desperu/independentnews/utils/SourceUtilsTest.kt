@@ -17,22 +17,22 @@ import java.lang.IllegalArgumentException
  */
 class SourceUtilsTest {
 
-    @Test
-    fun given_bastamag_When_getMiniLogoId_Then_checkResult() {
-        val expected = R.drawable.logo_mini_bastamag
-
-        val output = getMiniLogoId(BASTAMAG)
-
-        assertEquals(expected, output)
-    }
+    // FOR DATA
+    private val sourceList = listOf(BASTAMAG, REPORTERRE, MULTINATIONALES)
 
     @Test
-    fun given_reporterre_When_getMiniLogoId_Then_checkResult() {
-        val expected = R.drawable.logo_mini_reporterre
+    fun given_sourceList_When_getMiniLogoId_Then_checkResult() {
+        val expectedList = listOf(
+            R.drawable.logo_mini_bastamag,
+            R.drawable.logo_mini_reporterre,
+            R.drawable.logo_mini_multinationales
+        )
 
-        val output = getMiniLogoId(REPORTERRE)
+        val outputList = sourceList.map { getMiniLogoId(it) }
 
-        assertEquals(expected, output)
+        outputList.forEachIndexed { index, output ->
+            assertEquals(expectedList[index], output)
+        }
     }
 
     @Test
@@ -47,20 +47,17 @@ class SourceUtilsTest {
 
     @Test
     fun given_bastamag_When_getLogoId_Then_checkResult() {
-        val expected = R.drawable.logo_bastamag
+        val expectedList = listOf(
+            R.drawable.logo_bastamag,
+            R.drawable.logo_reporterre,
+            R.drawable.logo_multinationales
+        )
 
-        val output = getLogoId(BASTAMAG)
+        val outputList = sourceList.map { getLogoId(it) }
 
-        assertEquals(expected, output)
-    }
-
-    @Test
-    fun given_reporterre_When_getLogoId_Then_checkResult() {
-        val expected = R.drawable.logo_reporterre
-
-        val output = getLogoId(REPORTERRE)
-
-        assertEquals(expected, output)
+        outputList.forEachIndexed { index, output ->
+            assertEquals(expectedList[index], output)
+        }
     }
 
     @Test
@@ -75,20 +72,17 @@ class SourceUtilsTest {
 
     @Test
     fun given_bastamag_When_getBackgroundColorId_Then_checkResult() {
-        val expected = R.color.bastamag_background
+        val expectedList = listOf(
+            R.color.bastamag_background,
+            R.color.reporterre_background,
+            R.color.multinationales_background
+        )
 
-        val output = getBackgroundColorId(BASTAMAG)
+        val outputList = sourceList.map { getBackgroundColorId(it) }
 
-        assertEquals(expected, output)
-    }
-
-    @Test
-    fun given_reporterre_When_getBackgroundColorId_Then_checkResult() {
-        val expected = R.color.reporterre_background
-
-        val output = getBackgroundColorId(REPORTERRE)
-
-        assertEquals(expected, output)
+        outputList.forEachIndexed { index, output ->
+            assertEquals(expectedList[index], output)
+        }
     }
 
     @Test

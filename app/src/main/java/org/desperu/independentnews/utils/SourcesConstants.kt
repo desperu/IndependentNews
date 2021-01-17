@@ -11,9 +11,11 @@ const val HTML = 1
 // Base url for retrofit request
 const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
 const val REPORTERRE_BASE_URL = "https://reporterre.net/"
+const val MULTINATIONALES_BASE_URL = "https://multinationales.org/"
 // Editorial
 const val BASTAMAG_EDITO_URL = "Qui-sommes-nous"
 const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
+const val MULTINATIONALES_EDITO_URL = "A-propos"
 
 // Section value
 const val BASTA_SEC_DECRYPTER = "Approfondir"
@@ -24,12 +26,15 @@ const val REPORT_SEC_DECRYPTER = "Enquete"
 const val REPORT_SEC_RESISTER = "Reportage"
 const val REPORT_SEC_INVENTER = "Alternatives"
 
+const val MULTINATIONALES_SEC_ENQUETE = "Enquetes"
+
 
 // --- SOURCES ---
 
 // Source name
 const val BASTAMAG = "Basta !"
 const val REPORTERRE = "Reporterre"
+const val MULTINATIONALES = "Observatoire des Multinationales"
 
 // Source data type (for snackbar message)
 const val RSS = " (RSS)"
@@ -37,7 +42,7 @@ const val CATEGORY = " (Categories)"
 
 // Source for database
 val SOURCE_LIST: List<Source>
-    get() = listOf(BASTAMAG_SOURCE, REPORTERRE_SOURCE)
+    get() = listOf(BASTAMAG_SOURCE, REPORTERRE_SOURCE, MULTINATIONALES_SOURCE)
 val BASTAMAG_SOURCE = Source(
     name = BASTAMAG,
     url = BASTAMAG_BASE_URL,
@@ -46,6 +51,11 @@ val BASTAMAG_SOURCE = Source(
 val REPORTERRE_SOURCE = Source(
     name = REPORTERRE,
     url = REPORTERRE_BASE_URL,
+    isEnabled = true
+)
+val MULTINATIONALES_SOURCE = Source(
+    name = MULTINATIONALES,
+    url = MULTINATIONALES_BASE_URL,
     isEnabled = true
 )
 
