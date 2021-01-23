@@ -57,7 +57,8 @@ data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlA
         )
     }
 
-    override fun getCssUrl(): String = getTagList(LINK).getCssUrl(MULTINATIONALES_BASE_URL)
+    override fun getCssUrl(): String =// getTagList(LINK).getCssUrl(MULTINATIONALES_BASE_URL)
+        findData(LINK, REL, STYLE_SHEET, null)?.attr(HREF).toFullUrl(MULTINATIONALES_BASE_URL)
 
     // -----------------
     // CONVERT
@@ -100,10 +101,10 @@ data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlA
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes()
-                .correctUrlLink(MULTINATIONALES_BASE_URL)
+                .addNotes(getTagList(DIV))
+                .correctUrlLink(MULTINATIONALES_BASE_URL) // TODO mail to error
                 .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
-                .setMainCssId(CLASS, MAIN_CONTAINER)
+                .setMainCssId(CLASS, CONTENT)
                 .mToString()
                 .forceHttps()
                 .escapeHashtag()

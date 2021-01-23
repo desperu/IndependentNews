@@ -3,17 +3,7 @@ package org.desperu.independentnews.extension.parseHtml
 import org.desperu.independentnews.utils.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import java.lang.StringBuilder
-
-/**
- * Return the list of element that match the given tag.
- *
- * @param tag the tag value to search for.
- *
- * @return the list of element that match the given tag.
- */
-internal fun Document.getTagList(tag: String): Elements = this.select(tag)
 
 /**
  * Returns the string convert to Jsoup document.

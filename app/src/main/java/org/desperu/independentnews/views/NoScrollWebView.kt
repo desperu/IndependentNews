@@ -9,8 +9,10 @@ import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
@@ -108,7 +110,8 @@ class NoScrollWebView @JvmOverloads constructor(
         url?.let {
             updateTextSize(it, sourceName)
             updateBackground(it, sourceName)
-            applyCssStyle(it, css)
+            updateMargins(it, sourceName)
+            postDelayed({ applyCssStyle(it, css) }, 10) // To prevent design bug
         }
 
 //        setOnTouchListener { view, motionEvent -> true }
@@ -128,7 +131,7 @@ class NoScrollWebView @JvmOverloads constructor(
 //            // use to correct zoom mistake ??
 //        }
 
-        // seems to work, remove other test !!!
+    // seems to work, remove other test !!!
 //        setOnTouchListener { view, motionEvent -> false }
 //        var count = 0
 //        do { zoomOut(); count++ } while (count < 50)
@@ -223,11 +226,11 @@ class NoScrollWebView @JvmOverloads constructor(
      */
     private val resizeMedia =
         ("iframe {" +
-            "display: block;" +
-            "max-width:100%;" +
-            "margin-top:10px;" +
-            "margin-bottom:10px;" +
-            "}")
+                "display: block;" +
+                "max-width:100%;" +
+                "margin-top:10px;" +
+                "margin-bottom:10px;" +
+                "}")
 
     // --------------
     // DESIGN
@@ -240,15 +243,44 @@ class NoScrollWebView @JvmOverloads constructor(
     private fun updateTextSize(actualUrl: String, sourceName: String) {
         settings.apply {
             textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
-            // Needed to correct Bastamag article text size.
-            if (isSourceUrl(actualUrl) && sourceName == BASTAMAG ||
-                actualUrl.contains(BASTAMAG_BASE_URL))
+
+            // Needed to correct Bastamag and Multinationales articles text size.
+            if (isSourceUrl(actualUrl) && sourceName == BASTAMAG
+                || isSourceUrl(actualUrl) && sourceName == MULTINATIONALES
+                || actualUrl.contains(BASTAMAG_BASE_URL)
+                || actualUrl.contains(MULTINATIONALES_BASE_URL)
+            )
+
                 textZoom += 20
+            textAlignment = TEXT_ALIGNMENT_VIEW_START
         }
     }
 
-    // TODO useless, now with css properly set the color is blank too, so remove
-    //  *** but add bottom margin for reporterre only !! ***
+    /**
+     * Update margins of the web view, needed for Reporterre source (bottom margin),
+     * and for Multinationales source (all margins).
+     *
+     * @param url               the actual url of the web view.
+     * @param sourceName        the name of the source of the page.
+     */
+    private fun updateMargins(url: String, sourceName: String) {
+        var margins = intArrayOf(0, 0, 0, 0)
+
+        if (isSourceUrl(url)) {
+            val margin = bindDimen(R.dimen.default_margin).value.toInt()
+
+            // Needed to correct article design.
+            when (sourceName) {
+                REPORTERRE -> margins = intArrayOf(0, 0, 0, margin)
+                MULTINATIONALES -> margins = intArrayOf(margin, margin, margin, margin)
+            }
+        }
+
+        // Apply margins to the web view.
+        (this.layoutParams as LinearLayout.LayoutParams)
+            .setMargins(margins[0], margins[1], margins[2], margins[3])
+    }
+
     /**
      * Update the background for reporterre page.
      *

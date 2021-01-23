@@ -14,7 +14,7 @@ const val REPORTERRE_BASE_URL = "https://reporterre.net/"
 const val MULTINATIONALES_BASE_URL = "https://multinationales.org/"
 // Editorial
 const val BASTAMAG_EDITO_URL = "Qui-sommes-nous"
-const val REPORTERRE_EDITO_URL = "Qui-sommes-nous-8"
+const val REPORTERRE_EDITO_URL = "quisommesnous"
 const val MULTINATIONALES_EDITO_URL = "A-propos"
 
 // Section value
@@ -111,3 +111,9 @@ const val DONATE_CALL =
             "<center>\n" +
             "<A HREF=\" https://reporterre.net/spip.php?page=don\" class=bouton_petitvert >Soutenir Reporterre</A>\n" +
             "</center></div>"
+
+
+// --- Parse Css Style ---
+
+const val MULTI_ORIG_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:center}"
+const val MULTI_NEW_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:left}"

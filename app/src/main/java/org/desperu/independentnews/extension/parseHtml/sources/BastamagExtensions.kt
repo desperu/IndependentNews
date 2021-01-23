@@ -2,22 +2,24 @@ package org.desperu.independentnews.extension.parseHtml.sources
 
 import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
-import org.desperu.independentnews.extension.parseHtml.getTagList
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 
 /**
  * Add notes at the end of the article body.
  *
+ * @param elements the element list in which search notes.
+ *
  * @return the article body with notes at the end.
  */
-internal fun Document?.addNotes(): Document? = // Used in multinationales too
+internal fun Document?.addNotes(elements: Elements): Document? = // Used in multinationales too
     this?.let {
-        val notes = getTagList(DIV).getMatchAttr(CLASS, NOTES).getOrNull(0)?.outerHtml()
+        val notes = elements.getMatchAttr(CLASS, NOTES).getOrNull(0)?.outerHtml()
 
         notes?.let { select(BODY).append(it) }
         this
@@ -52,7 +54,7 @@ internal fun Document?.correctBastaMediaUrl(baseUrl: String): Document? = // Use
                     parent.parent().attrToFullUrl(HREF, baseUrl)
                 }
                 // Source page "Basta a tool for those", button "They support us"
-                parent.`is`(SPAN) && parent.attr(CLASS) == SPIP_DOCUMENT -> {
+                parent.`is`(SPAN) && parent.attr(CLASS).contains(SPIP_DOCUMENT) -> {
                     parent.appendElement(a).attr(HREF, it.attr(SRC)).append(it.outerHtml())
                     toRemove.add(it)
                 }

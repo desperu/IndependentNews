@@ -2,15 +2,10 @@ package org.desperu.independentnews.models.database
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 
 /**
  * Simple model class test, for Css data class that's check setter, getter and default parameters.
  */
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28], manifest= Config.NONE)
 class CssTest {
 
     // FOR DATA

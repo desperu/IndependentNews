@@ -99,7 +99,7 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes()
+                .addNotes(getTagList(DIV))
                 .correctUrlLink(BASTAMAG_BASE_URL)
                 .correctBastaMediaUrl(BASTAMAG_BASE_URL)
                 .setMainCssId(CLASS, MAIN_CONTAINER)

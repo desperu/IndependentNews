@@ -12,6 +12,7 @@ import org.desperu.independentnews.repositories.database.ArticleRepository
 import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.repositories.network.BastamagRepository
+import org.desperu.independentnews.repositories.network.MultinationalesRepository
 import org.desperu.independentnews.repositories.network.ReporterreRepository
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.FilterUtils.parseSelectedMap
@@ -109,28 +110,32 @@ interface IndependentNewsRepository {
  * @author Desperu
  *
  * @property articleRepository              the repository access for article database.
- * @property sourceRepository               the repository access for source database.
  * @property cssRepository                  the repository access for css database.
- * @property reporterreRepository           the repository access for reporterre network.
+ * @property sourceRepository               the repository access for source database.
  * @property bastamagRepository             the repository access for bastamag network.
+ * @property multinationalesRepository      the repository access for the multinationales network.
+ * @property reporterreRepository           the repository access for reporterre network.
  * @property articleDao                     the database access object for article.
  * @property snackBarHelper                 the helper to display fetch messages to the user
  *                                          with the snack bar.
  *
  * @constructor Instantiates a new IndependentNewsRepositoryImpl.
+ *
  * @param articleRepository                 the repository access for article database to set.
- * @param sourceRepository                  the repository access for source database to set.
  * @param cssRepository                     the repository access for css database to set.
- * @param reporterreRepository              the repository access for reporterre network to set.
+ * @param sourceRepository                  the repository access for source database to set.
  * @param bastamagRepository                the repository access for bastamag network to set.
+ * @param multinationalesRepository         the repository access for the multinationales network to set.
+ * @param reporterreRepository              the repository access for reporterre network to set.
  * @param articleDao                        the database access object for article to set.
  */
 class IndependentNewsRepositoryImpl(
     private val articleRepository: ArticleRepository,
-    private val sourceRepository: SourceRepository,
     private val cssRepository: CssRepository,
-    private val reporterreRepository: ReporterreRepository,
+    private val sourceRepository: SourceRepository,
     private val bastamagRepository: BastamagRepository,
+    private val multinationalesRepository: MultinationalesRepository,
+    private val reporterreRepository: ReporterreRepository,
     private val articleDao: ArticleDao
 ): IndependentNewsRepository {
 
@@ -155,6 +160,7 @@ class IndependentNewsRepositoryImpl(
             when (source.name) {
                 BASTAMAG -> bastamagRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
                 REPORTERRE -> reporterreRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
+                MULTINATIONALES -> multinationalesRepository.fetchRssArticles()?.let { rssArticleList.addAll(it) }
             }
         }
 
@@ -174,6 +180,7 @@ class IndependentNewsRepositoryImpl(
             when (source.name) {
                 BASTAMAG -> bastamagRepository.fetchCategories()?.let { articleList.addAll(it) }
                 REPORTERRE -> reporterreRepository.fetchCategories()?.let { articleList.addAll(it) }
+                MULTINATIONALES -> multinationalesRepository.fetchCategories()?.let { articleList.addAll(it) }
             }
         }
 
@@ -346,6 +353,7 @@ class IndependentNewsRepositoryImpl(
                 val fetchedSourcePages = when (source.name) {
                     BASTAMAG -> bastamagRepository.fetchSourcePages()
                     REPORTERRE -> reporterreRepository.fetchSourcePages()
+                    MULTINATIONALES -> multinationalesRepository.fetchSourcePages()
                     else -> listOf()
                 }
 
