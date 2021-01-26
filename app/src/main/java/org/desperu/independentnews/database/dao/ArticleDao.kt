@@ -31,7 +31,7 @@ interface ArticleDao {
      * @return the corresponding article.
      */
     @Query("SELECT * FROM article WHERE url = :url")
-    suspend fun getArticle(url: String): Article
+    suspend fun getArticle(url: String): Article?
 
     /**
      * Returns the top story article list from database ordered from the most recent to the oldest,

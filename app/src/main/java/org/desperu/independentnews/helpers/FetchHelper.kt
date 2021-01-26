@@ -22,22 +22,19 @@ object FetchHelper : KoinComponent {
     private val cssRepository: CssRepository = get()
 
     /**
-     * Wrap coroutine block in secure call (try/catch), add message for ui and logs.
-     * Used in network repository to fetch article data.
+     * Wrap coroutine block in secure call (try/catch), add message for logs.
+     * Used in network repository to fetch data.
      *
-     * @param sourceName    the name of the source for which fetch data.
-     * @param block         the coroutine block to execute into secure call.
+     * @param block the coroutine block to execute into secure call.
+     *
+     * @return the fetched data list.
      */
-    internal suspend fun <T: Any> catchFetchArticle(
-        sourceName: String,
+    internal suspend fun <T: Any> catchFetch(
         block: suspend () -> List<T>?
     ): List<T>? = // Use T on test
         try {
-            snackBarHelper?.showMessage(SEARCH, listOf(sourceName))
-
             withContext(Dispatchers.IO) { return@withContext block() }
         } catch (e: Exception) {
-            snackBarHelper?.showMessage(ERROR, listOf(sourceName))
 
             // add store fetch result
 
@@ -50,32 +47,39 @@ object FetchHelper : KoinComponent {
         }
 
     /**
-     * Wrap coroutine block in secure call (try/catch), add message for ui and logs.
-     * Used in network repository to fetch source data.
+     * Wrap coroutine block in secure call (catchFetch), add message for ui.
+     * Used in network repository to fetch data and display message to the user.
      *
      * @param sourceName    the name of the source for which fetch data.
+     * @param type          the type of the data to fetch.
      * @param block         the coroutine block to execute into secure call.
+     *
+     * @return the fetched data list.
      */
-    internal suspend fun catchFetchSource(
+    internal suspend fun <T: Any> fetchWithMessage(
         sourceName: String,
-        block: suspend () -> List<SourcePage>?
-    ): List<SourcePage>? =
-        try {
-            snackBarHelper?.showMessage(SOURCE_FETCH, listOf(sourceName))
+        type: Int,
+        block: suspend () -> List<T>?
+    ): List<T>? {
 
-            withContext(Dispatchers.IO) { return@withContext block() }
-        } catch (e: Exception) {
-            snackBarHelper?.showMessage(SOURCE_ERROR, listOf(sourceName))
+        // Display start search message to the user
+        snackBarHelper?.showMessage(
+            if (type == FETCH) SEARCH else SOURCE_FETCH,
+            listOf(sourceName)
+        )
 
-            // add store fetch result
+        // Execute fetch block with secure call
+        val result = catchFetch(block)
 
-            val tag = "${block.javaClass.enclosingClass?.simpleName}" +
-                    "-${block.javaClass.enclosingMethod?.name}"
-            Log.e(tag, e.message.toString())
-            e.printStackTrace()
+        // Display error message to the user
+        if (result == null)
+            snackBarHelper?.showMessage(
+                if (type == FETCH) ERROR else SOURCE_ERROR,
+                listOf(sourceName)
+            )
 
-            null
-        }
+        return result
+    }
 
     // Look at that to handle response, new coroutine
     //        callbackFlow<> {  }
@@ -91,7 +95,7 @@ object FetchHelper : KoinComponent {
     internal suspend fun <T: Any> fetchAndPersistCssList(
             list: List<T>,
             block: suspend (cssUrl: String) -> String
-    ) = withContext(Dispatchers.IO) {
+    ) = catchFetch {
 
         // Determine and transform the given list to it's original object type.
         val cssList = list.map {

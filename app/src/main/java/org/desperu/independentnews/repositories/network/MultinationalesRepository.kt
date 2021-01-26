@@ -2,8 +2,9 @@ package org.desperu.independentnews.repositories.network
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.desperu.independentnews.helpers.FetchHelper
+import org.desperu.independentnews.helpers.FetchHelper.catchFetch
 import org.desperu.independentnews.helpers.FetchHelper.fetchAndPersistCssList
+import org.desperu.independentnews.helpers.FetchHelper.fetchWithMessage
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.SourcePage
@@ -44,6 +45,15 @@ interface MultinationalesRepository {
      * @return the source page list of Multinationales from it's Web site.
      */
     suspend fun fetchSourcePages(): List<SourcePage>?
+
+    /**
+     * Convenience function to fetch only one article.
+     *
+     * @param article the article to fetch all data.
+     *
+     * @return the fetched article with all data.
+     */
+    suspend fun fetchArticle(article: Article): List<Article>?
 }
 
 /**
@@ -75,74 +85,82 @@ class MultinationalesRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Multinationales.
      */
-    override suspend fun fetchRssArticles(): List<Article>? =
-        FetchHelper.catchFetchArticle(MULTINATIONALES + RSS) {
-            val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
+    override suspend fun fetchRssArticles(): List<Article>? = fetchWithMessage(MULTINATIONALES + RSS, FETCH) {
+        val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
-            if (!rssArticleList.isNullOrEmpty()) {
-                val articleList = rssArticleList.map { it.toArticle(MULTINATIONALES) }
-                articleRepository.updateTopStory(articleList)
+        if (!rssArticleList.isNullOrEmpty()) {
+            val articleList = rssArticleList.map { it.toArticle(MULTINATIONALES) }
+            articleRepository.updateTopStory(articleList)
 
-                val newArticles = articleRepository.getNewArticles(articleList)
-                snackBarHelper?.showMessage(
-                    FIND,
-                    listOf(MULTINATIONALES + RSS, newArticles.size.toString())
-                )
+            val newArticles = articleRepository.getNewArticles(articleList)
+            snackBarHelper?.showMessage(
+                FIND,
+                listOf(MULTINATIONALES + RSS, newArticles.size.toString())
+            )
 
-                fetchArticleList(newArticles, RSS)
-            } else
-                null
-        }
+            fetchArticleList(newArticles, RSS)
+        } else
+            null
+    }
 
     /**
      * Returns the categories list of articles from the Web site of Multinationales.
      *
      * @return the categories list of articles from the Web site of Multinationales.
      */
-    override suspend fun fetchCategories(): List<Article>? =
-        FetchHelper.catchFetchArticle(MULTINATIONALES + CATEGORY) {
-            val categories = listOf(MULTINATIONALES_SEC_ENQUETE)
-            val numbers = mutableListOf<Int>()
-            for (i in 0..29) { numbers.add(i * 5) }
-            val articleList = mutableListOf<Article>()
+    override suspend fun fetchCategories(): List<Article>? = fetchWithMessage(MULTINATIONALES + CATEGORY, FETCH) {
+        val categories = listOf(MULTINATIONALES_SEC_ENQUETE)
+        val numbers = mutableListOf<Int>()
+        for (i in 0..29) { numbers.add(i * 5) }
+        val articleList = mutableListOf<Article>()
 
-            categories.forEach { category ->
-                numbers.forEach { number ->
-                    val responseBody = webService.getCategory(category, number.toString())
-                    articleList.addAll(MultinationalesCategory(responseBody).getArticleList())
-                }
+        categories.forEach { category ->
+            numbers.forEach { number ->
+                val responseBody = webService.getCategory(category, number.toString())
+                articleList.addAll(MultinationalesCategory(responseBody).getArticleList())
             }
-
-            val newArticles = articleRepository.getNewArticles(articleList)
-            snackBarHelper?.showMessage(
-                FIND,
-                listOf(MULTINATIONALES + CATEGORY, newArticles.size.toString())
-            )
-
-            fetchArticleList(newArticles, CATEGORY)
         }
+
+        val newArticles = articleRepository.getNewArticles(articleList)
+        snackBarHelper?.showMessage(
+            FIND,
+            listOf(MULTINATIONALES + CATEGORY, newArticles.size.toString())
+        )
+
+        fetchArticleList(newArticles, CATEGORY)
+    }
 
     /**
      * Returns the source pages list of Multinationales from it's Web site.
      *
      * @return the source page list of Multinationales from it's Web site.
      */
-    override suspend fun fetchSourcePages(): List<SourcePage>? =
-        FetchHelper.catchFetchSource(MULTINATIONALES) {
-            val sourcePages = mutableListOf<SourcePage>()
+    override suspend fun fetchSourcePages(): List<SourcePage>? = fetchWithMessage(MULTINATIONALES, SOURCE_FETCH) {
+        val sourcePages = mutableListOf<SourcePage>()
 
-            val responseBody = webService.getArticle(MULTINATIONALES_EDITO_URL)
-            val multinationalesSourcePage = MultinationalesSourcePage(responseBody)
-            sourcePages.add(multinationalesSourcePage.toSourceEditorial(MULTINATIONALES_EDITO_URL)) // Add the editorial page, the primary
+        val responseBody = webService.getArticle(MULTINATIONALES_EDITO_URL)
+        val multinationalesSourcePage = MultinationalesSourcePage(responseBody)
+        sourcePages.add(multinationalesSourcePage.toSourceEditorial(MULTINATIONALES_EDITO_URL)) // Add the editorial page, the primary
 
-            // Fetch the css style for the source page list.
-            fetchAndPersistCssList(sourcePages) { cssUrl ->
-                val style = webService.getCss(cssUrl).charStream().readText()
-                style.replace(MULTI_ORIG_CSS_BODY, MULTI_NEW_CSS_BODY) // Needed to force left text align
-            }
-
-            sourcePages
+        // Fetch the css style for the source page list.
+        fetchAndPersistCssList(sourcePages) { cssUrl ->
+            val style = webService.getCss(cssUrl).charStream().readText()
+            style.replace(MULTI_ORIG_CSS_BODY, MULTI_NEW_CSS_BODY) // Needed to force left text align
         }
+
+        sourcePages
+    }
+
+    /**
+     * Convenience function to fetch only one article.
+     *
+     * @param article the article to fetch all data.
+     *
+     * @return the fetched article with all data.
+     */
+    override suspend fun fetchArticle(article: Article): List<Article>? = catchFetch {
+        fetchArticleList(listOf(article), null)
+    }
 
     // -----------------
     // UTILS
@@ -151,13 +169,14 @@ class MultinationalesRepositoryImpl(
     /**
      * Fetch article html page for each article in the given list.
      *
-     * @param articleList the list of article to fetch html page.
+     * @param articleList   the list of article to fetch html page.
+     * @param type          the article type to fetch.
      *
      * @return the article list with all fetched data.
      */
     private suspend fun fetchArticleList(
         articleList: List<Article>,
-        type: String
+        type: String?
     ): List<Article> = withContext(Dispatchers.IO) {
 
         articleList.forEachIndexed { index, article ->
@@ -165,10 +184,11 @@ class MultinationalesRepositoryImpl(
                 MultinationalesArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             multinationalesArticle.toArticle(article)
 
-            snackBarHelper?.showMessage(
-                FETCH,
-                listOf(MULTINATIONALES + type, (index + 1).toString(), articleList.size.toString())
-            )
+            if (!type.isNullOrBlank())
+                snackBarHelper?.showMessage(
+                    FETCH,
+                    listOf(MULTINATIONALES + type, (index + 1).toString(), articleList.size.toString())
+                )
         }
 
         // Fetch the css style for the article list.

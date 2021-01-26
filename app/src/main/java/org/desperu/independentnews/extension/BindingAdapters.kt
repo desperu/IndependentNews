@@ -22,6 +22,7 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
+import org.desperu.independentnews.extension.design.screenWidth
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.SourceWithData
@@ -90,15 +91,17 @@ fun ImageView.setImage(imageData: Any?) {
     }
     val image: Any? = if (isNotNull) imageData else R.drawable.no_image
     val listener = if (isFragImage) getRequestListener(this, isFragImage) else null
+    val size = if (isFragImage) Target.SIZE_ORIGINAL else screenWidth
 
-    if (isItem || isNotNull)
+    if (isItem || isNotNull) {
+        visibility = View.VISIBLE
         Glide.with(this)
             .load(image)
             .listener(listener)
-            .override(Target.SIZE_ORIGINAL)
             .encodeQuality(100)
+            .override(size)
             .into(this)
-    else
+    } else
         visibility = View.GONE
 }
 

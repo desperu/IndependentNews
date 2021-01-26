@@ -57,6 +57,20 @@ data class SourcePage(@PrimaryKey(autoGenerate = true)
 ): Parcelable, Comparable<SourcePage> {
 
     /**
+     * Convert SourcePage to Article, to show it in the web view.
+     *
+     * @param source the source of the source page.
+     */
+    internal fun toArticle(source: Source): Article =
+        Article(
+            url = url,
+            title = title,
+            article = body,
+            cssUrl = cssUrl,
+            source = source
+        )
+
+    /**
      * Compare this source page to another source page. Compare fields one to one,
      * if one field is different with the other, return not equals,
      * else the two estates are equals, return equals.

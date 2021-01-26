@@ -3,9 +3,9 @@ package org.desperu.independentnews.repositories.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
-import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
+import org.desperu.independentnews.helpers.FetchHelper.catchFetch
 import org.desperu.independentnews.helpers.FetchHelper.fetchAndPersistCssList
+import org.desperu.independentnews.helpers.FetchHelper.fetchWithMessage
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.SourcePage
@@ -46,6 +46,15 @@ interface BastamagRepository {
      * @return the source page list of Basta ! from it's Web site.
      */
     suspend fun fetchSourcePages(): List<SourcePage>?
+
+    /**
+     * Convenience function to fetch only one article.
+     *
+     * @param article the article to fetch all data.
+     *
+     * @return the fetched article with all data.
+     */
+    suspend fun fetchArticle(article: Article): List<Article>?
 }
 
 /**
@@ -77,7 +86,7 @@ class BastamagRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Bastamag.
      */
-    override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(BASTAMAG + RSS) {
+    override suspend fun fetchRssArticles(): List<Article>? = fetchWithMessage(BASTAMAG + RSS, FETCH) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
@@ -97,7 +106,7 @@ class BastamagRepositoryImpl(
      *
      * @return the categories list of articles from the Web site of Bastamag.
      */
-    override suspend fun fetchCategories(): List<Article>? = catchFetchArticle(BASTAMAG + CATEGORY) {
+    override suspend fun fetchCategories(): List<Article>? = fetchWithMessage(BASTAMAG + CATEGORY, FETCH) {
         val categories = listOf(BASTA_SEC_DECRYPTER, BASTA_SEC_RESISTER, BASTA_SEC_INVENTER)
         val number = listOf(0, 10, 20, 30, 40)
         val articleList = mutableListOf<Article>()
@@ -120,7 +129,7 @@ class BastamagRepositoryImpl(
      *
      * @return the source page list of Basta ! from it's Web site.
      */
-    override suspend fun fetchSourcePages(): List<SourcePage>? = catchFetchSource(BASTAMAG) {
+    override suspend fun fetchSourcePages(): List<SourcePage>? = fetchWithMessage(BASTAMAG, SOURCE_FETCH) {
         val sourcePages = mutableListOf<SourcePage>()
 
         val responseBody = webService.getArticle(BASTAMAG_EDITO_URL)
@@ -140,6 +149,17 @@ class BastamagRepositoryImpl(
         sourcePages
     }
 
+    /**
+     * Convenience function to fetch only one article.
+     *
+     * @param article the article to fetch all data.
+     *
+     * @return the fetched article with all data.
+     */
+    override suspend fun fetchArticle(article: Article): List<Article>? = catchFetch {
+        fetchArticleList(listOf(article), null)
+    }
+
     // -----------------
     // UTILS
     // -----------------
@@ -147,23 +167,25 @@ class BastamagRepositoryImpl(
     /**
      * Fetch article html page for each article in the given list.
      *
-     * @param articleList the list of article to fetch html page.
+     * @param articleList   the list of article to fetch html page.
+     * @param type          the article type to fetch.
      *
      * @return the article list with all fetched data.
      */
     private suspend fun fetchArticleList(
         articleList: List<Article>,
-        type: String
+        type: String?
     ): List<Article> = withContext(Dispatchers.IO) {
 
         articleList.forEachIndexed { index, article ->
             val bastamagArticle = BastamagArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             bastamagArticle.toArticle(article)
 
-            snackBarHelper?.showMessage(
-                FETCH,
-                listOf(BASTAMAG + type, (index + 1).toString(), articleList.size.toString())
-            )
+            if (!type.isNullOrBlank())
+                snackBarHelper?.showMessage(
+                    FETCH,
+                    listOf(BASTAMAG + type, (index + 1).toString(), articleList.size.toString())
+                )
         }
 
         // Fetch the css style for the article list.
@@ -171,8 +193,4 @@ class BastamagRepositoryImpl(
 
         return@withContext articleList
     }
-
-//    override fun fetchArticle(article: Article): Article {
-//
-//    }
 }

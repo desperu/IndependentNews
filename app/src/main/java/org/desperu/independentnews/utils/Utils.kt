@@ -172,12 +172,29 @@ internal object Utils {
     }
 
     /**
-     * Returns true if the given url is a source article, false otherwise.
-     * @param url the given url to compare with source urls.
-     * @return true if the given url is a source article, false otherwise.
+     * Returns the domain name from the given url.
+     * @param url the given url to parse.
+     * @return the domain name from the given url.
      */
-    internal fun isSourceUrl(url: String) =
-        url.contains("data:text/html; charset=UTF-8,")
+    internal fun getDomainFromUrl(url: String): String? {
+        val list = url.split("/")
+
+        list.forEach {
+
+            if (it.contains(".")) // Return the first element that contains a point
+                return it.removePrefix("www.")
+        }
+
+        return null
+    }
+
+    /**
+     * Returns true if the given url is html data, false otherwise.
+     * @param url the given url to compare with source urls.
+     * @return true if the given url is html data, false otherwise.
+     */
+    internal fun isHtmlData(url: String) =
+        url.startsWith("data:text/html; charset=UTF-8,")
 
     /**
      * Returns true if the given url is a note redirection, false otherwise.
@@ -202,6 +219,24 @@ internal object Utils {
         }
 
         return false
+    }
+
+    /**
+     * Returns true if the the given url is a source article url.
+     * @param url the given url to compare.
+     * @return true if the the given url is a source article url.
+     */
+    internal fun isSourceArticleUrl(url: String): Boolean {
+        val domain = getDomainFromUrl(url)
+        val pageName = getPageNameFromUrl(url)
+        val sourceDomains = SOURCE_LIST.map { getDomainFromUrl(it.url) }
+
+        return when {
+            WHITE_LIST.contains(url) -> true
+            BLACK_LIST.contains(url) -> false
+            else -> sourceDomains.contains(domain)
+                    && pageName.contains("""(.)+-(.)+-(.)+""".toRegex())
+        }
     }
 
     // -----------------

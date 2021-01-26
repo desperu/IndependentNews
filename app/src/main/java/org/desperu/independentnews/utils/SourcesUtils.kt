@@ -3,11 +3,26 @@ package org.desperu.independentnews.utils
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.utils.Utils.getDomainFromUrl
 
 /**
  * SourceUtils object witch provide utils functions for sources.
  */
 object SourcesUtils {
+
+    /**
+     * Returns the source name from the given source url.
+     *
+     * @param url the url from which retrieved the source name.
+     *
+     * @return the source name from the given source url.
+     */
+    internal fun getSourceNameFromUrl(url: String) = when (getDomainFromUrl(url)) {
+        getDomainFromUrl(BASTAMAG_BASE_URL) -> BASTAMAG
+        getDomainFromUrl(REPORTERRE_BASE_URL) -> REPORTERRE
+        getDomainFromUrl(MULTINATIONALES_BASE_URL) -> MULTINATIONALES
+        else -> throw IllegalArgumentException("Source name not found from url : $url")
+    }
 
     // -----------------
     // LOGO
@@ -15,6 +30,8 @@ object SourcesUtils {
 
     /**
      * Returns the unique identifier of the source mini logo drawable.
+     *
+     * @param sourceName the source name for which retrieved the mini logo id.
      *
      * @return the unique identifier of the source mini logo drawable.
      */
@@ -27,6 +44,8 @@ object SourcesUtils {
 
     /**
      * Returns the unique identifier of the source logo drawable.
+     *
+     * @param sourceName the source name for which retrieved the logo id.
      *
      * @return the unique identifier of the source logo drawable.
      */
@@ -43,6 +62,8 @@ object SourcesUtils {
 
     /**
      * Returns the unique identifier of the source background color.
+     *
+     * @param sourceName the source name for which retrieved the background color id.
      *
      * @return the unique identifier of the source background color.
      */

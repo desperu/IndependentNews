@@ -1,5 +1,6 @@
 package org.desperu.independentnews.di.module
 
+import androidx.databinding.ObservableField
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.models.database.Article
@@ -35,7 +36,8 @@ val viewModelModule = module {
      */
     viewModel { (article: Article, router: ImageRouter) ->
         ArticleViewModel(
-            article,
+            ObservableField(article),
+            get(),
             router
         )
     }

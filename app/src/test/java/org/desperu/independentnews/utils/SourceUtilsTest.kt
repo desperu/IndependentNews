@@ -8,6 +8,7 @@ import org.desperu.independentnews.utils.SourcesUtils.getBackgroundColorId
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.SourcesUtils.getLogoId
 import org.desperu.independentnews.utils.SourcesUtils.getMiniLogoId
+import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.lang.IllegalArgumentException
@@ -19,6 +20,28 @@ class SourceUtilsTest {
 
     // FOR DATA
     private val sourceList = listOf(BASTAMAG, REPORTERRE, MULTINATIONALES)
+
+    @Test
+    fun given_sourceList_When_getSourceNameFromUrl_Then_checkResult() {
+        val expectedList = listOf(BASTAMAG, REPORTERRE, MULTINATIONALES)
+
+        val outputList = SOURCE_LIST.map { getSourceNameFromUrl(it.url) }
+
+        outputList.forEachIndexed { index, output ->
+            assertEquals(expectedList[index], output)
+        }
+    }
+
+    @Test
+    fun given_notSourceUrl_When_getSourceNameFromUrl_Then_checkError() {
+        val url = "https://www.delachauxetniestle.com/livre/sauvons-la-biodiversite"
+        val expected = "Source name not found from url : $url"
+
+        val output = try { getSourceNameFromUrl(url) }
+        catch (e: IllegalArgumentException) { e.message }
+
+        assertEquals(expected, output)
+    }
 
     @Test
     fun given_sourceList_When_getMiniLogoId_Then_checkResult() {

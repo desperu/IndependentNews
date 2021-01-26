@@ -239,7 +239,7 @@ class ArticleRepositoryImpl(
         val notInDb = articleListPair.second
 
         inDb.forEach { article ->
-            val dBDate = articleDao.getArticle(article.url).publishedDate
+            val dBDate = articleDao.getArticle(article.url)?.publishedDate ?: 0L
 
             if (article.publishedDate > dBDate)
                 newArticles.add(article)
@@ -267,7 +267,7 @@ class ArticleRepositoryImpl(
 
         articlesToUpdate.forEachIndexed { index, article ->
             val categories = if (article.isTopStory) article.categories
-            else articleDao.getArticle(urlsToUpdate[index]).categories
+            else articleDao.getArticle(urlsToUpdate[index])?.categories ?: ""
 
             articleDao.update(
                 article.title,

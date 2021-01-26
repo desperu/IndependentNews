@@ -3,9 +3,9 @@ package org.desperu.independentnews.repositories.network
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.helpers.FetchHelper.catchFetchArticle
-import org.desperu.independentnews.helpers.FetchHelper.catchFetchSource
+import org.desperu.independentnews.helpers.FetchHelper.catchFetch
 import org.desperu.independentnews.helpers.FetchHelper.fetchAndPersistCssList
+import org.desperu.independentnews.helpers.FetchHelper.fetchWithMessage
 import org.desperu.independentnews.helpers.SnackBarHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.SourcePage
@@ -46,6 +46,15 @@ interface ReporterreRepository {
      * @return the source page list of Reporterre from it's Web site.
      */
     suspend fun fetchSourcePages(): List<SourcePage>?
+
+    /**
+     * Convenience function to fetch only one article.
+     *
+     * @param article the article to fetch all data.
+     *
+     * @return the fetched article with all data.
+     */
+    suspend fun fetchArticle(article: Article): List<Article>?
 }
 
 /**
@@ -77,7 +86,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the list of articles from the Rss flux of Reporterre.
      */
-    override suspend fun fetchRssArticles(): List<Article>? = catchFetchArticle(REPORTERRE + RSS) {
+    override suspend fun fetchRssArticles(): List<Article>? = fetchWithMessage(REPORTERRE + RSS, FETCH) {
         val rssArticleList = rssService.getRssArticles().channel?.rssArticleList
 
         if (!rssArticleList.isNullOrEmpty()) {
@@ -99,7 +108,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the categories list of articles from the Web site of Reporterre.
      */
-    override suspend fun fetchCategories(): List<Article>? = catchFetchArticle(REPORTERRE + CATEGORY) {
+    override suspend fun fetchCategories(): List<Article>? = fetchWithMessage(REPORTERRE + CATEGORY, FETCH) {
         val categories = listOf(REPORT_SEC_DECRYPTER, REPORT_SEC_RESISTER, REPORT_SEC_INVENTER)
         val articleList = mutableListOf<Article>()
 
@@ -119,7 +128,7 @@ class ReporterreRepositoryImpl(
      *
      * @return the source page list of Reporterre from it's Web site.
      */
-    override suspend fun fetchSourcePages(): List<SourcePage>? = catchFetchSource(REPORTERRE) {
+    override suspend fun fetchSourcePages(): List<SourcePage>? = fetchWithMessage(REPORTERRE, SOURCE_FETCH) {
         val sourcePages = mutableListOf<SourcePage>()
 
         val responseBody = webService.getArticle(REPORTERRE_EDITO_URL)
@@ -139,6 +148,17 @@ class ReporterreRepositoryImpl(
         sourcePages
     }
 
+    /**
+     * Convenience function to fetch only one article.
+     *
+     * @param article the article to fetch all data.
+     *
+     * @return the fetched article with all data.
+     */
+    override suspend fun fetchArticle(article: Article): List<Article>? = catchFetch {
+        fetchArticleList(listOf(article), null)
+    }
+
     // -----------------
     // UTILS
     // -----------------
@@ -146,23 +166,25 @@ class ReporterreRepositoryImpl(
     /**
      * Fetch article html page for each article in the given list.
      *
-     * @param articleList the list of article to fetch html page.
+     * @param articleList   the list of article to fetch html page.
+     * @param type          the article type to fetch.
      *
      * @return the article list with all fetched data.
      */
     private suspend fun fetchArticleList(
         articleList: List<Article>,
-        type: String
+        type: String?
     ): List<Article> = withContext(Dispatchers.IO) {
 
         articleList.forEachIndexed { index, article ->
             val reporterreArticle = ReporterreArticle(webService.getArticle(getPageNameFromUrl(article.url)))
             reporterreArticle.toArticle(article)
 
-            snackBarHelper?.showMessage(
-                FETCH,
-                listOf(REPORTERRE + type, (index + 1).toString(), articleList.size.toString())
-            )
+            if (!type.isNullOrBlank())
+                snackBarHelper?.showMessage(
+                    FETCH,
+                    listOf(REPORTERRE + type, (index + 1).toString(), articleList.size.toString())
+                )
         }
 
         // Fetch and persist the css style for the article list.

@@ -28,6 +28,15 @@ import java.util.*
 interface IndependentNewsRepository {
 
     /**
+     * Fetch the article from the Web Site for the given article url, and persist it in database.
+     *
+     * @param article the article to fetch with data.
+     *
+     * @return the fetched article.
+     */
+    suspend fun fetchArticle(article: Article): Article?
+
+    /**
      * Fetch the list of articles from the Rss flux for all sources.
      *
      * @return the id list of persisted articles.
@@ -48,6 +57,15 @@ interface IndependentNewsRepository {
      * @return the number of row affected for removed articles.
      */
     suspend fun refreshData(): Int
+
+    /**
+     * Returns the article for the given url from the database.
+     *
+     * @param url the url of the article to retrieved.
+     *
+     * @return the article for the given url from the database.
+     */
+    suspend fun getArticle(url: String): Article?
 
     /**
      * Returns the top story list of articles from the database.
@@ -147,6 +165,40 @@ class IndependentNewsRepositoryImpl(
     // -----------------
 
     /**
+     * Fetch the article from the Web Site for the given article url, and persist it in database.
+     *
+     * @param article the article to fetch with data.
+     *
+     * @return the fetched article.
+     */
+    override suspend fun fetchArticle(article: Article): Article? = withContext(Dispatchers.IO) {
+        val articleDb = articleDao.getArticle(article.url) ?: Article()
+        val sourcePageDb = sourceRepository.getSourcePage(article.url) ?: SourcePage()
+
+        return@withContext if (articleDb.id == 0L && sourcePageDb.id == 0L) {
+            when (article.source.name) {
+                BASTAMAG -> bastamagRepository.fetchArticle(article)
+                REPORTERRE -> reporterreRepository.fetchArticle(article)
+                MULTINATIONALES -> multinationalesRepository.fetchArticle(article)
+            }
+
+            // Persist and set source
+            if (article.article.isNotBlank()) {
+                articleRepository.persist(listOf(article))
+                getArticle(article.url)
+            } else
+                article
+
+        } else if (articleDb.id != 0L) {
+            listOf(articleDb).setSourceForEach(getSources())?.get(0)
+        } else if (sourcePageDb.id != 0L) {
+            val source = getSources().find { it.id == sourcePageDb.sourceId }
+            source?.let { sourcePageDb.toArticle(it) }
+        } else
+            article
+    }
+
+    /**
      * Fetch the list of articles from the Rss flux of all enabled sources,
      * and persist them in database.
      *
@@ -210,6 +262,21 @@ class IndependentNewsRepositoryImpl(
     // -----------------
     // GET DATA (DATABASE)
     // -----------------
+
+    /**
+     * Returns the article for the given url from the database.
+     *
+     * @param url the url of the article to retrieved.
+     *
+     * @return the article for the given url from the database.
+     */
+    override suspend fun getArticle(url: String): Article? = withContext(Dispatchers.IO) {
+        val article = articleDao.getArticle(url)
+        val source = getSources().find { article?.sourceId == it.id }
+        source?.let { article?.source = it }
+
+        return@withContext article
+    }
 
     /**
      * Returns the top story list of articles from the database.

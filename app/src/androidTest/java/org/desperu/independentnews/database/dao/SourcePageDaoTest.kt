@@ -47,12 +47,27 @@ class SourcePageDaoTest {
     fun closeDb() { mDatabase.close() }
 
     @Test
-    fun insertAndGetSourcePage() = runBlockingTest {
+    fun insertAndGetSourcePageWithId() = runBlockingTest {
         // Insert the given SourcePage into the DB
         val sourcePageId = mDatabase.sourcePageDao().insertSourcePages(sourcePage)[0]
 
         // When getting the SourcePage via the DAO
         val sourcePageDb = mDatabase.sourcePageDao().getSourcePage(sourcePageId)
+
+        // Then the retrieved SourcePage match the original SourcePage object
+        assertEquals(sourcePage, sourcePageDb)
+
+        // Clean up coroutines
+        cleanupTestCoroutines()
+    }
+
+    @Test
+    fun insertAndGetSourcePageWithUrl() = runBlockingTest {
+        // Insert the given SourcePage into the DB
+        mDatabase.sourcePageDao().insertSourcePages(sourcePage)
+
+        // When getting the SourcePage via the DAO
+        val sourcePageDb = mDatabase.sourcePageDao().getSourcePage(sourcePage.url)
 
         // Then the retrieved SourcePage match the original SourcePage object
         assertEquals(sourcePage, sourcePageDb)

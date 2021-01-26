@@ -40,6 +40,15 @@ interface SourceRepository {
     suspend fun getAll(): List<SourceWithData>
 
     /**
+     * Return the source with it's unique identifier.
+     *
+     * @param url the url of the source page.
+     *
+     * @return the source with it's unique identifier.
+     */
+    suspend fun getSourcePage(url: String): SourcePage?
+
+    /**
      * Set the enabled state of the source in the database.
      *
      * @param id the unique identifier of the source.
@@ -95,6 +104,8 @@ class SourceRepositoryImpl(
     /**
      * Return the source with it's unique identifier.
      *
+     * @param id the unique identifier of the source.
+     *
      * @return the source with it's unique identifier.
      */
     override suspend fun getSource(id: Long): Source = sourceDao.getSource(id)
@@ -114,6 +125,15 @@ class SourceRepositoryImpl(
     override suspend fun getAll(): List<SourceWithData> = withContext(Dispatchers.IO) {
         return@withContext sourceWithDataDao.getAll()
     }
+
+    /**
+     * Return the source with it's unique identifier.
+     *
+     * @param url the url of the source page.
+     *
+     * @return the source with it's unique identifier.
+     */
+    override suspend fun getSourcePage(url: String): SourcePage? = sourcePageDao.getSourcePage(url)
 
     /**
      * Set the enabled state of the source in the database.

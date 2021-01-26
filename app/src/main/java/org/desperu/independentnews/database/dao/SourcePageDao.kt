@@ -18,6 +18,14 @@ interface SourcePageDao {
     suspend fun getSourcePage(id: Long): SourcePage
 
     /**
+     * Returns the source page from database ordered for the given url.
+     * @param url the url of the source page to get from database.
+     * @return the corresponding source page.
+     */
+    @Query("SELECT * FROM SourcePage WHERE url=:url")
+    suspend fun getSourcePage(url: String): SourcePage?
+
+    /**
      * Returns the source page from database ordered for the given source page id.
      * @param sourceId the unique identifier of the source to get it's source pages from database.
      * @return the corresponding source page.

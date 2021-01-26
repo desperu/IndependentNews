@@ -12,9 +12,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.doOnAttach
-import androidx.core.view.doOnPreDraw
-import androidx.core.view.postOnAnimationDelayed
+import androidx.core.view.*
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -41,7 +39,8 @@ import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
-import org.desperu.independentnews.utils.Utils.isSourceUrl
+import org.desperu.independentnews.utils.Utils.isHtmlData
+import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -79,7 +78,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private var isNoteRedirect = false
     private var noteScrollPosition = -1
     private var isWebViewDesigned = false
-    private var navigationCount = 0
+    private var navigationCount = -1
     private lateinit var animator: ValueAnimator
 
     /**
@@ -205,9 +204,13 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 isWebViewDesigned = false
                 handleNavigation(it)
                 lifecycleScope.launch(Dispatchers.Main) {
-                    if (!isWebViewDesigned)
-                        web_view.updateWebViewStart(it, article.source.name, viewModel.getCss())
-                    isWebViewDesigned = true
+//                    if (!isWebViewDesigned)
+                        web_view.updateWebViewStart(
+                            it,
+                            viewModel.article.get()?.source?.name ?: "",
+                            viewModel.getCss()
+                        )
+//                    isWebViewDesigned = true
                 }
             }
         }
@@ -251,9 +254,16 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     override fun onBackPressed() = when {
         inCustomView -> hideCustomView()
-        web_view.canGoBack() -> {
-            article_scroll_view.visibility = View.INVISIBLE
-            web_view.goBack()
+        web_view.canGoBack() && navigationCount > 0 -> {
+//            article_scroll_view.visibility = View.INVISIBLE
+//            web_view.goBack()
+            val previousPage = viewModel.previousPage(navigationCount)
+            scrollPosition = previousPage?.second ?: 0
+            if (previousPage?.first == null)
+//                viewModel.previousPage(navigationCount)
+//            else
+                web_view.goBack()
+            navigationCount -= 2
         }
 //        article_loading_progress_bar.isShown -> {
 ////            web_view.goBack()
@@ -314,7 +324,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Configure views animation when activity appear (enter animation).
      */
     private fun configureViewAnimations() {
-        if (article.id != 0L) {
+        if (viewModel.article.get()?.id != 0L) {
             animator =
                 getValueAnimator(
                     true,
@@ -357,7 +367,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Set custom activity transition, only for source detail to source page transition.
      */
     private fun setActivityTransition() {
-        if (article.id == 0L)
+        if (viewModel.article.get()?.id == 0L)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
@@ -404,11 +414,42 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         article_scroll_view.visibility = View.VISIBLE
 //        web_view.zoomOut()
 //        web_view.settings.textZoom = web_view.settings.textZoom
-        if (isSourceUrl(url) && scrollPosition > -1)// && !isWebViewDesigned)
-            sv.scrollTo(sv.scrollX, scrollPosition)
-        else if (!isSourceUrl(url))
-            sv.scrollTo(sv.scrollX, 0)
-//        isWebViewDesigned = true
+//        if (isHtmlData(url) && scrollPosition > -1)// && !isWebViewDesigned)
+//            sv.scrollTo(sv.scrollX, scrollPosition)
+//        else if (!isHtmlData(url))
+//            sv.scrollTo(sv.scrollX, 0)
+
+        if (!isWebViewDesigned)
+            sv.doOnPreDraw {
+                sv.postDelayed({
+                    sv.scrollTo(sv.scrollX, if (scrollPosition > -1) scrollPosition else 0)
+                    scrollPosition = -1
+                }, 50) // To wait apply css, and properly scroll
+            }
+
+        isWebViewDesigned = true
+    }
+
+    private fun handleDesign(progress: Int) {
+        when {
+            progress == 0 -> {
+                sv.visibility = View.INVISIBLE
+
+                article_scroll_progress_bar.visibility = View.INVISIBLE // Scroll position
+                article_loading_progress_bar.apply { visibility = View.VISIBLE; show() } // Loading anim
+                appbar_loading_progress_bar.visibility = View.VISIBLE // Loading progress
+            }
+            progress > 80 -> {
+                article_loading_progress_bar.hide()
+                sv.visibility = View.VISIBLE
+                sv.scrollTo(sv.scrollX, if (scrollPosition > -1) scrollPosition else 0)
+                return
+            }
+            progress > 100 -> {
+                article_scroll_progress_bar.visibility = View.VISIBLE
+                appbar_loading_progress_bar.visibility = View.INVISIBLE
+            }
+        }
     }
 
     /**
@@ -470,12 +511,28 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         }
         isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
         url.endsWith(".pdf") -> { showInBrowser(url); true }
+        isSourceArticleUrl(url) -> {
+            addPageToHistory()
+            viewModel.fetchArticle(url)
+            true
+        }
         else -> {
-            if (!isSourceUrl(url) && url.isNotBlank()) saveScrollPosition()
+            addPageToHistory()
+//            if (!isHtmlData(url) && url.isNotBlank()) saveScrollPosition()
             if (noteScrollPosition == -1) isNoteRedirect = false
             false
         }
         // TODO handle if is blank !!!
+    }
+
+    /**
+     * Add the previous page in the navigation history.
+     */
+    private fun addPageToHistory() {
+        viewModel.addPage(
+            navigationCount,
+            Pair(if (isHtmlData(actualUrl)) viewModel.article.get() else null, sv.scrollY)
+        )
     }
 
     /**
@@ -485,17 +542,19 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * @param url the url that the loading start.
      */
     private fun handleNavigation(url: String) {
-        hideArticleDataContainer(!isSourceUrl(url))
-        if (!isSourceUrl(url)) {
-            navigationCount += 1
-            if (navigationCount == 1)
-                article_scroll_view.visibility = View.INVISIBLE
+        hideArticleDataContainer(!isHtmlData(url))
 
-            article_scroll_progress_bar.visibility = View.INVISIBLE
-            article_loading_progress_bar.apply { visibility = View.VISIBLE; show() }
-            appbar_loading_progress_bar.visibility = View.VISIBLE
-        } else
-            navigationCount = 0
+        if (navigationCount >= 0) {
+
+            sv.visibility = View.INVISIBLE
+
+            article_scroll_progress_bar.visibility = View.INVISIBLE // Scroll position
+            article_loading_progress_bar.apply { visibility = View.VISIBLE; show() } // Loading anim
+            appbar_loading_progress_bar.visibility = View.VISIBLE // Loading progress
+        }
+
+        if (url.contains(article.article)) navigationCount = 0
+        else navigationCount += 1
     }
 
     /**
@@ -513,9 +572,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
         // Add data to the intent, the receiving app will decide
         // what to do with it.
-        if (isSourceUrl(actualUrl)) {
-            share.putExtra(Intent.EXTRA_SUBJECT, article.title)
-            share.putExtra(Intent.EXTRA_TEXT, article.url)
+        if (isHtmlData(actualUrl)) {
+            share.putExtra(Intent.EXTRA_SUBJECT, viewModel.article.get()?.title)
+            share.putExtra(Intent.EXTRA_TEXT, viewModel.article.get()?.url)
 
         } else {
             share.putExtra(Intent.EXTRA_SUBJECT, web_view.title)

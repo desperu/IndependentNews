@@ -10,6 +10,7 @@ import org.junit.Test
  */
 class SourcePageTest {
 
+    // FOR DATA
     private val id: Long = 1L
     private val sourceId: Long = 2L
     private val url = "a source page url"
@@ -23,6 +24,8 @@ class SourcePageTest {
     private val sourcePage = SourcePage(
         id, sourceId, url, buttonName, title, body, cssUrl, position, isPrimary
     )
+
+    private val source = Source(sourceId, "source name", "a source url", false)
 
     @Test
     fun given_emptySourcePage_When_createEmptySourcePage_Then_checkDefaultValues() {
@@ -65,6 +68,30 @@ class SourcePageTest {
 
         assertEquals(sourceId, sourcePage.sourceId)
         assertEquals(body, sourcePage.body)
+    }
+
+    @Test
+    fun given_sourceWithData_When_toArticle_Then_checkArticleValues() {
+        val expected = Article(
+            url = url,
+            title = title,
+            article = body,
+            cssUrl = cssUrl,
+            source = source
+        )
+
+        val output = sourcePage.toArticle(source)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_sourceWithData_When_toArticle_Then_checkEmptyValues() {
+        val expected = Article()
+
+        val output = SourcePage().toArticle(Source())
+
+        assertEquals(expected, output)
     }
 
     @Test

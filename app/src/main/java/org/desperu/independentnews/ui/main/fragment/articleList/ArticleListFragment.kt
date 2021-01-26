@@ -169,7 +169,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * @param toShow true to show no article, false otherwise.
      */
     override fun showNoArticle(toShow: Boolean) {
-        no_article_find.visibility = if (toShow) View.VISIBLE else View.INVISIBLE
+        no_article_find?.visibility = if (toShow) View.VISIBLE else View.INVISIBLE
     }
 
     /**

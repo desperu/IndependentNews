@@ -9,13 +9,15 @@ import io.mockk.mockk
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
+import org.desperu.independentnews.utils.Utils.getDomainFromUrl
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
-import org.desperu.independentnews.utils.Utils.isSourceUrl
+import org.desperu.independentnews.utils.Utils.isHtmlData
+import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
 import org.desperu.independentnews.utils.Utils.millisToString
@@ -272,16 +274,26 @@ class UtilsTest {
     }
 
     @Test
-    fun given_sourceUrl_When_isSourceUrl_Then_checkTrue() {
-        val output = isSourceUrl("data:text/html; charset=UTF-8,")
+    fun given_url_When_getDomainFromUrl_Then_checkResult() {
+        val expected ="bastamag.net"
+
+        val url = "https://www.bastamag.net/ecologie-quartiers-populaires-front-des-meres-fatima-Ouassak-cantines-scolaires"
+        val output = getDomainFromUrl(url)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_sourceUrl_When_isHtmlData_Then_checkTrue() {
+        val output = isHtmlData("data:text/html; charset=UTF-8,")
 
         assertTrue(output)
     }
 
     @Test
-    fun given_normalUrl_When_isSourceUrl_Then_checkFalse() {
+    fun given_normalUrl_When_isHtmlData_Then_checkFalse() {
         val url = "https://www.bastamag.net/ecologie-quartiers-populaires-front-des-meres-fatima-Ouassak-cantines-scolaires"
-        val output = isSourceUrl(url)
+        val output = isHtmlData(url)
 
         assertFalse(output)
     }
@@ -338,6 +350,49 @@ class UtilsTest {
 
         imageUrlList.forEach {
             val output = isImageUrl(it)
+            assertFalse(output)
+        }
+    }
+
+    @Test
+    fun given_url_When_isArticleSourceUrl_Then_checkTrue() {
+        val urlList = listOf(
+            "https://www.bastamag.net/ecologie-quartiers-populaires-front-des-meres-fatima-Ouassak-cantines-scolaires",
+            "https://www.bastamag.net/Qui-sommes-nous",
+            "https://reporterre.net/Tout-le-monde-craque-les-jeunes-activistes-du-climat-sonnes-par-le-Covid",
+            "https://reporterre.net/quisommesnous",
+            "https://multinationales.org/CAC40-le-veritable-bilan-annuel-l-edition-2020",
+            "https://multinationales.org/A-propos"
+        )
+
+        urlList.forEach {
+            val output = isSourceArticleUrl(it)
+            assertTrue(output)
+        }
+    }
+
+    @Test
+    fun given_url_When_isArticleSourceUrl_Then_checkFalse() {
+        val urlList = listOf(
+            "https://www.delachauxetniestle.com/livre/sauvons-la-biodiversite",
+            "https://www.bastamag.net/Approfondir",
+            "https://www.bastamag.net/don",
+            "https://www.bastamag.net/Agnes-Rousseaux",
+            "https://reporterre.net/Pres-de-chez-vous",
+            "https://reporterre.net/La-vie-de-Reporterre-10",
+            "https://reporterre.net/Tribune-15",
+            "https://reporterre.net/Soutenir",
+            "https://reporterre.net/Culture-et-idees",
+            "https://reporterre.net/Hors-les-murs",
+            "https://reporterre.net/rubrique-de-plus",
+            "https://reporterre.net/Une-minute-Une-question-21",
+            "https://reporterre.net/Les-femmes-et-les-hommes-de-Reporterre-72",
+            "https://multinationales.org/Enquetes",
+            "https://www.okpal.com/multinationales/"
+        )
+
+        urlList.forEach {
+            val output = isSourceArticleUrl(it)
             assertFalse(output)
         }
     }

@@ -117,3 +117,37 @@ const val DONATE_CALL =
 
 const val MULTI_ORIG_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:center}"
 const val MULTI_NEW_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:left}"
+
+
+// --- HTML PAGE TO PARSE ---
+
+internal val WHITE_LIST = listOf(
+
+    // Basta !
+
+    // Reporterre
+    "https://reporterre.net/quisommesnous",
+
+    // Multinationales
+    "https://multinationales.org/A-propos"
+)
+
+internal val BLACK_LIST = listOf(
+
+    // Basta !
+
+    // Reporterre
+    "https://reporterre.net/La-vie-de-Reporterre-10",
+    "https://reporterre.net/Les-femmes-et-les-hommes-de-Reporterre-72",
+    "https://reporterre.net/Hors-les-murs",
+    "https://reporterre.net/Pres-de-chez-vous",
+    "https://reporterre.net/Tribune-15",
+    "https://reporterre.net/Soutenir",
+    "https://reporterre.net/Culture-et-idees",
+    "https://reporterre.net/Hors-les-murs",
+    "https://reporterre.net/rubrique-de-plus",
+    "https://reporterre.net/Une-minute-Une-question-21",
+    "https://reporterre.net/Les-femmes-et-les-hommes-de-Reporterre-72"
+
+    // Multinationales
+)

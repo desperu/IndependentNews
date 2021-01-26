@@ -17,10 +17,12 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.service.SharedPrefService
+import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.Utils.isSourceUrl
+import org.desperu.independentnews.utils.Utils.isHtmlData
+import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import kotlin.properties.Delegates
@@ -39,7 +41,8 @@ class NoScrollWebView @JvmOverloads constructor(
 
     // FOR DATA
     private val sourcesInterface: SourcesInterface? get() = getKoin().getOrNull()
-    private val router: SourceRouter by inject()
+    private val sourceRouter: SourceRouter by inject()
+    private val imageRouter: ImageRouter by inject()
     private val prefs: SharedPrefService by inject()
     private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
@@ -155,14 +158,20 @@ class NoScrollWebView @JvmOverloads constructor(
 
             // Force to open link in a new activity
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                router.openShowArticle(
-                    Article(
-                        url = request?.url.toString(),
-                        source = Source(name = sourceName)
-                    ),
-                    sourcesInterface?.isExpanded ?: true
-                )
+                val url = request?.url.toString()
+
+                if (isImageUrl(url))
+                    imageRouter.openShowImages(arrayListOf(url))
+                else
+                    sourceRouter.openShowArticle(
+                        Article(
+                            url = url,
+                            source = Source(name = sourceName)
+                        ),
+                        sourcesInterface?.isExpanded ?: true
+                    )
                 true
+
             } else
                 super.shouldOverrideUrlLoading(view, request)
     }
@@ -179,7 +188,7 @@ class NoScrollWebView @JvmOverloads constructor(
      */
     private fun applyCssStyle(url: String, css: Css) {
         injectCssCode(resizeMedia)
-        if (isSourceUrl(url)) {
+        if (isHtmlData(url)) {
             if (css.style.isNotBlank()) injectCssCode(css.style)
             else injectCssUrl(url, css.url)
 //            zoomOut()
@@ -193,7 +202,7 @@ class NoScrollWebView @JvmOverloads constructor(
      * @param url       the actual url of the web view.
      */
     private fun injectCssUrl(url: String, cssUrl: String) {
-        if (isSourceUrl(url)) {
+        if (isHtmlData(url)) {
             val js = "var link = document.createElement('link');" +
                     " link.setAttribute('rel', 'stylesheet');" +
                     " link.setAttribute('href','$cssUrl');" +
@@ -245,8 +254,8 @@ class NoScrollWebView @JvmOverloads constructor(
             textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
 
             // Needed to correct Bastamag and Multinationales articles text size.
-            if (isSourceUrl(actualUrl) && sourceName == BASTAMAG
-                || isSourceUrl(actualUrl) && sourceName == MULTINATIONALES
+            if (isHtmlData(actualUrl) && sourceName == BASTAMAG
+                || isHtmlData(actualUrl) && sourceName == MULTINATIONALES
                 || actualUrl.contains(BASTAMAG_BASE_URL)
                 || actualUrl.contains(MULTINATIONALES_BASE_URL)
             )
@@ -266,7 +275,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private fun updateMargins(url: String, sourceName: String) {
         var margins = intArrayOf(0, 0, 0, 0)
 
-        if (isSourceUrl(url)) {
+        if (isHtmlData(url)) {
             val margin = bindDimen(R.dimen.default_margin).value.toInt()
 
             // Needed to correct article design.
@@ -291,7 +300,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private fun updateBackground(url: String, sourceName: String) { // should use alpha with value animator
         (parent as View).setBackgroundColor(
             resources.getColor(
-                if (isSourceUrl(url) && sourceName == REPORTERRE)
+                if (isHtmlData(url) && sourceName == REPORTERRE)
                     R.color.reporterre_background
                 else
                     android.R.color.white
