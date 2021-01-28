@@ -253,7 +253,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
 
         // If current height is not in end state (collapsed or expanded),
         // anim app bar to the nearly state
-        if (!isCollapsed && ! isExpanded) {
+        if (!isCollapsed && !isExpanded) {
             val middleSize = (toolbarOriginalHeight - toolbarCollapsedHeight) / 2 + toolbarCollapsedHeight
             val isMoreMiddle = currentHeight > middleSize
             expandAppBar(isMoreMiddle)

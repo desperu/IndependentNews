@@ -16,12 +16,23 @@ interface ShowArticleInterface {
     fun saveScrollPosition()
 
     /**
-     * Restore the scroll position of the scroll view.
+     * Scroll vertically to the y position value, if null restore scroll position.
+     *
+     * @param y the y value, vertical axe, to scroll to.
      */
-    fun restoreScrollPosition()
+    fun scrollTo(y: Int?)
 
     /**
-     * Update web view design, css style and margins.
+     * Update app bar loading progress bar with the new progress value.
+     *
+     * @param newProgress the new progress value.
      */
-    fun updateWebViewDesign()
+    fun updateProgress(newProgress: Int)
+
+    /**
+     * Handle layout design, used between page navigation to hide or show ui elements.
+     *
+     * @param progress the loading progress of the page.
+     */
+    fun handleDesign(progress: Int)
 }

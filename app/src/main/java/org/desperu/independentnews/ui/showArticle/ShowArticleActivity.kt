@@ -7,18 +7,23 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.view.View
 import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.*
+import androidx.core.widget.ContentLoadingProgressBar
 import androidx.core.widget.NestedScrollView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.animatedValue
@@ -74,10 +79,15 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     // FOR UI
     private val sv: NestedScrollView by bindView(R.id.article_scroll_view)
+    private val scrollBar: ProgressBar by bindView(R.id.article_scroll_progress_bar)
+    private val loadingAnimBar: ContentLoadingProgressBar by bindView(R.id.article_loading_progress_bar)
+    private val loadingProgressBar: ProgressBar by bindView(R.id.appbar_loading_progress_bar)
     private var scrollPosition = -1
     private var isNoteRedirect = false
     private var noteScrollPosition = -1
-    private var isWebViewDesigned = false
+    private var isLayoutDesigned = false
+    private var hasScroll = false
+    private var isFirstPage = true
     private var navigationCount = -1
     private lateinit var animator: ValueAnimator
 
@@ -167,16 +177,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         web_view.settings.apply {
             javaScriptEnabled = true
             javaScriptCanOpenWindowsAutomatically = true
-//            setSupportZoom(false) // TODO try to remove all zoom
-//            loadWithOverviewMode = true
-//            builtInZoomControls = true // It seems to be good
-//            displayZoomControls = false
         }
-
-        // Test to fix zoom bug...
-//        web_view.setInitialScale(500)
-//        web_view.settings.defaultZoom = WebSettings.ZoomDensity.MEDIUM
-//        web_view.settings.useWideViewPort = true // Seems to work
 
         web_view.webViewClient = webViewClient!!
 
@@ -201,25 +202,15 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             super.onPageStarted(view, url, favicon)
             url?.let {
                 actualUrl = it
-                isWebViewDesigned = false
+                isLayoutDesigned = false
+                hasScroll = false
                 handleNavigation(it)
-                lifecycleScope.launch(Dispatchers.Main) {
-//                    if (!isWebViewDesigned)
-                        web_view.updateWebViewStart(
-                            it,
-                            viewModel.article.get()?.source?.name ?: "",
-                            viewModel.getCss()
-                        )
-//                    isWebViewDesigned = true
-                }
+                updateWebViewStart(it)
             }
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
-//            url?.let { if (it == actualUrl) updateDesign(it, false) }
-//            web_view.updateWebViewFinish("", "")
-            article_scroll_progress_bar.visibility = View.VISIBLE
-            appbar_loading_progress_bar.visibility = View.INVISIBLE
+            handleDesign(101)
             super.onPageFinished(view, url)
         }
 
@@ -248,21 +239,15 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onStop() {
         super.onStop()
         if (inCustomView) hideCustomView()
-//        web_view.onFinishTemporaryDetach()
-//        mWebChromeClient = null
     }
 
     override fun onBackPressed() = when {
         inCustomView -> hideCustomView()
         web_view.canGoBack() && navigationCount > 0 -> {
-//            article_scroll_view.visibility = View.INVISIBLE
-//            web_view.goBack()
+            handleDesign(0)
             val previousPage = viewModel.previousPage(navigationCount)
             scrollPosition = previousPage?.second ?: 0
-            if (previousPage?.first == null)
-//                viewModel.previousPage(navigationCount)
-//            else
-                web_view.goBack()
+            if (previousPage?.first == null) web_view.goBack()
             navigationCount -= 2
         }
 //        article_loading_progress_bar.isShown -> {
@@ -387,9 +372,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
             // Use animation for API >= Nougat (24)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                article_scroll_progress_bar.setProgress(progress.toInt(), true)
+                scrollBar.setProgress(progress.toInt(), true)
             else
-                article_scroll_progress_bar.progress = progress.toInt()
+                scrollBar.progress = progress.toInt()
         }
         // TODO on scroll video should pause ...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -399,57 +384,57 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     }
 
     /**
-     * Update layout and web view design.
+     * Handle layout design, used between page navigation to hide or show ui elements.
      *
-     * @param url the actual url of the web view.
-     * @param fromProgress true if call from onProgressChanged, false otherwise.
+     * @param progress the loading progress of the page.
      */
-    private fun updateDesign(url: String, fromProgress: Boolean) {
-//        if (fromProgress && !isSourceUrl(url)) return
-
-//        if (!isWebViewDesigned)
-//            lifecycleScope.launch { web_view.updateWebViewFinish(actualUrl, viewModel.getCssStyle()) }
-//            web_view.updateWebViewDesign(article.sourceName, actualUrl, article.cssUrl)
-        article_loading_progress_bar.hide()
-        article_scroll_view.visibility = View.VISIBLE
-//        web_view.zoomOut()
-//        web_view.settings.textZoom = web_view.settings.textZoom
-//        if (isHtmlData(url) && scrollPosition > -1)// && !isWebViewDesigned)
-//            sv.scrollTo(sv.scrollX, scrollPosition)
-//        else if (!isHtmlData(url))
-//            sv.scrollTo(sv.scrollX, 0)
-
-        if (!isWebViewDesigned)
-            sv.doOnPreDraw {
-                sv.postDelayed({
-                    sv.scrollTo(sv.scrollX, if (scrollPosition > -1) scrollPosition else 0)
-                    scrollPosition = -1
-                }, 50) // To wait apply css, and properly scroll
-            }
-
-        isWebViewDesigned = true
-    }
-
-    private fun handleDesign(progress: Int) {
+    override fun handleDesign(progress: Int) {
         when {
             progress == 0 -> {
                 sv.visibility = View.INVISIBLE
+                sv.alpha = 0f
 
-                article_scroll_progress_bar.visibility = View.INVISIBLE // Scroll position
-                article_loading_progress_bar.apply { visibility = View.VISIBLE; show() } // Loading anim
-                appbar_loading_progress_bar.visibility = View.VISIBLE // Loading progress
+                scrollBar.apply { visibility = View.INVISIBLE; this.progress = 0 }
+                loadingAnimBar.apply { visibility = View.VISIBLE; show() }
+                loadingProgressBar.visibility = View.VISIBLE
             }
-            progress > 80 -> {
-                article_loading_progress_bar.hide()
-                sv.visibility = View.VISIBLE
-                sv.scrollTo(sv.scrollX, if (scrollPosition > -1) scrollPosition else 0)
-                return
+            progress in 80..100 -> {
+                if (!isLayoutDesigned && !isFirstPage) {
+                    isLayoutDesigned = true
+                    loadingAnimBar.hide()
+                    if (!isHtmlData(actualUrl)) scrollTo(null)
+                    sv.visibility = View.VISIBLE
+
+                    val anim = getValueAnimator(
+                        true,
+                        300L,
+                        DecelerateInterpolator(),
+                        { progressVal -> sv.alpha = progressVal }
+                    )
+
+                    val startAnim = lifecycleScope.async(Dispatchers.Main) {
+                        do { delay(50) } while (!hasScroll)
+                        anim.start()
+                    }
+                    startAnim[startAnim.key]
+                }
             }
             progress > 100 -> {
-                article_scroll_progress_bar.visibility = View.VISIBLE
-                appbar_loading_progress_bar.visibility = View.INVISIBLE
+                scrollBar.visibility = View.VISIBLE
+                loadingProgressBar.visibility = View.INVISIBLE
+                isFirstPage = false
             }
         }
+    }
+
+    /**
+     * Update web view start loading, update text size, background, margins and css style.
+     *
+     * @param url the new url to load.
+     */
+    private fun updateWebViewStart(url: String) = lifecycleScope.launch(Dispatchers.Main) {
+        val sourceName = viewModel.article.get()?.source?.name ?: ""
+        web_view.updateWebViewStart(url, sourceName, viewModel.getCss())
     }
 
     /**
@@ -467,29 +452,36 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private fun hideCustomView() { mWebChromeClient?.onHideCustomView() }
 
     /**
-     * Scroll horizontally to the y position value, use smooth scroll with custom duration.
-     *
-     * @param y the y, horizontal axe, value to scroll to.
-     */
-    private fun scrollTo(y: Int) { sv.smoothScrollTo(sv.scrollX, y, 1000) }
-
-    /**
      * Save the scroll position of the scroll view.
      */
     override fun saveScrollPosition() { scrollPosition = sv.scrollY }
 
     /**
-     * Restore the saved scroll position of the scroll view.
+     * Scroll vertically to the y position value, if null restore scroll position.
+     *
+     * @param y the y value, vertical axe, to scroll to.
      */
-    override fun restoreScrollPosition() { sv.doOnPreDraw { scrollTo(scrollPosition) } }
+    override fun scrollTo(y: Int?) {
+        sv.doOnPreDraw {
+
+            val scrollY = when {
+                y != null -> y
+                scrollPosition > -1 -> scrollPosition
+                else -> 0
+            }
+
+            sv.scrollTo(sv.scrollX, scrollY)
+            scrollPosition = -1
+            hasScroll = true
+        }
+    }
 
     /**
-     * Update web view design, css style and margins.
+     * Update loading progress bar, in the app bar, with the new progress value.
+     *
+     * @param newProgress the new progress value.
      */
-    override fun updateWebViewDesign() {
-        if (!::actualUrl.isInitialized) return
-        updateDesign(actualUrl, true)
-    }
+    override fun updateProgress(newProgress: Int) { loadingProgressBar.progress = newProgress }
 
     // --------------
     // UTILS
@@ -503,22 +495,24 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private fun handleRedirect(url: String) = when {
         isNoteRedirect(getPageNameFromUrl(url)) -> {
             if (!isNoteRedirect) noteScrollPosition = sv.scrollY
-            scrollPosition = -1
+//            scrollPosition = -1
             isNoteRedirect = !isNoteRedirect
             val svBottom = sv.getChildAt(0).bottom - sv.measuredHeight
-            scrollTo(if (isNoteRedirect) svBottom else noteScrollPosition)
+            val y = if (isNoteRedirect) svBottom else noteScrollPosition
+            sv.smoothScrollTo(sv.scrollX, y, 1000)
             true
         }
         isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
         url.endsWith(".pdf") -> { showInBrowser(url); true }
         isSourceArticleUrl(url) -> {
+            handleDesign(0)
             addPageToHistory()
             viewModel.fetchArticle(url)
             true
         }
         else -> {
+            handleDesign(0)
             addPageToHistory()
-//            if (!isHtmlData(url) && url.isNotBlank()) saveScrollPosition()
             if (noteScrollPosition == -1) isNoteRedirect = false
             false
         }
@@ -544,14 +538,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private fun handleNavigation(url: String) {
         hideArticleDataContainer(!isHtmlData(url))
 
-        if (navigationCount >= 0) {
-
-            sv.visibility = View.INVISIBLE
-
-            article_scroll_progress_bar.visibility = View.INVISIBLE // Scroll position
-            article_loading_progress_bar.apply { visibility = View.VISIBLE; show() } // Loading anim
-            appbar_loading_progress_bar.visibility = View.VISIBLE // Loading progress
-        }
+        if (navigationCount >= 0) handleDesign(0)
 
         if (url.contains(article.article)) navigationCount = 0
         else navigationCount += 1

@@ -8,11 +8,25 @@ import androidx.appcompat.app.AppCompatActivity
 interface SystemUiHelper {
 
     /**
+     * Set windows flag for the activity.
+     *
+     * @param flags the window flags to set.
+     */
+    fun setWindowFlag(flags: Int)
+
+    /**
      * Set decor system ui visibility for the given activity.
      *
      * @param flags the decor system ui visibility flags to set.
      */
     fun setDecorUiVisibility(flags: Int)
+
+    /**
+     * Remove windows flags for the activity.
+     *
+     * @param flags the window flags to remove.
+     */
+    fun removeWindowFlag(flags: Int)
 
     /**
      * Remove decor system ui visibility for the given activity.
@@ -39,7 +53,15 @@ interface SystemUiHelper {
  *
  * @param activity the Activity instance used to provide system ui helper functions to set.
  */
+@Suppress("Deprecation")
 class SystemUiHelperImpl(private val activity: AppCompatActivity) : SystemUiHelper {
+
+    /**
+     * Set windows flag for the activity.
+     *
+     * @param flags the window flags to set.
+     */
+    override fun setWindowFlag(flags: Int) { activity.window.addFlags(flags) }
 
     /**
      * Set decor system ui visibility for the activity.
@@ -49,6 +71,13 @@ class SystemUiHelperImpl(private val activity: AppCompatActivity) : SystemUiHelp
     override fun setDecorUiVisibility(flags: Int) {
         activity.window.decorView.systemUiVisibility = flags
     }
+
+    /**
+     * Remove windows flags for the activity.
+     *
+     * @param flags the window flags to remove.
+     */
+    override fun removeWindowFlag(flags: Int) { activity.window.clearFlags(flags) }
 
     /**
      * Remove decor system ui visibility for the activity.

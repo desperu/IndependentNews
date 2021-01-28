@@ -18,6 +18,7 @@ import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ImageRouter
+import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
@@ -40,46 +41,13 @@ class NoScrollWebView @JvmOverloads constructor(
 ) : WebView(context, attrs, defStyleAttr), KoinComponent {
 
     // FOR DATA
+    private val showArticleInterface: ShowArticleInterface? get() = getKoin().getOrNull()
     private val sourcesInterface: SourcesInterface? get() = getKoin().getOrNull()
     private val sourceRouter: SourceRouter by inject()
     private val imageRouter: ImageRouter by inject()
     private val prefs: SharedPrefService by inject()
     private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
-
-//    init {
-//        setWebContentsDebuggingEnabled(true) // TODO needed ??
-//    }
-
-    // --------------
-    // METHODS OVERRIDE
-    // --------------
-
-//    override fun overScrollBy(
-//        deltaX: Int,
-//        deltaY: Int,
-//        scrollX: Int,
-//        scrollY: Int,
-//        scrollRangeX: Int,
-//        scrollRangeY: Int,
-//        maxOverScrollX: Int,
-//        maxOverScrollY: Int,
-//        isTouchEvent: Boolean
-//    ): Boolean {
-//
-//        // Consume only horizontal event (X axe).
-//        return super.overScrollBy(
-//            deltaX,
-//            0,
-//            scrollX,
-//            0,
-//            scrollRangeX,
-//            0,
-//            maxOverScrollX,
-//            0,
-//            isTouchEvent
-//        )
-//    }
 
     // --------------
     // CONFIGURATION
@@ -116,30 +84,7 @@ class NoScrollWebView @JvmOverloads constructor(
             updateMargins(it, sourceName)
             postDelayed({ applyCssStyle(it, css) }, 10) // To prevent design bug
         }
-
-//        setOnTouchListener { view, motionEvent -> true }
     }
-
-//    /**
-//     * Update the design of the web view on loading finish. Resize media and set the css style.
-//     *
-//     * @param url               the url of the page.
-//     * @param cssUrl            the css url to apply to the web view.
-//     */
-//    internal fun updateWebViewFinish(url: String?, cssUrl: String?) {
-//        url?.let {
-
-//            cssUrl?.let { cssUrl -> injectCssUrl(it, cssUrl) }
-//            cssUrl?.let { cssStyle -> injectCssCode(cssStyle) }
-//            // use to correct zoom mistake ??
-//        }
-
-    // seems to work, remove other test !!!
-//        setOnTouchListener { view, motionEvent -> false }
-//        var count = 0
-//        do { zoomOut(); count++ } while (count < 50)
-//        injectCssCode(resizeMedia)
-//    }
 
     /**
      * Web view client for the web view.
@@ -187,10 +132,14 @@ class NoScrollWebView @JvmOverloads constructor(
      * @param css   the css of the web view content.
      */
     private fun applyCssStyle(url: String, css: Css) {
-        injectCssCode(resizeMedia)
+        // Used to delay the scroll action to be sure that the css style is applied,
+        // and prevent scroll gap error.
+        val callback = { postDelayed( { showArticleInterface?.scrollTo(null) }, 50) }
+
+        injectCssCode(resizeMedia) { }
         if (isHtmlData(url)) {
-            if (css.style.isNotBlank()) injectCssCode(css.style)
-            else injectCssUrl(url, css.url)
+            if (css.style.isNotBlank()) injectCssCode(css.style) { callback() }
+            else injectCssUrl(url, css.url) { callback() }
 //            zoomOut()
         }
     }
@@ -200,15 +149,16 @@ class NoScrollWebView @JvmOverloads constructor(
      *
      * @param cssUrl    the css url to inject to the web view.
      * @param url       the actual url of the web view.
+     * @param callback  the callback to invoke after the java script execution.
      */
-    private fun injectCssUrl(url: String, cssUrl: String) {
+    private fun injectCssUrl(url: String, cssUrl: String, callback: () -> Unit) {
         if (isHtmlData(url)) {
             val js = "var link = document.createElement('link');" +
                     " link.setAttribute('rel', 'stylesheet');" +
                     " link.setAttribute('href','$cssUrl');" +
                     " link.setAttribute('type','text/css');" +
                     " document.head.appendChild(link);"
-            evaluateJavascript(js, null)// { zoomOut() }
+            evaluateJavascript(js) { callback() }
         }
     }
 
@@ -216,8 +166,9 @@ class NoScrollWebView @JvmOverloads constructor(
      * Inject the css style to the content of the web view, with JavaScript.
      *
      * @param cssCode the css code to inject to the web view.
+     * @param callback  the callback to invoke after the java script execution.
      */
-    private fun injectCssCode(cssCode: String) {
+    private fun injectCssCode(cssCode: String, callback: () -> Unit) {
         val buffer = cssCode.toByteArray()
         val encoded = Base64.encodeToString(buffer, Base64.NO_WRAP)
 
@@ -227,7 +178,7 @@ class NoScrollWebView @JvmOverloads constructor(
                 // Tell the browser to BASE64-decode the string into your script !!!
                 " style.innerHTML = window.atob('" + encoded + "');" +
                 " parent.appendChild(style)"
-        evaluateJavascript(js, null)
+        evaluateJavascript(js) { callback() }
     }
 
     /**
