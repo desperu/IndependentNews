@@ -13,12 +13,19 @@ import org.desperu.independentnews.extension.design.findSuitableScrollable
  * A custom [AppBarLayout] that support collapse and expand animations implementation.
  * Works with [ToolbarBehavior] to perform animations.
  */
-class AppBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : AppBarLayout(context, attrs, defStyleAttr) {
+class AppBar @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : AppBarLayout(context, attrs, defStyleAttr) {
 
     // FOR DATA
     private lateinit var toolbarBehavior: ToolbarBehavior
     private var suitableScroll: View? = null
+        get() {
+            field = field ?: findSuitableScrollable()
+            return field
+        }
 
     // -----------------
     // METHODS OVERRIDE
@@ -55,7 +62,7 @@ class AppBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
      */
     @SuppressLint("ClickableViewAccessibility")
     private fun configureOnTouch() {
-        findSuitableScrollable()?.setOnTouchListener { _, ev ->
+        suitableScroll?.setOnTouchListener { _, ev ->
             if (ev.action == MotionEvent.ACTION_UP)
                 toolbarBehavior.finishAnimation()
             false
@@ -70,7 +77,11 @@ class AppBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = 
      * Update on touch listener when the fragment change.
      */
     internal fun updateOnTouch() {
-        if (suitableScroll?.isShown == false) configureOnTouch()
+        if (suitableScroll?.isShown == false) {
+            suitableScroll = null
+            toolbarBehavior.suitableScroll = null
+            configureOnTouch()
+        }
     }
 
     /**

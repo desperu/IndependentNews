@@ -84,3 +84,42 @@ internal fun ViewGroup?.findScrollableChild(): View? {
     // If we reach here then we didn't find a Scrollable Child
     return null
 }
+
+/**
+ * Find the asked view type in the view hierarchy.
+ * Try to directly get the root Coordinator of the layout, to search into it's descendants.
+ * Return null if the asked view type is not found.
+ */
+internal inline fun <reified T: View> View?.findView(): T? {
+    var view = this
+
+    do {
+        val parent = view?.parent
+
+        if (parent is CoordinatorLayout) {
+            // We've found the parent coordinator layout, it should be the root layout,
+            // so start to search in it's descendants
+            view = parent
+        }
+
+        if (view is ViewGroup) {
+            // If the view is a view group, search the view type in it's descendants
+            view.descendants.forEach {
+
+                if (it is T) {
+                    // We've found the searched view type, use it
+                    return it
+                }
+            }
+        }
+
+        if (view != null) {
+            // Else, we will loop and crawl up the view hierarchy and try to find a parent
+            view = if (parent is View) parent else null
+        }
+
+    } while (view != null)
+
+    // If we reach here then we didn't find a view type
+    return null
+}

@@ -16,7 +16,7 @@ import org.desperu.independentnews.extension.design.getValueAnimator
  * This behavior animates the toolbar (frame appbar_container) and it's elements
  * (toolbarTitle and icons) as the child scrollable owner scrolls.
  */
-class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
+class ToolbarBehavior : AppBarLayout.Behavior() {
 
     // FOR DATA
     private lateinit var toolbar: FrameLayout
@@ -29,6 +29,11 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
     private var isShrinking = false
     private var isExpanding = false
     private var dyAmount = 0
+    internal var suitableScroll: View? = null
+        get() {
+            field = field ?: toolbar.findSuitableScrollable()
+            return field
+        }
 
     // -----------------
     // CONFIGURATION
@@ -95,17 +100,6 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                 handleAppBarAnim(dyConsumed, true)
             }
         }
-    }
-
-    override fun layoutDependsOn(
-        parent: CoordinatorLayout,
-        child: AppBarLayout,
-        dependency: View
-    ): Boolean {
-
-        (child as AppBar).updateOnTouch()
-
-        return super.layoutDependsOn(parent, child, dependency)
     }
 
     // -----------------
@@ -234,7 +228,7 @@ class ToolbarBehavior : CoordinatorLayout.Behavior<AppBarLayout>() {
                     val dyConsumed = (progress * amount).toInt()
 
                     // Correct scrollable position
-                    toolbar.findSuitableScrollable()?.scrollBy(0, -dyConsumed)
+                    suitableScroll?.scrollBy(0, -dyConsumed)
                     // Animate the app bar
                     animAppBar(dyConsumed, toExpand)
                 }

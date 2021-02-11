@@ -233,6 +233,15 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     }
 
     // --------------
+    // UI
+    // --------------
+
+    /**
+     * Update app bar on touch listener, used to finish app bar anim.
+     */
+    override fun updateAppBarOnTouch() = appbar.updateOnTouch()
+
+    // --------------
     // UTILS
     // --------------
 

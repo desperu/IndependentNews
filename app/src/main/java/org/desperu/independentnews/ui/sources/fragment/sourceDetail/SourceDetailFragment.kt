@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.doOnNextLayout
 import androidx.core.widget.NestedScrollView.OnScrollChangeListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.fragment_source_detail.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,6 +19,8 @@ import org.desperu.independentnews.anim.AnimHelper.scaleViewAnimation
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.extension.design.dp
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.ui.sources.SourcesInterface
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -119,13 +123,24 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     }
 
     // --------------
+    // METHODS OVERRIDE
+    // --------------
+
+    override fun onResume() {
+        super.onResume()
+        source_detail_nested_scroll.doOnNextLayout {
+            get<SourcesInterface>().updateAppBarOnTouch()
+        }
+    }
+
+    // --------------
     // LISTENER
     // --------------
 
     /**
      * Scroll listener, to show recycler animation each time it appear on user screen.
      */
-    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ -> // TODO to perfect, not remove the adapter, just re-play anim
+    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ -> // to perfect, not remove the adapter, just re-play anim
         source_detail_nested_scroll?.let {
             val safeMarge = 50.dp // Safe marge to prevent ui mistake
             val recyclerTop = source_detail_recycler.top - v.measuredHeight - safeMarge

@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.android.synthetic.main.fragment_source_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
+import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -89,6 +91,10 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
         super.onResume()
         updateRecyclerAnim()
         fromDetail = false
+
+        sources_recycler.doOnNextLayout {
+            get<SourcesInterface>().updateAppBarOnTouch()
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {

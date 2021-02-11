@@ -18,6 +18,11 @@ interface SourcesInterface {
     fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int)
 
     /**
+     * Update app bar on touch listener, used to finish app bar anim.
+     */
+    fun updateAppBarOnTouch()
+
+    /**
      * Returns true if the app bar is expanded, false if is collapsed.
      */
     val isExpanded: Boolean
