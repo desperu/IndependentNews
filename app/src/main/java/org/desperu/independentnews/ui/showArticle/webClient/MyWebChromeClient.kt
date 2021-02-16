@@ -1,11 +1,14 @@
-package org.desperu.independentnews.ui.showArticle
+package org.desperu.independentnews.ui.showArticle.webClient
 
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.FrameLayout
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.helpers.SystemUiHelper
+import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.views.NoScrollWebView
 import org.koin.core.KoinComponent
@@ -14,7 +17,6 @@ import org.koin.core.get
 /**
  * My custom Web Chrome Client, used to show full screen video in a custom view.
  *
- * @property webView                the web view witch is used this custom Web Chrome Client.
  * @property mCustomView            the custom view used to display the video.
  * @property customViewContainer    the container of the custom view.
  * @property customViewCallback     the callback of the custom view, used to communicate with.
@@ -22,17 +24,20 @@ import org.koin.core.get
  * @property sysUiHelper            the interface of the system ui helper to manage it.
  *
  * @constructor Instantiates a new MyWebChromeClient.
- *
- * @param webView the web view witch used this custom Web Chrome Client to set.
  */
-class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(), KoinComponent {
+class MyWebChromeClient : WebChromeClient(), KoinComponent {
 
-    // FOR DATA
-    private var mCustomView: View? = null
-    private val customViewContainer = webView.rootView.findViewById<FrameLayout>(R.id.video_container)
-    private var customViewCallback: CustomViewCallback? = null
+    // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface? = getKoin().getOrNull()
+    private val articleDesign: ArticleDesignInterface? = getKoin().getOrNull()
     private val sysUiHelper: SystemUiHelper = get()
+
+    // FOR UI
+    private val webView: NoScrollWebView by bindView(showArticleInterface!!.activity, R.id.web_view)
+    private val customViewContainer: FrameLayout by bindView(showArticleInterface!!.activity, R.id.video_container)
+    private var mCustomView: View? = null
+    private var customViewCallback: CustomViewCallback? = null
+
 
     // --------------
     // METHODS OVERRIDE
@@ -70,16 +75,16 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         sysUiHelper.setWindowFlag(KEEP_SCREEN_ON) // Seems to properly work
         sysUiHelper.setDecorUiVisibility(SYS_UI_FULL_HIDE)
         sysUiHelper.setOrientation(LANDSCAPE) // Not needed for new api
-        showArticleInterface?.saveScrollPosition()
+        articleDesign?.saveScrollPosition()
 
         showArticleInterface?.inCustomView = true
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        showArticleInterface?.updateProgress(newProgress)
+        articleDesign?.updateProgress(newProgress)
         // Update layout design.
-        if (newProgress > 80) showArticleInterface?.handleDesign(newProgress)
+        if (newProgress >= 80) articleDesign?.handleDesign(newProgress)
     }
 
     override fun onHideCustomView() {
@@ -100,7 +105,7 @@ class MyWebChromeClient(private val webView: NoScrollWebView) : WebChromeClient(
         sysUiHelper.removeWindowFlag(KEEP_SCREEN_ON)
         sysUiHelper.setDecorUiVisibility(SYS_UI_VISIBLE)
         sysUiHelper.setOrientation(FULL_USER)
-        showArticleInterface?.scrollTo(null)
+        articleDesign?.scrollTo(null)
 
         showArticleInterface?.inCustomView = false
     }

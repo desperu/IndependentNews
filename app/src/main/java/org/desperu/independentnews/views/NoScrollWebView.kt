@@ -18,7 +18,7 @@ import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ImageRouter
-import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
@@ -26,6 +26,7 @@ import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import org.koin.core.qualifier.qualifier
 import kotlin.properties.Delegates
 
 /**
@@ -41,10 +42,10 @@ class NoScrollWebView @JvmOverloads constructor(
 ) : WebView(context, attrs, defStyleAttr), KoinComponent {
 
     // FOR DATA
-    private val showArticleInterface: ShowArticleInterface? get() = getKoin().getOrNull()
+    private val articleDesignInterface: ArticleDesignInterface? get() = getKoin().getOrNull()
     private val sourcesInterface: SourcesInterface? get() = getKoin().getOrNull()
+    private val imageRouter: ImageRouter? get() = getKoin().getOrNull(qualifier(SOURCE_IMAGE_ROUTER))
     private val sourceRouter: SourceRouter by inject()
-    private val imageRouter: ImageRouter by inject()
     private val prefs: SharedPrefService by inject()
     private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
@@ -106,7 +107,7 @@ class NoScrollWebView @JvmOverloads constructor(
                 val url = request?.url.toString()
 
                 if (isImageUrl(url))
-                    imageRouter.openShowImages(arrayListOf(url))
+                    imageRouter?.openShowImages(arrayListOf(url))
                 else
                     sourceRouter.openShowArticle(
                         Article(
@@ -134,7 +135,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private fun applyCssStyle(url: String, css: Css) {
         // Used to delay the scroll action to be sure that the css style is applied,
         // and prevent scroll gap error.
-        val callback = { postDelayed( { showArticleInterface?.scrollTo(null) }, 50) }
+        val callback = { postDelayed( { articleDesignInterface?.scrollTo(null) }, 50) }
 
         injectCssCode(resizeMedia) { }
         if (isHtmlData(url)) {

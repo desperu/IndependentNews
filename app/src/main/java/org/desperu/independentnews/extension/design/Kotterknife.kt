@@ -27,6 +27,14 @@ import kotlin.reflect.KProperty
  */
 
 
+fun <V : View> Any.bindView(activity: Activity, id: Int, onInitializedListener: ((V) -> Unit)? = null)
+        : ReadOnlyProperty<Any, V> =
+    required(
+        id,
+        activity.viewFinderAny,
+        onInitializedListener
+    )
+
 fun <V : View> Any.bindView(fragment: Fragment, id: Int, onInitializedListener: ((V) -> Unit)? = null)
         : ReadOnlyProperty<Any, V> =
     required(
@@ -131,6 +139,8 @@ fun <V : View> RecyclerView.ViewHolder.bindOptionalViews(vararg ids: Int)
         : ReadOnlyProperty<RecyclerView.ViewHolder, List<V>> =
     optional(ids, viewFinder)
 
+private val Activity.viewFinderAny: Any.(Int) -> View?
+    get() = { findViewById(it) }
 private val Fragment.viewFinderAny: Any.(Int) -> View?
     get() = { view?.findViewById(it) }
 private val View.viewFinder: View.(Int) -> View?

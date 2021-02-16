@@ -9,6 +9,8 @@ import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.ui.sources.fragment.SourceRouterImpl
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailInterface
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListInterface
+import org.desperu.independentnews.utils.SOURCE_IMAGE_ROUTER
+import org.koin.core.qualifier.qualifier
 import org.koin.dsl.module
 
 /**
@@ -33,9 +35,12 @@ val sourcesModule = module {
     }
 
     /**
-     * Provides a ImageRouter from the instance of SourcesActivity.
+     * Provides an ImageRouter from the instance of SourcesActivity.
      */
-    single<ImageRouter>(override = true) { (activity: BaseActivity) ->
+    single<ImageRouter>(
+        override = true,
+        qualifier = qualifier(SOURCE_IMAGE_ROUTER)
+    ) { (activity: BaseActivity) ->
         ImageRouterImpl(activity)
     }
 

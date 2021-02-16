@@ -53,15 +53,6 @@ val mainModule = module {
         )
     }
 
-    /**
-     * Provides a ImageRouter interface from the instance of MainActivity.
-     */
-    single<ImageRouter>(override = true) { (activity: BaseActivity) ->
-        ImageRouterImpl(
-            activity
-        )
-    }
-
     // TODO useless ??? not that the error... ??? Must check
     /**
      * Provides a ArticleListInterface interface from the instance of ArticleListFragment.

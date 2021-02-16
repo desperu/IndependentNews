@@ -173,7 +173,7 @@ dependencies {
     implementation 'me.saket:better-link-movement-method:2.2.0'
 
     // Leak Canary
-//    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
-//    implementation "com.squareup.leakcanary:leakcanary-object-watcher-android:$leak_canary_version"
-//    implementation "com.squareup.leakcanary:plumber-android:$leak_canary_version"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
+    implementation "com.squareup.leakcanary:leakcanary-object-watcher-android:$leak_canary_version"
+    implementation "com.squareup.leakcanary:plumber-android:$leak_canary_version"
 }

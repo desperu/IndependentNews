@@ -6,6 +6,10 @@ import org.desperu.independentnews.helpers.SystemUiHelperImpl
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ImageRouterImpl
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
+import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
 import org.koin.dsl.module
 
 /**
@@ -32,5 +36,19 @@ val showArticleModule = module {
      */
     single<SystemUiHelper>(override = true) { (activity: BaseBindingActivity) ->
         SystemUiHelperImpl(activity)
+    }
+
+    /**
+     * Provides a ArticleDesignInterface from the instance of ArticleDesign.
+     */
+    single<ArticleDesignInterface> { (articleDesign: ArticleDesign) ->
+        articleDesign
+    }
+
+    /**
+     * Provides a MyWebViewClientInterface from the instance of MyWebViewClient.
+     */
+    single<MyWebViewClientInterface> { (mWebViewClient: MyWebViewClient) ->
+        mWebViewClient
     }
 }

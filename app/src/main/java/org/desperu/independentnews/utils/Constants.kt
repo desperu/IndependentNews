@@ -82,6 +82,11 @@ const val REFRESH_TIME_DIALOG = 2
 const val STORE_DELAY_DIALOG = 3
 const val RESET_DIALOG = 4
 
+// --- FOR KOIN ---
+
+// For Qualifier Name
+const val SOURCE_IMAGE_ROUTER = "sourceImageRouter"
+
 
 // --- FOR UTILS ---
 

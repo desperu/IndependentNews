@@ -102,6 +102,11 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
         fromDetail?.let { fromDetail = true }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        sourceListAdapter = null
+    }
+
     // --------------
     // UPDATE
     // --------------
@@ -138,7 +143,7 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
         sharedElement.doOnPreDraw {
-            updateRecyclerAnim()
+//            updateRecyclerAnim()
             startPostponedEnterTransition()
         }
     }

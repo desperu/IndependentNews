@@ -26,6 +26,7 @@ import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.WHO_OWNS_WHAT
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.qualifier
 
 /**
  * Fade default time animation for fragment transition.
@@ -72,7 +73,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     private fun configureKoinDependency() {
         get<SourcesInterface> { parametersOf(this) }
         get<SourceRouter> { parametersOf(this) }
-        imageRouter = get { parametersOf(this) }
+        imageRouter = get(qualifier(SOURCE_IMAGE_ROUTER)) { parametersOf(this) }
     }
 
     /**
