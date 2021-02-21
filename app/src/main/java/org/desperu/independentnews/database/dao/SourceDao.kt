@@ -21,7 +21,6 @@ interface SourceDao {
      * Returns the source list from database.
      * @return the source list from database.
      */
-    @Transaction
     @Query("SELECT * FROM source")
     suspend fun getAll(): List<Source>
 
@@ -29,7 +28,6 @@ interface SourceDao {
      * Returns the sources that are enabled.
      * @return the sources that are enabled.
      */
-    @Transaction
     @Query("SELECT * FROM source WHERE isEnabled=1")
     suspend fun getEnabled(): List<Source>
 

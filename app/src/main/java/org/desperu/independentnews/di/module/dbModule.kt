@@ -40,6 +40,20 @@ val dbModule = module{
     }
 
     /**
+     * Provides the database access object for favorite.
+     */
+    single{
+        (get() as ArticleDatabase).favoriteDao()
+    }
+
+    /**
+     * Provides the database access object for paused.
+     */
+    single{
+        (get() as ArticleDatabase).pausedDao()
+    }
+
+    /**
      * Provides the database access object for source with data.
      */
     single{

@@ -3,10 +3,7 @@ package org.desperu.independentnews.database.dao
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import org.desperu.independentnews.database.ArticleDatabase
-import org.desperu.independentnews.models.database.Article
-import org.desperu.independentnews.models.database.Css
-import org.desperu.independentnews.models.database.Source
-import org.desperu.independentnews.models.database.SourcePage
+import org.desperu.independentnews.models.database.*
 import org.desperu.independentnews.utils.BASTAMAG
 import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
 
@@ -99,6 +96,72 @@ class DaoTestHelper {
         listOf(
             css,
             Css(1000000000000002L, "a css url 2", "a ccs style 2")
+        )
+
+    // -----------------
+    // FAVORITE
+    // -----------------
+
+    /**
+     * Favorite object for dao test.
+     *
+     * @param articleId the article id to set.
+     *
+     * @return the created favorite.
+     */
+    internal fun getFavorite(articleId: Long) = Favorite(
+        200000000000000000L,
+        articleId
+    )
+
+    /**
+     * Favorite List for dao test.
+     *
+     * @param articleId the article id to set.
+     *
+     * @return the create favorite list.
+     */
+    internal fun getFavoriteList(articleId: Long): List<Favorite> =
+        listOf(
+            getFavorite(articleId),
+            Favorite(
+                200000000000000001L,
+                articleId
+            )
+        )
+
+    // -----------------
+    // PAUSED
+    // -----------------
+
+    /**
+     * Paused object for dao test.
+     *
+     * @param articleId the article id to set.
+     *
+     * @return the created paused.
+     */
+    internal fun getPaused(articleId: Long) = Paused(
+        200000000000000000L,
+        articleId,
+        100
+    )
+
+    /**
+     * Paused List for dao test.
+     *
+     * @param articleId the article id to set.
+     *
+     * @return the create paused list.
+     */
+    internal fun getPausedList(articleId: Long): List<Paused> =
+        listOf(
+            getPaused(articleId),
+            Paused(
+                200000000000000001L,
+                articleId,
+                100
+            )
         )
 
     // -----------------

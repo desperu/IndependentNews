@@ -10,7 +10,14 @@ import org.desperu.independentnews.utils.DATABASE_VERSION
  * The database class of the application.
  */
 @Database(
-    entities = [Article::class, Css::class, Source::class, SourcePage::class],
+    entities = [
+        Article::class,
+        Css::class,
+        Favorite::class,
+        Paused::class,
+        Source::class,
+        SourcePage::class
+    ],
     version = DATABASE_VERSION
 )
 abstract class ArticleDatabase: RoomDatabase() {
@@ -56,4 +63,18 @@ abstract class ArticleDatabase: RoomDatabase() {
      * @return the database access object for source pages.
      */
     abstract fun sourcePageDao(): SourcePageDao
+
+    /**
+     * Returns the database access object for favorite.
+     *
+     * @return the database access object for favorite.
+     */
+    abstract fun favoriteDao(): FavoriteDao
+
+    /**
+     * Returns the database access object for paused.
+     *
+     * @return the database access object for paused.
+     */
+    abstract fun pausedDao(): PausedDao
 }

@@ -72,7 +72,6 @@ data class Article(@PrimaryKey(autoGenerate = true)
                    var cssUrl: String = "",
                    var isTopStory: Boolean = false,
                    var read: Boolean = false,
-//                   var scrollPosition: Int = 0,
 
                    // Should use ArticleWithData instead
                    @Ignore

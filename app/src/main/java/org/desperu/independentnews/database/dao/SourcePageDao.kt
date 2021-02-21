@@ -37,7 +37,6 @@ interface SourcePageDao {
      * Returns the source page list from database.
      * @return the source page list from database.
      */
-    @Transaction // TODO remove useless transaction for all dao ?????
     @Query("SELECT * FROM SourcePage")
     suspend fun getAll(): List<SourcePage>
 
