@@ -1,15 +1,17 @@
 package org.desperu.independentnews.utils
 
 import android.content.Context
+import android.os.Bundle
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import io.mockk.every
 import io.mockk.mockk
 import org.desperu.independentnews.R
-import org.desperu.independentnews.di.module.repositoryModule
 import org.desperu.independentnews.di.module.serviceModule
-import org.desperu.independentnews.di.module.viewModelModule
 import org.desperu.independentnews.service.ResourceService
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
+import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
@@ -20,9 +22,11 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.context.unloadKoinModules
+import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.get
 
@@ -34,19 +38,23 @@ class MainUtilsTest : KoinTest {
     // FOR DATA
     private val mockContext: Context = mockk()
     private val mockTextView: TextView = mockk()
+    private val mockArticleListVM: ArticleListViewModel = mockk()
     private lateinit var resources: ResourceService
+
+    private val testModule = module {
+        viewModel { mockArticleListVM }
+    }
 
     @Before
     fun before() {
-        every { mockTextView.text = any() } returns Unit
-
         startKoin {
             androidContext(mockContext)
-            modules(serviceModule, viewModelModule, repositoryModule)
+            modules(testModule, serviceModule)
         }
 
         resources = get()
 
+        every { mockTextView.text = any() } returns Unit
         every { resources.getString(R.string.navigation_drawer_top_story) } returns "Top Story"
         every { resources.getString(R.string.navigation_drawer_all_articles) } returns "All Articles"
         every { resources.getString(R.string.fragment_today_articles) } returns "Today Articles"
@@ -55,16 +63,22 @@ class MainUtilsTest : KoinTest {
 
     @After
     fun after() {
-        unloadKoinModules(serviceModule)
+        unloadKoinModules(listOf(testModule, serviceModule))
         stopKoin()
     }
 
     @Test
     fun given_fragKey_When_getFragFromKey_Then_checkResult() {
-        val expected = CategoriesFragment::class.java
-        val output: Class<out Fragment> = getFragFromKey(FRAG_CATEGORY)::class.java
+        val expectedList = listOf(ArticleListFragment::class.java, CategoriesFragment::class.java)
 
-        assertEquals(expected, output)
+        val fragKeyList = listOf(FRAG_TOP_STORY, FRAG_CATEGORY, FRAG_ALL_ARTICLES, FRAG_TODAY_ARTICLES)
+
+        fragKeyList.forEach {
+            val output: Class<out Fragment> = getFragFromKey(it)::class.java
+
+            val index = if (it != FRAG_CATEGORY) 0 else 1
+            assertEquals(expectedList[index], output)
+        }
     }
 
     @Test
@@ -79,9 +93,23 @@ class MainUtilsTest : KoinTest {
     }
 
     @Test
-    fun given_fragList_When_retrievedKeyFromFrag_Then_checkResult() {
+    fun given_catFrag_When_retrievedKeyFromFrag_Then_checkResult() {
         val expected = FRAG_CATEGORY
+
         val fragment = CategoriesFragment()
+        val output = retrievedKeyFromFrag(fragment)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_topStoryFrag_When_retrievedKeyFromFrag_Then_checkResult() {
+        val expected = FRAG_TOP_STORY
+
+        val fragment = ArticleListFragment()
+        val bundle = Bundle()
+        bundle.putInt(FRAG_KEY, FRAG_TOP_STORY)
+        fragment.arguments = bundle
         val output = retrievedKeyFromFrag(fragment)
 
         assertEquals(expected, output)
@@ -107,9 +135,9 @@ class MainUtilsTest : KoinTest {
             Pair(NO_FRAG, R.string.app_name) // For else
         )
 
-        testMap.forEach { (fragKey, stringKey) ->
-            val expected = resources.getString(stringKey)
-            every { mockTextView.getText() } returns expected
+        testMap.forEach { (fragKey, stringId) ->
+            val expected = resources.getString(stringId)
+            every { mockTextView.text } returns expected
 
             setTitle(mockTextView, fragKey)
             val output = mockTextView.text

@@ -4,20 +4,21 @@ import android.graphics.Rect
 import android.view.View
 import android.view.ViewAnimationUtils.createCircularReveal
 import android.widget.Toast
-import androidx.annotation.IdRes
 import androidx.core.animation.doOnEnd
 import androidx.core.view.*
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.leinardi.android.speeddial.FabWithLabelView
 import com.leinardi.android.speeddial.SpeedDialActionItem
-import com.leinardi.android.speeddial.SpeedDialView
 import com.leinardi.android.speeddial.SpeedDialView.OnActionSelectedListener
 import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.utils.TEXT_SIZE
+import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabIcon
+import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabId
+import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabLabel
 import org.desperu.independentnews.views.MySpeedDialView
 import org.desperu.independentnews.views.MySpeedDialView.OnAnimationListener
 import org.koin.core.KoinComponent
@@ -40,11 +41,11 @@ class FabsMenu : KoinComponent{
 
     // FOR DATA
     private val subFabList = listOf(
-        R.id.fab_action1,
-        R.id.fab_action2,
-        R.id.fab_action3,
-        R.id.fab_action4,
-        R.id.fab_action5
+        SUB_FAB_MIN_TEXT,
+        SUB_FAB_UP_TEXT,
+        SUB_FAB_STAR,
+        SUB_FAB_PAUSE,
+        SUB_FAB_HOME
     )
 
     init {
@@ -67,23 +68,19 @@ class FabsMenu : KoinComponent{
     /**
      * Configure all sub fabs as needed.
      */
-    private fun configureSubFabs() {
-        subFabList.forEach {
-            addSubFab(it, null)
-        }
-    }
+    private fun configureSubFabs() { subFabList.forEach { addSubFab(it) } }
 
     /**
      * Add sub fab to the Speed Dial View.
      *
      * @param subFabKey the key of the sub fab to configure and add.
      */
-    private fun addSubFab(@IdRes id: Int, subFabsMap: Map<Int, Pair<Int, Int>>?) {
+    private fun addSubFab(subFabKey: Int) {
         speedDialView.addActionItem(
-            SpeedDialActionItem.Builder(id, R.drawable.ic_filter)
+            SpeedDialActionItem.Builder(getSubFabId(subFabKey), getSubFabIcon(subFabKey))
                 .setFabBackgroundColor(fabBackgroundColor)
                 .setFabImageTintColor(fabImageTintColor)
-                .setLabel(activity.getString(R.string.fragment_today_articles))
+                .setLabel(getSubFabLabel(subFabKey))
                 .setLabelColor(fabLabelColor)
                 .setLabelBackgroundColor(fabLabelBackgroundColor)
                 .setLabelClickable(true)
@@ -98,18 +95,18 @@ class FabsMenu : KoinComponent{
         speedDialView.setOnActionSelectedListener(OnActionSelectedListener { actionItem ->
             when (actionItem.id) {
 
-                R.id.fab_action1 -> {
+                R.id.fab_minus_text -> {
                     val vWSettings = showArticleInterface.activity.web_view.settings
                     vWSettings.textZoom -= 10
                     prefs.getPrefs().edit().putInt(TEXT_SIZE, vWSettings.textZoom).apply()
                     speedDialView.overlayLayout?.alpha = 0.6f
                 }
 
-                R.id.fab_action2 -> {
+                R.id.fab_up_text -> {
                     showArticleInterface.activity.web_view.settings.textZoom += 10
                 }
 
-                R.id.fab_action3, R.id.fab_action4, R.id.fab_action5 -> {
+                R.id.fab_star, R.id.fab_pause, R.id.fab_home -> {
                     Toast.makeText(
                         activity,
                         "No label action clicked!\nClosing with animation",

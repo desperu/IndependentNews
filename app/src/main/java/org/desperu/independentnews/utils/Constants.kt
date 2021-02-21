@@ -19,9 +19,6 @@ const val FRAG_TODAY_ARTICLES = 7
 const val FRAG_SOURCES_LIST = 100
 const val FRAG_SOURCES_DETAIL = 101
 
-// Filters View Pager
-const val numberOfPage = 4
-
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"
 
@@ -48,19 +45,20 @@ const val CONNEXION = 1
 const val CONNEXION_START = 10
 const val FIRST_START_ERROR = 20
 
-
 // For Request Code
 const val RC_FIRST_START = 1000     // First start activity
 const val RC_SOURCE = 2000          // Source activity
 const val RC_SHOW_ARTICLE = 3000    // Back from Show Article to Sources
 const val RC_PERMS = 10000          // For permissions
 
+// --- FOR FABS MENU ---
 
-// --- FOR DATABASE ---
-
-// For init DB
-const val DATABASE_NAME = "article"
-const val DATABASE_VERSION = 1
+// For Sub Fabs Key
+const val SUB_FAB_MIN_TEXT = 0
+const val SUB_FAB_UP_TEXT = 1
+const val SUB_FAB_STAR = 2
+const val SUB_FAB_PAUSE = 3
+const val SUB_FAB_HOME = 4
 
 
 // --- FOR FILTERS ---
@@ -81,6 +79,14 @@ const val TEXT_SIZE_DIALOG = 1
 const val REFRESH_TIME_DIALOG = 2
 const val STORE_DELAY_DIALOG = 3
 const val RESET_DIALOG = 4
+
+
+// --- FOR DATABASE ---
+
+// For init DB
+const val DATABASE_NAME = "article"
+const val DATABASE_VERSION = 1
+
 
 // --- FOR KOIN ---
 

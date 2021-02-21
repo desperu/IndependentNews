@@ -42,6 +42,12 @@
     <!-- Show Article Activity -->
     <string name="show_article_activity_article_error">Error, failed to retrieved article !</string>
     <string name="show_article_activity_share_chooser_title">Share article !</string>
+    <!-- Fabs Menu -->
+    <string name="sub_fab_label_min_text">Minus text size</string>
+    <string name="sub_fab_label_up_text">Up text size</string>
+    <string name="sub_fab_label_star">Add favorite</string>
+    <string name="sub_fab_label_pause">Pause reading</string>
+    <string name="sub_fab_label_home">Back home</string>
 
     <!-- FILTER LAYOUT -->
     <!-- Filter Layout Sources -->

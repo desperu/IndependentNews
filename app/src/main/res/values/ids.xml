@@ -3,10 +3,10 @@
 <resources>
 
     <!-- Ids for the Fab Menu (SpeedDialItem) -->
-    <item name="fab_action1" type="id" />
-    <item name="fab_action2" type="id" />
-    <item name="fab_action3" type="id" />
-    <item name="fab_action4" type="id" />
-    <item name="fab_action5" type="id" />
+    <item name="fab_minus_text" type="id" />
+    <item name="fab_up_text" type="id" />
+    <item name="fab_star" type="id" />
+    <item name="fab_pause" type="id" />
+    <item name="fab_home" type="id" />
 
 </resources>

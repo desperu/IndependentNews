@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
-import org.desperu.independentnews.utils.numberOfPage
 
 class CategoriesAdapter(mContext: Context,
                         fm: FragmentManager?,
@@ -14,7 +13,7 @@ class CategoriesAdapter(mContext: Context,
 
     private val tabTitles = mContext.resources.getStringArray(R.array.categories_tab_titles)
 
-    override fun getCount(): Int = numberOfPage
+    override fun getCount(): Int = tabTitles.size
 
     override fun getItem(position: Int): Fragment = ArticleListFragment.newInstance(position + 3)
 
