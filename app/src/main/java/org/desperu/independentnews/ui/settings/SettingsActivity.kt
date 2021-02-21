@@ -116,7 +116,10 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
         } else if (dialogKey == RESET_DIALOG) {
 
             // Set positive button
-            dialog.setPositiveButton(R.string.activity_settings_dialog_positive_button) { _, _ -> viewModel.resetSettings() }
+            dialog.setPositiveButton(R.string.activity_settings_dialog_positive_button) { _, _ ->
+                viewModel.resetSettings()
+                showToast(getToastMessage(baseContext, dialogKey), Toast.LENGTH_SHORT)
+            }
         }
 
         // Set negative button, and show dialog
@@ -130,7 +133,7 @@ class SettingsActivity : BaseBindingActivity(settingsModule), SettingsInterface 
      * @param message       the message to display to the user.
      * @param duration      the duration to display the message.
      */
-    override fun showToast(message: String, duration: Int) {
+    private fun showToast(message: String, duration: Int) {
         Toast.makeText(baseContext, message, duration).show()
     }
 

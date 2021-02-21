@@ -18,9 +18,9 @@ object FabsMenuUtils : KoinComponent {
      *
      * @param subFabKey the key of the sub fab.
      *
-     * @throws IllegalArgumentException if the sub fab key was not found.
-     *
      * @return the unique identifier for the given sub fab key.
+     *
+     * @throws IllegalArgumentException if the sub fab key was not found.
      */
     internal fun getSubFabId(subFabKey: Int): Int = when (subFabKey) {
         SUB_FAB_MIN_TEXT -> R.id.fab_minus_text
@@ -36,9 +36,9 @@ object FabsMenuUtils : KoinComponent {
      *
      * @param subFabKey the key of the sub fab.
      *
-     * @throws IllegalArgumentException if the sub fab key was not found.
-     *
      * @return the unique identifier of the Icon for the given sub fab key.
+     *
+     * @throws IllegalArgumentException if the sub fab key was not found.
      */
     internal fun getSubFabIcon(subFabKey: Int): Int = when (subFabKey) {
         SUB_FAB_MIN_TEXT -> R.drawable.ic_baseline_minus_text_black_18
@@ -54,9 +54,9 @@ object FabsMenuUtils : KoinComponent {
      *
      * @param subFabKey the key of the sub fab.
      *
-     * @throws IllegalArgumentException if the sub fab key was not found.
-     *
      * @return the sub fab label for the sub fab key.
+     *
+     * @throws IllegalArgumentException if the sub fab key was not found.
      */
     internal fun getSubFabLabel(subFabKey: Int): String = when (subFabKey) {
         SUB_FAB_MIN_TEXT -> resources.getString(R.string.sub_fab_label_min_text)

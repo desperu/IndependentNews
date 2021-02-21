@@ -16,6 +16,8 @@ object SourcesUtils {
      * @param url the url from which retrieved the source name.
      *
      * @return the source name from the given source url.
+     *
+     * @throws IllegalArgumentException if the url was not found.
      */
     internal fun getSourceNameFromUrl(url: String) = when (getDomainFromUrl(url)) {
         getDomainFromUrl(BASTAMAG_BASE_URL) -> BASTAMAG
@@ -34,6 +36,8 @@ object SourcesUtils {
      * @param sourceName the source name for which retrieved the mini logo id.
      *
      * @return the unique identifier of the source mini logo drawable.
+     *
+     * @throws IllegalArgumentException if the source name was not found.
      */
     internal fun getMiniLogoId(sourceName: String) = when(sourceName) {
         BASTAMAG -> R.drawable.logo_mini_bastamag
@@ -48,6 +52,8 @@ object SourcesUtils {
      * @param sourceName the source name for which retrieved the logo id.
      *
      * @return the unique identifier of the source logo drawable.
+     *
+     * @throws IllegalArgumentException if the source name was not found.
      */
     internal fun getLogoId(sourceName: String) = when(sourceName) {
         BASTAMAG -> R.drawable.logo_bastamag
@@ -66,6 +72,8 @@ object SourcesUtils {
      * @param sourceName the source name for which retrieved the background color id.
      *
      * @return the unique identifier of the source background color.
+     *
+     * @throws IllegalArgumentException if the source name was not found.
      */
     internal fun getBackgroundColorId(sourceName: String) = when(sourceName) {
         BASTAMAG -> R.color.bastamag_background
@@ -85,6 +93,8 @@ object SourcesUtils {
      *                       to determine background color.
      *
      * @return the button link background color.
+     *
+     * @throws IllegalArgumentException if the source name was not found.
      */
     internal fun getButtonLinkColor(sourceWithData: SourceWithData) =
         when(sourceWithData.source.name) {

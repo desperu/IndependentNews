@@ -8,14 +8,6 @@ import androidx.databinding.ObservableInt
 interface SettingsInterface {
 
     /**
-     * Show toast message.
-     *
-     * @param message       the message to display to the user.
-     * @param duration      the duration to display the message.
-     */
-    fun showToast(message: String, duration: Int)
-
-    /**
      * Create alert dialog to set zoom value or confirm reset settings.
      * @param dialogKey Key to show corresponding dialog.
      * @param observable the observable value to get and set.

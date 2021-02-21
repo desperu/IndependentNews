@@ -76,7 +76,6 @@ val viewModelModule = module {
     viewModel { (activity: BaseBindingActivity) ->
         SettingsViewModel(
             get(),
-            get(),
             get { parametersOf(activity) }
         )
     }

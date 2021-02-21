@@ -24,8 +24,12 @@ object MainUtils : KoinComponent{
 
     /**
      * Get the associated fragment with the given fragment key.
+     *
      * @param fragmentKey the given fragment key from witch get the key.
+     *
      * @return the corresponding fragment instance.
+     *
+     * @throws IllegalArgumentException if the [fragmentKey] was not found.
      */
     internal fun getFragFromKey(fragmentKey: Int): Fragment = when(fragmentKey) {
         FRAG_TOP_STORY -> ArticleListFragment()
@@ -37,8 +41,12 @@ object MainUtils : KoinComponent{
 
     /**
      * Retrieve the associated fragment key with the fragment instance.
+     *
      * @param fragment the given fragment from witch retrieved the key.
+     *
      * @return the corresponding fragment key.
+     *
+     * @throws IllegalArgumentException if the [fragment] class was not found.
      */
     internal fun retrievedKeyFromFrag(fragment: Fragment): Int = when(fragment) {
         is CategoriesFragment -> FRAG_CATEGORY
@@ -74,8 +82,12 @@ object MainUtils : KoinComponent{
 
     /**
      * Get the menu drawer item id from fragment key.
+     *
      * @param fragmentKey the given fragment key from which get the id.
+     *
      * @return the corresponding item id.
+     *
+     * @throws IllegalArgumentException if the [fragmentKey] was not found.
      */
     internal fun getDrawerItemIdFromFragKey(fragmentKey: Int) = when(fragmentKey) {
         NO_FRAG -> 0

@@ -1,13 +1,11 @@
 package org.desperu.independentnews.ui.settings
 
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.edit
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.R
-import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
 
@@ -16,23 +14,17 @@ import org.desperu.independentnews.utils.*
  *
  * @property prefs                  the shared preferences service interface witch provide access
  *                                  to the app shared preferences.
- * @property resourceService        the resource service interface witch provide access to the app
- *                                  resources.
  * @property settingsInterface      the settings interface witch provide activity interface.
  *
  * @constructor Instantiates a new SettingsViewModel.
  *
  * @param prefs                     the shared preferences service interface witch provide access
  *                                  to the app shared preferences to set.
- * @param resourceService           the resource service interface witch provide access to the app
- *                                  resources to set.
  * @param settingsInterface         the settings interface witch provide activity interface to set.
  */
 class SettingsViewModel(
     private val prefs: SharedPrefService,
-    private val resourceService: ResourceService,
     private val settingsInterface: SettingsInterface
-
 ): ViewModel() {
 
     // FOR DATA
@@ -143,8 +135,6 @@ class SettingsViewModel(
         refreshTime.set(REFRESH_TIME_DEFAULT)
         isRefreshOnlyWifi.set(REFRESH_ONLY_WIFI_DEFAULT)
         storeDelay.set(STORE_DELAY_DEFAULT)
-        val message = resourceService.getString(R.string.activity_settings_toast_reset_settings_default)
-        settingsInterface.showToast(message, Toast.LENGTH_SHORT)
     }
 
     /**

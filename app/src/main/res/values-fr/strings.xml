@@ -95,9 +95,7 @@
     <string name="activity_settings_dialog_reset_settings_message">Êtes-vous sûr de vouloir réinitialiser les paramètres?</string>
     <string name="activity_settings_dialog_negative_button">Annuler</string>
     <!-- Toast -->
-    <string name="activity_settings_toast_time_wrong_value">%1$s doit être entre 0 et 24 !</string>
-    <string name="activity_settings_toast_text_size_wrong_value">La taille du texte doit être entre 1 et 200 !</string>
-    <string name="activity_settings_toast_store_delay_wrong_value">La durée de stockage des articles doit être entre 1 et 24 !</string>
+    <string name="activity_settings_toast_time_wrong_value">%1$s doit être entre %2$d et %3$d !</string>
     <string name="activity_settings_toast_reset_settings_default">Paramètres réinitialisés à leur valeur par défault !</string>
 
     <!-- MENU -->
