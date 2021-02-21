@@ -81,6 +81,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param sharedElement the shared element to animate for the transition.
      */
     internal fun scheduleStartPostponedTransition(sharedElement: View) {
+        // TODO wait has scroll to perfect anim, and use transition to sync and better anim
         sharedElement.doOnPreDraw { activity.supportStartPostponedEnterTransition() }
     }
 
@@ -163,7 +164,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             true,
             300L,
             DecelerateInterpolator(),
-            { progressVal -> sv.alpha = progressVal }
+            { progress -> sv.alpha = progress }
         )
 
         activity.article_image.doOnPreDraw {

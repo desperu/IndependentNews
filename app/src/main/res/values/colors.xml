@@ -47,6 +47,7 @@
     <color name="colorRead">#8069E7FF</color>
     <color name="colorRead2">#8018BDD6</color>
     <color name="colorRead3">#806AC5F6</color>
+    <color name="colorSpeedDialOverlay">#C7E8ED</color>
 
     <!-- Sources Background color -->
     <color name="bastamag_background">#f78c11</color>

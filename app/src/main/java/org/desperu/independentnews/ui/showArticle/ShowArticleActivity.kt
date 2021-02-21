@@ -40,6 +40,8 @@ const val IS_EXPANDED: String = "isExpanded"    // For app bar size
  */
 class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleInterface {
 
+    // TODO add a GestureOverlayView to detect ^ event to back home, the article list.
+
     // FROM BUNDLE
     override val article: Article
         get() = intent.getParcelableExtra(ARTICLE)
@@ -177,13 +179,23 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     // METHODS OVERRIDE
     // --------------
 
-    override fun onPause() { super.onPause(); web_view.onPause() }
+    override fun onAttachedToWindow() { super.onAttachedToWindow(); FabsMenu() }
 
     override fun onResume() { super.onResume(); web_view.onResume() }
+
+    override fun onPause() { super.onPause(); web_view.onPause() }
 
     override fun onStop() {
         super.onStop()
         if (inCustomView) hideCustomView()
+    }
+
+    override fun onDestroy() {
+        mWebViewClient = null
+        mWebChromeClient = null
+        articleDesign = null
+        super.onDestroy()
+        supportFinishAfterTransition()
     }
 
     override fun onBackPressed() = when {
@@ -201,13 +213,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //        }
 //        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
         else -> { sendResult(); super.onBackPressed() }
-    }
-
-    override fun onDestroy() {
-        mWebViewClient = null
-        mWebChromeClient = null
-        articleDesign = null
-        super.onDestroy()
     }
 
     // --------------

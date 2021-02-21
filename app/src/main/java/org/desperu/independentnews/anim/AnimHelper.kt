@@ -3,7 +3,7 @@ package org.desperu.independentnews.anim
 import android.content.Context
 import android.view.View
 import android.view.animation.*
-import androidx.core.view.postOnAnimationDelayed
+import android.view.animation.Animation.AnimationListener
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 /**
@@ -33,7 +33,7 @@ object AnimHelper {
             .setStartDelay(startDelay)
             .setDuration(300L)
             .start()
-        clearAnimAfterPlaying(listOf(view), startDelay + 300L)
+//        clearAnimAfterPlaying(view.animate(), listOf(view))
     }
 
     /**
@@ -48,11 +48,12 @@ object AnimHelper {
         animation.duration = 500L
         animation.interpolator = AccelerateInterpolator()
         animation.startOffset = startDelay
-        clearAnimAfterPlaying(views, startDelay + animation.duration)
+        clearAnimAfterPlaying(animation, views)
         views.forEach {
-            it.postOnAnimation { it.visibility = if (toShow) View.VISIBLE else View.INVISIBLE }
-            it.startAnimation(animation)
+            it.postOnAnimation { it.visibility = if (toShow) View.VISIBLE else View.INVISIBLE } // TODO use listener start/end ???
+            it.animation = animation
         }
+        animation.start()
     }
 
     /**
@@ -72,7 +73,7 @@ object AnimHelper {
         animation.interpolator = DecelerateInterpolator()
         animation.startOffset = startDelay
         view.startAnimation(animation)
-        clearAnimAfterPlaying(listOf(view), startDelay + animation.duration)
+        clearAnimAfterPlaying(animation, listOf(view))
     }
 
     /**
@@ -92,19 +93,27 @@ object AnimHelper {
         val anim = AnimationUtils.makeInAnimation(context, fromLeft)
         anim.startOffset = startDelay
         anim.duration = 250L
-        views.forEach { it.startAnimation(anim) }
-        clearAnimAfterPlaying(views, startDelay + anim.duration)
+        views.forEach { it.animation = anim }
+        clearAnimAfterPlaying(anim, views)
+        anim.start()
     }
 
     /**
      * Clear animation after playing for each view in the given list.
      *
+     * @param anim  the animation on which clear at end.
      * @param views the list of views for which clear animation.
-     * @param delay the post delay after which clear animation.
      */
-    private fun clearAnimAfterPlaying(views: List<View>, delay: Long) {
-        val fullDelay = delay + 500L
-        views.forEach { it.postOnAnimationDelayed(fullDelay) { it.clearAnimation() } }
+    private fun clearAnimAfterPlaying(anim: Animation, views: List<View>) {
+        anim.setAnimationListener(object : AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+
+            override fun onAnimationEnd(animation: Animation?) {
+                views.forEach { it.clearAnimation() }
+            }
+
+            override fun onAnimationRepeat(animation: Animation?) {}
+        })
     }
 
     // --------------

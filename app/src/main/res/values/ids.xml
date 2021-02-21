@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Resources Ids list -->
+<resources>
+
+    <!-- Ids for the Fab Menu (SpeedDialItem) -->
+    <item name="fab_action1" type="id" />
+    <item name="fab_action2" type="id" />
+    <item name="fab_action3" type="id" />
+    <item name="fab_action4" type="id" />
+    <item name="fab_action5" type="id" />
+
+</resources>

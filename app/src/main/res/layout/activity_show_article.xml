@@ -160,6 +160,8 @@
             android:layout_height="match_parent"
             android:visibility="invisible" />
 
+        <include layout="@layout/layout_fabs_menu" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>
