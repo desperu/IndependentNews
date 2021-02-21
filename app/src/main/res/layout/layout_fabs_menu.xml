@@ -11,6 +11,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <View
+            android:id="@+id/fabs_custom_overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0.95"
@@ -27,7 +28,7 @@
         app:elevation="@dimen/default_middle_margin"
 
         app:sdMainFabClosedBackgroundColor="@color/colorPrimaryDark"
-        app:sdMainFabClosedSrc="@drawable/ic_close"
+        app:sdMainFabClosedSrc="@drawable/ic_add"
         app:sdMainFabClosedIconColor="@color/subtitle_color"
 
         app:sdMainFabOpenedBackgroundColor="@color/filter_pill_color"

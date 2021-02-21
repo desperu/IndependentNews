@@ -7,7 +7,7 @@
         android:centerY="0.9"
         android:type="radial"
         android:gradientRadius="700dp"
-        android:startColor="@color/colorSpeedDialOverlay"
+        android:startColor="@color/colorSDOverlayStart"
         android:centerColor="@color/subtitle_color"
         android:endColor="@android:color/transparent" />
 

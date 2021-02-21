@@ -60,6 +60,15 @@ const val SUB_FAB_STAR = 2
 const val SUB_FAB_PAUSE = 3
 const val SUB_FAB_HOME = 4
 
+// For Sub Fabs list
+internal val subFabList = listOf(
+    SUB_FAB_MIN_TEXT,
+    SUB_FAB_UP_TEXT,
+    SUB_FAB_STAR,
+    SUB_FAB_PAUSE,
+    SUB_FAB_HOME
+)
+
 
 // --- FOR FILTERS ---
 

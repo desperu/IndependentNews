@@ -17,6 +17,7 @@ import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
+import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
 import org.desperu.independentnews.ui.sources.SourcesActivity
