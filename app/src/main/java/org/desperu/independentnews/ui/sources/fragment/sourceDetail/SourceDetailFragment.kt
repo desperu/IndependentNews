@@ -189,7 +189,7 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
      * Animate view when fragment appear.
      */
     private fun animateViews() {
-        alphaViewAnimation(listOf(source_detail_container), 0, true)
+//        alphaViewAnimation(listOf(source_detail_container), 0, true) // TODO create a highlight on the image logo, try to animate the container
         scaleViewAnimation(source_detail_disable_button, 250)
         alphaViewAnimation(listOf(source_detail_title, source_detail_web_view), 50, true)
         fromBottomAnimation(source_detail_web_view, 50)

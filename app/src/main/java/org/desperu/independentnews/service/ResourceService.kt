@@ -1,11 +1,12 @@
 package org.desperu.independentnews.service
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.annotation.ArrayRes
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.core.content.res.ResourcesCompat
 
 /**
  * Service for being able to access resources of the application.
@@ -42,8 +43,21 @@ interface ResourceService{
      *
      * @return the Drawable with the given unique identifier from the resources of the
      * application.
+     *
+     * @throws Exception Drawable not found.
      */
-    fun getDrawable(@DrawableRes drawableRes: Int): Drawable
+    fun getDrawable(@DrawableRes drawableRes: Int): Drawable?
+
+    /**
+     * Returns the Color with the given unique identifier from the resources of the
+     * application.
+     *
+     * @param colorRes the unique identifier of the Color resource.
+     *
+     * @return the Color with the given unique identifier from the resources of the
+     * application.
+     */
+    fun getColor(@ColorRes colorRes: Int): Int
 }
 
 /**
@@ -56,7 +70,7 @@ interface ResourceService{
  *
  * @param context The Context instance used to access the resources of the application to set.
  */
-class ResourceServiceImpl(private val context: Context) : ResourceService{
+class ResourceServiceImpl(private val context: Context) : ResourceService {
     /**
      * Returns the String with the given unique identifier and format arguments from the resources
      * of the application.
@@ -88,8 +102,21 @@ class ResourceServiceImpl(private val context: Context) : ResourceService{
      *
      * @return the Drawable with the given unique identifier from the resources of the
      * application.
+     *
+     * @throws Exception Drawable not found.
      */
-    @SuppressLint("UseCompatLoadingForDrawables")
-    @Suppress("deprecation")
-    override fun getDrawable(@DrawableRes drawableRes: Int): Drawable = context.resources.getDrawable(drawableRes)
+    override fun getDrawable(@DrawableRes drawableRes: Int): Drawable =
+        ResourcesCompat.getDrawable(context.resources, drawableRes, null)
+            ?: throw Exception("Drawable not found")
+    /**
+     * Returns the Color with the given unique identifier from the resources of the
+     * application.
+     *
+     * @param colorRes the unique identifier of the Color resource.
+     *
+     * @return the Color with the given unique identifier from the resources of the
+     * application.
+     */
+    override fun getColor(@ColorRes colorRes: Int): Int =
+        ResourcesCompat.getColor(context.resources, colorRes, null)
 }

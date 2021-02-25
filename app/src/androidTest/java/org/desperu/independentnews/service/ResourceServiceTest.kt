@@ -46,6 +46,15 @@ class ResourcesServiceInstrumentedTest : KoinTest {
                     " Check the repertory src/androidTest/res/drawable",
             expected != null
         )
-        assertTrue(expected!!.toBitmap().sameAs(output.toBitmap()))
+        assertTrue(expected!!.toBitmap().sameAs(output?.toBitmap()))
+    }
+
+    @Test
+    fun getColor() {
+        val expected = appContext.getColor(R.color.colorAccent)
+
+        val output = resource.getColor(R.color.colorAccent)
+
+        assertEquals(expected, output)
     }
 }
