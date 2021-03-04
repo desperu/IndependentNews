@@ -1,34 +1,44 @@
 package org.desperu.independentnews.ui.showArticle.design
 
+import android.graphics.drawable.Drawable
 import android.os.Build
+import android.transition.Transition
+import android.transition.TransitionInflater
+import android.transition.TransitionSet
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
+import androidx.annotation.RequiresApi
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
-import kotlinx.android.synthetic.main.activity_show_article.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.desperu.independentnews.R
-import org.desperu.independentnews.anim.AnimHelper.animatedValue
-import org.desperu.independentnews.anim.AnimHelper.fromSideAnimator
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
-import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+import org.desperu.independentnews.ui.showArticle.ShowArticleTransition
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
 
+/**
+ * Article Design class used to handle User Interface.
+ *
+ * @property activity       the activity for which handle ui.
+ * @property actualUrl      the actual url of the web view.
+ *
+ * @constructor Instantiate a new ArticleDesign.
+ */
 class ArticleDesign : ArticleDesignInterface, KoinComponent {
 
     // FOR COMMUNICATION
@@ -45,7 +55,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     override var scrollPosition = -1
     private var isLayoutDesigned = false
     private var hasScroll = false
-    private var isFirstPage = true
+    override var isFirstPage = true
 
     init {
         configureKoinDependency()
@@ -63,7 +73,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     }
 
     // --------------
-    // ANIMATION
+    // TRANSITION
     // --------------
 
     /**
@@ -81,76 +91,67 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param sharedElement the shared element to animate for the transition.
      */
     internal fun scheduleStartPostponedTransition(sharedElement: View) {
-        // TODO wait has scroll to perfect anim, and use transition to sync and better anim
-        sharedElement.doOnPreDraw { activity.supportStartPostponedEnterTransition() }
+        sharedElement.doOnPreDraw {
+            // Used here to be sure that the web content is full loaded.
+            waitHasScroll { activity.supportStartPostponedEnterTransition() }
+        }
     }
 
     /**
-     * Configure views animation when activity appear (enter animation).
+     * Set custom activity transition, if the article id equal zero,
+     * the show article activity was call from source detail, so set the specific transition.
      *
-     * @param articleId the unique identifier of the article.
+     * Else, and only for API >= LOLLIPOP, add shared element activity transition.
+     *
+     * Else, update views background.
+     *
+     * @param article       the current article shown in the web view.
+     * @param bgDrawable    the background drawable used for the transition.
      */
-    internal fun configureViewAnimations(articleId: Long?) {
-        if (articleId != 0L) {
-            activity.apply {
-                val animator =
-                    getValueAnimator(
-                        true,
-                        resources.getInteger(R.integer.enter_anim_duration).toLong(),
-                        DecelerateInterpolator(),
-                        { progress ->
+    internal fun setActivityTransition(article: Article?, bgDrawable: Drawable?) {
+        val body = article?.article ?: ""
+        val sourceName = article?.source?.name ?: ""
 
-                            article_source_name.apply { // From left
-                                translationX = animatedValue(-right, progress)
-                                rootView.article_source_image.translationX = translationX // to sync with name anim
-                            }
-                            fromSideAnimator(
-                                listOf(article_subtitle, article_date),
-                                progress,
-                                false
-                            )
-                            fromSideAnimator(listOf(article_author), progress, true)
-                            article_title.setScale(progress)
-                            web_view.apply {
-                                alpha = (progress - 0.65f) / 0.35f // (progress - 0.8f) / 0.2f // not shown because css update
-                                translationY = animatedValue(
-                                    sv.bottom - web_view.top,
-                                    progress
-                                )//100.dp - 100.dp * progress
-                            }
-//                        article_root_view.alpha = progress // create anim mistake
-                        }
-                    )
-
-                article_image.postOnAnimation { animator.start() }
-                article_image.postOnAnimationDelayed(animator.duration * 2) { clearAnimations() }
+        when {
+            article?.id == 0L -> {
+                activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                activity.web_view.updateBackground(body, sourceName)
             }
 
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bgDrawable != null-> {
+                activity.window.setBackgroundDrawable(bgDrawable)
+                activity.window.sharedElementEnterTransition = getActivityTransition(true)
+                activity.window.sharedElementReturnTransition = getActivityTransition(false)
+            }
+
+            else -> activity.web_view.updateBackground(body, sourceName) // Add from bottom anim ??
         }
     }
 
     /**
-     * Clear all animated value for each views. Needed to prevent ui mistake,
-     * when not play anim until it's end.
-     */
-    private fun clearAnimations() {
-        activity.apply {
-            val views = listOf(article_source_image, article_source_name, article_subtitle, article_date, article_author)
-            views.forEach { it.translationX = 0f }
-            article_title.setScale(1f)
-            web_view.apply { alpha = 1f; translationY = 0f }
-        }
-    }
-
-    /**
-     * Set custom activity transition, only for source detail to source page transition.
+     * Returns the activity transitions for enter and return transitions.
+     * We use move transition for the shared element (the article image),
+     * and add a custom transition animation with [ShowArticleTransition].
      *
-     * @param articleId the unique identifier of the article.
+     * @param isEnter true if is enter transition, false if is return.
+     *
+     * @return return the activity transition set.
      */
-    internal fun setActivityTransition(articleId: Long?) {
-        if (articleId == 0L)
-            activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun getActivityTransition(isEnter: Boolean): Transition {
+        val transitionSet = TransitionSet()
+        val moveTransition = TransitionInflater.from(activity)
+            .inflateTransition(android.R.transition.move)
+
+        transitionSet.addTransition(moveTransition)
+        transitionSet.addTransition(ShowArticleTransition(isEnter))
+
+        return transitionSet
     }
+
+    // --------------
+    // ANIMATION
+    // --------------
 
     /**
      * Show the scroll view, with alpha animation, delayed after set the scroll Y position.
@@ -167,15 +168,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             { progress -> sv.alpha = progress }
         )
 
-        activity.article_image.doOnPreDraw {
-            val startAnim = activity.lifecycleScope.async(Dispatchers.Main) {
-                do { delay(50) } while (!hasScroll)
-                anim.start()
-            }
-
-            startAnim[startAnim.key]
-        }
-
+        activity.article_image.doOnPreDraw { waitHasScroll { anim.start() } }
     }
 
     // --------------
@@ -273,11 +266,33 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
 
     /**
      * Update loading progress bar, in the app bar, with the new progress value.
+     * Use animation only for API >= NOUGAT.
      *
      * @param newProgress the new progress value.
      */
     override fun updateProgress(newProgress: Int) {
         if (newProgress <= 80 && !isLayoutDesigned || newProgress > 80 && isLayoutDesigned)
-            loadingProgressBar.progress = newProgress
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                loadingProgressBar.setProgress(newProgress, true)
+            } else
+                loadingProgressBar.progress = newProgress
+    }
+
+    // --------------
+    // UTILS
+    // --------------
+
+    /**
+     * Wait has scroll before invoke the given block.
+     *
+     * @param block the given block to invoke after has scroll.
+     */
+    private fun waitHasScroll(block: () -> Unit) {
+        val waitHasScroll = activity.lifecycleScope.async(Dispatchers.Main) {
+            do { delay(50) } while (!hasScroll)
+            block()
+        }
+
+        waitHasScroll[waitHasScroll.key]
     }
 }

@@ -9,10 +9,14 @@ import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.NestedScrollView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindDimen
+import org.desperu.independentnews.extension.design.findView
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
@@ -48,6 +52,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private val sourceRouter: SourceRouter by inject()
     private val prefs: SharedPrefService by inject()
     private var css: Css by Delegates.notNull()
+    private var actualUrl: String? = null
     private var sourceName: String by Delegates.notNull()
 
     // --------------
@@ -72,18 +77,23 @@ class NoScrollWebView @JvmOverloads constructor(
 
     /**
      * Update the design of the web view on loading start.
-     * Set the margins, text size, background color and apply css style.
+     * Set the margins, text size and apply css style.
      *
      * @param url               the url of the page.
      * @param sourceName        the name of the source of the page.
      * @param css               the css of the web view content.
      */
     internal fun updateWebViewStart(url: String?, sourceName: String, css: Css) {
+        // Work with updateBackground() without arguments, and getCurrentSourceColor()
+        actualUrl = url
+        this.sourceName = sourceName
+
         url?.let {
             updateTextSize(it, sourceName)
-            updateBackground(it, sourceName)
+            if (articleDesignInterface?.isFirstPage != true) // To allow enter transition, from article list
+                updateBackground(it, sourceName)
             updateMargins(it, sourceName)
-            postDelayed({ applyCssStyle(it, css) }, 10) // To prevent design bug
+            postDelayed({ applyCssStyle(it, css) }, 50) // To prevent design bug, mistake in source detail with 10
         }
     }
 
@@ -94,7 +104,10 @@ class NoScrollWebView @JvmOverloads constructor(
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
-            url?.let { updateWebViewStart(it, sourceName, css) }
+            url?.let {
+                updateBackground(it, sourceName)
+                updateWebViewStart(it, sourceName, css)
+            }
         }
 
         override fun shouldOverrideUrlLoading(
@@ -213,6 +226,7 @@ class NoScrollWebView @JvmOverloads constructor(
             )
 
                 textZoom += 20
+
             textAlignment = TEXT_ALIGNMENT_VIEW_START
         }
     }
@@ -238,8 +252,9 @@ class NoScrollWebView @JvmOverloads constructor(
         }
 
         // Apply margins to the web view.
-        (this.layoutParams as LinearLayout.LayoutParams)
-            .setMargins(margins[0], margins[1], margins[2], margins[3])
+        (layoutParams as? FrameLayout.LayoutParams)
+            ?: (layoutParams as LinearLayout.LayoutParams)
+                .setMargins(margins[0], margins[1], margins[2], margins[3])
     }
 
     /**
@@ -248,15 +263,41 @@ class NoScrollWebView @JvmOverloads constructor(
      * @param url               the actual url of the web view.
      * @param sourceName        the name of the source of the page.
      */
-    @Suppress("Deprecation")
-    private fun updateBackground(url: String, sourceName: String) { // should use alpha with value animator
-        (parent as View).setBackgroundColor(
-            resources.getColor(
-                if (isHtmlData(url) && sourceName == REPORTERRE)
-                    R.color.reporterre_background
-                else
-                    android.R.color.white
-            )
-        )
+    internal fun updateBackground(url: String, sourceName: String) {
+        val color = getCurrentSourceColor(url, sourceName)
+
+        rootView.findViewById<View>(R.id.article_root_view)?.setBackgroundColor(color)
+        findView<NestedScrollView>()?.setBackgroundColor(color)
+        rootView.findViewById<View>(R.id.article_metadata_container)?.setBackgroundColor(color)
     }
+
+    /**
+     * Convenience call for update background color of the parent container,
+     * the linear layout that's container all content view.
+     */
+    internal fun updateBackground() {
+        if (actualUrl != null && sourceName.isNotBlank())
+            updateBackground(actualUrl!!, sourceName)
+    }
+
+    /**
+     * Returns the current background color, depends of the current source name.
+     *
+     * @param url               the actual url of the web view.
+     * @param sourceName        the name of the source of the page.
+     *
+     * @return the current source background color.
+     */
+    internal fun getCurrentSourceColor(
+        url: String = actualUrl ?: "false =)",
+        sourceName: String = this.sourceName
+    ) =
+        ResourcesCompat.getColor(
+            resources,
+            if (isHtmlData(url) && sourceName == REPORTERRE)
+                R.color.reporterre_background
+            else
+                android.R.color.white,
+            null
+        )
 }

@@ -6,10 +6,10 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.view.doOnAttach
 import androidx.fragment.app.Fragment
-import androidx.transition.Fade
-import androidx.transition.TransitionInflater
-import androidx.transition.TransitionSet
+import androidx.transition.*
+import com.google.android.material.transition.MaterialFade
 import icepick.State
+import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
@@ -207,7 +207,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         if (isDestroyed) return
 
         // 1. Exit for Previous Fragment
-        val exitFade = Fade()
+        val exitFade = MaterialFade()
         exitFade.duration = FADE_DEFAULT_TIME
         currentFragment?.exitTransition = exitFade
 
@@ -216,13 +216,13 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         transitionSet.addTransition(
             TransitionInflater.from(this).inflateTransition(android.R.transition.move)
         )
-        transitionSet.addTransition(SourceTransition())
+        transitionSet.addTransition(SourceTransition()) // ChangeImageTransform() has bad animation result
         fragment.sharedElementEnterTransition = transitionSet
 
         // 3. Enter Transition for New Fragment
-        val enterFade = Fade()
+        val enterFade = MaterialFade()
         enterFade.duration = FADE_DEFAULT_TIME
-        fragment.enterTransition = enterFade
+        fragment.enterTransition = enterFade // TODO anim mistake du to this line and use card view instead of image
     }
 
     /**

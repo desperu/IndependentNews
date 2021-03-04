@@ -11,6 +11,11 @@ interface ArticleDesignInterface {
     var scrollPosition: Int
 
     /**
+     * True if it's the first page, false otherwise.
+     */
+    var isFirstPage: Boolean
+
+    /**
      * Save the scroll position of the scroll view position.
      */
     fun saveScrollPosition()

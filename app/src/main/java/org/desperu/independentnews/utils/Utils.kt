@@ -195,6 +195,7 @@ internal object Utils {
      */
     internal fun isHtmlData(url: String) =
         url.startsWith("data:text/html; charset=UTF-8,")
+                || url.startsWith("<html>")
 
     /**
      * Returns true if the given url is a note redirection, false otherwise.

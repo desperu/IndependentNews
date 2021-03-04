@@ -1,5 +1,6 @@
 package org.desperu.independentnews.ui.main.fragment.articleList
 
+import android.util.Pair
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.databinding.ObservableBoolean
@@ -10,6 +11,7 @@ import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
+import org.desperu.independentnews.service.ResourceService
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -19,6 +21,7 @@ import org.koin.core.get
  * @property article            the given article data for this view model.
  * @property ideNewsRepository  the app repository interface witch provide database and network access.
  * @property router             the router that allows redirection of the user.
+ * @property isRead             true if is read, false otherwise.
  *
  * @constructor Instantiates a new ArticleItemViewModel.
  *
@@ -29,6 +32,7 @@ class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
     // FOR DATA
     private val ideNewsRepository: IndependentNewsRepository = get()
     private val router: ArticleRouter get() = get()
+    private val resource: ResourceService = get()
     val isRead = ObservableBoolean(article.read)
 
     // ------------
@@ -36,27 +40,14 @@ class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
     // ------------
 
     /**
-     * On click image listener.
+     * On click image, title and description container listener.
      */
-    val onClickImage = OnClickListener {
-        markAsRead()
-        router.openShowArticle(article, it)
-    }
+    val onClickArticle = OnClickListener {
+        val imageView = (it.parent as View).findViewById<View>(R.id.image)
+        val imageName = resource.getString(R.string.animation_main_to_show_article)
 
-    /**
-     * On click title listener.
-     */
-    val onClickTitle = OnClickListener {
+        router.openShowArticle(article, Pair(imageView, imageName))
         markAsRead()
-        router.openShowArticle(article, (it.parent as View).findViewById(R.id.image))
-    }
-
-    /**
-     * On click description container listener.
-     */
-    val onClickDescriptionContainer = OnClickListener {
-        markAsRead()
-        router.openShowArticle(article, (it.parent as View).findViewById(R.id.image))
     }
 
     // ------------

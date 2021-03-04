@@ -58,5 +58,5 @@ class SourceRouterImpl(private val activity: AppCompatActivity): SourceRouter {
      * @param isExpanded    true if the app bar is expanded, false if is collapsed.
      */
     override fun openShowArticle(article: Article, isExpanded: Boolean) =
-        ShowArticleActivity.routeFromActivity(activity, article, null, isExpanded)
+        ShowArticleActivity.routeFromActivity(activity, article, isExpanded)
 }

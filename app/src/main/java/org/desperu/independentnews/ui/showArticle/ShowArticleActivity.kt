@@ -2,10 +2,16 @@ package org.desperu.independentnews.ui.showArticle
 
 import android.app.ActivityOptions
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Pair
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnAttach
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
@@ -27,12 +33,14 @@ import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.io.ByteArrayOutputStream
 
 /**
  * The name of the arguments to received data for this Activity.
  */
-const val ARTICLE: String = "article"           // For article
-const val IS_EXPANDED: String = "isExpanded"    // For app bar size
+const val ARTICLE: String = "article"                       // For article data
+const val IS_EXPANDED: String = "isExpanded"                // For app bar size
+const val TRANSITION_BG: String = "transitionBackground"    // For transition background
 
 /**
  * Activity to show articles list.
@@ -48,6 +56,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         get() = intent.getParcelableExtra(ARTICLE)
             ?: Article(title = getString(R.string.show_article_activity_article_error))
     private val isExpanded: Boolean get() = intent.getBooleanExtra(IS_EXPANDED, true)
+    private val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG)
 
     // FOR DATA
     private lateinit var binding: ActivityShowArticleBinding
@@ -67,27 +76,35 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         /**
          * Redirects from an Activity to this Activity with transition animation.
          *
-         * @param activity      the activity use to perform redirection.
-         * @param article       the article to show in this activity.
-         * @param imageView     the image view to animate.
-         * @param isExpanded    true if the app bar is expanded, false if is collapsed.
+         * @param activity          the activity use to perform redirection.
+         * @param article           the article to show in this activity.
+         * @param isExpanded        true if the app bar is expanded, false if is collapsed.
+         * @param sharedElements    the shared elements to animate.
          */
         fun routeFromActivity(activity: AppCompatActivity,
                               article: Article,
-                              imageView: View?,
-                              isExpanded: Boolean) {
+                              isExpanded: Boolean,
+                              vararg sharedElements: Pair<View, String>,
+        ) {
             val intent = Intent(activity, ShowArticleActivity::class.java)
                 .putExtra(ARTICLE, article)
                 .putExtra(IS_EXPANDED, isExpanded)
 
+            val hasShared = sharedElements.isNotEmpty()
+                    && (sharedElements[0].first as ImageView).drawable != null
+
             // Create animation transition scene
             val options =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && imageView != null) {
-                    ActivityOptions.makeSceneTransitionAnimation(
-                        activity,
-                        imageView,
-                        activity.getString(R.string.animation_main_to_show_article)
-                    )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasShared) {
+
+                    // Save previous activity window to use as background during the transition
+                    val decorBitmap = activity.window.decorView.drawToBitmap()
+                    val out =  ByteArrayOutputStream()
+                    decorBitmap.compress(Bitmap.CompressFormat.JPEG, 0, out)
+
+                    intent.putExtra(TRANSITION_BG, out.toByteArray())
+                    
+                    ActivityOptions.makeSceneTransitionAnimation(activity, *sharedElements)
                 } else
                     null
 
@@ -141,12 +158,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         articleDesign = ArticleDesign()
 
         articleDesign?.apply {
-            val articleId = viewModel.article.get()?.id
-
-            configureViewAnimations(articleId)
             postponeSceneTransition()
+            this@ShowArticleActivity.setActivityTransition()
             scheduleStartPostponedTransition(article_image)
-            setActivityTransition(articleId)
             setupProgressBarWithScrollView()
         }
     }
@@ -182,7 +196,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     override fun onAttachedToWindow() { super.onAttachedToWindow(); FabsMenu() }
 
-    override fun onResume() { super.onResume(); web_view.onResume() }
+    override fun onResume() {
+        super.onResume()
+        web_view.onResume()
+        if (articleDesign?.isFirstPage == false) setActivityTransition()
+    }
 
     override fun onPause() { super.onPause(); web_view.onPause() }
 
@@ -240,6 +258,20 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Hide video custom view.
      */
     private fun hideCustomView() { mWebChromeClient?.onHideCustomView() }
+
+    /**
+     * Set the activity transition.
+     */
+    private fun setActivityTransition() {
+        val drawable = if (transitionBg != null) {
+            val length = transitionBg?.size ?: 0
+            val bitmap = BitmapFactory.decodeByteArray(transitionBg, 0, length)
+            bitmap.toDrawable(resources)
+        } else
+            null
+
+        articleDesign?.setActivityTransition(article, drawable)
+    }
 
     // --------------
     // UTILS

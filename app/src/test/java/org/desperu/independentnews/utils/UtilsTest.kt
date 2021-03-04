@@ -285,9 +285,16 @@ class UtilsTest {
 
     @Test
     fun given_sourceUrl_When_isHtmlData_Then_checkTrue() {
-        val output = isHtmlData("data:text/html; charset=UTF-8,")
+        val list = listOf(
+            "data:text/html; charset=UTF-8,",
+            "<html>"
+        )
 
-        assertTrue(output)
+        list.forEach {
+            val output = isHtmlData(it)
+
+            assertTrue(output)
+        }
     }
 
     @Test

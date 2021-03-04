@@ -120,7 +120,7 @@
                         android:ellipsize="end"
                         android:textStyle="bold"
                         android:text="@{viewModel.article.title}"
-                        android:onClick="@{viewModel.onClickTitle}" />
+                        android:onClick="@{viewModel.onClickArticle}" />
 
                     <TextView
                         android:id="@+id/author"
@@ -157,7 +157,7 @@
                         android:layout_marginTop="@dimen/item_article_image_vertical_margin"
                         android:layout_marginBottom="@dimen/item_article_image_vertical_margin"
                         android:scaleType="centerCrop"
-                        android:onClick="@{viewModel.onClickImage}"
+                        android:onClick="@{viewModel.onClickArticle}"
                         android:tag="item_article"
                         android:transitionName="@string/animation_main_to_show_article"
                         app:setImage="@{viewModel.article.imageUrl}"
@@ -172,7 +172,7 @@
                         android:layout_marginTop="@dimen/item_article_expand_view_padding_top"
                         android:layout_marginEnd="@dimen/default_middle_margin"
                         android:visibility="gone"
-                        android:onClick="@{viewModel.onClickDescriptionContainer}"
+                        android:onClick="@{viewModel.onClickArticle}"
                         tools:visibility="gone">
 
                         <TextView

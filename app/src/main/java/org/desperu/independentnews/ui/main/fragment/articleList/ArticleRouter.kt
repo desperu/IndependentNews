@@ -1,5 +1,6 @@
 package org.desperu.independentnews.ui.main.fragment.articleList
 
+import android.util.Pair
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import org.desperu.independentnews.models.database.Article
@@ -13,10 +14,10 @@ interface ArticleRouter {
     /**
      * Redirects the user to the ShowArticle Activity to show articles.
      *
-     * @param article       the article to show in the Activity.
-     * @param imageView     the image view to animate.
+     * @param article           the article to show in the Activity.
+     * @param sharedElements    the shared elements to animate.
      */
-    fun openShowArticle(article: Article, imageView: View)
+    fun openShowArticle(article: Article, vararg sharedElements: Pair<View, String>)
 }
 
 /**
@@ -33,9 +34,9 @@ class ArticleRouterImpl(private val activity: AppCompatActivity): ArticleRouter 
     /**
      * Redirects the user to the Show Article Activity to show article.
      *
-     * @param article       the article to show in the Activity.
-     * @param imageView     the image view to animate.
+     * @param article           the article to show in the Activity.
+     * @param sharedElements    the shared elements to animate.
      */
-    override fun openShowArticle(article: Article, imageView: View) =
-        ShowArticleActivity.routeFromActivity(activity, article, imageView, true)
+    override fun openShowArticle(article: Article, vararg sharedElements: Pair<View, String>) =
+        ShowArticleActivity.routeFromActivity(activity, article, true, *sharedElements)
 }
