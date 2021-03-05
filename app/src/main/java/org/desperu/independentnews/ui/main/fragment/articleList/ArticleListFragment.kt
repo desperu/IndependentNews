@@ -121,6 +121,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     override fun onResume() {
         super.onResume()
+        showFilterMotion(true)
         articleListAdapter?.isFiltered?.let { updateFiltersMotionState(it) }
     }
 

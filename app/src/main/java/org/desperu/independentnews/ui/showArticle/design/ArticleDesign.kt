@@ -2,6 +2,8 @@ package org.desperu.independentnews.ui.showArticle.design
 
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.transition.Transition
 import android.transition.TransitionInflater
 import android.transition.TransitionSet
@@ -9,12 +11,15 @@ import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
+import androidx.core.os.postDelayed
+import androidx.core.transition.doOnEnd
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
+import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -276,6 +281,35 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 loadingProgressBar.setProgress(newProgress, true)
             } else
                 loadingProgressBar.progress = newProgress
+    }
+
+    /**
+     * Show or hide fabs menu, depends of to show value.
+     *
+     * @param toShow    true to show the fabs menu, false to hide.
+     * @param toDelay   true to delay show fabs menu, false to do on transition end.
+     */
+    internal fun showFabsMenu(toShow: Boolean, toDelay: Boolean = true) {
+        val delay = activity.resources.getInteger(
+            if (toDelay)
+                android.R.integer.config_longAnimTime
+            else
+                android.R.integer.config_shortAnimTime
+        )
+        val show = {
+            Handler(Looper.getMainLooper()).postDelayed(delay.toLong()) {
+                activity.fabs_menu.apply { visibility = View.VISIBLE; show() }
+            }
+        }
+
+        if (toShow) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (toDelay) show()
+                else activity.window.enterTransition.doOnEnd { show() }
+            } else
+                show()
+        } else
+            activity.fabs_menu.hide()
     }
 
     // --------------

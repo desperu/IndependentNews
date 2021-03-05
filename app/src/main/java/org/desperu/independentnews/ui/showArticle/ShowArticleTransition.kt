@@ -9,7 +9,6 @@ import android.transition.TransitionValues
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.core.view.children
 import org.desperu.independentnews.R
@@ -77,7 +76,7 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
         if (startValues != null && endValues != null) {
             val view = endValues.view
 
-            if (view is ImageView) {
+            if (view.id == R.id.article_image) {
 
                 // Get views and prepare layout before animation
                 getViews(view)

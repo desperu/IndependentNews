@@ -161,6 +161,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             postponeSceneTransition()
             this@ShowArticleActivity.setActivityTransition()
             scheduleStartPostponedTransition(article_image)
+            showFabsMenu(true, transitionBg == null)
             setupProgressBarWithScrollView()
         }
     }
@@ -231,7 +232,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //            web_view.stopLoading()
 //        }
 //        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
-        else -> { sendResult(); super.onBackPressed() }
+        else -> {
+            sendResult()
+            articleDesign?.showFabsMenu(false)
+            super.onBackPressed()
+        }
     }
 
     // --------------
