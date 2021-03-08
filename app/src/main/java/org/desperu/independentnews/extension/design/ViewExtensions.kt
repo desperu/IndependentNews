@@ -123,3 +123,31 @@ internal inline fun <reified T: View> View?.findView(): T? {
     // If we reach here then we didn't find a view type
     return null
 }
+
+/**
+ * Find the animated child in the view descendants, the first or the last.
+ *
+ * @param last true for the last, false for the first.
+ *
+ * @return the animated child view, null if not found.
+ */
+internal fun View?.findAnimatedChild(last: Boolean): View? {
+    var view: View? = null
+
+    if (this is ViewGroup) {
+        // If the view is a view group, search the animated child in it's descendants
+        this.descendants.forEach {
+
+            if (it.animation != null) {
+                // We've found an animated child, use it
+                if (last) view = it
+
+                // Return the first animated child found
+                else return it
+            }
+        }
+    }
+
+    // Return the last animated child found
+    return view
+}

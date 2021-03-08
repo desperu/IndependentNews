@@ -10,6 +10,7 @@ import android.transition.TransitionSet
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
+import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
 import androidx.core.os.postDelayed
 import androidx.core.transition.doOnEnd
@@ -53,14 +54,21 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     // FOR DESIGN
     private val sv: NestedScrollView by bindView(activity, R.id.article_scroll_view)
     private val scrollBar: ProgressBar by bindView(activity, R.id.article_scroll_progress_bar)
-    private val loadingAnimBar: ContentLoadingProgressBar by bindView(activity, R.id.article_loading_progress_bar)
-    private val loadingProgressBar: ProgressBar by bindView(activity, R.id.appbar_loading_progress_bar)
+    private val loadingAnimBar: ContentLoadingProgressBar by bindView(
+        activity,
+        R.id.article_loading_progress_bar
+    )
+    private val loadingProgressBar: ProgressBar by bindView(
+        activity,
+        R.id.appbar_loading_progress_bar
+    )
 
     // FOR DATA
-    override var scrollPosition = -1
-    private var isLayoutDesigned = false
-    private var hasScroll = false
     override var isFirstPage = true
+    private var isLayoutDesigned = false
+    private val scrollHeight get() = sv.getChildAt(0).bottom - sv.measuredHeight
+    override var scrollPosition = -1
+    private var hasScroll = false
 
     init {
         configureKoinDependency()
@@ -186,21 +194,59 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     internal fun setupProgressBarWithScrollView() {
         var svScrollY = 0
         val setup = {
-            svScrollY = if (svScrollY != 0) svScrollY else sv.scrollY
-            val scrollHeight = sv.getChildAt(0).bottom - sv.measuredHeight
-            val progress = (svScrollY.toFloat() / scrollHeight.toFloat()) * 100f
-
-            // Use animation for API >= Nougat (24)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                scrollBar.setProgress(progress.toInt(), true)
-            else
-                scrollBar.progress = progress.toInt()
+            val newProgress = getScrollYPercent(svScrollY) * 100
+            updateProgressBar(scrollBar, newProgress.toInt())
         }
         // TODO on scroll video should pause ...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> svScrollY = scrollY; setup() }
         else
             sv.viewTreeObserver.addOnScrollChangedListener { svScrollY = 0; setup() }
+    }
+
+    /**
+     * Returns the current scroll y value in percent.
+     *
+     * @param svScrollY the scroll y value.
+     *
+     * @return the current scroll y value in percent.
+     */
+    override fun getScrollYPercent(svScrollY: Int): Float {
+        val scrollY = if (svScrollY != 0) svScrollY else sv.scrollY
+        return (scrollY.toFloat() / scrollHeight.toFloat())
+    }
+
+    /**
+     * Save the scroll position of the scroll view.
+     */
+    override fun saveScrollPosition() { scrollPosition = sv.scrollY }
+
+    /**
+     * Scroll vertically to the y position value, if null restore scroll position.
+     *
+     * @param y the y value, vertical axe, to scroll to.
+     */
+    override fun scrollTo(y: Int?) {
+        sv.doOnLayout {
+            val scrollY = when {
+                y != null -> y
+                scrollPosition > -1 -> scrollPosition
+                else -> 0
+            }
+
+            sv.scrollTo(sv.scrollX, scrollY)
+            scrollPosition = -1
+            hasScroll = true
+        }
+    }
+
+    /**
+     * Scroll vertically to the y percent value.
+     *
+     * @param yPercent the y percent value, vertical axe, to scroll to.
+     */
+    override fun scrollTo(@FloatRange(from = 0.0, to = 1.0) yPercent: Float) {
+        sv.scrollTo(sv.scrollX, (scrollHeight * yPercent).toInt())
     }
 
     /**
@@ -246,41 +292,27 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     }
 
     /**
-     * Save the scroll position of the scroll view.
-     */
-    override fun saveScrollPosition() { scrollPosition = sv.scrollY }
-
-    /**
-     * Scroll vertically to the y position value, if null restore scroll position.
-     *
-     * @param y the y value, vertical axe, to scroll to.
-     */
-    override fun scrollTo(y: Int?) {
-        sv.doOnLayout {
-            val scrollY = when {
-                y != null -> y
-                scrollPosition > -1 -> scrollPosition
-                else -> 0
-            }
-
-            sv.scrollTo(sv.scrollX, scrollY)
-            scrollPosition = -1
-            hasScroll = true
-        }
-    }
-
-    /**
      * Update loading progress bar, in the app bar, with the new progress value.
-     * Use animation only for API >= NOUGAT.
      *
      * @param newProgress the new progress value.
      */
-    override fun updateProgress(newProgress: Int) {
+    override fun updateLoadingProgress(newProgress: Int) {
         if (newProgress <= 80 && !isLayoutDesigned || newProgress > 80 && isLayoutDesigned)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                loadingProgressBar.setProgress(newProgress, true)
-            } else
-                loadingProgressBar.progress = newProgress
+            updateProgressBar(loadingProgressBar, newProgress)
+    }
+
+    /**
+     * Update progress bar, with the new progress value.
+     * Use animation only for API >= NOUGAT.
+     *
+     * @param progressBar   the progress bar for which update progress.
+     * @param newProgress   the new progress value.
+     */
+    private fun updateProgressBar(progressBar: ProgressBar, newProgress: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            progressBar.setProgress(newProgress, true)
+        else
+            progressBar.progress = newProgress
     }
 
     /**

@@ -1,7 +1,10 @@
 package org.desperu.independentnews.ui.showArticle.fabsMenu
 
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import androidx.core.os.postDelayed
 import androidx.core.view.*
 import com.leinardi.android.speeddial.FabWithLabelView
 import com.leinardi.android.speeddial.SpeedDialActionItem
@@ -12,12 +15,14 @@ import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabIcon
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabId
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabLabel
 import org.desperu.independentnews.views.MySpeedDialView
-import org.desperu.independentnews.views.MySpeedDialView.OnAnimationListener
+import org.desperu.independentnews.views.MySpeedDialView.OnAnimationEndListener
+import org.desperu.independentnews.views.MySpeedDialView.OnAnimationStartListener
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -26,6 +31,7 @@ import org.koin.core.get
  * Customize animation, handle actions.
  *
  * @property showArticleInterface   the interface of the show article activity.
+ * @property articleDesign          the article design interface access.
  * @property prefs                  the shared preferences interface access.
  * @property activity               the activity that owns this Fabs Menu.
  *
@@ -37,6 +43,7 @@ class FabsMenu : KoinComponent{
 
     // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface = get()
+    private val articleDesign: ArticleDesignInterface = get()
     private val prefs: SharedPrefService = get()
     private val activity = showArticleInterface.activity
 
@@ -114,6 +121,13 @@ class FabsMenu : KoinComponent{
                 }
 
                 R.id.fab_home -> {
+                    speedDialView.setOnAnimationEndListener(object : OnAnimationEndListener {
+
+                        override fun onEnd() {
+                            // Need to support image change transition in SowArticleActivity.
+                            activity.supportFinishAfterTransition()
+                        }
+                    })
 
                     speedDialView.close()
                 }
@@ -137,11 +151,28 @@ class FabsMenu : KoinComponent{
         // Start to low the overlay transparency
         customOverlay.alpha = 0.6f
 
-        val wVSettings = showArticleInterface.activity.web_view.settings
-        wVSettings.textZoom += if (toUp) 10 else -10
+        Handler(Looper.getMainLooper()).postDelayed(500L) {
+            // Save the scroll Y percent
+            val yPercent = articleDesign.getScrollYPercent()
 
-        // Store the new value in the preferences.
-        prefs.getPrefs().edit().putInt(TEXT_SIZE, wVSettings.textZoom).apply()
+            // Calculus new text zoom and ratio
+            val wVSettings = activity.web_view.settings
+            val origTextZoom = wVSettings.textZoom
+            val newTextZoom = origTextZoom + if (toUp) 10 else -10
+            val textRatio = newTextZoom.toFloat() / origTextZoom.toFloat()
+            val correct = if (toUp) 0.9f else 1.1f
+
+            // Correct the scroll position
+            activity.web_view.doOnNextLayout {
+                articleDesign.scrollTo(yPercent * textRatio * correct)
+            }
+
+            // Update text size
+            wVSettings.textZoom = newTextZoom
+
+            // Store the new value in the preferences.
+            prefs.getPrefs().edit().putInt(TEXT_SIZE, wVSettings.textZoom).apply()
+        }
     }
 
     // --------------
@@ -152,9 +183,9 @@ class FabsMenu : KoinComponent{
      * Customize open and close animation of the speed dial view and the speed dial overlay.
      */
     private fun customizeAnimation() {
-        speedDialView.setOnAnimationListener(object : OnAnimationListener {
+        speedDialView.setOnAnimationStartListener(object : OnAnimationStartListener {
 
-            override fun onToggle(isOpen: Boolean) {
+            override fun onStart(isOpen: Boolean) {
                 customizeFabLabelAnim()
                 OverlayAnim().customizeOverlayAnim(isOpen)
             }

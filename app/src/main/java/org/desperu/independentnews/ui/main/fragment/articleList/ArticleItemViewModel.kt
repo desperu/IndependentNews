@@ -52,7 +52,7 @@ class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
 
         mainInterface.showFilterMotion(false)
         router.openShowArticle(article, Pair(imageView, imageName))
-        imageView.doOnNextLayout { markAsRead() }
+        markAsRead(imageView)
     }
 
     // ------------
@@ -61,9 +61,11 @@ class ArticleItemViewModel(val article: Article): ViewModel(), KoinComponent {
 
     /**
      * Mark the article as read in current list and database.
+     *
+     * @param imageView the animated image view, used to delay article color animation.
      */
-    private fun markAsRead() = viewModelScope.launch(Dispatchers.IO) {
-        isRead.set(true)
+    private fun markAsRead(imageView: View) = viewModelScope.launch(Dispatchers.IO) {
         ideNewsRepository.markArticleAsRead(article)
+        imageView.doOnNextLayout { isRead.set(true) }
     }
 }

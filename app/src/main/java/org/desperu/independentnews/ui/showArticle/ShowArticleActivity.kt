@@ -65,7 +65,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private var articleDesign: ArticleDesign? = null
     private var mWebViewClient: MyWebViewClient? = null
     private var mWebChromeClient: MyWebChromeClient? = null
-    override var inCustomView: Boolean = false
     private val navigationCount get() = mWebViewClient?.navigationCount ?: -1
     override val activity = this
 
@@ -123,7 +122,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     override fun configureDesign() {
         configureKoinDependency()
-        configureArticleDesign()
+        configureArticleDesign() // TODO force portrait ot prevent anim bug !!!
         configureWebView()
         configureAppBar()
     }
@@ -207,7 +206,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     override fun onStop() {
         super.onStop()
-        if (inCustomView) hideCustomView()
+        if (mWebChromeClient?.inCustomView == true) hideCustomView()
     }
 
     override fun onDestroy() {
@@ -219,7 +218,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     }
 
     override fun onBackPressed() = when {
-        inCustomView -> hideCustomView()
+        mWebChromeClient?.inCustomView == true -> hideCustomView()
         web_view.canGoBack() && navigationCount > 0 -> {
             mWebViewClient?.webViewBack(viewModel.previousPage(navigationCount))
             Unit

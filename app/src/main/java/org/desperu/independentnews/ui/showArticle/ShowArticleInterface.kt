@@ -21,9 +21,4 @@ interface ShowArticleInterface {
      * The article currently show in the web view.
      */
     val article: Article
-
-    /**
-     * Marker to save custom view state, full screen or not.
-     */
-    var inCustomView: Boolean
 }

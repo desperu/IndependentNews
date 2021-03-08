@@ -6,18 +6,17 @@ import android.animation.ValueAnimator
 import android.graphics.Rect
 import android.os.Build
 import android.view.View
-import android.view.ViewAnimationUtils
+import android.view.ViewAnimationUtils.createCircularReveal
 import androidx.annotation.RequiresApi
 import androidx.core.animation.doOnEnd
 import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.leinardi.android.speeddial.SpeedDialOverlayLayout
 import org.desperu.independentnews.R
-import org.desperu.independentnews.anim.AnimHelper
+import org.desperu.independentnews.anim.AnimHelper.animatedValue
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.desperu.independentnews.utils.subFabList
 import org.desperu.independentnews.views.MySpeedDialView
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -83,7 +82,7 @@ class OverlayAnim : KoinComponent {
         //Simply use the diagonal of the view
         val finalRadius = sqrt((width * width + height * height).toDouble()).toFloat()
 
-        val anim = ViewAnimationUtils.createCircularReveal(
+        val anim = createCircularReveal(
             overlay,
             mainFabRect.centerX(),
             mainFabRect.centerY(),
@@ -114,7 +113,7 @@ class OverlayAnim : KoinComponent {
             isOpen,
             getAnimDuration(isOpen),
             FastOutSlowInInterpolator(),
-            { progress -> overlay.alpha = AnimHelper.animatedValue(1, progress) }
+            { progress -> overlay.alpha = animatedValue(1, progress) }
         )
 
         anim.doOnEnd {
@@ -139,7 +138,7 @@ class OverlayAnim : KoinComponent {
             else R.integer.sd_close_animation_duration
         ).toLong()
 
-        if (isOpen) duration += subFabList.size * 20
+        if (isOpen) duration += speedDialView.actionItems.size * 20
 
         return duration
     }

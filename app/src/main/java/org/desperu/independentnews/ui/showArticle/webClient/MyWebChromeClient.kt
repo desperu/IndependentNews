@@ -17,27 +17,30 @@ import org.koin.core.get
 /**
  * My custom Web Chrome Client, used to show full screen video in a custom view.
  *
- * @property mCustomView            the custom view used to display the video.
- * @property customViewContainer    the container of the custom view.
- * @property customViewCallback     the callback of the custom view, used to communicate with.
- * @property showArticleInterface   the interface of the parent activity.
+ * @property activity               the parent activity through it's interface.
+ * @property articleDesign          the article design interface access.
  * @property sysUiHelper            the interface of the system ui helper to manage it.
+ * @property webView                the web view that owns this web chrome client.
+ * @property customViewContainer    the container of the custom view.
+ * @property mCustomView            the custom view used to display the video.
+ * @property customViewCallback     the callback of the custom view, used to communicate with.
+ * @property inCustomView           true if is in custom view, false otherwise.
  *
  * @constructor Instantiates a new MyWebChromeClient.
  */
 class MyWebChromeClient : WebChromeClient(), KoinComponent {
 
     // FOR COMMUNICATION
-    private val showArticleInterface: ShowArticleInterface? = getKoin().getOrNull()
+    private val activity = get<ShowArticleInterface>().activity
     private val articleDesign: ArticleDesignInterface? = getKoin().getOrNull()
     private val sysUiHelper: SystemUiHelper = get()
 
     // FOR UI
-    private val webView: NoScrollWebView by bindView(showArticleInterface!!.activity, R.id.web_view)
-    private val customViewContainer: FrameLayout by bindView(showArticleInterface!!.activity, R.id.video_container)
+    private val webView: NoScrollWebView by bindView(activity, R.id.web_view)
+    private val customViewContainer: FrameLayout by bindView(activity, R.id.video_container)
     private var mCustomView: View? = null
     private var customViewCallback: CustomViewCallback? = null
-
+    internal var inCustomView = false
 
     // --------------
     // METHODS OVERRIDE
@@ -77,12 +80,12 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
         sysUiHelper.setOrientation(LANDSCAPE) // Not needed for new api
         articleDesign?.saveScrollPosition()
 
-        showArticleInterface?.inCustomView = true
+        inCustomView = true
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        articleDesign?.updateProgress(newProgress)
+        articleDesign?.updateLoadingProgress(newProgress)
         // Update layout design.
         if (newProgress >= 80) articleDesign?.handleDesign(newProgress)
     }
@@ -107,6 +110,6 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
         sysUiHelper.setOrientation(FULL_USER)
         articleDesign?.scrollTo(null)
 
-        showArticleInterface?.inCustomView = false
+        inCustomView = false
     }
 }

@@ -1,19 +1,30 @@
 package org.desperu.independentnews.ui.showArticle.design
 
+import androidx.annotation.FloatRange
+
 /**
  * Interface to allow communications with Article Design.
  */
 interface ArticleDesignInterface {
 
     /**
-     * Used to store the current scroll position.
+     * True if it's the first page, false otherwise.
+     */
+    var isFirstPage: Boolean
+
+    /**
+     * Used to store the page scroll position.
      */
     var scrollPosition: Int
 
     /**
-     * True if it's the first page, false otherwise.
+     * Returns the current scroll y value in percent.
+     *
+     * @param svScrollY the scroll y value, def value 0.
+     *
+     * @return the current scroll y value in percent.
      */
-    var isFirstPage: Boolean
+    fun getScrollYPercent(svScrollY: Int = 0): Float
 
     /**
      * Save the scroll position of the scroll view position.
@@ -28,11 +39,18 @@ interface ArticleDesignInterface {
     fun scrollTo(y: Int?)
 
     /**
-     * Update app bar loading progress bar with the new progress value.
+     * Scroll vertically to the y percent value.
+     *
+     * @param yPercent the y percent value, vertical axe, to scroll to.
+     */
+    fun scrollTo(@FloatRange(from = 0.0, to = 1.0) yPercent: Float)
+
+    /**
+     * Update loading progress bar, in app bar, with the new progress value.
      *
      * @param newProgress the new progress value.
      */
-    fun updateProgress(newProgress: Int)
+    fun updateLoadingProgress(newProgress: Int)
 
     /**
      * Handle layout design, used between page navigation to hide or show ui elements.

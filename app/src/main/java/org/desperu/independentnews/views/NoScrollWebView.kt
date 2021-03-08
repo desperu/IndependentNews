@@ -33,6 +33,7 @@ import org.koin.core.inject
 import org.koin.core.qualifier.qualifier
 import kotlin.properties.Delegates
 
+
 /**
  * A custom [WebView] that does not allow to vertical scroll.
  * To correct scroll jump when init the web view.
@@ -148,7 +149,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private fun applyCssStyle(url: String, css: Css) {
         // Used to delay the scroll action to be sure that the css style is applied,
         // and prevent scroll gap error.
-        val callback = { postDelayed( { articleDesignInterface?.scrollTo(null) }, 50) }
+        val callback = { postDelayed({ articleDesignInterface?.scrollTo(null) }, 50) }
 
         injectCssCode(resizeMedia) { }
         if (isHtmlData(url)) {
@@ -205,6 +206,23 @@ class NoScrollWebView @JvmOverloads constructor(
                 "margin-top:10px;" +
                 "margin-bottom:10px;" +
                 "}")
+
+    // To use for note redirect, need to be set in the original html code to work
+    // as JavascriptInterface
+//    private val scrollTo =
+//        ("function scrollToElement() {\n" +
+//                "    var elem = document.getElementById(id);\n" +
+//                "    var x = 0;\n" +
+//                "    var y = 0;\n" +
+//                "\n" +
+//                "    while (elem != null) {\n" +
+//                "        x += elem.offsetLeft;\n" +
+//                "        y += elem.offsetTop;\n" +
+//                "        elem = elem.offsetParent;\n" +
+//                "    }\n" +
+//                "    window.scrollTo(0, 0);\n" +
+//                "    AndroidFunction.showToast(id);\n" + // Call Javascript interface function
+//                "}")
 
     // --------------
     // DESIGN
