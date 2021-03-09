@@ -13,6 +13,7 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragm
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
+import org.desperu.independentnews.ui.main.fragment.categories.VP_FRAG_KEY
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
 import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
@@ -30,6 +31,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.get
 
+
 /**
  * Main Utils class test, to check that all utils functions work as needed.
  */
@@ -39,6 +41,7 @@ class MainUtilsTest : KoinTest {
     private val mockContext: Context = mockk()
     private val mockTextView: TextView = mockk()
     private val mockArticleListVM: ArticleListViewModel = mockk()
+    private val mockBundle = mockk<Bundle>()
     private lateinit var resources: ResourceService
 
     private val testModule = module {
@@ -57,8 +60,12 @@ class MainUtilsTest : KoinTest {
         every { mockTextView.text = any() } returns Unit
         every { resources.getString(R.string.navigation_drawer_top_story) } returns "Top Story"
         every { resources.getString(R.string.navigation_drawer_all_articles) } returns "All Articles"
+        every { resources.getString(R.string.navigation_drawer_user_articles) } returns "My Articles"
         every { resources.getString(R.string.fragment_today_articles) } returns "Today Articles"
         every { resources.getString(R.string.app_name) } returns "Independent News"
+
+        every { mockBundle.containsKey(any()) } returns true
+        every { mockBundle.putInt(any(), any()) } returns Unit
     }
 
     @After
@@ -71,12 +78,18 @@ class MainUtilsTest : KoinTest {
     fun given_fragKey_When_getFragFromKey_Then_checkResult() {
         val expectedList = listOf(ArticleListFragment::class.java, CategoriesFragment::class.java)
 
-        val fragKeyList = listOf(FRAG_TOP_STORY, FRAG_CATEGORY, FRAG_ALL_ARTICLES, FRAG_TODAY_ARTICLES)
+        val fragKeyList = listOf(
+            FRAG_TOP_STORY,
+            FRAG_CATEGORY,
+            FRAG_ALL_ARTICLES,
+            FRAG_USER_ARTICLE,
+            FRAG_TODAY_ARTICLES
+        )
 
         fragKeyList.forEach {
             val output: Class<out Fragment> = getFragFromKey(it)::class.java
 
-            val index = if (it != FRAG_CATEGORY) 0 else 1
+            val index = if (it != FRAG_CATEGORY && it != FRAG_USER_ARTICLE) 0 else 1
             assertEquals(expectedList[index], output)
         }
     }
@@ -93,23 +106,29 @@ class MainUtilsTest : KoinTest {
     }
 
     @Test
-    fun given_catFrag_When_retrievedKeyFromFrag_Then_checkResult() {
-        val expected = FRAG_CATEGORY
+    fun given_topStoryFrag_When_retrievedKeyFromFrag_Then_checkResult() {
+        val expected = FRAG_ALL_ARTICLES
 
-        val fragment = CategoriesFragment()
+        val fragment = ArticleListFragment()
+        every { mockBundle.getInt(FRAG_KEY) } returns FRAG_ALL_ARTICLES
+        mockBundle.putInt(FRAG_KEY, FRAG_ALL_ARTICLES)
+        fragment.arguments = mockBundle
+
         val output = retrievedKeyFromFrag(fragment)
 
         assertEquals(expected, output)
     }
 
     @Test
-    fun given_topStoryFrag_When_retrievedKeyFromFrag_Then_checkResult() {
-        val expected = FRAG_TOP_STORY
+    fun given_vpFrag_When_retrievedKeyFromFrag_Then_checkResult() {
+        val expected = FRAG_ECOLOGY
 
-        val fragment = ArticleListFragment()
-        val bundle = Bundle()
-        bundle.putInt(FRAG_KEY, FRAG_TOP_STORY)
-        fragment.arguments = bundle
+        val fragment = CategoriesFragment()
+        every { mockBundle.getInt(any()) } returns FRAG_ECOLOGY
+//        every { mockBundle.getInt(VP_FRAG_KEY) } returns FRAG_ECOLOGY
+        mockBundle.putInt(VP_FRAG_KEY, FRAG_ECOLOGY)
+        fragment.arguments = mockBundle
+
         val output = retrievedKeyFromFrag(fragment)
 
         assertEquals(expected, output)
@@ -131,6 +150,7 @@ class MainUtilsTest : KoinTest {
         val testMap = mapOf(
             Pair(FRAG_TOP_STORY, R.string.navigation_drawer_top_story),
             Pair(FRAG_ALL_ARTICLES, R.string.navigation_drawer_all_articles),
+            Pair(FRAG_USER_ARTICLE, R.string.navigation_drawer_user_articles),
             Pair(FRAG_TODAY_ARTICLES, R.string.fragment_today_articles),
             Pair(NO_FRAG, R.string.app_name) // For else
         )
@@ -147,28 +167,13 @@ class MainUtilsTest : KoinTest {
     }
 
     @Test
-    fun given_topStoryFragKey_When_getDrawerItemIdFromFragKey_Then_checkResult() {
-        val expected = R.id.activity_main_menu_drawer_top_story
-        val output = getDrawerItemIdFromFragKey(FRAG_TOP_STORY)
-
-        assertEquals(expected, output)
-    }
-
-    @Test
-    fun given_catFragKey_When_getDrawerItemIdFromFragKey_Then_checkResult() {
-        val expected = R.id.activity_main_menu_drawer_categories
-        val output = getDrawerItemIdFromFragKey(FRAG_CATEGORY)
-
-        assertEquals(expected, output)
-    }
-
-    @Test
     fun given_AllArticlesFragKey_When_getDrawerItemIdFromFragKey_Then_checkResult() {
         val testMap = mapOf(
             Pair(NO_FRAG, 0),
             Pair(FRAG_TOP_STORY, R.id.activity_main_menu_drawer_top_story),
             Pair(FRAG_CATEGORY, R.id.activity_main_menu_drawer_categories),
             Pair(FRAG_ALL_ARTICLES, R.id.activity_main_menu_drawer_all_articles),
+            Pair(FRAG_USER_ARTICLE, R.id.activity_main_menu_drawer_user_article),
             Pair(FRAG_TODAY_ARTICLES, 0)
         )
 

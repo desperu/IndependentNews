@@ -36,6 +36,15 @@ val repositoryModule = module {
     }
 
     /**
+     * Provides a UserArticleRepository instance.
+     */
+    single<UserArticleRepository> {
+        UserArticleRepositoryImpl(
+            get(), get()
+        )
+    }
+
+    /**
      * Provides an SourceRepository instance.
      */
     single<SourceRepository> {

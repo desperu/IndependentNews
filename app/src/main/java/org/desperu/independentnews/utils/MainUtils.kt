@@ -7,6 +7,7 @@ import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
+import org.desperu.independentnews.ui.main.fragment.categories.VP_FRAG_KEY
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -32,10 +33,11 @@ object MainUtils : KoinComponent{
      * @throws IllegalArgumentException if the [fragmentKey] was not found.
      */
     internal fun getFragFromKey(fragmentKey: Int): Fragment = when(fragmentKey) {
-        FRAG_TOP_STORY -> ArticleListFragment()
-        FRAG_CATEGORY -> CategoriesFragment()
-        FRAG_ALL_ARTICLES -> ArticleListFragment()
-        FRAG_TODAY_ARTICLES -> ArticleListFragment()
+        FRAG_TOP_STORY -> ArticleListFragment.newInstance(fragmentKey)
+        FRAG_CATEGORY -> CategoriesFragment.newInstance(fragmentKey)
+        FRAG_ALL_ARTICLES -> ArticleListFragment.newInstance(fragmentKey)
+        FRAG_USER_ARTICLE -> CategoriesFragment.newInstance(fragmentKey)
+        FRAG_TODAY_ARTICLES -> ArticleListFragment.newInstance(fragmentKey)
         else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }
 
@@ -48,11 +50,12 @@ object MainUtils : KoinComponent{
      *
      * @throws IllegalArgumentException if the [fragment] class was not found.
      */
-    internal fun retrievedKeyFromFrag(fragment: Fragment): Int = when(fragment) {
-        is CategoriesFragment -> FRAG_CATEGORY
-        else -> fragment.arguments?.getInt(FRAG_KEY)
-            ?: throw IllegalArgumentException("Fragment class not found : ${fragment.javaClass.simpleName}")
-    }
+    internal fun retrievedKeyFromFrag(fragment: Fragment): Int =
+        fragment.arguments?.getInt(FRAG_KEY)
+            ?: fragment.arguments?.getInt(VP_FRAG_KEY)
+            ?: throw IllegalArgumentException(
+                "Fragment class not found : ${fragment.javaClass.simpleName}"
+            )
 
     // -----------------
     // UI
@@ -70,6 +73,7 @@ object MainUtils : KoinComponent{
                 when (fragmentKey) {
                     FRAG_TOP_STORY -> R.string.navigation_drawer_top_story
                     FRAG_ALL_ARTICLES -> R.string.navigation_drawer_all_articles
+                    FRAG_USER_ARTICLE -> R.string.navigation_drawer_user_articles
                     FRAG_TODAY_ARTICLES -> R.string.fragment_today_articles
                     else -> R.string.app_name
                 }
@@ -94,6 +98,7 @@ object MainUtils : KoinComponent{
         FRAG_TOP_STORY -> R.id.activity_main_menu_drawer_top_story
         FRAG_CATEGORY -> R.id.activity_main_menu_drawer_categories
         FRAG_ALL_ARTICLES -> R.id.activity_main_menu_drawer_all_articles
+        FRAG_USER_ARTICLE -> R.id.activity_main_menu_drawer_user_article
         FRAG_TODAY_ARTICLES -> 0
         else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }

@@ -10,14 +10,21 @@ const val NO_FRAG = -1
 const val FRAG_TOP_STORY = 0
 const val FRAG_CATEGORY = 1
 const val FRAG_ALL_ARTICLES = 2
-const val FRAG_ECOLOGY = 3
-const val FRAG_SOCIAL = 4
-const val FRAG_ENERGY = 5
-const val FRAG_HEALTH = 6
-const val FRAG_TODAY_ARTICLES = 7
+const val FRAG_USER_ARTICLE = 3
+const val FRAG_TODAY_ARTICLES = 4
+// View Pager Frag
+// Vp Frag Categories
+const val FRAG_ECOLOGY = 5
+const val FRAG_SOCIAL = 6
+const val FRAG_ENERGY = 7
+const val FRAG_HEALTH = 8
+// Vp Frag User Article
+const val FRAG_FAVORITE = 9
+const val FRAG_PAUSED = 10
+
 // Sources
-const val FRAG_SOURCES_LIST = 100
-const val FRAG_SOURCES_DETAIL = 101
+const val FRAG_SOURCES_LIST = 1000
+const val FRAG_SOURCES_DETAIL = 1001
 
 // Documentation url
 const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/master/Documentation/Documentation%20Fonctionnelle%20Independent%20News.pdf"

@@ -8,7 +8,6 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
-import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.articleList.TODAY_ARTICLES_FRAG
 import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
 import org.desperu.independentnews.utils.FRAG_CATEGORY
@@ -28,8 +27,9 @@ import org.koin.core.KoinComponent
  * @param fm                    the FragmentManager of the ui part to manage to set.
  * @param mainInterface         the main interface that allow communication with activity to set.
  */
-class MainFragmentManager(private val fm: FragmentManager,
-                          private val mainInterface: MainInterface
+class MainFragmentManager(
+    private val fm: FragmentManager,
+    private val mainInterface: MainInterface
 ): KoinComponent {
 
     // FOR DATA
@@ -73,8 +73,6 @@ class MainFragmentManager(private val fm: FragmentManager,
     private fun populateDataToFragment(fragment: Fragment, articleList: List<Article>?) {
         // Populate article lit to fragment with bundle if there's one.
         articleList?.let { populateArticleListToFragment(fragment, it) }
-
-        populateKeyToFragment(fragment, fragmentKey)
     }
 
     /**
@@ -137,19 +135,6 @@ class MainFragmentManager(private val fm: FragmentManager,
     private fun populateArticleListToFragment(fragment: Fragment, articleList: List<Article>) {
         fragment.arguments = setBundle(fragment.arguments)
         fragment.arguments?.putParcelableArrayList(TODAY_ARTICLES_FRAG, ArrayList(articleList))
-    }
-
-    /**
-     * Populate fragment key to the fragment instance with bundle.
-     * @param fragment the fragment to send data to.
-     * @param fragmentKey the fragment key to populate.
-     */
-    private fun populateKeyToFragment(fragment: Fragment, fragmentKey: Int) {
-        if (fragmentKey != FRAG_CATEGORY) {
-            fragment.arguments = setBundle(fragment.arguments)
-            fragment.arguments?.putInt(FRAG_KEY, fragmentKey)
-//        (fragment as? ArticleListFragment?)?.updateRecycler()
-        }
     }
 
     // --------------

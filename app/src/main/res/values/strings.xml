@@ -110,6 +110,7 @@
     <string name="navigation_drawer_category_utilities">Utilities</string>
     <string name="navigation_drawer_search">Search</string>
     <string name="navigation_drawer_sources">Sources</string>
+    <string name="navigation_drawer_user_articles">My Articles</string>
     <string name="navigation_drawer_refresh_data">Refresh Data</string>
     <string name="navigation_drawer_notification">Notification</string>
     <string name="navigation_drawer_category_parameter">Parameters</string>

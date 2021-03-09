@@ -182,6 +182,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             R.id.activity_main_menu_drawer_categories -> showFragment(FRAG_CATEGORY, null)
             R.id.activity_main_menu_drawer_all_articles -> showFragment(FRAG_ALL_ARTICLES, null)
             R.id.activity_main_menu_drawer_sources -> showActivityForResult(SourcesActivity::class.java, RC_SOURCE)
+            R.id.activity_main_menu_drawer_user_article -> showFragment(FRAG_USER_ARTICLE, null)
             R.id.activity_main_menu_drawer_refresh_data -> refreshData()
             R.id.activity_main_menu_drawer_settings -> showActivity(SettingsActivity::class.java)
             R.id.activity_main_drawer_about -> dialogHelper.showDialog(ABOUT)

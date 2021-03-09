@@ -106,6 +106,7 @@
     <string name="navigation_drawer_category_utilities">Utilitaires</string>
     <string name="navigation_drawer_search">Recherche</string>
     <string name="navigation_drawer_sources">Sources</string>
+    <string name="navigation_drawer_user_articles">Mes Articles</string>
     <string name="navigation_drawer_refresh_data">Rafraîchir</string>
     <string name="navigation_drawer_notification">Notification</string>
     <string name="navigation_drawer_category_parameter">Paramètres</string>
