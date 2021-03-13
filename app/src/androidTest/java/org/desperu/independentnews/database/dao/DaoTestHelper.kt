@@ -144,7 +144,7 @@ class DaoTestHelper {
     internal fun getPaused(articleId: Long) = Paused(
         200000000000000000L,
         articleId,
-        100
+        100f
     )
 
     /**
@@ -160,7 +160,7 @@ class DaoTestHelper {
             Paused(
                 200000000000000001L,
                 articleId,
-                100
+                100f
             )
         )
 

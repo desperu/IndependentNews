@@ -2,11 +2,17 @@ package org.desperu.independentnews.repositories.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.desperu.independentnews.database.dao.ArticleDao
 import org.desperu.independentnews.database.dao.FavoriteDao
 import org.desperu.independentnews.database.dao.PausedDao
+import org.desperu.independentnews.database.dao.SourceDao
+import org.desperu.independentnews.extension.setSourceForEach
+import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Favorite
 import org.desperu.independentnews.models.database.Paused
+import org.desperu.independentnews.models.database.Source
 import org.koin.core.KoinComponent
+import java.util.*
 
 /**
  * User Article Repository interface to get data from Favorite and Paused database.
@@ -34,54 +40,69 @@ interface UserArticleRepository {
     suspend fun getPausedArticle(articleId: Long): Paused?
 
     /**
-     * Returns the list of all favorites with data from the database.
+     * Returns the list of all favorites from the database.
      *
-     * @return the list of all favorites with data from the database.
+     * @return the list of all favorites from the database.
      */
     suspend fun getAllFavorites(): List<Favorite>
 
     /**
-     * Returns the list of all paused with data from the database.
+     * Returns the list of all paused from the database.
      *
-     * @return the list of all paused with data from the database.
+     * @return the list of all paused from the database.
      */
     suspend fun getAllPaused(): List<Paused>
 
     /**
-     * Insert the given favorite in the database.
+     * Returns the list of all favorites articles from the database.
      *
-     * @param favorite the favorite to insert.
-     *
-     * @return the row id of inserted favorite.
+     * @return the list of all favorites articles from the database.
      */
-    suspend fun insertFavorite(vararg favorite: Favorite): List<Long>
+    suspend fun getAllFavoriteArticles(): List<Article>?
 
     /**
-     * Insert the given paused in the database.
+     * Returns the list of all paused articles from the database.
      *
-     * @param paused the paused to insert.
-     *
-     * @return the row id of inserted paused.
+     * @return the list of all paused articles from the database.
      */
-    suspend fun insertPaused(vararg paused: Paused): List<Long>
+    suspend fun getAllPausedArticles(): List<Article>?
 
     /**
-     * Delete favorite from the database.
+     * Handle favorite state for the current article, in the database.
      *
-     * @param favorite the favorite to delete.
+     * @param articleId the unique identifier of the article.
      *
-     * @return the number of row affected.
+     * @return true if is favorite after change, false if not.
      */
-    suspend fun deleteFavorite(vararg favorite: Favorite): Int
+    suspend fun handleFavorite(articleId: Long): Boolean
 
     /**
-     * Delete paused from the database.
+     * Handle paused state for the current article, in the database.
      *
-     * @param paused the paused to delete.
+     * @param articleId         the unique identifier of the article.
+     * @param scrollYPercent    the scroll y percent value, bind with text ratio.
      *
-     * @return the number of row affected.
+     * @return true if is paused after change, false if not.
      */
-    suspend fun deletePaused(vararg paused: Paused): Int
+    suspend fun handlePaused(articleId: Long, scrollYPercent: Float): Boolean
+
+    /**
+     * Returns the list of user articles state.
+     *
+     * @param articleList the article list for which get state.
+     *
+     * @return the list of user articles state.
+     */
+    suspend fun getUserArticlesState(articleList: List<Article>): List<Pair<String, Any>>
+
+    /**
+     * Restore the user articles state.
+     *
+     * @param articlesState the state list of the user articles.
+     *
+     * @return the user articles state.
+     */
+    suspend fun restoreUserArticlesState(articlesState: List<Pair<String, Any>>)
 }
 
 /**
@@ -90,16 +111,22 @@ interface UserArticleRepository {
  * @author Desperu
  *
  * @property favoriteDao    the database access for favorite.
- * @property pausedDao      the database access for paused to set.
+ * @property pausedDao      the database access for paused.
+ * @property articleDao     the database access for article.
+ * @property sourceDao      the database access for source.
  *
  * @constructor Instantiates a new UserArticleRepositoryImpl.
  *
  * @param favoriteDao       the database access for favorite to set.
  * @param pausedDao         the database access for paused to set.
+ * @param articleDao        the database access for article to set.
+ * @param sourceDao         the database access for source to set.
  */
 class UserArticleRepositoryImpl(
     private val favoriteDao: FavoriteDao,
-    private val pausedDao: PausedDao
+    private val pausedDao: PausedDao,
+    private val articleDao: ArticleDao,
+    private val sourceDao: SourceDao
 ): UserArticleRepository, KoinComponent {
 
     /**
@@ -125,64 +152,160 @@ class UserArticleRepositoryImpl(
     }
 
     /**
-     * Returns the list of all favorites with data from the database.
+     * Returns the list of all favorites from the database.
      *
-     * @return the list of all favorites with data from the database.
+     * @return the list of all favorites from the database.
      */
     override suspend fun getAllFavorites(): List<Favorite> = withContext(Dispatchers.IO) {
         return@withContext favoriteDao.getAll()
     }
 
     /**
-     * Returns the list of all paused with data from the database.
+     * Returns the list of all paused from the database.
      *
-     * @return the list of all paused with data from the database.
+     * @return the list of all paused from the database.
      */
     override suspend fun getAllPaused(): List<Paused> = withContext(Dispatchers.IO) {
         return@withContext pausedDao.getAll()
     }
 
     /**
-     * Insert the given favorite in the database.
+     * Returns the list of all favorites articles from the database.
      *
-     * @param favorite the favorite to insert.
-     *
-     * @return the row id of inserted favorite.
+     * @return the list of all favorites articles from the database.
      */
-    override suspend fun insertFavorite(vararg favorite: Favorite): List<Long> = withContext(Dispatchers.IO) {
-        return@withContext favoriteDao.insertFavorite(*favorite)
+    override suspend fun getAllFavoriteArticles(): List<Article>? = withContext(Dispatchers.IO) {
+        val articleIds = getAllFavorites().map { it.articleId }
+        return@withContext articleDao.getWhereIdsIn(articleIds).setSourceForEach(getSources())
     }
 
     /**
-     * Insert the given paused in the database.
+     * Returns the list of all paused articles from the database.
      *
-     * @param paused the paused to insert.
-     *
-     * @return the row id of inserted paused.
+     * @return the list of all paused articles from the database.
      */
-    override suspend fun insertPaused(vararg paused: Paused): List<Long> = withContext(Dispatchers.IO) {
-        return@withContext pausedDao.insertPaused(*paused)
+    override suspend fun getAllPausedArticles(): List<Article>? = withContext(Dispatchers.IO) {
+        val articleIds = getAllPaused().map { it.articleId }
+        return@withContext articleDao.getWhereIdsIn(articleIds).setSourceForEach(getSources())
     }
 
     /**
-     * Delete favorite from the database.
+     * Handle favorite state for the current article, in the database.
      *
-     * @param favorite the favorite to delete.
+     * @param articleId the unique identifier of the article.
      *
-     * @return the number of row affected.
+     * @return true if is favorite after change, false if not.
      */
-    override suspend fun deleteFavorite(vararg favorite: Favorite): Int = withContext(Dispatchers.IO) {
-        return@withContext favoriteDao.deleteFavorite()
+    override suspend fun handleFavorite(articleId: Long): Boolean = withContext(Dispatchers.IO) {
+        val isFavorite = getFavoriteArticle(articleId) != null
+        val favorite = Favorite(
+            articleId = articleId,
+            creationDate = Calendar.getInstance().timeInMillis
+        )
+
+        if (!isFavorite) favoriteDao.insertFavorite(favorite)
+        else favoriteDao.deleteFavorite(favorite)
+
+        return@withContext !isFavorite
     }
 
     /**
-     * Delete paused from the database.
+     * Handle paused state for the current article, in the database.
      *
-     * @param paused the paused to delete.
+     * @param articleId         the unique identifier of the article.
+     * @param scrollYPercent    the scroll y percent value, bind with text ratio.
      *
-     * @return the number of row affected.
+     * @return true if is paused after change, false if not.
      */
-    override suspend fun deletePaused(vararg paused: Paused): Int = withContext(Dispatchers.IO) {
-        return@withContext pausedDao.deletePaused(*paused)
+    override suspend fun handlePaused(
+        articleId: Long,
+        scrollYPercent: Float
+    ): Boolean = withContext(Dispatchers.IO) {
+
+        val isPaused = getPausedArticle(articleId) != null
+        val paused = Paused(
+            articleId = articleId,
+            scrollPosition = scrollYPercent,
+            creationDate = Calendar.getInstance().timeInMillis
+        )
+
+        if (!isPaused) pausedDao.insertPaused(paused)
+        else pausedDao.deletePaused(paused)
+
+        return@withContext !isPaused
+    }
+
+    /**
+     * Returns the list of user articles state, favorite, paused and is read.
+     *
+     * @param articleList the article list for which get state.
+     *
+     * @return the list of user articles state.
+     */
+    override suspend fun getUserArticlesState(
+        articleList: List<Article>
+    ): List<Pair<String, Any>> = withContext(Dispatchers.IO) {
+
+        val articlesState = mutableListOf<Pair<String, Any>>()
+
+        articleList.forEach {
+            val id = articleDao.getWhereTitlesIn(listOf(it.title)).getOrNull(0)?.id
+            val title = it.title
+
+            id?.let {
+                val favorite = getFavoriteArticle(id)
+                val paused = getPausedArticle(id)
+                val isRead = articleDao.getArticle(id).read
+
+                if (favorite != null) articlesState.add(Pair(title, favorite))
+                if (paused != null) articlesState.add(Pair(title, paused))
+                if (isRead) articlesState.add(Pair(title, isRead))
+            }
+        }
+
+        return@withContext articlesState
+    }
+
+    /**
+     * Restore the user articles state, favorite, paused an is read.
+     *
+     * @param articlesState the state list of the user articles.
+     *
+     * @return the user articles state.
+     */
+    override suspend fun restoreUserArticlesState(
+        articlesState: List<Pair<String, Any>>
+    ) = withContext(Dispatchers.IO) {
+
+        articlesState.forEach {
+            val articleId = articleDao.getWhereTitlesIn(listOf(it.first)).getOrNull(0)?.id
+            val state = it.second
+
+            articleId?.let {
+                when (state) {
+                    is Favorite -> {
+                        state.articleId = articleId
+                        favoriteDao.insertFavorite(state)
+                    }
+                    is Paused -> {
+                        state.articleId = articleId
+                        pausedDao.insertPaused(state)
+                    }
+                    is Boolean -> articleDao.markAsRead(articleId)
+                }
+            }
+        }
+    }
+
+    // -----------------
+    // UTILS
+    // -----------------
+
+    /**
+     * Get enabled sources from the database.
+     * Get from database on each call to handle source state change, from a user action.
+     */
+    private suspend fun getSources(): List<Source> = withContext(Dispatchers.IO) {
+        sourceDao.getEnabled()
     }
 }

@@ -40,7 +40,7 @@ val repositoryModule = module {
      */
     single<UserArticleRepository> {
         UserArticleRepositoryImpl(
-            get(), get()
+            get(), get(), get(), get()
         )
     }
 

@@ -26,10 +26,10 @@ interface PausedDao {
     suspend fun getPausedForArticleId(articleId: Long): Paused?
 
     /**
-     * Returns the paused list from database.
-     * @return the paused list from database.
+     * Returns the paused list from database, ordered from the most recent to the oldest.
+     * @return the paused list from database, ordered from the most recent to the oldest.
      */
-    @Query("SELECT * FROM paused")
+    @Query("SELECT * FROM paused ORDER BY creationDate DESC")
     suspend fun getAll(): List<Paused>
 
     /**

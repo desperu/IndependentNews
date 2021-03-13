@@ -13,12 +13,14 @@ import kotlinx.android.parcel.Parcelize
  * @property id                 the unique identifier of the paused.
  * @property articleId          the unique identifier of the article of this paused.
  * @property scrollPosition     the scroll position of the article.
+ * @property creationDate       the creation date of the paused.
  *
  * @constructor Instantiate a new Paused.
  *
  * @param id                    the unique identifier of the paused to set.
  * @param articleId             the unique identifier of the article of this paused to set.
  * @param scrollPosition        the scroll position of the article to set.
+ * @param creationDate          the creation date of the paused to set.
  */
 @Parcelize
 @Entity(
@@ -37,5 +39,6 @@ data class Paused(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
     var articleId: Long = 0L,
-    var scrollPosition: Int = 0
+    var scrollPosition: Float = 0f,
+    var creationDate: Long = 0L
 ) : Parcelable

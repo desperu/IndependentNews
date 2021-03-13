@@ -51,11 +51,12 @@ interface ArticleRepository {
      *
      * @return the list of filtered articles from the database.
      */
-    suspend fun getFilteredListFromDB(sources: List<Long>,
-                                      themes: List<String>?,
-                                      sections: List<String>?,
-                                      dates: List<Long>,
-                                      urls: List<String>
+    suspend fun getFilteredListFromDB(
+        sources: List<Long>,
+        themes: List<String>?,
+        sections: List<String>?,
+        dates: List<Long>,
+        urls: List<String>
     ): List<Article>
 
     /**
@@ -66,8 +67,9 @@ interface ArticleRepository {
      *
      * @return the list of filtered articles with categories filter.
      */
-    suspend fun filterCategories(parsedMap: Map<Int, List<String>>,
-                                 unMatchArticleList: List<Article>
+    suspend fun filterCategories(
+        parsedMap: Map<Int, List<String>>,
+        unMatchArticleList: List<Article>
     ): List<Article>
 
     /**
@@ -87,7 +89,7 @@ interface ArticleRepository {
  *
  * @property articleDao             the database access object for article.
  * @property sourceRepository       the repository access for source from the database.
- * @property cssRepository          the repository access for css from the database.
+ * @property userArticleRepository  the repository access for user article from the database.
  * @property prefs                  the shared preferences service interface witch provide access
  *                                  to the app shared preferences.
  * @property nowMillis              the time in millis for now.
@@ -97,14 +99,14 @@ interface ArticleRepository {
  *
  * @param articleDao                the database access object for article to set.
  * @param sourceRepository          the repository access for source from the database to set.
- * @param cssRepository             the repository access for css from the database to set.
+ * @param userArticleRepository     the repository access for user article from the database to set.
  * @param prefs                     the shared preferences service interface witch provide access
  *                                  to the app shared preferences to set.
  */
 class ArticleRepositoryImpl(
     private val articleDao: ArticleDao,
     private val sourceRepository: SourceRepository,
-    private val cssRepository: CssRepository,
+    private val userArticleRepository: UserArticleRepository,
     private val prefs: SharedPrefService
 ): ArticleRepository {
 
@@ -126,16 +128,19 @@ class ArticleRepositoryImpl(
         val articlesToUpdate = articleListPair.first
         val articlesToInsert = articleListPair.second
 
-        // To prevent duplicate if an article's url was updated
-        removeExistingTitles(articlesToInsert)
+        val ids = articlesToUpdate.map { it.id }.toMutableList()
+        updateArticles(articlesToUpdate)
 
-        updateArticles(articlesToUpdate, urlsToUpdate)
+        ids.addAll(insertArticles(articlesToInsert))
 
-        insertArticles(articlesToInsert)
+        return@withContext ids
     }
 
     /**
      * Update top story values if needed in database.
+     * Must be called with the full top story source article list,
+     * in each fetchRssArticles source repository function, before [getNewArticles] call,
+     * to be able to handle top story articles.
      *
      * @param rssArticleList    the rss article list.
      */
@@ -156,11 +161,17 @@ class ArticleRepositoryImpl(
 
     /**
      * Delete the older articles than the millis limit, in the database.
+     * Don't remove user articles, favorite or paused.
      *
      * @return the number of row affected.
      */
     override suspend fun removeOldArticles(): Int = withContext(Dispatchers.IO) {
-        articleDao.removeOldArticles(storeDelayMillis(nowMillis, storeDelay))
+        val idsToNotRemove = mutableListOf<Long>()
+        userArticleRepository.getAllFavoriteArticles()?.map { it.id }?.let { idsToNotRemove.addAll(it) }
+        userArticleRepository.getAllPausedArticles()?.map { it.id }?.let { idsToNotRemove.addAll(it) }
+        // TODO add user article download, when nav between articles.
+
+        articleDao.removeOldArticles(storeDelayMillis(nowMillis, storeDelay), idsToNotRemove)
     }
 
     /**
@@ -174,11 +185,12 @@ class ArticleRepositoryImpl(
      *
      * @return the list of filtered articles from the database.
      */
-    override suspend fun getFilteredListFromDB(sources: List<Long>,
-                                               themes: List<String>?,
-                                               sections: List<String>?,
-                                               dates: List<Long>,
-                                               urls: List<String>
+    override suspend fun getFilteredListFromDB(
+        sources: List<Long>,
+        themes: List<String>?,
+        sections: List<String>?,
+        dates: List<Long>,
+        urls: List<String>
     ): List<Article> = withContext(Dispatchers.IO) {
         when {
             !themes.isNullOrEmpty() && !sections.isNullOrEmpty() ->
@@ -200,8 +212,9 @@ class ArticleRepositoryImpl(
      *
      * @return the list of filtered articles with categories filter from database.
      */
-    override suspend fun filterCategories(parsedMap: Map<Int, List<String>>,
-                                          unMatchArticleList: List<Article>
+    override suspend fun filterCategories(
+        parsedMap: Map<Int, List<String>>,
+        unMatchArticleList: List<Article>
     ): List<Article> = withContext(Dispatchers.Default) {
 
         val filterCategories = mutableListOf<Article>()
@@ -258,16 +271,12 @@ class ArticleRepositoryImpl(
      * Update articles in the database.
      *
      * @param articlesToUpdate  the list of the articles to update.
-     * @param urlsToUpdate      the list of the url to update.
      */
-    private suspend fun updateArticles(
-        articlesToUpdate: List<Article>,
-        urlsToUpdate: List<String>
-    ) = withContext(Dispatchers.IO) {
+    private suspend fun updateArticles(articlesToUpdate: List<Article>) = withContext(Dispatchers.IO) {
 
-        articlesToUpdate.forEachIndexed { index, article ->
+        articlesToUpdate.forEach { article ->
             val categories = if (article.isTopStory) article.categories
-            else articleDao.getArticle(urlsToUpdate[index])?.categories ?: ""
+                             else articleDao.getArticle(article.url)?.categories ?: ""
 
             articleDao.update(
                 article.title,
@@ -285,19 +294,29 @@ class ArticleRepositoryImpl(
     }
 
     /**
-     * Insert articles in the database.
+     * Insert articles in the database, set the source id for each before store.
+     * Handle url update with title support, save and restore user articles state.
      *
      * @param articlesToInsert the list of articles to insert in the database.
      *
      * @return the list of ids for the inserted articles.
      */
     private suspend fun insertArticles(articlesToInsert: List<Article>): List<Long> = withContext(Dispatchers.IO) {
+        // Handle user articles state
+        val removedStates = userArticleRepository.getUserArticlesState(articlesToInsert)
+        // To prevent duplicate if an article's url was updated
+        removeExistingTitles(articlesToInsert)
+
         articlesToInsert.forEach { article ->
             val sourceId = getSources().find { it.name == article.source.name }?.id
             sourceId?.let { article.sourceId = it }
         }
 
-        return@withContext articleDao.insertArticles(*articlesToInsert.toTypedArray())
+        val ids = articleDao.insertArticles(*articlesToInsert.toTypedArray())
+        // Restore user articles state
+        userArticleRepository.restoreUserArticlesState(removedStates)
+
+        return@withContext ids
     }
 
     // -----------------

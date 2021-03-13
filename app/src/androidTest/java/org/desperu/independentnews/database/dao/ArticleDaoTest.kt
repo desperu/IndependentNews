@@ -103,6 +103,15 @@ class ArticleDaoTest {
     }
 
     @Test
+    fun getWhereIdsIn() = articleListTest {
+        // Try to get All Articles in the database in the given url list
+        val urlsIn = mDatabase.articleDao().getWhereIdsIn(articleList.map { it.id })
+
+        // Then check that the list isn't empty
+        assertTrue(urlsIn.isNotEmpty())
+    }
+
+    @Test
     fun getWhereUrlsIn() = articleListTest {
         // Try to get All Articles in the database in the given url list
         val urlsIn = mDatabase.articleDao().getWhereUrlsIn(articleList.map { it.url })
@@ -328,21 +337,24 @@ class ArticleDaoTest {
 
     @Test
     fun deleteOldArticleAndCheckDb() = runBlockingTest {
-        // Insert an article in database for the test
-        article.publishedDate = 0L
-        mDatabase.articleDao().insertArticles(article)
+        // Insert an article list in database for the test
+        articleList[0].publishedDate = 0L
+        mDatabase.articleDao().insertArticles(*articleList.toTypedArray())
 
         // Given an Article that has been deleted into the DB
-        val rowAffected = mDatabase.articleDao().removeOldArticles(1L)
+        val rowAffected = mDatabase.articleDao().removeOldArticles(1L, listOf(articleList[1].id))
 
         // Check that's there only one row affected when deleting
         assertEquals(1, rowAffected)
 
         // When getting the Article via the DAO
-        val articleDb = mDatabase.articleDao().getArticle(article.id)
+        val articleDb = mDatabase.articleDao().getArticle(articleList[0].id)
 
-        // Then the retrieved a null object
+        // Then we retrieved a null object
         assertNull(articleDb)
+
+        // Delete the other article used for the test
+        mDatabase.articleDao().deleteArticle(articleList[1].id)
 
         // Clean up coroutines
         cleanupTestCoroutines()

@@ -86,18 +86,18 @@ class PausedDaoTest {
     }
 
     @Test
-    fun getAllPauseds() = pausedListTest {
-        // When getting All Pauseds via the DAO
-        val allPauseds = mDatabase.pausedDao().getAll()
+    fun getAllPaused() = pausedListTest {
+        // When getting All Paused via the DAO
+        val allPaused = mDatabase.pausedDao().getAll()
 
-        // Then the retrieved All Pauseds match the original Paused list object
-        assertEquals(pausedList, allPauseds)
+        // Then the retrieved All Paused match the original Paused list object
+        assertEquals(pausedList, allPaused)
     }
 
     @Test
     fun updateAndGetPaused() = onePausedTest {
         // Change some data to update them in database
-        val newPaused = Paused(paused.id, articleId, 500)
+        val newPaused = Paused(paused.id, articleId, 500f)
 
         // Given a Article that has been updated into the DB
         val rowAffected = mDatabase.pausedDao().updatePaused(newPaused)
@@ -115,7 +115,7 @@ class PausedDaoTest {
     @Test
     fun updateScrollPositionAndGetPaused() = onePausedTest {
         // Change some data to update them in database
-        val newPaused = Paused(paused.id, articleId, 2000)
+        val newPaused = Paused(paused.id, articleId, 2000f)
 
         // Given a Article that has been updated into the DB
         mDatabase.pausedDao().setScrollPosition(articleId, 2000)

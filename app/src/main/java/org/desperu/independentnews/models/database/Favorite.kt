@@ -12,11 +12,13 @@ import kotlinx.android.parcel.Parcelize
  *
  * @property id             the unique identifier of the favorite.
  * @property articleId      the unique identifier of the article of this favorite.
+ * @property creationDate   the creation date of the favorite.
  *
  * @constructor Instantiate a new Favorite.
  *
  * @param id                the unique identifier of the favorite to set.
  * @param articleId         the unique identifier of the article of this favorite to set.
+ * @param creationDate      the creation date of the favorite to set.
  */
 @Parcelize
 @Entity(
@@ -34,5 +36,6 @@ import kotlinx.android.parcel.Parcelize
 data class Favorite(
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0L,
-    var articleId: Long = 0L
+    var articleId: Long = 0L,
+    var creationDate: Long = 0L
 ) : Parcelable

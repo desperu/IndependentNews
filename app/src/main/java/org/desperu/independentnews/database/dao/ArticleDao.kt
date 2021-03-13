@@ -67,6 +67,16 @@ interface ArticleDao {
     suspend fun getAll(sourceIds: List<Long>): List<Article>
 
     /**
+     * Returns the articles for which the id are in the given list.
+     *
+     * @param ids the unique identifier list of the articles to return.
+     *
+     * @return the articles for which the id are in the given list.
+     */
+    @Query("SELECT * FROM article WHERE id IN (:ids)")
+    suspend fun getWhereIdsIn(ids: List<Long>): List<Article>
+
+    /**
      * Returns the articles for which the url are in the given list.
      *
      * @param urls the list of urls of the articles to return.
@@ -306,10 +316,11 @@ interface ArticleDao {
     /**
      * Delete the older articles than the limit millis in database.
      *
-     * @param limitMillis the limit millis for which older articles are deleted in database.
+     * @param limitMillis   the limit millis for which older articles are deleted in database.
+     * @param ids           the unique identifier list of the articles to not delete.
      *
      * @return the number of row affected.
      */
-    @Query("DELETE FROM Article WHERE publishedDate < :limitMillis")
-    suspend fun removeOldArticles(limitMillis: Long): Int
+    @Query("DELETE FROM Article WHERE publishedDate < :limitMillis AND id NOT IN (:ids)")
+    suspend fun removeOldArticles(limitMillis: Long, ids: List<Long>): Int
 }

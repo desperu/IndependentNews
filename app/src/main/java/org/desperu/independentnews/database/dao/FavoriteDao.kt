@@ -26,10 +26,10 @@ interface FavoriteDao {
     suspend fun getFavoriteForArticleId(articleId: Long): Favorite?
 
     /**
-     * Returns the favorite list from database.
-     * @return the favorite list from database.
+     * Returns the favorite list from database, ordered from the most recent to the oldest.
+     * @return the favorite list from database, ordered from the most recent to the oldest.
      */
-    @Query("SELECT * FROM favorite")
+    @Query("SELECT * FROM favorite ORDER BY creationDate DESC")
     suspend fun getAll(): List<Favorite>
 
     /**
