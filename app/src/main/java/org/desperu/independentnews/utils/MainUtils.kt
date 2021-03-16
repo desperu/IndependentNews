@@ -6,8 +6,8 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
-import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
-import org.desperu.independentnews.ui.main.fragment.categories.VP_FRAG_KEY
+import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
+import org.desperu.independentnews.ui.main.fragment.viewPager.VP_FRAG_KEY
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
@@ -34,9 +34,9 @@ object MainUtils : KoinComponent{
      */
     internal fun getFragFromKey(fragmentKey: Int): Fragment = when(fragmentKey) {
         FRAG_TOP_STORY -> ArticleListFragment.newInstance(fragmentKey)
-        FRAG_CATEGORY -> CategoriesFragment.newInstance(fragmentKey)
+        FRAG_CATEGORY -> ViewPagerFragment.newInstance(fragmentKey)
         FRAG_ALL_ARTICLES -> ArticleListFragment.newInstance(fragmentKey)
-        FRAG_USER_ARTICLE -> CategoriesFragment.newInstance(fragmentKey)
+        FRAG_USER_ARTICLE -> ViewPagerFragment.newInstance(fragmentKey)
         FRAG_TODAY_ARTICLES -> ArticleListFragment.newInstance(fragmentKey)
         else -> throw IllegalArgumentException("Fragment key not found : $fragmentKey")
     }

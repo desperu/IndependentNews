@@ -5,7 +5,7 @@
    ////////////////////////////////////////////////////////// -->
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimary</item>
@@ -92,13 +92,13 @@
     </style>
 
     <!-- Date Picker Dialog Style -->
-    <style name="DatePickerDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+    <style name="DatePickerDialogStyle" parent="Theme.MaterialComponents.Light.Dialog">
         <item name="colorAccent">@color/filter_seek_bar_color</item>
     </style>
 
     <!-- Alert Dialog -->
-    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="colorPrimary">@color/colorPrimary</item>
+    <style name="AlertDialogStyle" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>

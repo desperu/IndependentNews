@@ -27,6 +27,7 @@ val viewModelModule = module {
     viewModel { (fragment: BaseBindingFragment) ->
         ArticleListViewModel(
             get(),
+            get(),
             get { parametersOf(fragment) }
         )
     }

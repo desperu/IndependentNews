@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.postOnAnimationDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -112,6 +113,8 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
         FRAG_HEALTH -> viewModel.getCategory(resources.getStringArray(R.array.filter_health).asList())
         FRAG_ALL_ARTICLES -> viewModel.getAllArticles()
         FRAG_TODAY_ARTICLES -> viewModel.updateList(todayArticles)
+        FRAG_FAVORITE -> viewModel.getFavorites()
+        FRAG_PAUSED -> viewModel.getPaused()
         else -> viewModel.getTopStory()
     }
 
@@ -121,8 +124,14 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     override fun onResume() {
         super.onResume()
-        showFilterMotion(true)
+        showFilterMotion(!articleListAdapter?.list.isNullOrEmpty())
         articleListAdapter?.isFiltered?.let { updateFiltersMotionState(it) }
+        recycler_view.doOnNextLayout { mainInterface?.updateAppBarOnTouch() }
+    }
+
+    override fun onDestroyView() {
+        articleListAdapter = null
+        super.onDestroyView()
     }
 
     // -----------------
@@ -180,7 +189,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     override fun showFilterMotion(toShow: Boolean) { mainInterface?.showFilterMotion(toShow) }
 
     /**
-     * Update filters motion state adapter state, when switch fragment.
+     * Update filters motion state, depends of adapter state, when switch fragment.
      * @param isFiltered true if the adapter is filtered, false otherwise.
      */
     override fun updateFiltersMotionState(isFiltered: Boolean) {

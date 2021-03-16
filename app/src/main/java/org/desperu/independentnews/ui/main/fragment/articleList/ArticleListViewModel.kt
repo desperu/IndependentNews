@@ -9,6 +9,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.toArticleItemVMList
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
+import org.desperu.independentnews.repositories.database.UserArticleRepository
 import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.utils.*
 import org.koin.java.KoinJavaComponent.getKoin
@@ -16,17 +17,20 @@ import org.koin.java.KoinJavaComponent.getKoin
 /**
  * View Model witch provide data for article list.
  *
- * @property ideNewsRepository      the app repository interface witch provide database and network access.
- * @property articleListInterface   the article list interface witch provide fragment interface.
+ * @property ideNewsRepository      the app repository interface which provide database and network access.
+ * @property userArticleRepository  the repository which provide user article database access.
+ * @property articleListInterface   the article list interface which provide fragment interface.
  *
  * @constructor Instantiates a new ArticleListViewModel.
  *
- * @param ideNewsRepository         the app repository interface witch provide database and network
+ * @param ideNewsRepository         the app repository interface which provide database and network
  *                                  access to set.
+ * @param userArticleRepository     the repository which provide user article database access to set.
  * @param articleListInterface      the article list interface witch provide fragment interface to set.
  */
 class ArticleListViewModel(
     private val ideNewsRepository: IndependentNewsRepository,
+    private val userArticleRepository: UserArticleRepository,
     private val articleListInterface: ArticleListInterface
 ): ViewModel() {
 
@@ -62,6 +66,22 @@ class ArticleListViewModel(
      */
     internal fun getAllArticles() = viewModelScope.launch(Dispatchers.IO) {
         articleList = ideNewsRepository.getAllArticles()
+        updateRecyclerData()
+    }
+
+    /**
+     * Get all favorite articles from database, and dispatch to recycler adapter.
+     */
+    internal fun getFavorites() = viewModelScope.launch(Dispatchers.IO) {
+        articleList = userArticleRepository.getAllFavoriteArticles()
+        updateRecyclerData()
+    }
+
+    /**
+     * Get all paused articles from database, and dispatch to recycler adapter.
+     */
+    internal fun getPaused() = viewModelScope.launch(Dispatchers.IO) {
+        articleList = userArticleRepository.getAllPausedArticles()
         updateRecyclerData()
     }
 

@@ -12,8 +12,8 @@ import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListViewModel
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
-import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
-import org.desperu.independentnews.ui.main.fragment.categories.VP_FRAG_KEY
+import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
+import org.desperu.independentnews.ui.main.fragment.viewPager.VP_FRAG_KEY
 import org.desperu.independentnews.utils.MainUtils.getDrawerItemIdFromFragKey
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
 import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
@@ -76,7 +76,7 @@ class MainUtilsTest : KoinTest {
 
     @Test
     fun given_fragKey_When_getFragFromKey_Then_checkResult() {
-        val expectedList = listOf(ArticleListFragment::class.java, CategoriesFragment::class.java)
+        val expectedList = listOf(ArticleListFragment::class.java, ViewPagerFragment::class.java)
 
         val fragKeyList = listOf(
             FRAG_TOP_STORY,
@@ -123,7 +123,7 @@ class MainUtilsTest : KoinTest {
     fun given_vpFrag_When_retrievedKeyFromFrag_Then_checkResult() {
         val expected = FRAG_ECOLOGY
 
-        val fragment = CategoriesFragment()
+        val fragment = ViewPagerFragment()
         every { mockBundle.getInt(any()) } returns FRAG_ECOLOGY
 //        every { mockBundle.getInt(VP_FRAG_KEY) } returns FRAG_ECOLOGY
         mockBundle.putInt(VP_FRAG_KEY, FRAG_ECOLOGY)

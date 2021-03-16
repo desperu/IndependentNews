@@ -97,8 +97,9 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:visibility="gone"
+        app:tabIconTint="@color/title_color"
         app:tabTextColor="@color/title_color"
         app:tabIndicatorColor="@color/subtitle_color"
-        app:tabSelectedTextColor="@color/list_item_bg_collapsed"/>
+        app:tabSelectedTextColor="@color/list_item_bg_collapsed" />
 
 </org.desperu.independentnews.views.appbar.AppBar>

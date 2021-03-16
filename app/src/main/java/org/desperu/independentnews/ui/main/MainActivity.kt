@@ -35,7 +35,7 @@ import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
-import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
+import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
 import org.desperu.independentnews.ui.settings.SettingsActivity
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
@@ -45,7 +45,7 @@ import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
-var animationPlaybackSpeed: Double = 0.8
+var animationPlaybackSpeed: Double = 1.0 // Was 0.8
 /**
  * The names of the arguments to received data to this Activity.
  */
@@ -266,10 +266,15 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     }
 
     /**
+     * Update app bar on touch listener, used to finish app bar anim.
+     */
+    override fun updateAppBarOnTouch() = appbar.updateOnTouch()
+
+    /**
      * Show or hide tab layout, depends of fragment key value.
      */
     private fun showTabLayout() {
-        val toShow = fragmentKey == FRAG_CATEGORY
+        val toShow = fragmentKey in listOf(FRAG_CATEGORY, FRAG_USER_ARTICLE)
         app_bar_tab_layout.visibility = if (toShow) View.VISIBLE else View.GONE
     }
 
@@ -342,7 +347,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
             if (hasChange == true) {
                 var currentFrag = fm.getCurrentFragment()
 
-                if (currentFrag is CategoriesFragment)
+                if (currentFrag is ViewPagerFragment)
                     currentFrag = currentFrag.getCurrentFrag()
 
                 (currentFrag as ArticleListInterface).refreshList()

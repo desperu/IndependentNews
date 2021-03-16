@@ -9,9 +9,10 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.TODAY_ARTICLES_FRAG
-import org.desperu.independentnews.ui.main.fragment.categories.CategoriesFragment
+import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
 import org.desperu.independentnews.utils.FRAG_CATEGORY
 import org.desperu.independentnews.utils.FRAG_TOP_STORY
+import org.desperu.independentnews.utils.FRAG_USER_ARTICLE
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
 import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
 import org.koin.core.KoinComponent
@@ -146,21 +147,20 @@ class MainFragmentManager(
         get() = (fm.findFragmentByTag(ArticleListFragment::class.java.simpleName) as ArticleListFragment?)
 
     private val categoryFragment
-        get() = (fm.findFragmentByTag(CategoriesFragment::class.java.simpleName) as CategoriesFragment?)
+        get() = (fm.findFragmentByTag(ViewPagerFragment::class.java.simpleName) as ViewPagerFragment?)
 
     /**
-    * Returns the current fragment instance attached to frame layout main container.
-    * @return the current fragment instance attached to frame layout main container.
+    * Returns the current fragment instance attached to the frame layout main container.
+    * @return the current fragment instance attached to the frame layout main container.
     */
-    internal fun getCurrentFragment(): Fragment? =
-        fm.findFragmentById(R.id.main_frame_container)
+    internal fun getCurrentFragment(): Fragment? = fm.findFragmentById(R.id.main_frame_container)
 
     /**
      * Returns the current article list fragment instance attached to the frame layout.
      * @return the current article list fragment instance attached to the frame layout.
      */
     internal fun getCurrentArticleListFrag(): ArticleListFragment? =
-        if (fragmentKey == FRAG_CATEGORY)
+        if (fragmentKey in listOf(FRAG_CATEGORY, FRAG_USER_ARTICLE))
             categoryFragment?.getCurrentFrag()
         else
             articleListFragment

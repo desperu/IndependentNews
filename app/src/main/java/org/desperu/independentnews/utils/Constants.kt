@@ -22,6 +22,12 @@ const val FRAG_HEALTH = 8
 const val FRAG_FAVORITE = 9
 const val FRAG_PAUSED = 10
 
+// For Vp User Article Icon id list
+internal val USER_ARTICLE_ICONS = listOf(
+    R.drawable.ic_baseline_star_black_24,
+    R.drawable.ic_baseline_pause_black_24
+)
+
 // Sources
 const val FRAG_SOURCES_LIST = 1000
 const val FRAG_SOURCES_DETAIL = 1001
