@@ -51,9 +51,9 @@ class ResourcesServiceInstrumentedTest : KoinTest {
 
     @Test
     fun getColor() {
-        val expected = appContext.getColor(R.color.colorAccent)
+        val expected = appContext.getColor(android.R.color.holo_green_light)
 
-        val output = resource.getColor(R.color.colorAccent)
+        val output = resource.getColor(android.R.color.holo_green_light)
 
         assertEquals(expected, output)
     }
