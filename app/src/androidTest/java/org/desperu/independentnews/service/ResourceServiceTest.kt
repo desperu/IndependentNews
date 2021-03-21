@@ -1,5 +1,6 @@
 package org.desperu.independentnews.service
 
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.test.platform.app.InstrumentationRegistry
 import org.desperu.independentnews.test.R
@@ -51,9 +52,9 @@ class ResourcesServiceInstrumentedTest : KoinTest {
 
     @Test
     fun getColor() {
-        val expected = appContext.getColor(android.R.color.holo_green_light)
+        val expected = ResourcesCompat.getColor(appContext.resources, R.color.colorAccent, null)
 
-        val output = resource.getColor(android.R.color.holo_green_light)
+        val output = resource.getColor(R.color.colorAccent)
 
         assertEquals(expected, output)
     }
