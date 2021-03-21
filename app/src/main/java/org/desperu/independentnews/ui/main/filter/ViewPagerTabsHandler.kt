@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import androidx.cardview.widget.CardView
+import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -38,7 +39,6 @@ class ViewPagerTabsHandler(
     private val filterLayoutPadding: Float by bindDimen(context, R.dimen.filter_layout_padding)
 
     private val toggleAnimDuration = context.resources.getInteger(R.integer.toggleAnimDuration).toLong()
-    private var bottomBarAnimator: ValueAnimator? = null
 
     private lateinit var tabsAdapter: FiltersTabsAdapter
     private var totalTabsScroll = 0
@@ -72,6 +72,7 @@ class ViewPagerTabsHandler(
                 // onScrollListener for the RecyclerView but that requires extra math. positionOffset
                 // is all we need so let's use that to apply transformation to the tabs
 
+                val previousTabView = tabsRecyclerView.layoutManager?.findViewByPosition(position - 1)
                 val currentTabView = tabsRecyclerView.layoutManager?.findViewByPosition(position) ?: return
                 val nextTabView = tabsRecyclerView.layoutManager?.findViewByPosition(position + 1)
 
@@ -99,7 +100,6 @@ class ViewPagerTabsHandler(
                             )
                         )
                 } else {
-                    val previousTabView = tabsRecyclerView.layoutManager?.findViewByPosition(position - 1)
                     previousTabView?.findViewById<View>(R.id.tab_title)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
                     currentTabView.findViewById<View>(R.id.tab_title).setBackgroundResource(R.drawable.ic_tab_pill_selected)
                     nextTabView?.findViewById<View>(R.id.tab_title)?.setBackgroundResource(R.drawable.ic_tab_pill_unselected)
@@ -118,7 +118,7 @@ class ViewPagerTabsHandler(
             viewPager.adapter = FiltersPagerAdapter(context!!, ::onFilterSelected)
 
             // Tabs
-            tabsAdapter = FiltersTabsAdapter(context!!) { clickedPosition ->
+            tabsAdapter = FiltersTabsAdapter(context) { clickedPosition ->
                 // smoothScroll = true will call the onPageScrolled callback which will smoothly
                 // animate (transform) the tabs accordingly
                 viewPager.setCurrentItem(clickedPosition, true)
@@ -146,25 +146,25 @@ class ViewPagerTabsHandler(
         tabsAdapter.updateBadge(updatedPosition, !selectedMap[updatedPosition].isNullOrEmpty())
 
         bottomBarAnimator?.let {
-            this.bottomBarAnimator = bottomBarAnimator.clone()
-            this.hasActiveFilters = !this.hasActiveFilters
-            this.bottomBarAnimator?.addUpdateListener { animation ->
+            this.hasActiveFilters = hasActiveFilters
+            bottomBarAnimator.addUpdateListener { animation ->
                 val color =
                     blendColors(
                         bottomBarColor,
                         bottomBarPinkColor,
                         animation.animatedValue as Float
                     )
-                bottomBarCardView.setCardBackgroundColor(color)
+                bottomBarCardView.setCardBackgroundColor(ColorStateList.valueOf(color))
             }
-            this.bottomBarAnimator?.duration = toggleAnimDuration
-            this.bottomBarAnimator?.start()
+            bottomBarAnimator.duration = toggleAnimDuration
+            bottomBarAnimator.start()
         }
 
-        // To correct Motion Layout reset color when change tab and select filter
-        if (bottomBarAnimator == null) {
-            this.bottomBarAnimator?.duration = 1
-            this.bottomBarAnimator?.start()
+        bottomBarCardView.postDelayed(bottomBarAnimator?.duration ?: 0L) {
+            bottomBarCardView.setBackgroundColor(
+                if (hasActiveFilters) bottomBarPinkColor
+                else bottomBarColor
+            )
         }
     }
 }

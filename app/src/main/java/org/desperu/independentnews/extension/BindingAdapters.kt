@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.screenWidth
 import org.desperu.independentnews.extension.parseHtml.mToString
@@ -212,12 +213,11 @@ fun RecyclerView.myAdapter(adapter: SourceListAdapter?) {
  * Update transition name with the given position of the item.
  */
 @BindingAdapter("updateTransitionName")
-fun View.updateTransitionName(position: Int?) { // TODO use string and set in view model with service/Ressources
+fun View.updateTransitionName(position: Int?) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && position != null) {
-        val transitionName = context.getString(R.string.animation_source_list_to_detail) + position
+        val transitionName = transitionName + position
         setTransitionName(transitionName)
     }
-//    (context as SourcesActivity)
 }
 
 /**
@@ -285,14 +285,18 @@ fun View.myPadding(sourceName: String?) {
  * @param enabled true if the source is enabled.
  */
 @BindingAdapter("disableFab")
-@Suppress("Deprecation")
 fun FloatingActionButton.disableFab(enabled: Boolean?) {
-    if (enabled != null && enabled) {
+    val iconColor by bindColor(android.R.color.white)
+    val enabledBg by bindColor(android.R.color.holo_green_light)
+    val disabledBg by bindColor(R.color.colorAccent)
+
+    backgroundTintList = if (enabled == true) {
         setImageResource(R.drawable.ic_baseline_check_white_24)
-        backgroundTintList = ColorStateList.valueOf(resources.getColor(android.R.color.holo_green_light))
+        ColorStateList.valueOf(enabledBg)
     } else {
         setImageResource(R.drawable.ic_close)
-        supportImageTintList = ColorStateList.valueOf(resources.getColor(android.R.color.white))
-        backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorAccent))
+        ColorStateList.valueOf(disabledBg)
     }
+
+    supportImageTintList = ColorStateList.valueOf(iconColor)
 }
