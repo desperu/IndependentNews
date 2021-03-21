@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import androidx.cardview.widget.CardView
-import androidx.core.view.postDelayed
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -42,6 +41,7 @@ class ViewPagerTabsHandler(
 
     private lateinit var tabsAdapter: FiltersTabsAdapter
     private var totalTabsScroll = 0
+    private var bottomBarAnimator: ValueAnimator? = null
     var hasActiveFilters = false
         private set
 
@@ -146,25 +146,25 @@ class ViewPagerTabsHandler(
         tabsAdapter.updateBadge(updatedPosition, !selectedMap[updatedPosition].isNullOrEmpty())
 
         bottomBarAnimator?.let {
-            this.hasActiveFilters = hasActiveFilters
-            bottomBarAnimator.addUpdateListener { animation ->
+            this.bottomBarAnimator = bottomBarAnimator.clone()
+            this.hasActiveFilters = !this.hasActiveFilters
+            this.bottomBarAnimator?.addUpdateListener { animation ->
                 val color =
                     blendColors(
                         bottomBarColor,
                         bottomBarPinkColor,
                         animation.animatedValue as Float
                     )
-                bottomBarCardView.setCardBackgroundColor(ColorStateList.valueOf(color))
+                bottomBarCardView.setCardBackgroundColor(color)
             }
-            bottomBarAnimator.duration = toggleAnimDuration
-            bottomBarAnimator.start()
+            this.bottomBarAnimator?.duration = toggleAnimDuration
+            this.bottomBarAnimator?.start()
         }
 
-        bottomBarCardView.postDelayed(bottomBarAnimator?.duration ?: 0L) {
-            bottomBarCardView.setBackgroundColor(
-                if (hasActiveFilters) bottomBarPinkColor
-                else bottomBarColor
-            )
+        // To correct Motion Layout reset color when change tab and select filter
+        if (bottomBarAnimator == null) {
+            this.bottomBarAnimator?.duration = 1
+            this.bottomBarAnimator?.start()
         }
     }
 }
