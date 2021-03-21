@@ -113,7 +113,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
         articleDesign.handleDesign(0)
         articleDesign.scrollPosition = previousPage?.second ?: 0
         if (previousPage?.first == null) activity.web_view.goBack()
-        navigationCount -= 2
+        navigationCount -= 2 // TODO to check why not use previousPage.second instead !!
     }
 
     // --------------
@@ -148,6 +148,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
         else -> {
             articleDesign.handleDesign(0)
             addPageToHistory()
+            viewModel.article.set(null)
             if (noteScrollPosition == -1) isNoteRedirect = false
             false
         }

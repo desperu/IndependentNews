@@ -38,6 +38,7 @@
     <color name="colorLightBlue">#8C9EFF</color>
     <color name="colorPassedWhite">#eeeeee</color>
     <color name="colorPurple">@color/design_default_color_primary</color>
+    <color name="colorStar">#F0E00C</color>
 
     <!-- Translucent Colors -->
     <color name="colorTransWhite">#CDEEEEEE</color>

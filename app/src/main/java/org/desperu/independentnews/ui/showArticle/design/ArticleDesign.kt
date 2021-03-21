@@ -12,6 +12,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.annotation.FloatRange
 import androidx.annotation.RequiresApi
+import androidx.core.animation.doOnEnd
 import androidx.core.os.postDelayed
 import androidx.core.transition.doOnEnd
 import androidx.core.view.doOnLayout
@@ -31,7 +32,10 @@ import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.ShowArticleTransition
+import org.desperu.independentnews.ui.showArticle.fabsMenu.IconAnim
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
+import org.desperu.independentnews.utils.REMOVE_PAUSED
+import org.desperu.independentnews.utils.TEXT_SIZE_DEFAULT
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -72,6 +76,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
 
     init {
         configureKoinDependency()
+        setupScrollListener()
     }
 
     // --------------
@@ -83,6 +88,23 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      */
     private fun configureKoinDependency() {
         get<ArticleDesignInterface> { parametersOf(this) }
+    }
+
+    /**
+     * Setup the scroll listener on the nested scroll view.
+     */
+    private fun setupScrollListener() {
+        // TODO on scroll video should pause ...
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            sv.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                updateScrollProgress(scrollY)
+                // TODO >>>>>>>> AADD a listener for the bottom and pause article to remove from pause ???
+            }
+        else
+            sv.viewTreeObserver.addOnScrollChangedListener {
+                updateScrollProgress(null)
+                // TODO >>>>>>>> AADD a listener for the bottom and pause article to remove from pause ???
+            }
     }
 
     // --------------
@@ -131,7 +153,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 activity.web_view.updateBackground(body, sourceName)
             }
 
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bgDrawable != null-> {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bgDrawable != null -> {
                 activity.window.setBackgroundDrawable(bgDrawable)
                 activity.window.sharedElementEnterTransition = getActivityTransition(true)
                 activity.window.sharedElementReturnTransition = getActivityTransition(false)
@@ -181,7 +203,31 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             { progress -> sv.alpha = progress }
         )
 
+        // Seems to not delay after image download...
         activity.article_image.doOnPreDraw { waitHasScroll { anim.start() } }
+    }
+
+    /**
+     * Resume paused article to the saved scroll position, with drawable transition,
+     * play to pause and smooth scroll to the saved position.
+     * Delay this animation after the activity shared element enter transition.
+     *
+     * @param scrollPercent the scroll position to restore.
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun resumePausedArticle(scrollPercent: Float) {
+        activity.window.sharedElementEnterTransition.doOnEnd {
+            // Restore scroll position
+            val yPercent = scrollPercent * getTextRatio()
+
+            // Play drawable animation
+            val anim = IconAnim().getIconAnim(R.id.pause_to_play, null)
+            anim.doOnEnd {
+                val y = (scrollHeight * yPercent).toInt()
+                sv.smoothScrollTo(sv.scrollX, y, 1000)
+            }
+            anim.start()
+        }
     }
 
     // --------------
@@ -189,20 +235,12 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     // --------------
 
     /**
-     * Setup progress bar with scroll view scroll position.
+     * Returns the text ratio of the current web view.
+     *
+     * @return the current text ratio.
      */
-    internal fun setupProgressBarWithScrollView() {
-        var svScrollY = 0
-        val setup = {
-            val newProgress = getScrollYPercent(svScrollY) * 100
-            updateProgressBar(scrollBar, newProgress.toInt())
-        }
-        // TODO on scroll video should pause ...
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> svScrollY = scrollY; setup() }
-        else
-            sv.viewTreeObserver.addOnScrollChangedListener { svScrollY = 0; setup() }
-    }
+    override fun getTextRatio(): Float =
+        activity.web_view.settings.textZoom.toFloat() / TEXT_SIZE_DEFAULT.toFloat()
 
     /**
      * Returns the current scroll y value in percent.
@@ -302,6 +340,18 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     }
 
     /**
+     * Update scroll progress bar, below the app bar, with the new scroll Y value.
+     * If the given scroll Y is null, direct get the current value in the nested scroll view.
+     *
+     * @param scrollY the new scroll Y value.
+     */
+    private fun updateScrollProgress(scrollY: Int?) {
+        val newScrollY = scrollY ?: sv.scrollY
+        val newProgress = getScrollYPercent(newScrollY) * 100
+        updateProgressBar(scrollBar, newProgress.toInt())
+    }
+
+    /**
      * Update progress bar, with the new progress value.
      * Use animation only for API >= NOUGAT.
      *
@@ -330,7 +380,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         )
         val show = {
             Handler(Looper.getMainLooper()).postDelayed(delay.toLong()) {
-                activity.fabs_menu.apply { visibility = View.VISIBLE; show() }
+                activity.fabs_menu.show()
             }
         }
 

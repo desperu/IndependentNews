@@ -167,8 +167,8 @@ class ArticleRepositoryImpl(
      */
     override suspend fun removeOldArticles(): Int = withContext(Dispatchers.IO) {
         val idsToNotRemove = mutableListOf<Long>()
-        userArticleRepository.getAllFavoriteArticles()?.map { it.id }?.let { idsToNotRemove.addAll(it) }
-        userArticleRepository.getAllPausedArticles()?.map { it.id }?.let { idsToNotRemove.addAll(it) }
+        idsToNotRemove.addAll(userArticleRepository.getAllFavoriteArticles().map { it.id })
+        idsToNotRemove.addAll(userArticleRepository.getAllPausedArticles().map { it.id })
         // TODO add user article download, when nav between articles.
 
         articleDao.removeOldArticles(storeDelayMillis(nowMillis, storeDelay), idsToNotRemove)

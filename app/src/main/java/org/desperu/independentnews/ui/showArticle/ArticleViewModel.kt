@@ -1,20 +1,24 @@
 package org.desperu.independentnews.ui.showArticle
 
 import android.view.View.OnClickListener
+import androidx.databinding.Observable
+import androidx.databinding.Observable.OnPropertyChangedCallback
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.desperu.independentnews.models.database.Article
-import org.desperu.independentnews.models.database.Css
-import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.models.database.*
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.database.CssRepository
+import org.desperu.independentnews.repositories.database.UserArticleRepository
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
 import org.koin.core.KoinComponent
 import org.koin.core.get
+import org.koin.core.inject
 import kotlin.properties.Delegates
 
 /**
@@ -22,8 +26,12 @@ import kotlin.properties.Delegates
  *
  * @property article                the article object with contains data.
  * @property ideNewsRepository      the app repository interface witch provide database and network access.
+ * @property userArticleRepository  the repository which provide user article database access.
  * @property router                 the image router which provide user redirection.
+ * @property articleDesign          the article design interface access.
  * @property cssRepository          the repository that allow access for css from the database.
+ * @property isFavorite             true if the article is favorite, false otherwise.
+ * @property isPaused               true if the article is paused, false otherwise.
  * @property navHistoryMap          the navigation history of the web view.
  *
  * @constructor Instantiates a new ArticleViewModel.
@@ -31,16 +39,21 @@ import kotlin.properties.Delegates
  * @param article                   the article object with contains data to set.
  * @param ideNewsRepository         the app repository interface witch provide database and network
  *                                  access to set.
+ * @param userArticleRepository     the repository which provide user article database access to set.
  * @param router                    the image router which provide user redirection to set.
  */
 class ArticleViewModel(
     val article: ObservableField<Article>,
     private val ideNewsRepository: IndependentNewsRepository,
+    private val userArticleRepository: UserArticleRepository,
     private val router: ImageRouter
 ): ViewModel(), KoinComponent {
 
     // FOR DATA
+    private val articleDesign: ArticleDesignInterface by inject()
     private val cssRepository: CssRepository = get()
+    val isFavorite = ObservableBoolean(false)
+    val isPaused = ObservableBoolean(false)
     private val navHistoryMap = mutableMapOf<Int, Pair<Article?, Int>>()
 
     // --------------
@@ -54,8 +67,51 @@ class ArticleViewModel(
         router.openShowImages(arrayListOf(article.get()?.imageUrl ?: ""))
     }
 
+    /**
+     * On article property changed callback.
+     * Need to be declared before init to be instantiate before first call.
+     */
+    private val onArticleChanged = object : OnPropertyChangedCallback() {
+
+        override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+            setUserArticleState()
+        }
+    }
+
     // --------------
-    // DB AND WEB
+    // CONFIGURATION
+    // --------------
+
+    init {
+        setUserArticleState()
+        setArticleListener()
+    }
+
+    /**
+     * Set user article state values, favorite and paused.
+     * Restore the paused position if there's one.
+     */
+    private fun setUserArticleState() = viewModelScope.launch(Dispatchers.IO) {
+        val articleId = article.get()?.id ?: 0L
+        isFavorite.set(userArticleRepository.getFavoriteArticle(articleId) != null)
+        
+        val paused = userArticleRepository.getPausedArticle(articleId)
+        isPaused.set(paused != null)
+        paused?.let { articleDesign.resumePausedArticle(it.scrollPosition) }
+    }
+
+    /**
+     * Set article property changed callback listener.
+     */
+    private fun setArticleListener() { article.addOnPropertyChangedCallback(onArticleChanged) }
+
+    /**
+     * Remove article property changed callback listener.
+     */
+    private fun removeArticleListener() { article.removeOnPropertyChangedCallback(onArticleChanged) }
+
+    // --------------
+    // DB
     // --------------
 
     /**
@@ -66,6 +122,32 @@ class ArticleViewModel(
     internal suspend fun getCss(): Css = withContext(Dispatchers.IO) {
         return@withContext cssRepository.getCssStyle(article.get()?.cssUrl ?: "")
     }
+
+    /**
+     * Update favorite state for the current article, here in view model and in the database.
+     */
+    internal fun updateFavorite() = viewModelScope.launch(Dispatchers.IO) {
+        val articleId = article.get()?.id ?: 0L
+        val isFavorite = userArticleRepository.handleFavorite(articleId)
+
+        this@ArticleViewModel.isFavorite.set(isFavorite)
+    }
+
+    /**
+     * Update paused state for the current article, here in view model and in the database.
+     *
+     * @param scrollYPercent the scroll y percent value, bind with text ratio.
+     */
+    internal fun updatePaused(scrollYPercent: Float) = viewModelScope.launch(Dispatchers.IO) {
+        val articleId = article.get()?.id ?: 0L
+        val isPaused = userArticleRepository.handlePaused(articleId, scrollYPercent)
+
+        this@ArticleViewModel.isPaused.set(isPaused)
+    }
+
+    // --------------
+    // WEB
+    // --------------
 
     /**
      * Fetch article and display it to the user.
@@ -106,5 +188,14 @@ class ArticleViewModel(
         previous?.let { article.set(it.first) }
         article.notifyChange()
         return previous
+    }
+
+    // --------------
+    // METHODS OVERRIDE
+    // --------------
+
+    override fun onCleared() {
+        super.onCleared()
+        removeArticleListener()
     }
 }

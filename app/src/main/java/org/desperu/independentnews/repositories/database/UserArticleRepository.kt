@@ -58,17 +58,18 @@ interface UserArticleRepository {
      *
      * @return the list of all favorites articles from the database.
      */
-    suspend fun getAllFavoriteArticles(): List<Article>?
+    suspend fun getAllFavoriteArticles(): List<Article>
 
     /**
      * Returns the list of all paused articles from the database.
      *
      * @return the list of all paused articles from the database.
      */
-    suspend fun getAllPausedArticles(): List<Article>?
+    suspend fun getAllPausedArticles(): List<Article>
 
     /**
-     * Handle favorite state for the current article, in the database.
+     * Handle favorite state for the current article, in the database,
+     * switch it's state, enabled disabled.
      *
      * @param articleId the unique identifier of the article.
      *
@@ -77,7 +78,8 @@ interface UserArticleRepository {
     suspend fun handleFavorite(articleId: Long): Boolean
 
     /**
-     * Handle paused state for the current article, in the database.
+     * Handle paused state for the current article, in the database,
+     * switch it's state, enabled disabled.
      *
      * @param articleId         the unique identifier of the article.
      * @param scrollYPercent    the scroll y percent value, bind with text ratio.
@@ -174,9 +176,11 @@ class UserArticleRepositoryImpl(
      *
      * @return the list of all favorites articles from the database.
      */
-    override suspend fun getAllFavoriteArticles(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun getAllFavoriteArticles(): List<Article> = withContext(Dispatchers.IO) {
         val articleIds = getAllFavorites().map { it.articleId }
-        return@withContext articleDao.getWhereIdsIn(articleIds).setSourceForEach(getSources())
+        val articles = articleDao.getWhereIdsIn(articleIds).setSourceForEach(getSources())
+
+        return@withContext reorderArticles(articles, articleIds)
     }
 
     /**
@@ -184,33 +188,38 @@ class UserArticleRepositoryImpl(
      *
      * @return the list of all paused articles from the database.
      */
-    override suspend fun getAllPausedArticles(): List<Article>? = withContext(Dispatchers.IO) {
+    override suspend fun getAllPausedArticles(): List<Article> = withContext(Dispatchers.IO) {
         val articleIds = getAllPaused().map { it.articleId }
-        return@withContext articleDao.getWhereIdsIn(articleIds).setSourceForEach(getSources())
+        val articles = articleDao.getWhereIdsIn(articleIds).setSourceForEach(getSources())
+
+        return@withContext reorderArticles(articles, articleIds)
     }
 
     /**
-     * Handle favorite state for the current article, in the database.
+     * Handle favorite state for the current article, in the database,
+     * switch it's state, enabled disabled.
      *
      * @param articleId the unique identifier of the article.
      *
      * @return true if is favorite after change, false if not.
      */
     override suspend fun handleFavorite(articleId: Long): Boolean = withContext(Dispatchers.IO) {
-        val isFavorite = getFavoriteArticle(articleId) != null
-        val favorite = Favorite(
+        val favorite = getFavoriteArticle(articleId)
+        val isFavorite = favorite != null
+        val newFavorite = Favorite(
             articleId = articleId,
             creationDate = Calendar.getInstance().timeInMillis
         )
 
-        if (!isFavorite) favoriteDao.insertFavorite(favorite)
-        else favoriteDao.deleteFavorite(favorite)
+        if (!isFavorite) favoriteDao.insertFavorite(newFavorite)
+        else favoriteDao.deleteFavorite(favorite!!)
 
         return@withContext !isFavorite
     }
 
     /**
-     * Handle paused state for the current article, in the database.
+     * Handle paused state for the current article, in the database,
+     * switch it's state, enabled disabled.
      *
      * @param articleId         the unique identifier of the article.
      * @param scrollYPercent    the scroll y percent value, bind with text ratio.
@@ -222,15 +231,16 @@ class UserArticleRepositoryImpl(
         scrollYPercent: Float
     ): Boolean = withContext(Dispatchers.IO) {
 
-        val isPaused = getPausedArticle(articleId) != null
-        val paused = Paused(
+        val paused = getPausedArticle(articleId)
+        val isPaused = paused != null
+        val newPaused = Paused(
             articleId = articleId,
             scrollPosition = scrollYPercent,
             creationDate = Calendar.getInstance().timeInMillis
         )
 
-        if (!isPaused) pausedDao.insertPaused(paused)
-        else pausedDao.deletePaused(paused)
+        if (!isPaused) pausedDao.insertPaused(newPaused)
+        else pausedDao.deletePaused(paused!!)
 
         return@withContext !isPaused
     }
@@ -307,5 +317,23 @@ class UserArticleRepositoryImpl(
      */
     private suspend fun getSources(): List<Source> = withContext(Dispatchers.IO) {
         sourceDao.getEnabled()
+    }
+
+    /**
+     * Reorder the given article list with the given ordered ids.
+     *
+     * @param articles      the article list to reorder.
+     * @param orderedIds    the ordered ids to apply.
+     *
+     * @return the reordered article list.
+     */
+    private fun reorderArticles(articles: List<Article>?, orderedIds: List<Long>): List<Article> {
+        val orderedArticles = mutableListOf<Article>()
+        orderedIds.forEachIndexed { index, id ->
+            val article = articles?.find { it.id == id }
+            article?.let { orderedArticles.add(index, it) }
+        }
+
+        return orderedArticles
     }
 }

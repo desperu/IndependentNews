@@ -12,6 +12,9 @@
 
     <integer name="toggleAnimDuration">100</integer>
 
+    <!-- Fab Menu Icon Animation Duration -->
+    <integer name="sub_fab_icon_anim_duration">600</integer>
+
     <!-- Show Article Activity Animation Duration -->
     <integer name="enter_anim_duration">500</integer>
 

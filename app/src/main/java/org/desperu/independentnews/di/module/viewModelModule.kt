@@ -39,6 +39,7 @@ val viewModelModule = module {
         ArticleViewModel(
             ObservableField(article),
             get(),
+            get(),
             router
         )
     }

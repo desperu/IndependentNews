@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
+import androidx.core.view.children
+import com.leinardi.android.speeddial.FabWithLabelView
 import com.leinardi.android.speeddial.SpeedDialView
 import org.desperu.independentnews.extension.design.findAnimatedChild
 
@@ -33,6 +35,13 @@ class MySpeedDialView @JvmOverloads constructor(
      */
     interface OnAnimationStartListener {
 
+        /**
+         * On Pre Start Speed Dial View animation, expand/shrink fabs menu.
+         *
+         * @param isOpen true if the speed dial is open, false otherwise.
+         */
+        fun onPreStart(isOpen: Boolean)
+
         // Same as OnChangeListener.onToggleChanged()
         // Just take care about isOpen value, that is invert
         // because is called after change toggle state.
@@ -59,6 +68,22 @@ class MySpeedDialView @JvmOverloads constructor(
     // --------------
     // CONFIGURATION
     // --------------
+
+    /**
+     * Returns the FabWithLabelView for the given id, null if not find.
+     *
+     * @param id the unique identifier of the FabWithLabelView.
+     *
+     * @return the FabWithLabelView, null if not find.
+     */
+    fun getFabWithLabelViewById(id: Int): FabWithLabelView? {
+        children.forEach {
+            if (it is FabWithLabelView && it.id == id)
+                return it
+        }
+
+        return null
+    }
 
     /**
      * Set the On Animation Start Listener, erase it if there's already one.
@@ -151,6 +176,9 @@ class MySpeedDialView @JvmOverloads constructor(
 
         // Get the speed dial state before switch state.
         val isOpen = isOpen
+
+        // Call on animation pre start, to allow touch sub fabs.
+        startListener?.onPreStart(isOpen)
 
         // Call super to set original speed dial animations.
         super.toggle(animate)

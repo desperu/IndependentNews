@@ -15,6 +15,7 @@ import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
@@ -56,7 +57,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         get() = intent.getParcelableExtra(ARTICLE)
             ?: Article(title = getString(R.string.show_article_activity_article_error))
     private val isExpanded: Boolean get() = intent.getBooleanExtra(IS_EXPANDED, true)
-    private val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG)
+    private val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG) // TODO useless
 
     // FOR DATA
     private lateinit var binding: ActivityShowArticleBinding
@@ -83,14 +84,13 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         fun routeFromActivity(activity: AppCompatActivity,
                               article: Article,
                               isExpanded: Boolean,
-                              vararg sharedElements: Pair<View, String>,
+                              vararg sharedElements: Pair<View, String>, // TODO try without list
         ) {
             val intent = Intent(activity, ShowArticleActivity::class.java)
                 .putExtra(ARTICLE, article)
                 .putExtra(IS_EXPANDED, isExpanded)
 
-            val hasShared = sharedElements.isNotEmpty()
-                    && (sharedElements[0].first as ImageView).drawable != null
+            val hasShared = (sharedElements.getOrNull(0)?.first as? ImageView)?.drawable != null
 
             // Create animation transition scene
             val options =
@@ -161,7 +161,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             this@ShowArticleActivity.setActivityTransition()
             scheduleStartPostponedTransition(article_image)
             showFabsMenu(true, transitionBg == null)
-            setupProgressBarWithScrollView()
         }
     }
 
@@ -199,7 +198,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onResume() {
         super.onResume()
         web_view.onResume()
-        if (articleDesign?.isFirstPage == false) setActivityTransition()
+        // TODO try to restore activity options to enable return transition when have stop activity
+        //  line below change nothing, try to re use one shared element only
+//        if (articleDesign?.isFirstPage == false) setActivityTransition()
     }
 
     override fun onPause() { super.onPause(); web_view.onPause() }
@@ -219,6 +220,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     override fun onBackPressed() = when {
         mWebChromeClient?.inCustomView == true -> hideCustomView()
+        fabs_menu.isOpen -> fabs_menu.close()
         web_view.canGoBack() && navigationCount > 0 -> {
             mWebViewClient?.webViewBack(viewModel.previousPage(navigationCount))
             Unit

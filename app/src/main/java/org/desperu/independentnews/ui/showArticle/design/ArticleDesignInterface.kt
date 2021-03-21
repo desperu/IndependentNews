@@ -18,6 +18,22 @@ interface ArticleDesignInterface {
     var scrollPosition: Int
 
     /**
+     * Resume paused article to the saved scroll position, with drawable transition,
+     * play to pause and smooth scroll to the saved position.
+     * Delay this animation after the activity shared element enter transition.
+     *
+     * @param scrollPercent the scroll position to restore.
+     */
+    fun resumePausedArticle(scrollPercent: Float)
+
+    /**
+     * Returns the text ratio of the current web view.
+     *
+     * @return the current text ratio.
+     */
+    fun getTextRatio(): Float
+
+    /**
      * Returns the current scroll y value in percent.
      *
      * @param svScrollY the scroll y value, def value 0.

@@ -46,6 +46,9 @@
     <string name="sub_fab_label_star">Add favoris</string>
     <string name="sub_fab_label_pause">Pause lecture</string>
     <string name="sub_fab_label_home">Retour home</string>
+    <!-- Toast -->
+    <string name="sub_fab_toast_remove_favorite">Article retiré des favoris!</string>
+    <string name="sub_fab_toast_remove_paused">Article retiré des pauses!</string>
 
     <!-- FILTER LAYOUT -->
     <!-- Filter Layout Sources -->
@@ -120,6 +123,10 @@
     <!-- Dialog No Internet Connexion -->
     <string name="dialog_no_connexion_title">Pas de Connexion</string>
     <string name="dialog_no_connexion_message">Pas de connexion internet disponible. Vérifiez votre connexion internet.</string>
+    <!-- Dialog for paused article -->
+    <string name="dialog_remove_paused_title">Retirer des articles en pause</string>
+    <string name="dialog_remove_paused_message">Retirer cet article des articles en pause? Vous l\'avez lu entier!</string>
+    <string name="dialog_remove_paused_neutral_button">Toujours</string>
 
     <!-- NOTIFICATION -->
     <string name="notification_title">Articles du jour !</string>
