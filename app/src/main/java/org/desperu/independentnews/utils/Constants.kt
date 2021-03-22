@@ -57,6 +57,7 @@ const val ABOUT = 0
 const val CONNEXION = 1
 const val CONNEXION_START = 10
 const val FIRST_START_ERROR = 20
+const val REMOVE_PAUSED = 30
 
 // For Request Code
 const val RC_FIRST_START = 1000     // First start activity
@@ -151,6 +152,8 @@ const val REFRESH_ARTICLE_LIST = "refreshArticleList"
 const val REFRESH_TIME = "refreshTime"
 const val REFRESH_ONLY_WIFI = "refreshOnlyWifi"
 const val STORE_DELAY = "storeDelay"
+// user article
+const val AUTO_REMOVE_PAUSE = "autoRemovePause"
 
 // Settings default value
 // global use
@@ -163,3 +166,5 @@ const val REFRESH_ARTICLE_LIST_DEFAULT = true
 const val REFRESH_TIME_DEFAULT = 11
 const val REFRESH_ONLY_WIFI_DEFAULT = false
 const val STORE_DELAY_DEFAULT = 6
+// user article
+const val AUTO_REMOVE_PAUSE_DEFAULT = false

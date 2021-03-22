@@ -29,11 +29,15 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.ShowArticleTransition
 import org.desperu.independentnews.ui.showArticle.fabsMenu.IconAnim
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
+import org.desperu.independentnews.utils.AUTO_REMOVE_PAUSE
+import org.desperu.independentnews.utils.AUTO_REMOVE_PAUSE_DEFAULT
 import org.desperu.independentnews.utils.REMOVE_PAUSED
 import org.desperu.independentnews.utils.TEXT_SIZE_DEFAULT
 import org.desperu.independentnews.utils.Utils.isHtmlData
@@ -46,6 +50,8 @@ import org.koin.core.parameter.parametersOf
  *
  * @property activity       the activity for which handle ui.
  * @property actualUrl      the actual url of the web view.
+ * @property dialogHelper   the dialog helper interface access.
+ * @property prefs          the shared preferences service access.
  *
  * @constructor Instantiate a new ArticleDesign.
  */
@@ -54,18 +60,14 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     // FOR COMMUNICATION
     private val activity = get<ShowArticleInterface>().activity
     private val actualUrl get() = getKoin().getOrNull<MyWebViewClientInterface>()?.actualUrl
+    private val dialogHelper: DialogHelper = get()
+    private val prefs: SharedPrefService = get()
 
     // FOR DESIGN
     private val sv: NestedScrollView by bindView(activity, R.id.article_scroll_view)
     private val scrollBar: ProgressBar by bindView(activity, R.id.article_scroll_progress_bar)
-    private val loadingAnimBar: ContentLoadingProgressBar by bindView(
-        activity,
-        R.id.article_loading_progress_bar
-    )
-    private val loadingProgressBar: ProgressBar by bindView(
-        activity,
-        R.id.appbar_loading_progress_bar
-    )
+    private val loadingAnimBar: ContentLoadingProgressBar by bindView(activity, R.id.article_loading_progress_bar)
+    private val loadingProgressBar: ProgressBar by bindView(activity, R.id.appbar_loading_progress_bar)
 
     // FOR DATA
     override var isFirstPage = true
@@ -73,6 +75,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     private val scrollHeight get() = sv.getChildAt(0).bottom - sv.measuredHeight
     override var scrollPosition = -1
     private var hasScroll = false
+    private var dialogCount = 0
 
     init {
         configureKoinDependency()
@@ -96,15 +99,23 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     private fun setupScrollListener() {
         // TODO on scroll video should pause ...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            sv.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-                updateScrollProgress(scrollY)
-                // TODO >>>>>>>> AADD a listener for the bottom and pause article to remove from pause ???
-            }
+            sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> onScrollChanged(scrollY) }
         else
-            sv.viewTreeObserver.addOnScrollChangedListener {
-                updateScrollProgress(null)
-                // TODO >>>>>>>> AADD a listener for the bottom and pause article to remove from pause ???
-            }
+            sv.viewTreeObserver.addOnScrollChangedListener { onScrollChanged(null) }
+    }
+
+    /**
+     * Scroll Changed Listener, update scroll progress bar
+     * and handle paused article reach bottom.
+     *
+     * @param scrollY the given scroll Y position.
+     */
+    private fun onScrollChanged(scrollY: Int?) {
+        val newScrollY = scrollY ?: sv.scrollY
+        updateScrollProgress(newScrollY)
+
+        val isPaused = activity.viewModel.isPaused.get()
+        if (isPaused && newScrollY == scrollHeight) showRemovePausedDialog()
     }
 
     // --------------
@@ -216,13 +227,12 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun resumePausedArticle(scrollPercent: Float) {
-        activity.window.sharedElementEnterTransition.doOnEnd {
-            // Restore scroll position
-            val yPercent = scrollPercent * getTextRatio()
-
+        activity.window.enterTransition.doOnEnd {
             // Play drawable animation
             val anim = IconAnim().getIconAnim(R.id.pause_to_play, null)
             anim.doOnEnd {
+                // Restore scroll position
+                val yPercent = scrollPercent * getTextRatio()
                 val y = (scrollHeight * yPercent).toInt()
                 sv.smoothScrollTo(sv.scrollX, y, 1000)
             }
@@ -345,9 +355,8 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      *
      * @param scrollY the new scroll Y value.
      */
-    private fun updateScrollProgress(scrollY: Int?) {
-        val newScrollY = scrollY ?: sv.scrollY
-        val newProgress = getScrollYPercent(newScrollY) * 100
+    private fun updateScrollProgress(scrollY: Int) {
+        val newProgress = getScrollYPercent(scrollY) * 100
         updateProgressBar(scrollBar, newProgress.toInt())
     }
 
@@ -392,6 +401,22 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 show()
         } else
             activity.fabs_menu.hide()
+    }
+
+    /**
+     * Show the remove pause dialog, when reach the bottom of a paused article.
+     */
+    private fun showRemovePausedDialog() {
+        // To prevent flood
+        if (dialogCount >= 2) return
+        dialogCount += 1
+
+        val isAuto = prefs.getPrefs().getBoolean(AUTO_REMOVE_PAUSE, AUTO_REMOVE_PAUSE_DEFAULT)
+
+        if (!isAuto)
+            dialogHelper.showDialog(REMOVE_PAUSED)
+        else
+            activity.viewModel.updatePaused(0f)
     }
 
     // --------------

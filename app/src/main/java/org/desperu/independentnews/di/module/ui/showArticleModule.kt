@@ -1,6 +1,8 @@
 package org.desperu.independentnews.di.module.ui
 
 import org.desperu.independentnews.base.ui.BaseBindingActivity
+import org.desperu.independentnews.helpers.DialogHelper
+import org.desperu.independentnews.helpers.DialogHelperImpl
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.helpers.SystemUiHelperImpl
 import org.desperu.independentnews.ui.showArticle.ImageRouter
@@ -36,6 +38,15 @@ val showArticleModule = module {
      */
     single<SystemUiHelper>(override = true) { (activity: BaseBindingActivity) ->
         SystemUiHelperImpl(activity)
+    }
+
+    /**
+     * Provides a DialogHelper interface from the instance of MainActivity.
+     */
+    single<DialogHelper>(override = true) { (activity: BaseBindingActivity) ->
+        DialogHelperImpl(
+            activity
+        )
     }
 
     /**

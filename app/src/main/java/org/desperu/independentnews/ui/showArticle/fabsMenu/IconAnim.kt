@@ -167,7 +167,7 @@ class IconAnim : KoinComponent {
         animatedView?.setImageState(intArrayOf(R.attr.state_pause), true)
 
         val anim = getIconAnimator(id, animatedView, iconAnimDuration)
-        anim.startDelay = iconAnimDuration
+//        anim.startDelay = iconAnimDuration
         anim.doOnEnd {
             // Animate drawable transition pause to play
             animatedView?.setImageState(intArrayOf(R.attr.state_play), true)

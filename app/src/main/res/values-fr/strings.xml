@@ -82,6 +82,8 @@
     <string name="activity_settings_text_category_article">Article</string>
     <string name="activity_settings_text_article_text_size">Taille du texte des articles</string>
     <string name="activity_settings_text_article_text_size_description">Choisir la taille du texte des articles, par défault 100, min 1, max 200.</string>
+    <string name="activity_settings_text_article_auto_remove_pause">Retiter automatiquement des Pauses</string>
+    <string name="activity_settings_text_article_auto_remove_pause_description">Quand vous finissez de lire un article mis en pause, le retirer automatiquement des articles en pause.</string>
     <string name="activity_settings_text_category_data_management">Gestion des Données</string>
     <string name="activity_settings_text_refresh_article_list">Rechercher de nouveaux articles tous les jours.</string>
     <string name="activity_settings_text_refresh_article_list_description">Recherche de nouveaux articles tous les jours, à l\'heure choisi.</string>

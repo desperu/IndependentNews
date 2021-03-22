@@ -21,6 +21,7 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
@@ -148,6 +149,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private fun configureKoinDependency() {
         get<ShowArticleInterface> { parametersOf(this) }
         get<SystemUiHelper> { parametersOf(this) }
+        get<DialogHelper> { parametersOf(this) }
     }
 
     /**

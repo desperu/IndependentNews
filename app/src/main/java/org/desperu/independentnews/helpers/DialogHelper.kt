@@ -1,16 +1,16 @@
 package org.desperu.independentnews.helpers
 
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import me.saket.bettermovementmethod.BetterLinkMovementMethod
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.showInBrowser
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.firstStart.FirstStartInterface
-import org.desperu.independentnews.utils.ABOUT
-import org.desperu.independentnews.utils.CONNEXION
-import org.desperu.independentnews.utils.CONNEXION_START
-import org.desperu.independentnews.utils.FIRST_START_ERROR
+import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+import org.desperu.independentnews.utils.*
 import org.koin.java.KoinJavaComponent.getKoin
 
 /**
@@ -30,7 +30,11 @@ interface DialogHelper {
  * Implementation of the DialogHelper which use an Activity instance
  * to display message into alert dialog.
  *
- * @property activity the Activity instance used to display the message.
+ * @property activity               the Activity instance used to display the message.
+ * @property resources              the resources access from the activity.
+ * @property firstStartInterface    the first start interface access.
+ * @property showArticleInterface   the show article activity interface access.
+ * @property prefs                  the shared preferences service access.
  *
  * @constructor Instantiate a new DialogHelperImpl.
  *
@@ -39,8 +43,10 @@ interface DialogHelper {
 class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
 
     // FOR DATA
-    private val firstStartInterface: FirstStartInterface? = getKoin().getOrNull()
     private val resources = activity.resources
+    private val firstStartInterface: FirstStartInterface? = getKoin().getOrNull()
+    private val showArticleInterface: ShowArticleInterface? = getKoin().getOrNull()
+    private val prefs: SharedPrefService? = getKoin().getOrNull()
 
     // --------------
     // CALL FUNCTION
@@ -74,20 +80,11 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
      */
     private fun configureButtons(dialogKey: Int, builder: AlertDialog.Builder) {
         when (dialogKey) {
-
-            ABOUT -> builder.setPositiveButton(
-                R.string.activity_main_dialog_about_positive_button,
-                null
-            )
-
-            CONNEXION -> builder.setPositiveButton(
-                R.string.activity_main_dialog_about_positive_button,
-                null
-            )
-
+            ABOUT -> builder.setPositiveButton(R.string.activity_main_dialog_about_positive_button, null)
+            CONNEXION -> builder.setPositiveButton(R.string.activity_main_dialog_about_positive_button, null)
             CONNEXION_START -> configureFirstStartButton(builder)
-
             FIRST_START_ERROR -> configureFirstStartButton(builder)
+            REMOVE_PAUSED -> configurePausedButton(builder)
         }
     }
 
@@ -105,6 +102,28 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
             .setNegativeButton(R.string.dialog_cant_start_quit) { dialogInterface, _ ->
                 dialogInterface.dismiss()
                 firstStartInterface?.closeApplication()
+            }
+    }
+
+    /**
+     * Configure buttons for the paused alert dialog builder.
+     *
+     * @param builder the dialog builder to add buttons.
+     */
+    private fun configurePausedButton(builder: AlertDialog.Builder) {
+        builder
+            .setPositiveButton(R.string.activity_main_dialog_about_positive_button) { dialog, _ ->
+                showArticleInterface?.viewModel?.updatePaused(0f)
+                Toast.makeText(activity, resources.getString(R.string.sub_fab_toast_remove_paused), Toast.LENGTH_SHORT).show()
+                dialog.cancel()
+            }
+            .setNegativeButton(R.string.dialog_remove_paused_neutral_button) { dialog, _ ->
+                showArticleInterface?.viewModel?.updatePaused(0f)
+                prefs?.getPrefs()?.edit()?.putBoolean(AUTO_REMOVE_PAUSE, true)?.apply()
+                dialog.cancel()
+            }
+            .setNeutralButton(R.string.activity_settings_dialog_negative_button) { dialog, _ ->
+                dialog.cancel()
             }
     }
 
@@ -174,6 +193,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
         CONNEXION -> resources.getString(R.string.dialog_no_connexion_title)
         CONNEXION_START -> resources.getString(R.string.dialog_no_connexion_title)
         FIRST_START_ERROR -> resources.getString(R.string.dialog_fetch_source_error_title)
+        REMOVE_PAUSED -> resources.getString(R.string.dialog_remove_paused_title)
         else -> throw IllegalArgumentException("Dialog key not found : $dialogKey")
     }
 
@@ -189,6 +209,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
         CONNEXION -> R.string.dialog_no_connexion_message
         CONNEXION_START -> R.string.dialog_cant_start_message
         FIRST_START_ERROR -> R.string.dialog_fetch_source_error_message
+        REMOVE_PAUSED -> R.string.dialog_remove_paused_message
         else -> throw IllegalArgumentException("Dialog key not found : $dialogKey")
     }
 }

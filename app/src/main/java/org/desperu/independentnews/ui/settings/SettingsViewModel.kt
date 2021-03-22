@@ -31,6 +31,7 @@ class SettingsViewModel(
     val isNotificationsEnabled = ObservableBoolean()
     val notificationTime = ObservableInt()
     val textSize = ObservableInt()
+    val autoRemovePause = ObservableBoolean()
     val isRefreshArticleList = ObservableBoolean()
     val refreshTime = ObservableInt()
     val isRefreshOnlyWifi = ObservableBoolean()
@@ -67,6 +68,9 @@ class SettingsViewModel(
 
             R.id.activity_settings_container_text_size ->
                 settingsInterface.alertDialog(TEXT_SIZE_DIALOG, textSize)
+
+            R.id.activity_settings_container_auto_remove_pause ->
+                inverseBoolean(autoRemovePause)
 
             R.id.activity_settings_container_refresh_article_list ->
                 inverseBoolean(isRefreshArticleList)
@@ -105,6 +109,7 @@ class SettingsViewModel(
         isNotificationsEnabled.set(this.getBoolean(NOTIFICATION_ENABLED, NOTIFICATION_DEFAULT))
         notificationTime.set(this.getInt(NOTIFICATION_TIME, NOTIFICATION_TIME_DEFAULT))
         textSize.set(this.getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT))
+        autoRemovePause.set(this.getBoolean(AUTO_REMOVE_PAUSE, AUTO_REMOVE_PAUSE_DEFAULT))
         isRefreshArticleList.set(this.getBoolean(REFRESH_ARTICLE_LIST, REFRESH_ARTICLE_LIST_DEFAULT))
         refreshTime.set(this.getInt(REFRESH_TIME, REFRESH_TIME_DEFAULT))
         isRefreshOnlyWifi.set(this.getBoolean(REFRESH_ONLY_WIFI, REFRESH_ONLY_WIFI_DEFAULT))
@@ -118,6 +123,7 @@ class SettingsViewModel(
         putBoolean(NOTIFICATION_ENABLED, isNotificationsEnabled.get())
         putInt(NOTIFICATION_TIME, notificationTime.get())
         putInt(TEXT_SIZE, textSize.get())
+        putBoolean(AUTO_REMOVE_PAUSE, autoRemovePause.get())
         putBoolean(REFRESH_ARTICLE_LIST,isRefreshArticleList.get())
         putInt(REFRESH_TIME, refreshTime.get())
         putBoolean(REFRESH_ONLY_WIFI, isRefreshOnlyWifi.get())
@@ -131,6 +137,7 @@ class SettingsViewModel(
         isNotificationsEnabled.set(NOTIFICATION_DEFAULT)
         notificationTime.set(NOTIFICATION_TIME_DEFAULT)
         textSize.set(TEXT_SIZE_DEFAULT)
+        autoRemovePause.set(AUTO_REMOVE_PAUSE_DEFAULT)
         isRefreshArticleList.set(REFRESH_ARTICLE_LIST_DEFAULT)
         refreshTime.set(REFRESH_TIME_DEFAULT)
         isRefreshOnlyWifi.set(REFRESH_ONLY_WIFI_DEFAULT)

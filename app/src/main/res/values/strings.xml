@@ -85,6 +85,8 @@
     <string name="activity_settings_text_category_article">Article</string>
     <string name="activity_settings_text_article_text_size">Article text size</string>
     <string name="activity_settings_text_article_text_size_description">Set article text size, in percent, default 100, min 1, max 200.</string>
+    <string name="activity_settings_text_article_auto_remove_pause">Auto Remove Pause</string>
+    <string name="activity_settings_text_article_auto_remove_pause_description">When you reach the bottom of a paused article, auto remove it from paused.</string>
     <string name="activity_settings_text_category_data_management">Data Management</string>
     <string name="activity_settings_text_refresh_article_list">Refresh articles list every days</string>
     <string name="activity_settings_text_refresh_article_list_description">Refresh article list every days, at the specified time.</string>
