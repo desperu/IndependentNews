@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.main.fragment.articleList.ArticleItemViewModel"/>
+    </data>
+
+    <FrameLayout
+        android:id="@+id/swipe_root_container"
+        android:layout_width="@dimen/swipe_root_container_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:layout_width="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/swipe_remove_pause_container"
+            android:layout_width="@dimen/swipe_container_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:background="@color/bottom_bar_color"
+            android:translationX="@dimen/swipe_container_width"
+            android:onClick="@{viewModel.onClickSwipeAction}"
+            tools:translationX="-300dp">
+
+            <ImageView
+                android:id="@+id/swipe_remove_pause_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_little_margin"
+                android:src="@drawable/ic_baseline_pause_black_24"
+                app:tint="@color/subtitle_color"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/swipe_remove_pause_icon"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:gravity="center"
+                android:minLines="2"
+                android:text="@string/sub_fab_label_remove_pause"
+                android:textColor="@color/subtitle_color"
+                android:textStyle="bold"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/swipe_remove_star_container"
+            android:layout_width="@dimen/swipe_container_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:background="@color/colorPrimaryDark"
+            android:translationX="@dimen/swipe_container_width"
+            android:onClick="@{viewModel.onClickSwipeAction}"
+            tools:translationX="-200dp">
+
+            <ImageView
+                android:id="@+id/swipe_remove_star_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_little_margin"
+                android:src="@drawable/ic_baseline_star_border_black_24"
+                app:tint="@color/subtitle_color"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_below="@id/swipe_remove_star_icon"
+                android:gravity="center"
+                android:minLines="2"
+                android:text="@string/sub_fab_label_remove_star"
+                android:textStyle="bold"
+                android:textColor="@color/subtitle_color"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/swipe_star_container"
+            android:layout_width="@dimen/swipe_container_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:background="@color/filter_seek_bar_selected_color"
+            android:translationX="@dimen/swipe_container_width"
+            android:onClick="@{viewModel.onClickSwipeAction}"
+            tools:translationX="-100dp">
+
+            <ImageView
+                android:id="@+id/swipe_star_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_little_margin"
+                android:src="@drawable/ic_baseline_star_black_24"
+                app:tint="@color/subtitle_color"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_below="@id/swipe_star_icon"
+                android:gravity="center"
+                android:minLines="2"
+                android:text="@string/sub_fab_label_star"
+                android:textStyle="bold"
+                android:textColor="@color/subtitle_color"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/swipe_share_container"
+            android:layout_width="@dimen/swipe_container_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:background="@color/colorBlue"
+            android:translationX="@dimen/swipe_container_width"
+            android:onClick="@{viewModel.onClickSwipeAction}"
+            tools:translationX="0dp">
+
+            <ImageView
+                android:id="@+id/swipe_share_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_little_margin"
+                app:srcCompat="@drawable/ic_baseline_share_24"
+                app:tint="@color/subtitle_color"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/default_margin"
+                android:layout_below="@+id/swipe_share_icon"
+                android:gravity="center"
+                android:minLines="2"
+                android:text="@string/show_article_activity_share_chooser_title"
+                android:textStyle="bold"
+                android:textColor="@color/subtitle_color"/>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</layout>

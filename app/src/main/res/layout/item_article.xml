@@ -32,6 +32,10 @@
             tools:layout_marginLeft="@dimen/default_large_margin"
             tools:layout_marginRight="@dimen/default_large_margin">
 
+            <include layout="@layout/layout_swipe_action"
+                app:viewModel="@{viewModel}"
+                tools:visibility="gone"/>
+
             <FrameLayout
                 android:id="@+id/card_container"
                 android:layout_width="match_parent"

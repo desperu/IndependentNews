@@ -27,6 +27,8 @@
     <!-- Fragment Article List -->
     <dimen name="recycler_view_padding_top">18dp</dimen>
     <dimen name="no_article_find_text_size">50sp</dimen>
+    <dimen name="swipe_root_container_width">300dp</dimen>
+    <dimen name="swipe_container_width">100dp</dimen>
     <!-- Item Article -->
     <dimen name="item_article_corner_radius">6dp</dimen>
     <dimen name="item_article_elevation">0dp</dimen>

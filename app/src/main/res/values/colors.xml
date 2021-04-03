@@ -34,6 +34,7 @@
     <color name="colorPink">#FF2ED1</color>
     <color name="colorDark">#ff000000</color>
     <color name="colorGrey">#4D4D4D</color>
+    <color name="colorBlue">#127ABF</color>
     <color name="colorLightDark">#454545</color>
     <color name="colorLightBlue">#8C9EFF</color>
     <color name="colorPassedWhite">#eeeeee</color>
