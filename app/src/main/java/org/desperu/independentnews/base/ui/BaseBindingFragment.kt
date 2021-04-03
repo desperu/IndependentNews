@@ -58,5 +58,6 @@ abstract class BaseBindingFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         viewBinding = null
+        container = null
     }
 }

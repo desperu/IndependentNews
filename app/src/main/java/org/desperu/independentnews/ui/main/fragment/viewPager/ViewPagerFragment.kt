@@ -60,7 +60,6 @@ class ViewPagerFragment: BaseFragment(), KoinComponent {
     override fun updateDesign() {
         configureViewPager()
         setupTabLayout()
-        setupViewPagerListener()
     }
 
     // --------------
@@ -82,19 +81,17 @@ class ViewPagerFragment: BaseFragment(), KoinComponent {
     }
 
     /**
-     * Setup tab layout with view pager and Tabs Handler support.
+     * Setup tab layout with view pager, add Tabs Handler support, only for user article frag.
      */
     private fun setupTabLayout() {
         tabLayout = view?.rootView?.findViewById(R.id.app_bar_tab_layout)
-        tabsHandler = TabsHandler(this, fragKey ?: NO_FRAG)
-    }
+        tabLayout?.setupWithViewPager(viewPager)
+        tabLayout?.tabMode = TabLayout.MODE_FIXED
 
-    /**
-     * Setup page changed listener, only for user articles frag.
-     */
-    private fun setupViewPagerListener() {
-        if (fragKey == FRAG_USER_ARTICLE)
+        if (fragKey == FRAG_USER_ARTICLE) {
+            tabsHandler = TabsHandler(this, fragKey ?: NO_FRAG)
             tabsHandler?.pageChangeListener?.let { viewPager?.addOnPageChangeListener(it) }
+        }
     }
 
     // -----------------

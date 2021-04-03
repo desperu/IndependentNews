@@ -11,6 +11,7 @@ import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.findSuitableScrollable
 import org.desperu.independentnews.extension.design.getValueAnimator
+import java.lang.ref.WeakReference
 
 /**
  * This behavior animates the toolbar (frame appbar_container) and it's elements
@@ -29,9 +30,9 @@ class ToolbarBehavior : AppBarLayout.Behavior() {
     private var isShrinking = false
     private var isExpanding = false
     private var dyAmount = 0
-    internal var suitableScroll: View? = null
+    internal var suitableScroll: WeakReference<View>? = null
         get() {
-            field = field ?: toolbar.findSuitableScrollable()
+            field = field ?: WeakReference(toolbar.findSuitableScrollable())
             return field
         }
 
@@ -228,7 +229,7 @@ class ToolbarBehavior : AppBarLayout.Behavior() {
                     val dyConsumed = (progress * amount).toInt()
 
                     // Correct scrollable position
-                    suitableScroll?.scrollBy(0, -dyConsumed)
+                    suitableScroll?.get()?.scrollBy(0, -dyConsumed)
                     // Animate the app bar
                     animAppBar(dyConsumed, toExpand)
                 }

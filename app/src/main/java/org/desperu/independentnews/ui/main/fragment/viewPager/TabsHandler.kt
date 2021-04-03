@@ -43,7 +43,7 @@ class TabsHandler (
 
     // FOR UI
     private val viewPager: ViewPager by bindView(fragment, R.id.list_view_pager)
-    private var tabLayout: TabLayout? = null
+    private var tabLayout: TabLayout? = fragment.view?.rootView?.findViewById(R.id.app_bar_tab_layout)
 
     // FOR COLORS
     private val tabIconColor by bindColor(viewPager, R.color.title_color)
@@ -52,7 +52,6 @@ class TabsHandler (
     private val badgeTextColor by bindColor(viewPager, R.color.toolbar_title_color)
 
     init {
-        setupTabLayout()
         setupViewPagerListener()
         updateTabs()
     }
@@ -60,15 +59,6 @@ class TabsHandler (
     // --------------
     // CONFIGURATION
     // --------------
-
-    /**
-     * Setup tab layout itself and with view pager.
-     */
-    private fun setupTabLayout() {
-        tabLayout = fragment.view?.rootView?.findViewById(R.id.app_bar_tab_layout)
-        tabLayout?.setupWithViewPager(viewPager)
-        tabLayout?.tabMode = TabLayout.MODE_FIXED
-    }
 
     /**
      * Setup page changed listener, only for user articles frag.

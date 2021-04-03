@@ -45,6 +45,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     private var articleListAdapter: ArticleListAdapter? = null
     private val mainInterface get() = getKoin().getOrNull<MainInterface>()
     private var itemTouch: ItemTouchHelperExtension? = null
+    private var swipeItem: SwipeItem? = null
     private val loadingDuration: Long
         get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
 
@@ -109,8 +110,8 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * Configure swipe, with item touch helper support.
      */
     private fun configureItemSwipe() {
-        val callback = SwipeItem(this)
-        itemTouch = ItemTouchHelperExtension(callback)
+        swipeItem = SwipeItem(this)
+        itemTouch = ItemTouchHelperExtension(swipeItem)
         itemTouch?.attachToRecyclerView(recycler_view)
     }
 
@@ -143,6 +144,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     override fun onDestroyView() {
         articleListAdapter = null
+        swipeItem = null
         itemTouch = null
         super.onDestroyView()
     }

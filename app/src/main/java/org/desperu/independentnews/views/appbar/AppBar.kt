@@ -8,6 +8,7 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.extension.design.findSuitableScrollable
+import java.lang.ref.WeakReference
 
 /**
  * A custom [AppBarLayout] that support collapse and expand animations implementation.
@@ -21,9 +22,9 @@ class AppBar @JvmOverloads constructor(
 
     // FOR DATA
     private lateinit var toolbarBehavior: ToolbarBehavior
-    private var suitableScroll: View? = null
+    private var suitableScroll: WeakReference<View>? = null
         get() {
-            field = field ?: findSuitableScrollable()
+            field = field ?: WeakReference(findSuitableScrollable())
             return field
         }
 
@@ -62,7 +63,7 @@ class AppBar @JvmOverloads constructor(
      */
     @SuppressLint("ClickableViewAccessibility")
     private fun configureOnTouch() {
-        suitableScroll?.setOnTouchListener { _, ev ->
+        suitableScroll?.get()?.setOnTouchListener { _, ev ->
             if (ev.action == MotionEvent.ACTION_UP)
                 toolbarBehavior.finishAnimation()
             false
@@ -77,7 +78,7 @@ class AppBar @JvmOverloads constructor(
      * Update on touch listener when the fragment change.
      */
     internal fun updateOnTouch() {
-        if (suitableScroll?.isShown == false) {
+        if (suitableScroll?.get()?.isShown == false) {
             suitableScroll = null
             toolbarBehavior.suitableScroll = null
             configureOnTouch()
