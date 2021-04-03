@@ -36,8 +36,8 @@ class ArticleListViewModel(
 
     // FOR DATA
     private val resources: ResourceService = getKoin().get()
-    private var articleList: List<Article>? = null // TODO Useless, use memory, already in adapter.
-    private var filteredList: List<Article>? = null
+    private val articleList get() = articleListInterface.getRecyclerAdapter()?.list?.map { (it as ArticleItemViewModel).article }
+    private val filteredList get() = articleListInterface.getRecyclerAdapter()?.filteredList?.map { (it as ArticleItemViewModel).article }
 
     // -----------------
     // DATABASE
@@ -47,8 +47,8 @@ class ArticleListViewModel(
      * Get top story article list from database, and dispatch to recycler adapter.
      */
     internal fun getTopStory() = viewModelScope.launch(Dispatchers.IO) {
-        articleList = ideNewsRepository.getTopStory()
-        updateRecyclerData()
+        val articleList = ideNewsRepository.getTopStory()
+        updateRecyclerData(articleList)
     }
 
     /**
@@ -57,32 +57,32 @@ class ArticleListViewModel(
      * @param categories the category list to search for in database.
      */
     internal fun getCategory(categories: List<String>) = viewModelScope.launch(Dispatchers.IO) {
-        articleList = ideNewsRepository.getCategory(categories)
-        updateRecyclerData()
+        val articleList = ideNewsRepository.getCategory(categories)
+        updateRecyclerData(articleList)
     }
 
     /**
      * Get all article list from database, and dispatch to recycler adapter.
      */
     internal fun getAllArticles() = viewModelScope.launch(Dispatchers.IO) {
-        articleList = ideNewsRepository.getAllArticles()
-        updateRecyclerData()
+        val articleList = ideNewsRepository.getAllArticles()
+        updateRecyclerData(articleList)
     }
 
     /**
      * Get all favorite articles from database, and dispatch to recycler adapter.
      */
     internal fun getFavorites() = viewModelScope.launch(Dispatchers.IO) {
-        articleList = userArticleRepository.getAllFavoriteArticles()
-        updateRecyclerData()
+        val articleList = userArticleRepository.getAllFavoriteArticles()
+        updateRecyclerData(articleList)
     }
 
     /**
      * Get all paused articles from database, and dispatch to recycler adapter.
      */
     internal fun getPaused() = viewModelScope.launch(Dispatchers.IO) {
-        articleList = userArticleRepository.getAllPausedArticles()
-        updateRecyclerData()
+        val articleList = userArticleRepository.getAllPausedArticles()
+        updateRecyclerData(articleList)
     }
 
     /**
@@ -112,7 +112,7 @@ class ArticleListViewModel(
      * Show the new downloaded articles.
      */
     internal fun showNewArticles() = viewModelScope.launch(Dispatchers.IO) {
-        articleList = ideNewsRepository.getTopStory()
+        val articleList = ideNewsRepository.getTopStory()
         articleList?.let { updateListWithAnim(it) }
     }
 
@@ -131,11 +131,13 @@ class ArticleListViewModel(
         isFiltered: Boolean
     ) = viewModelScope.launch(Dispatchers.IO) {
 
-        filteredList = if (isFiltered)
-                           articleList?.let { ideNewsRepository.getFilteredList(selectedMap, it) }
-                       else
-                           mutableListOf()
-        updateFilteredList(isFiltered)
+        val filteredList =
+            if (isFiltered)
+                articleList?.let { ideNewsRepository.getFilteredList(selectedMap, it) }
+            else
+                mutableListOf()
+
+        updateFilteredList(isFiltered, filteredList)
     }
 
     // -----------------
@@ -152,16 +154,18 @@ class ArticleListViewModel(
         articleList: List<Article>?
     ) = viewModelScope.launch(Dispatchers.Main) {
 
-        articleList?.let {
-            this@ArticleListViewModel.articleList = articleList
-            updateRecyclerData()
-        }
+        updateRecyclerData(articleList)
     }
 
     /**
      * Update list into article list adapter.
+     *
+     * @param articleList the new article list to set.
      */
-    private suspend fun updateRecyclerData() = withContext(Dispatchers.Main) {
+    private suspend fun updateRecyclerData(
+        articleList: List<Article>?
+    ) = withContext(Dispatchers.Main) {
+
         articleList?.let {
             articleListInterface.getRecyclerAdapter()?.apply {
                 updateList(it.toArticleItemVMList(articleListInterface).toMutableList())
@@ -177,14 +181,18 @@ class ArticleListViewModel(
      *
      * If the list is empty show no article find.
      *
-     * @param isFiltered true if apply filters to the list, false otherwise.
+     * @param isFiltered    true if apply filters to the list, false otherwise.
+     * @param filteredList  the new filtered article list to set.
      */
-    private suspend fun updateFilteredList(isFiltered: Boolean) = withContext(Dispatchers.Main) {
+    private suspend fun updateFilteredList(
+        isFiltered: Boolean,
+        filteredList: List<Article>?
+    ) = withContext(Dispatchers.Main) {
+
         articleListInterface.getRecyclerAdapter()?.apply {
 
             if (isFiltered) {
-                this.filteredList =
-                    this@ArticleListViewModel.filteredList
+                this.filteredList = filteredList
                         .toArticleItemVMList(articleListInterface)
                         .toMutableList()
             }
@@ -210,19 +218,15 @@ class ArticleListViewModel(
             if (newArticleList.isNotEmpty()) {
                 if (!isFiltered) {
                     // Use filtered list for Diff Utils support and update
-                    filteredList = newArticleList
-                    updateFilteredList(true)
+                    updateFilteredList(true, newArticleList)
                 }
 
                 // Update article list here (view model) and in adapter
-                withContext(Dispatchers.IO) { articleList = newArticleList }
-                val itemVMList = articleList.toArticleItemVMList(this)
-                getRecyclerAdapter()?.updateList(itemVMList.toMutableList())
+                getRecyclerAdapter()?.updateList(newArticleList.toMutableList())
 
                 // Unfilter list (no visible for the user), and need for isFiltered value
                 // Synchronize the Fab Filter visibility and state
-                filteredList = null
-                updateFilteredList(false)
+                updateFilteredList(false, emptyList())
                 showFilterMotion(true)
                 updateFiltersMotionState(false)
 
