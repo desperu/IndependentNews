@@ -6,6 +6,11 @@ package org.desperu.independentnews.ui.main.fragment.articleList
 interface ArticleListInterface {
 
     /**
+     * The key of the fragment.
+     */
+    val fragKey: Int?
+
+    /**
      * Return the article list adapter instance.
      * @return the article list adapter instance.
      */

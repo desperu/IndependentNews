@@ -35,9 +35,8 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleItemViewModel
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
-import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
 import org.desperu.independentnews.ui.settings.SettingsActivity
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.*
@@ -51,9 +50,10 @@ var animationPlaybackSpeed: Double = 1.0 // Was 0.8
 /**
  * The names of the arguments to received data to this Activity.
  */
-const val TODAY_ARTICLES: String = "todayArticles"  // For today article list
-const val HAS_CHANGE: String = "hasChange"          // For source state change
-const val NEW_ARTICLES: String = "newArticles"      // For new article find
+const val TODAY_ARTICLES: String = "todayArticles"                  // For today article list
+const val HAS_CHANGE: String = "hasChange"                          // For source state change
+const val NEW_ARTICLES: String = "newArticles"                      // For new article find
+const val UPDATED_USER_ARTICLES: String = "updatedUserArticles"     // For user articles state
 
 /**
  * Main Activity root activity of the application.
@@ -174,6 +174,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
         // Dispatch Activity response on activity result.
         when (requestCode) {
             RC_FIRST_START -> handleFirstStartResponse(resultCode)
+            RC_SHOW_ARTICLE -> handleShowArticleResponse(resultCode, data)
             RC_SOURCE -> handleSourceResponse(resultCode, data)
         }
     }
@@ -329,7 +330,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     /**
      * Handle response when retrieve first start result, if a fetching properly finish
      * show frag and do nothing here, else finish application.
-     * @param resultCode Result code of request.
+     * @param resultCode the result code of request.
      */
     private fun handleFirstStartResponse(resultCode: Int) {
         when (resultCode) {
@@ -344,25 +345,37 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     }
 
     /**
+     * Handle response when retrieve show article result, if a user article state was updated,
+     * refresh state data in it's view model.
+     * @param resultCode    the result code of request.
+     * @param data          the intent request result data.
+     */
+    private fun handleShowArticleResponse(resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK) {
+            val updatedUserArticles = data?.getLongArrayExtra(UPDATED_USER_ARTICLES)
+
+            val adapterList = fm.getCurrentArticleListFrag()?.getRecyclerAdapter()
+                ?.adapterList?.map { it as ArticleItemViewModel }
+
+            updatedUserArticles?.forEach { articleId: Long ->
+                val articleItemVM = adapterList?.find { it.article.id == articleId }
+                articleItemVM?.setUserArticleState()
+            }
+        }
+    }
+
+    /**
      * Handle response when retrieve source result, if a source state has changed,
      * update the article list.
-     * @param resultCode Result code of request.
-     * @param data Intent request result data.
+     * @param resultCode    the result code of request.
+     * @param data          the intent request result data.
      */
     private fun handleSourceResponse(resultCode: Int, data: Intent?) {
-        // If result code and request code matches with source result.
         if (resultCode == RESULT_OK) {
             val hasChange: Boolean? = data?.getBooleanExtra(HAS_CHANGE, false)
 
             // If has change, refresh the article list
-            if (hasChange == true) {
-                var currentFrag = fm.getCurrentFragment()
-
-                if (currentFrag is ViewPagerFragment)
-                    currentFrag = currentFrag.getCurrentFrag()
-
-                (currentFrag as ArticleListFragment).refreshList()
-            }
+            if (hasChange == true) fm.getCurrentArticleListFrag()?.refreshList()
         }
     }
 

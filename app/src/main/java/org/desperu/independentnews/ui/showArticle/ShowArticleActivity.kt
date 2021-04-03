@@ -25,6 +25,8 @@ import org.desperu.independentnews.extension.shareArticle
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.database.Article
+import org.desperu.independentnews.ui.main.MainActivity
+import org.desperu.independentnews.ui.main.UPDATED_USER_ARTICLES
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
 import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
@@ -65,11 +67,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private lateinit var binding: ActivityShowArticleBinding
     private val router: ImageRouter = get { parametersOf(this) }
     override val viewModel: ArticleViewModel by viewModel { parametersOf(article, router) }
+    override val activity = this
     private var articleDesign: ArticleDesign? = null
     private var mWebViewClient: MyWebViewClient? = null
     private var mWebChromeClient: MyWebChromeClient? = null
     private val navigationCount get() = mWebViewClient?.navigationCount ?: -1
-    override val activity = this
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -109,10 +111,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 } else
                     null
 
-            if (activity is SourcesActivity) // To synchronize app bar size
-                activity.startActivityForResult(intent, RC_SHOW_ARTICLE, options?.toBundle())
-            else
-                activity.startActivity(intent, options?.toBundle())
+            // To synchronize app bar size for SourceActivity
+            // or to update user article state for MainActivity
+            activity.startActivityForResult(intent, RC_SHOW_ARTICLE, options?.toBundle())
         }
     }
 
@@ -244,9 +245,16 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
         else -> {
             sendResult()
+            sendUpdatedUserArticles()
             articleDesign?.showFabsMenu(false)
             super.onBackPressed()
         }
+    }
+
+    override fun finishAfterTransition() {
+        // To support article set on pause, call this at end of animation.
+        sendUpdatedUserArticles()
+        super.finishAfterTransition()
     }
 
     // --------------
@@ -312,6 +320,17 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             RESULT_OK,
             Intent(this, SourcesActivity::class.java)
                 .putExtra(WAS_EXPANDED, appbar.isExpanded)
+        )
+    }
+
+    /**
+     * Send result for MainActivity, to refresh user articles states.
+     */
+    private fun sendUpdatedUserArticles() {
+        setResult(
+            RESULT_OK,
+            Intent(this, MainActivity::class.java)
+                .putExtra(UPDATED_USER_ARTICLES, viewModel.updatedUserArticles.toLongArray())
         )
     }
 }

@@ -150,12 +150,14 @@ const val IS_FIRST_TIME = "isFirstTime"
 const val NOTIFICATION_ENABLED = "notificationEnabled"
 const val NOTIFICATION_TIME = "notificationTime"
 const val TEXT_SIZE = "textSize"
+const val AUTO_REMOVE_PAUSE = "autoRemovePause"
 const val REFRESH_ARTICLE_LIST = "refreshArticleList"
 const val REFRESH_TIME = "refreshTime"
 const val REFRESH_ONLY_WIFI = "refreshOnlyWifi"
 const val STORE_DELAY = "storeDelay"
 // user article
-const val AUTO_REMOVE_PAUSE = "autoRemovePause"
+const val ADDED_FAVORITE = "addedFavorite"
+const val ADDED_PAUSED = "addedPaused"
 
 // Settings default value
 // global use
@@ -164,9 +166,11 @@ const val FIRST_TIME_DEFAULT = true
 const val NOTIFICATION_DEFAULT = true
 const val NOTIFICATION_TIME_DEFAULT = 12
 const val TEXT_SIZE_DEFAULT = 100
+const val AUTO_REMOVE_PAUSE_DEFAULT = false
 const val REFRESH_ARTICLE_LIST_DEFAULT = true
 const val REFRESH_TIME_DEFAULT = 11
 const val REFRESH_ONLY_WIFI_DEFAULT = false
 const val STORE_DELAY_DEFAULT = 6
 // user article
-const val AUTO_REMOVE_PAUSE_DEFAULT = false
+const val ADDED_FAVORITE_DEFAULT = 0
+const val ADDED_PAUSED_DEFAULT = 0

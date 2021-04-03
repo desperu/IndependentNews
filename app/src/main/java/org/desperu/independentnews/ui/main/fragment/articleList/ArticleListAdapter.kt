@@ -53,8 +53,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
             if (filteredList.isEmpty()) return
             val diff =
                 ArticleListDiffUtil(
-                    (if (field) list else filteredList).map { it as ArticleItemViewModel }.toList(),
-                    (if (field) filteredList else list).map { it as ArticleItemViewModel }.toList()
+                    (if (field) list else filteredList).map { it as ArticleItemViewModel },
+                    (if (field) filteredList else list).map { it as ArticleItemViewModel }
                 )
             DiffUtil.calculateDiff(diff).dispatchUpdatesTo(this)
         }

@@ -36,7 +36,7 @@ const val TODAY_ARTICLES_FRAG: String = "todayArticlesFrag"
 class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     // FROM BUNDLE
-    private val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
+    override val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
     private val todayArticles: List<Article>? get() = arguments?.getParcelableArrayList(TODAY_ARTICLES_FRAG)
 
     // FOR DATA

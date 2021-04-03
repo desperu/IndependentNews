@@ -10,17 +10,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.database.UserArticleRepository
 import org.desperu.independentnews.service.ResourceService
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.main.MainInterface
+import org.desperu.independentnews.utils.ADDED_FAVORITE
+import org.desperu.independentnews.utils.ADDED_FAVORITE_DEFAULT
+import org.desperu.independentnews.utils.FRAG_FAVORITE
+import org.desperu.independentnews.utils.FRAG_PAUSED
 import org.koin.core.KoinComponent
 import org.koin.core.get
 
 /**
- * View Model witch provide data for article item.
+ * View Model which provide data for article item.
  *
  * @property article                the given article data for this view model.
  * @property articleListInterface   the article list interface which provide fragment access.
@@ -30,6 +36,7 @@ import org.koin.core.get
  * @property router                 the router that allows redirection of the user.
  * @property isRead                 true if is read, false otherwise.
  * @property resource               the resource interface access.
+ * @property prefs                  the shared preferences service interface access.
  * @property isFavorite             true if is favorite, false otherwise.
  * @property isPaused               true if is paused, false otherwise.
  *
@@ -49,6 +56,7 @@ class ArticleItemViewModel(
     private val mainInterface: MainInterface = get()
     private val router: ArticleRouter get() = get()
     private val resource: ResourceService = get()
+    private val prefs: SharedPrefService = get()
     val isRead = ObservableBoolean(article.read)
     val isFavorite = ObservableBoolean(false)
     val isPaused = ObservableBoolean(false)
@@ -63,8 +71,8 @@ class ArticleItemViewModel(
 
     /**
      * Set user article state values, favorite and paused.
-     */ // TODO update when back from show article !!
-    private fun setUserArticleState() = viewModelScope.launch(Dispatchers.IO) {
+     */
+    internal fun setUserArticleState() = viewModelScope.launch(Dispatchers.IO) {
         isFavorite.set(userArticleRepository.getFavoriteArticle(article.id) != null)
         isPaused.set(userArticleRepository.getPausedArticle(article.id) != null)
     }
@@ -105,9 +113,26 @@ class ArticleItemViewModel(
     private fun handleSwipeAction(@IdRes id: Int) = viewModelScope.launch(Dispatchers.IO) {
         when (id) {
             R.id.swipe_share_container -> mainInterface.shareArticle(article.title, article.url)
-            R.id.swipe_star_container, R.id.swipe_remove_star_container ->
-                userArticleRepository.handleFavorite(article.id)
-            R.id.swipe_remove_pause_container -> userArticleRepository.handlePaused(article.id, 0f)
+
+            R.id.swipe_star_container, R.id.swipe_remove_star_container -> {
+                val isFavorite = userArticleRepository.handleFavorite(article.id)
+
+                if (isFavorite) prefs.getPrefs().apply {
+                    val previousVal = getInt(ADDED_FAVORITE, ADDED_FAVORITE_DEFAULT)
+                    edit().putInt(ADDED_FAVORITE, previousVal + 1).apply()
+                }
+
+                val isCurrentFrag = articleListInterface.fragKey == FRAG_FAVORITE
+                if (!isFavorite && isCurrentFrag) removeThisItem()
+            }
+
+            R.id.swipe_remove_pause_container -> {
+                val isPaused = userArticleRepository.handlePaused(article.id, 0f)
+
+                val isCurrentFrag = articleListInterface.fragKey == FRAG_PAUSED
+                if (!isPaused && isCurrentFrag) removeThisItem()
+            }
+
             else -> throw IllegalArgumentException("Unique identifier not found : $id")
         }
         closeSwipeContainer()
@@ -125,6 +150,17 @@ class ArticleItemViewModel(
      */
     private fun closeSwipeContainer() = viewModelScope.launch(Dispatchers.Main) {
         articleListInterface.closeSwipeContainer()
+    }
+
+    /**
+     * Remove this item in the adapter list and update UI.
+     */
+    private suspend fun removeThisItem() = withContext(Dispatchers.Main) {
+        articleListInterface.getRecyclerAdapter()?.apply {
+            val index = adapterList.indexOf(this@ArticleItemViewModel)
+            adapterList.removeAt(index)
+            notifyItemRemoved(index)
+        }
     }
 
     // ------------

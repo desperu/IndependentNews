@@ -14,7 +14,12 @@ import org.desperu.independentnews.models.database.*
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.UserArticleRepository
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.utils.ADDED_FAVORITE
+import org.desperu.independentnews.utils.ADDED_FAVORITE_DEFAULT
+import org.desperu.independentnews.utils.ADDED_PAUSED
+import org.desperu.independentnews.utils.ADDED_PAUSED_DEFAULT
 import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -30,9 +35,11 @@ import kotlin.properties.Delegates
  * @property router                 the image router which provide user redirection.
  * @property articleDesign          the article design interface access.
  * @property cssRepository          the repository that allow access for css from the database.
+ * @property prefs                  the shared preferences service interface access.
+ * @property navHistoryMap          the navigation history of the web view.
+ * @property updatedUserArticles    the id list of updated user articles state.
  * @property isFavorite             true if the article is favorite, false otherwise.
  * @property isPaused               true if the article is paused, false otherwise.
- * @property navHistoryMap          the navigation history of the web view.
  *
  * @constructor Instantiates a new ArticleViewModel.
  *
@@ -52,9 +59,11 @@ class ArticleViewModel(
     // FOR DATA
     private val articleDesign: ArticleDesignInterface by inject()
     private val cssRepository: CssRepository = get()
+    private val prefs: SharedPrefService = get()
+    private val navHistoryMap = mutableMapOf<Int, Pair<Article?, Int>>()
+    internal val updatedUserArticles = mutableListOf<Long>()
     val isFavorite = ObservableBoolean(false)
     val isPaused = ObservableBoolean(false)
-    private val navHistoryMap = mutableMapOf<Int, Pair<Article?, Int>>()
 
     // --------------
     // LISTENERS
@@ -126,9 +135,11 @@ class ArticleViewModel(
      * Update favorite state for the current article, here in view model and in the database.
      */
     internal fun updateFavorite() = viewModelScope.launch(Dispatchers.IO) {
-        val articleId = article.get()?.id ?: 0L
+        val articleId = article.get()?.id ?: return@launch
         val isFavorite = userArticleRepository.handleFavorite(articleId)
 
+        if (isFavorite) updateAddedUserArticles(ADDED_FAVORITE, ADDED_FAVORITE_DEFAULT)
+        updatedUserArticles.add(articleId)
         this@ArticleViewModel.isFavorite.set(isFavorite)
     }
 
@@ -141,6 +152,8 @@ class ArticleViewModel(
         val articleId = article.get()?.id ?: 0L
         val isPaused = userArticleRepository.handlePaused(articleId, scrollYPercent)
 
+        if (isPaused) updateAddedUserArticles(ADDED_PAUSED, ADDED_PAUSED_DEFAULT)
+        updatedUserArticles.add(articleId)
         this@ArticleViewModel.isPaused.set(isPaused)
     }
 
@@ -158,6 +171,23 @@ class ArticleViewModel(
         var articleDb by Delegates.notNull<Article>()
         withContext(Dispatchers.IO) { ideNewsRepository.fetchArticle(article)?.let { articleDb = it } }
         this@ArticleViewModel.article.set(articleDb)
+    }
+
+    // --------------
+    // PREFS
+    // --------------
+
+    /**
+     * Update added user article in shared preferences, for favorite and paused.
+     *
+     * @param key       the shared preferences key.
+     * @param defVal    the default value.
+     */
+    private fun updateAddedUserArticles(key: String, defVal: Int) {
+        prefs.getPrefs().apply {
+            val previousVal = getInt(key, defVal)
+            edit().putInt(key, previousVal + 1).apply()
+        }
     }
 
     // --------------

@@ -146,7 +146,7 @@ class MainFragmentManager(
     private val articleListFragment
         get() = (fm.findFragmentByTag(ArticleListFragment::class.java.simpleName) as ArticleListFragment?)
 
-    private val categoryFragment
+    private val viewPagerFragment
         get() = (fm.findFragmentByTag(ViewPagerFragment::class.java.simpleName) as ViewPagerFragment?)
 
     /**
@@ -161,7 +161,7 @@ class MainFragmentManager(
      */
     internal fun getCurrentArticleListFrag(): ArticleListFragment? =
         if (fragmentKey in listOf(FRAG_CATEGORY, FRAG_USER_ARTICLE))
-            categoryFragment?.getCurrentFrag()
+            viewPagerFragment?.getCurrentFrag()
         else
             articleListFragment
 
