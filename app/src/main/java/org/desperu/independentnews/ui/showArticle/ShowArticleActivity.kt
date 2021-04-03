@@ -21,6 +21,7 @@ import org.desperu.independentnews.base.ui.BaseBindingActivity
 import org.desperu.independentnews.databinding.ActivityShowArticleBinding
 import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.shareArticle
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.database.Article
@@ -124,6 +125,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun configureDesign() {
         configureKoinDependency()
         configureArticleDesign() // TODO force portrait ot prevent anim bug !!!
+        setUserArticleState()
         configureWebView()
         configureAppBar()
     }
@@ -165,6 +167,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             showFabsMenu(true, transitionBg == null)
         }
     }
+
+    /**
+     * Set user article state after Article Design, for koin instance lifecycle.
+     */
+    private fun setUserArticleState() { viewModel.setUserArticleState() }
 
     /**
      * Configure the web view.
@@ -288,30 +295,13 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     /**
      * Share article with title and url, to other applications.
      */
-    @Suppress("deprecation")
     private fun shareArticle() {
-        val share = Intent(Intent.ACTION_SEND)
-        share.type = "text/plain"
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            share.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-        } else
-            share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-
-        // Add data to the intent, the receiving app will decide
-        // what to do with it.
         val actualUrl = mWebViewClient?.actualUrl.mToString()
 
-        if (isHtmlData(actualUrl)) {
-            share.putExtra(Intent.EXTRA_SUBJECT, viewModel.article.get()?.title)
-            share.putExtra(Intent.EXTRA_TEXT, viewModel.article.get()?.url)
-
-        } else {
-            share.putExtra(Intent.EXTRA_SUBJECT, web_view.title)
-            share.putExtra(Intent.EXTRA_TEXT, actualUrl)
-        }
-
-        startActivity(Intent.createChooser(share, getString(R.string.show_article_activity_share_chooser_title)))
+        if (isHtmlData(actualUrl))
+            shareArticle(viewModel.article.get()?.title, viewModel.article.get()?.url)
+        else
+            shareArticle(web_view.title, actualUrl)
     }
 
     /**

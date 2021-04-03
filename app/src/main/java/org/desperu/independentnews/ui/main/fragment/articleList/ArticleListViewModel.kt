@@ -26,7 +26,7 @@ import org.koin.java.KoinJavaComponent.getKoin
  * @param ideNewsRepository         the app repository interface which provide database and network
  *                                  access to set.
  * @param userArticleRepository     the repository which provide user article database access to set.
- * @param articleListInterface      the article list interface witch provide fragment interface to set.
+ * @param articleListInterface      the article list interface which provide fragment interface to set.
  */
 class ArticleListViewModel(
     private val ideNewsRepository: IndependentNewsRepository,
@@ -36,7 +36,7 @@ class ArticleListViewModel(
 
     // FOR DATA
     private val resources: ResourceService = getKoin().get()
-    private var articleList: List<Article>? = null
+    private var articleList: List<Article>? = null // TODO Useless, use memory, already in adapter.
     private var filteredList: List<Article>? = null
 
     // -----------------
@@ -164,7 +164,7 @@ class ArticleListViewModel(
     private suspend fun updateRecyclerData() = withContext(Dispatchers.Main) {
         articleList?.let {
             articleListInterface.getRecyclerAdapter()?.apply {
-                updateList(it.toArticleItemVMList().toMutableList())
+                updateList(it.toArticleItemVMList(articleListInterface).toMutableList())
                 notifyDataSetChanged()
             }
         }
@@ -184,7 +184,9 @@ class ArticleListViewModel(
 
             if (isFiltered) {
                 this.filteredList =
-                    this@ArticleListViewModel.filteredList.toArticleItemVMList().toMutableList()
+                    this@ArticleListViewModel.filteredList
+                        .toArticleItemVMList(articleListInterface)
+                        .toMutableList()
             }
 
             this.isFiltered = isFiltered
@@ -214,7 +216,8 @@ class ArticleListViewModel(
 
                 // Update article list here (view model) and in adapter
                 withContext(Dispatchers.IO) { articleList = newArticleList }
-                getRecyclerAdapter()?.updateList(articleList.toArticleItemVMList().toMutableList())
+                val itemVMList = articleList.toArticleItemVMList(this)
+                getRecyclerAdapter()?.updateList(itemVMList.toMutableList())
 
                 // Unfilter list (no visible for the user), and need for isFiltered value
                 // Synchronize the Fab Filter visibility and state

@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.main
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.MenuItem
@@ -24,6 +25,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.mainModule
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.shareArticle
 import org.desperu.independentnews.extension.showActivity
 import org.desperu.independentnews.extension.showActivityForResult
 import org.desperu.independentnews.extension.showInBrowser
@@ -33,7 +35,7 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.ui.firstStart.FirstStartActivity
 import org.desperu.independentnews.ui.main.fragment.MainFragmentManager
-import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
+import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
 import org.desperu.independentnews.ui.settings.SettingsActivity
@@ -229,6 +231,15 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     }
 
     /**
+     * Share article with title and url, to other applications.
+     *
+     * @param title the title of the article.
+     * @param url   the url of the article.
+     */
+    override fun shareArticle(title: String, url: String) =
+        (this as Activity).shareArticle(title, url)
+
+    /**
      * Refresh data for the application, fetch data from Rss and Web, and persist them
      * into the database.
      */
@@ -244,8 +255,9 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * @param selectedMap the map of selected filters to apply.
      * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    override fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) =
-        (fm.getCurrentArticleListFrag() as ArticleListInterface).filterList(selectedMap, isFiltered)
+    override fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) {
+        fm.getCurrentArticleListFrag()?.filterList(selectedMap, isFiltered)
+    }
 
     // --------------
     // UI
@@ -301,8 +313,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
      * @return the adapter scale down animator for the recycler view of article list.
      */
     override fun getAdapterScaleDownAnimator(isScaledDown: Boolean): ValueAnimator? =
-        (fm.getCurrentArticleListFrag() as? ArticleListInterface)
-            ?.getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
+        fm.getCurrentArticleListFrag()?.getRecyclerAdapter()?.getScaleDownAnimator(isScaledDown)
 
     /**
      * Update filters motion state adapter state, when switch fragment.
@@ -350,7 +361,7 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
                 if (currentFrag is ViewPagerFragment)
                     currentFrag = currentFrag.getCurrentFrag()
 
-                (currentFrag as ArticleListInterface).refreshList()
+                (currentFrag as ArticleListFragment).refreshList()
             }
         }
     }

@@ -83,7 +83,6 @@ class ArticleViewModel(
     // --------------
 
     init {
-        setUserArticleState()
         setArticleListener()
     }
 
@@ -91,7 +90,7 @@ class ArticleViewModel(
      * Set user article state values, favorite and paused.
      * Restore the paused position if there's one.
      */
-    private fun setUserArticleState() = viewModelScope.launch(Dispatchers.IO) {
+    internal fun setUserArticleState() = viewModelScope.launch(Dispatchers.IO) {
         val articleId = article.get()?.id ?: 0L
         isFavorite.set(userArticleRepository.getFavoriteArticle(articleId) != null)
         

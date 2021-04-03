@@ -12,18 +12,6 @@ interface ArticleListInterface {
     fun getRecyclerAdapter(): ArticleListAdapter?
 
     /**
-     * Apply selected filters to the current article list.
-     * @param selectedMap the map of selected filters to apply.
-     * @param isFiltered true if apply filters to the list, false otherwise.
-     */
-    fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean)
-
-    /**
-     * Refresh the article list from the database, and display with DiffUtils support.
-     */
-    fun refreshList()
-
-    /**
      * Show no article and hide recycler view, or invert, depends of toShow value.
      * @param toShow true to show no article, false otherwise.
      */
@@ -40,4 +28,9 @@ interface ArticleListInterface {
      * @param isFiltered true if the adapter is filtered, false otherwise.
      */
     fun updateFiltersMotionState(isFiltered: Boolean)
+
+    /**
+     * Close swipe action container.
+     */
+    fun closeSwipeContainer()
 }

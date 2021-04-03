@@ -42,7 +42,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
     internal var list: MutableList<Any> = mutableListOf()
     internal var filteredList: MutableList<Any> = mutableListOf()
-    private val adapterList: MutableList<Any> get() = if (!isFiltered) list else filteredList
+    internal val adapterList: MutableList<Any> get() = if (!isFiltered) list else filteredList
 
     /** Variable used to filter adapter items. 'true' if filtered and 'false' if not */
 
@@ -192,6 +192,11 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
         holder.chevron.rotation = 90 * progress
 
+        val isSwipeVisible = holder.swipeContainer.isVisible
+        holder.swipeContainer.layoutParams.height = if (isSwipeVisible) holder.cardContainer.height
+                                                    else 0
+        holder.swipeContainer.requestLayout()
+
         holder.title.maxLines = if (progress > 0.1f) 5 else 2
         val title = (adapterList[holder.adapterPosition] as ArticleItemViewModel).article.title
         val expandedLength = title.length
@@ -251,8 +256,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         }
         holder.cardContainer.requestLayout()
 
-        holder.scaleContainer.scaleX = 1 - 0.05f * progress
-        holder.scaleContainer.scaleY = 1 - 0.05f * progress
+        holder.scaleContainer.setScale(1 - 0.05f * progress)
 
         val animatedPadding = (itemPadding * (1 - 0.2f * progress)).toInt()
         holder.scaleContainer.setPadding(
@@ -262,8 +266,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
                 animatedPadding
         )
 
-        holder.image.scaleX = 1 - 0.05f * progress
-        holder.image.scaleY = 1 - 0.05f * progress
+        holder.image.setScale(1 - 0.05f * progress)
 
         holder.listItemFg.alpha = progress
     }
@@ -286,6 +289,13 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
         val title: TextView by bindView(R.id.title)
         val image: View by bindView(R.id.image)
         val description: TextView by bindView(R.id.description)
+
+        // For swipe action
+        val swipeContainer: View by bindView(R.id.swipe_root_container)
+        val share: View by bindView(R.id.swipe_share_container)
+        val favorite: View by bindView(R.id.swipe_star_container)
+        val removeFavorite: View by bindView(R.id.swipe_remove_star_container)
+        val removePaused: View by bindView(R.id.swipe_remove_pause_container)
 
         internal fun bind(any: Any?) {
             binding.setVariable(org.desperu.independentnews.BR.viewModel, any)

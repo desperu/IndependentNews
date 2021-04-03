@@ -9,6 +9,11 @@ import androidx.lifecycle.LifecycleCoroutineScope
 interface MainInterface {
 
     /**
+     * The main life cycle scope to execute block with coroutine support.
+     */
+    val mainLifecycleScope: LifecycleCoroutineScope
+
+    /**
      * Get the fragment key value.
      */
     fun getFragmentKey(): Int
@@ -20,9 +25,9 @@ interface MainInterface {
     fun setFragmentKey(fragmentKey: Int)
 
     /**
-     * The main life cycle scope to execute block with coroutine support.
+     * Share article with title and url, to other applications.
      */
-    val mainLifecycleScope: LifecycleCoroutineScope
+    fun shareArticle(title: String, url: String)
 
     /**
      * Refresh data for the application, fetch data from Rss and Web, and persist them

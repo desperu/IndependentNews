@@ -139,6 +139,9 @@ dependencies {
     // Fab with sub menu
     implementation "com.leinardi.android:speed-dial:3.1.1"
 
+    // Item Touch Helper Extension
+    implementation 'com.loopeer.library:itemtouchhelperextension:1.0.6'
+
     // Koin
     implementation "org.koin:koin-android:$koin_version"
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"

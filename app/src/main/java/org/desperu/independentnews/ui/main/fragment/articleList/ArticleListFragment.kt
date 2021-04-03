@@ -6,6 +6,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.postOnAnimationDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.loopeer.itemtouchhelperextension.ItemTouchHelperExtension
 import kotlinx.android.synthetic.main.fragment_article_list.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
@@ -34,17 +35,18 @@ const val TODAY_ARTICLES_FRAG: String = "todayArticlesFrag"
  */
 class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
+    // FROM BUNDLE
+    private val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
+    private val todayArticles: List<Article>? get() = arguments?.getParcelableArrayList(TODAY_ARTICLES_FRAG)
+
     // FOR DATA
     private val binding get() = viewBinding!!
     private val viewModel = get<ArticleListViewModel> { parametersOf(this) }
     private var articleListAdapter: ArticleListAdapter? = null
     private val mainInterface get() = getKoin().getOrNull<MainInterface>()
+    private var itemTouch: ItemTouchHelperExtension? = null
     private val loadingDuration: Long
         get() = (resources.getInteger(R.integer.loadingAnimDuration) / animationPlaybackSpeed).toLong()
-
-    // FOR BUNDLE
-    private val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
-    private val todayArticles: List<Article>? get() = arguments?.getParcelableArrayList(TODAY_ARTICLES_FRAG)
 
     /**
      * Companion object, used to create a new instance of this fragment.
@@ -72,6 +74,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     override fun configureDesign() {
         configureRecyclerView()
+        configureItemSwipe()
     }
 
     override fun updateDesign() {
@@ -103,6 +106,15 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     }
 
     /**
+     * Configure swipe, with item touch helper support.
+     */
+    private fun configureItemSwipe() {
+        val callback = SwipeItem(this)
+        itemTouch = ItemTouchHelperExtension(callback)
+        itemTouch?.attachToRecyclerView(recycler_view)
+    }
+
+    /**
      * Configure corresponding fragment for the given key.
      */
     private fun configureCorrespondingFragment() = when(fragKey) {
@@ -131,6 +143,7 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
 
     override fun onDestroyView() {
         articleListAdapter = null
+        itemTouch = null
         super.onDestroyView()
     }
 
@@ -151,14 +164,14 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * @param selectedMap the map of selected filters to apply.
      * @param isFiltered true if apply filters to the list, false otherwise.
      */
-    override fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) {
+    internal fun filterList(selectedMap: Map<Int, MutableList<String>>, isFiltered: Boolean) {
         viewModel.filterList(selectedMap, isFiltered)
     }
 
     /**
      * Refresh the article list from the database, and display with DiffUtils support.
      */
-    override fun refreshList() { viewModel.refreshList(fragKey) }
+    internal fun refreshList() { viewModel.refreshList(fragKey) }
 
     /**
      * Show the new articles.
@@ -195,6 +208,11 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
     override fun updateFiltersMotionState(isFiltered: Boolean) {
         mainInterface?.updateFiltersMotionState(isFiltered)
     }
+
+    /**
+     * Close swipe action container.
+     */
+    override fun closeSwipeContainer() { itemTouch?.closeOpened() }
 
     // --- GETTERS ---
 

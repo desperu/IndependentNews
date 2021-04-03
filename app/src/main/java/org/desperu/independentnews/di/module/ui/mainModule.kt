@@ -10,8 +10,6 @@ import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListInterface
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouter
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleRouterImpl
-import org.desperu.independentnews.ui.showArticle.ImageRouter
-import org.desperu.independentnews.ui.showArticle.ImageRouterImpl
 import org.koin.dsl.module
 
 /**
@@ -45,7 +43,7 @@ val mainModule = module {
     }
 
     /**
-     * Provides a ArticleRouter interface from the instance of MainActivity.
+     * Provides an ArticleRouter interface from the instance of MainActivity.
      */
     single<ArticleRouter> { (activity: BaseActivity) ->
         ArticleRouterImpl(
@@ -55,7 +53,7 @@ val mainModule = module {
 
     // TODO useless ??? not that the error... ??? Must check
     /**
-     * Provides a ArticleListInterface interface from the instance of ArticleListFragment.
+     * Provides an ArticleListInterface from the instance of ArticleListFragment.
      */
     factory { (fragment: BaseBindingFragment) ->
         fragment as ArticleListInterface
