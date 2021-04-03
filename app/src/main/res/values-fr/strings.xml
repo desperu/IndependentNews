@@ -44,7 +44,9 @@
     <string name="sub_fab_label_min_text">Réduire text</string>
     <string name="sub_fab_label_up_text">Agrandir text</string>
     <string name="sub_fab_label_star">Add favoris</string>
+    <string name="sub_fab_label_remove_star">Retirer Favoris</string>
     <string name="sub_fab_label_pause">Pause lecture</string>
+    <string name="sub_fab_label_remove_pause">Retirer Pause</string>
     <string name="sub_fab_label_home">Retour home</string>
     <!-- Toast -->
     <string name="sub_fab_toast_remove_favorite">Article retiré des favoris!</string>

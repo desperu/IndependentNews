@@ -62,7 +62,9 @@ object FabsMenuUtils : KoinComponent {
         SUB_FAB_MIN_TEXT -> resources.getString(R.string.sub_fab_label_min_text)
         SUB_FAB_UP_TEXT -> resources.getString(R.string.sub_fab_label_up_text)
         SUB_FAB_STAR -> resources.getString(R.string.sub_fab_label_star)
+        SUB_FAB_REMOVE_STAR -> resources.getString(R.string.sub_fab_label_remove_star)
         SUB_FAB_PAUSE -> resources.getString(R.string.sub_fab_label_pause)
+        SUB_FAB_REMOVE_PAUSE -> resources.getString(R.string.sub_fab_label_remove_pause)
         SUB_FAB_HOME -> resources.getString(R.string.sub_fab_label_home)
         else -> throw IllegalArgumentException("Sub Fab key not found : $subFabKey")
     }

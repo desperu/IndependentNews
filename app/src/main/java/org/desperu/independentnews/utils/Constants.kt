@@ -71,8 +71,10 @@ const val RC_PERMS = 10000          // For permissions
 const val SUB_FAB_MIN_TEXT = 0
 const val SUB_FAB_UP_TEXT = 1
 const val SUB_FAB_STAR = 2
-const val SUB_FAB_PAUSE = 3
-const val SUB_FAB_HOME = 4
+const val SUB_FAB_REMOVE_STAR = 3
+const val SUB_FAB_PAUSE = 4
+const val SUB_FAB_REMOVE_PAUSE = 5
+const val SUB_FAB_HOME = 6
 
 // For Sub Fabs list
 internal val subFabList = listOf(

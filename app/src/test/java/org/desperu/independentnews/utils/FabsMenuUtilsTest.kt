@@ -42,7 +42,9 @@ class FabsMenuUtilsTest : KoinTest {
         every { resources.getString(R.string.sub_fab_label_min_text) } returns "Minus text size"
         every { resources.getString(R.string.sub_fab_label_up_text) } returns "Up text size"
         every { resources.getString(R.string.sub_fab_label_star) } returns "Add favorite"
+        every { resources.getString(R.string.sub_fab_label_remove_star) } returns "Remove Favorite"
         every { resources.getString(R.string.sub_fab_label_pause) } returns "Pause reading"
+        every { resources.getString(R.string.sub_fab_label_remove_pause) } returns "Remove Pause"
         every { resources.getString(R.string.sub_fab_label_home) } returns "Back home"
     }
 
@@ -114,7 +116,9 @@ class FabsMenuUtilsTest : KoinTest {
             Pair(SUB_FAB_MIN_TEXT, resources.getString(R.string.sub_fab_label_min_text)),
             Pair(SUB_FAB_UP_TEXT, resources.getString(R.string.sub_fab_label_up_text)),
             Pair(SUB_FAB_STAR, resources.getString(R.string.sub_fab_label_star)),
+            Pair(SUB_FAB_REMOVE_STAR, resources.getString(R.string.sub_fab_label_remove_star)),
             Pair(SUB_FAB_PAUSE, resources.getString(R.string.sub_fab_label_pause)),
+            Pair(SUB_FAB_REMOVE_PAUSE, resources.getString(R.string.sub_fab_label_remove_pause)),
             Pair(SUB_FAB_HOME, resources.getString(R.string.sub_fab_label_home))
         )
 

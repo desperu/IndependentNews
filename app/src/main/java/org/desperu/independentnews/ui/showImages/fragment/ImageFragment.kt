@@ -3,6 +3,7 @@ package org.desperu.independentnews.ui.showImages.fragment
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
@@ -17,6 +18,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.extension.design.bindView
+import org.desperu.independentnews.extension.design.getScreenRect
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.ui.showImages.ShowImagesInterface
 import org.desperu.independentnews.utils.LOW_NAV_AND_STATUS_BAR
@@ -98,7 +100,7 @@ class ImageFragment: BaseBindingFragment() {
     private val systemUiHelper: SystemUiHelper get() = get()
     private val backArrow get() =  activity?.back_arrow_icon
     private val sysUiShow get() = activity?.appbar?.isVisible
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     /**
      * Companion object, used to create new instance of this fragment.
@@ -284,8 +286,8 @@ class ImageFragment: BaseBindingFragment() {
         override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
             if (inVpTransition) return false
 
-            val backArrowRect = backArrow?.run { Rect().apply(::getHitRect) }
-            val isArrowClick = e?.let { backArrowRect?.contains(it.x.toInt(), it.y.toInt()) }
+            val backArrowRect = backArrow?.getScreenRect()
+            val isArrowClick = e?.let { backArrowRect?.contains(it.rawX.toInt(), it.rawY.toInt()) }
             if (isArrowClick == true) showImagesInterface.onClickBackArrow(backArrow!!)
 
             // show or hide nav, status and action bars

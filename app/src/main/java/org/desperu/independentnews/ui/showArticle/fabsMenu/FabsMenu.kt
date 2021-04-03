@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.IdRes
 import androidx.core.os.postDelayed
@@ -158,8 +159,8 @@ class FabsMenu : KoinComponent{
             }
         }
 
-        updateSubFabIconColor(R.id.fab_star, activity.viewModel.isFavorite.get())
-        updateSubFabIconColor(R.id.fab_pause, activity.viewModel.isPaused.get())
+        updateSubFabState(R.id.fab_star, activity.viewModel.isFavorite.get())
+        updateSubFabState(R.id.fab_pause, activity.viewModel.isPaused.get())
     }
 
     // --------------
@@ -286,18 +287,29 @@ class FabsMenu : KoinComponent{
     // --------------
 
     /**
-     * Update the sub fab icon color, for the given id and enabled state.
+     * Update the sub fab icon color and text label, for the given id and state, enabled/disabled.
      *
      * @param id            the unique identifier of the sub fab.
      * @param isEnabled     true if is enabled, false otherwise.
      */
-    private fun updateSubFabIconColor(@IdRes id: Int, isEnabled: Boolean) {
-        val enabledColor = if (id == R.id.fab_star) starColor else pauseColor
+    private fun updateSubFabState(@IdRes id: Int, isEnabled: Boolean) {
+        val fabWithLabelView = speedDialView.getFabWithLabelViewById(id)
+        val isFavoriteFab = id == R.id.fab_star
+        val enabledColor = if (isFavoriteFab) starColor else pauseColor
+        val enabledKey = if (isFavoriteFab) SUB_FAB_REMOVE_STAR else SUB_FAB_REMOVE_PAUSE
+        val disabledKey = if (isFavoriteFab) SUB_FAB_STAR else SUB_FAB_PAUSE
 
-        speedDialView.getFabWithLabelViewById(id)?.fab?.supportImageTintList =
+
+        fabWithLabelView?.fab?.supportImageTintList =
             ColorStateList.valueOf(
                 if (isEnabled) enabledColor
                 else fabImageTintColor
+            )
+
+        fabWithLabelView?.labelBackground.findView<TextView>()?.text =
+            getSubFabLabel(
+                if (isEnabled) enabledKey
+                else disabledKey
             )
     }
 

@@ -1,5 +1,6 @@
 package org.desperu.independentnews.extension.design
 
+import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -151,3 +152,10 @@ internal fun View?.findAnimatedChild(last: Boolean): View? {
     // Return the last animated child found
     return view
 }
+
+/**
+ * Returns the global visible rect of the given view.
+ *
+ * @return the global visible rect of the given view.
+ */
+internal fun View.getScreenRect(): Rect = this.run { Rect().apply(::getGlobalVisibleRect) }
