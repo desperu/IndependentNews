@@ -58,6 +58,7 @@ const val CONNEXION = 1
 const val CONNEXION_START = 10
 const val FIRST_START_ERROR = 20
 const val REMOVE_PAUSED = 30
+const val CANT_PARSE = 40
 
 // For Request Code
 const val RC_FIRST_START = 1000     // First start activity

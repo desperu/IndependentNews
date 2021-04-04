@@ -85,6 +85,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
             CONNEXION_START -> configureFirstStartButton(builder)
             FIRST_START_ERROR -> configureFirstStartButton(builder)
             REMOVE_PAUSED -> configurePausedButton(builder)
+            CANT_PARSE -> configureCantParseButton(builder)
         }
     }
 
@@ -125,6 +126,20 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
             .setNeutralButton(R.string.activity_settings_dialog_negative_button) { dialog, _ ->
                 dialog.cancel()
             }
+    }
+
+    /**
+     * Configure buttons for the can't parse alert dialog builder.
+     *
+     * @param builder the dialog builder to add buttons.
+     */
+    private fun configureCantParseButton(builder: AlertDialog.Builder) {
+        builder
+            .setPositiveButton(R.string.activity_main_dialog_about_positive_button) { dialogInterface, _ ->
+                dialogInterface.dismiss()
+                showArticleInterface?.activity?.finishAffinity()
+            }
+            .setOnCancelListener { showArticleInterface?.activity?.finishAffinity() }
     }
 
     /**
@@ -194,6 +209,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
         CONNEXION_START -> resources.getString(R.string.dialog_no_connexion_title)
         FIRST_START_ERROR -> resources.getString(R.string.dialog_fetch_source_error_title)
         REMOVE_PAUSED -> resources.getString(R.string.dialog_remove_paused_title)
+        CANT_PARSE -> resources.getString(R.string.dialog_cant_parse_title)
         else -> throw IllegalArgumentException("Dialog key not found : $dialogKey")
     }
 
@@ -210,6 +226,7 @@ class DialogHelperImpl(private val activity: AppCompatActivity) : DialogHelper {
         CONNEXION_START -> R.string.dialog_cant_start_message
         FIRST_START_ERROR -> R.string.dialog_fetch_source_error_message
         REMOVE_PAUSED -> R.string.dialog_remove_paused_message
+        CANT_PARSE -> R.string.dialog_cant_parse_message
         else -> throw IllegalArgumentException("Dialog key not found : $dialogKey")
     }
 }

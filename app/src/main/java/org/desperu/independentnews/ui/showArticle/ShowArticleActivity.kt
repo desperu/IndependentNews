@@ -33,8 +33,10 @@ import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.ui.sources.WAS_EXPANDED
+import org.desperu.independentnews.utils.CANT_PARSE
 import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.isHtmlData
+import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -61,7 +63,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         get() = intent.getParcelableExtra(ARTICLE)
             ?: Article(title = getString(R.string.show_article_activity_article_error))
     private val isExpanded: Boolean get() = intent.getBooleanExtra(IS_EXPANDED, true)
-    private val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG) // TODO useless
+    private val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG)
 
     // FOR DATA
     private lateinit var binding: ActivityShowArticleBinding
@@ -208,6 +210,8 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onResume() {
         super.onResume()
         web_view.onResume()
+        handleImplicitIntent()
+
         // TODO try to restore activity options to enable return transition when have stop activity
         //  line below change nothing, try to re use one shared element only
 //        if (articleDesign?.isFirstPage == false) setActivityTransition()
@@ -332,5 +336,25 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             Intent(this, MainActivity::class.java)
                 .putExtra(UPDATED_USER_ARTICLES, viewModel.updatedUserArticles.toLongArray())
         )
+    }
+
+    /**
+     * Handle received implicit intent to this activity,
+     * parse url if it's a source url, otherwise display can't parse alert dialog.
+     */
+    private fun handleImplicitIntent() {
+        var url = String()
+        if (intent.action == Intent.ACTION_SEND) {
+            if (intent.type?.startsWith("text/") == true) {
+                url = intent.getStringExtra(Intent.EXTRA_TEXT).mToString()
+            }
+        } else if (intent.action == Intent.ACTION_VIEW) {
+            url = intent.data.toString()
+        }
+
+        if (isSourceArticleUrl(url))
+            viewModel.fetchArticle(url)
+        else
+            get<DialogHelper>().showDialog(CANT_PARSE)
     }
 }

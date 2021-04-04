@@ -131,6 +131,9 @@
     <string name="dialog_remove_paused_title">Retirer des articles en pause</string>
     <string name="dialog_remove_paused_message">Retirer cet article des articles en pause? Vous l\'avez lu entier!</string>
     <string name="dialog_remove_paused_neutral_button">Toujours</string>
+    <!-- Dialog can't parse web page -->
+    <string name="dialog_cant_parse_title">Analyse impossible !</string>
+    <string name="dialog_cant_parse_message">Cette application ne peut analyser que les pages web des sites inclus dans les sources. Cette url n\'est pas compatible !</string>
 
     <!-- NOTIFICATION -->
     <string name="notification_title">Articles du jour !</string>

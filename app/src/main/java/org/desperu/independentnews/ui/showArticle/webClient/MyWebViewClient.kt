@@ -18,7 +18,7 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
-import org.desperu.independentnews.utils.Utils
+import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
@@ -128,7 +128,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
      * @return true if consumed, false otherwise.
      */
     private fun handleRedirect(url: String): Boolean = when {
-        isNoteRedirect(Utils.getPageNameFromUrl(url)) -> {
+        isNoteRedirect(getPageNameFromUrl(url)) -> {
             if (!isNoteRedirect) noteScrollPosition = sv.scrollY
 //            scrollPosition = -1
             isNoteRedirect = !isNoteRedirect
