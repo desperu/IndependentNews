@@ -40,9 +40,9 @@ class JavaScriptInterface(articleInterface: ShowArticleInterface) {
             val realHeight = activity.web_view.height
             val articleDataHeight = activity.article_data_container.measuredHeight
 
-            val isToNotes = y / contentHeight > 0.9
-            val decal = if (isToNotes) 0 else SCROLL_DECAL
-            val scrollY = y * realHeight / contentHeight + articleDataHeight - decal
+            val ratio = y.toFloat() / contentHeight.toFloat()
+            val isToNotes = ratio > 0.9f
+            val scrollY = y * realHeight / contentHeight + articleDataHeight - SCROLL_DECAL
 
             activity.article_scroll_view.smoothScrollTo(0, scrollY, 1000)
             if (isToNotes) activity.fabs_menu.hide()

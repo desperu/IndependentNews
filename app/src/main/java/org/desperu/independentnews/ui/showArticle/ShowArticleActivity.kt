@@ -342,10 +342,10 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      */
     private fun handleImplicitIntent() {
         val url = when {
-            intent.type == Intent.ACTION_SEND && intent.type?.startsWith("text/") == true ->
+            intent.action == Intent.ACTION_SEND && intent.type?.startsWith("text/") == true ->
                 intent.getStringExtra(Intent.EXTRA_TEXT).mToString()
 
-            intent.type == Intent.ACTION_VIEW -> intent.dataString
+            intent.action == Intent.ACTION_VIEW -> intent.dataString
             else -> null
         }
 
