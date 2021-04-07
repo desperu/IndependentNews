@@ -71,7 +71,7 @@ internal fun Document?.correctUrlLink(baseUrl: String): Document? =
             when {
                 it.attr(HREF).isNullOrBlank() -> it.removeAttr(HREF) // Check there's no error
                 isNoteRedirect(it.attr(HREF)) ->
-                    it.attr(HREF, "javascript:webScrollTo('${it.attr(HREF).removePrefix("#")}')")
+                    it.attr(HREF, "javascript:scrollToElement('${it.attr(HREF).removePrefix("#")}')")
                 it.attr(ONCLICK).isNotBlank() -> it.removeAttr(ONCLICK)
                 else -> it.attrToFullUrl(HREF, baseUrl)
             }

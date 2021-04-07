@@ -11,7 +11,7 @@ import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 /**
  * Constant value for decal the focused line in the web view from the top of the visible view.
  */
-const val SCROLL_DECAL = 50
+const val SCROLL_DECAL = 100
 
 /**
  * Javascript interface to communicate with the web view page code.
@@ -42,7 +42,7 @@ class JavaScriptInterface(articleInterface: ShowArticleInterface) {
 
             val isToNotes = y / contentHeight > 0.9
             val decal = if (isToNotes) 0 else SCROLL_DECAL
-            val scrollY = y * realHeight / contentHeight + articleDataHeight + decal
+            val scrollY = y * realHeight / contentHeight + articleDataHeight - decal
 
             activity.article_scroll_view.smoothScrollTo(0, scrollY, 1000)
             if (isToNotes) activity.fabs_menu.hide()
