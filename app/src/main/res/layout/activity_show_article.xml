@@ -162,6 +162,7 @@
             android:id="@+id/article_scroll_progress_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/article_scroll_progress_bar_margin_top"
             android:max="100"
             android:scaleY="1.5"
             app:layout_anchor="@+id/appbar"

@@ -21,6 +21,7 @@ import androidx.core.widget.ContentLoadingProgressBar
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
+import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -80,6 +81,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     init {
         configureKoinDependency()
         setupScrollListener()
+        configureAppBar()
     }
 
     // --------------
@@ -116,6 +118,13 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
 
         val isPaused = activity.viewModel.isPaused.get()
         if (isPaused && newScrollY == scrollHeight) showRemovePausedDialog()
+    }
+
+    /**
+     * Configure the app bar for special use, with full collapse and hide status bar.
+     */
+    private fun configureAppBar() {
+        activity.appbar_container.tag = activity::class.java.simpleName
     }
 
     // --------------

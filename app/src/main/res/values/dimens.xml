@@ -91,6 +91,7 @@
     <dimen name="article_image_source_width_height">16dp</dimen>
     <dimen name="article_title_text_size">24sp</dimen>
     <dimen name="article_image_min_width_height">300dp</dimen>
+    <dimen name="article_scroll_progress_bar_margin_top">-4dp</dimen>
 
     <!-- Sources Activity -->
     <dimen name="fragment_source_drawable_size">180dp</dimen>

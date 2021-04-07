@@ -11,22 +11,30 @@ import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.findSuitableScrollable
 import org.desperu.independentnews.extension.design.getValueAnimator
+import org.desperu.independentnews.helpers.SystemUiHelper
+import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
+import org.desperu.independentnews.utils.SYS_UI_HIDE
+import org.desperu.independentnews.utils.SYS_UI_VISIBLE
+import org.koin.core.KoinComponent
 import java.lang.ref.WeakReference
 
 /**
  * This behavior animates the toolbar (frame appbar_container) and it's elements
  * (toolbarTitle and icons) as the child scrollable owner scrolls.
  */
-class ToolbarBehavior : AppBarLayout.Behavior() {
+class ToolbarBehavior : AppBarLayout.Behavior(), KoinComponent {
 
     // FOR DATA
+    private val systemUiHelper: SystemUiHelper? = getKoin().getOrNull()
     private lateinit var toolbar: FrameLayout
     private lateinit var toolbarTitle: View
     private val iconList = mutableListOf<View>()
     private var toolbarOriginalHeight: Float = -1f
     private var toolbarCollapsedHeight: Float = -1f
     private var viewsSet = false
-    private var minScale = 0.6f
+    /** Used handle toolbar collapsed size, in show article, full collapse. */
+    private val minScale
+        get() = if (toolbar.tag == ShowArticleActivity::class.java.simpleName) 0.0f else 0.6f
     private var isShrinking = false
     private var isExpanding = false
     private var dyAmount = 0
@@ -148,6 +156,7 @@ class ToolbarBehavior : AppBarLayout.Behavior() {
         expandAppBar(dyConsumed, toExpand)
         translateIcons()
         scaleTitle()
+        fullHideAnim()
     }
 
     /**
@@ -191,6 +200,14 @@ class ToolbarBehavior : AppBarLayout.Behavior() {
         val scale = toolbar.layoutParams.height / toolbarOriginalHeight
         toolbarTitle.scaleX = if (scale < minScale) minScale else scale
         toolbarTitle.scaleY = toolbarTitle.scaleX
+    }
+
+    /**
+     * Full hide the app bar and the status bar, or expand/show, only for full collapse.
+     */
+    private fun fullHideAnim() {
+        val isFullCollapsed = toolbar.layoutParams.height == 0
+        systemUiHelper?.setDecorUiVisibility(if (isFullCollapsed) SYS_UI_HIDE else SYS_UI_VISIBLE)
     }
 
     // -----------------
