@@ -6,7 +6,6 @@ import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.getChild
 import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.extension.parseHtml.sources.addNotes
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.models.database.SourcePage
@@ -97,7 +96,8 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
     private fun String?.updateBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes(getTagList(DIV))
+                .addNotes(getTagList(DIV), NOTES)
+                .addNoteRedirect()
                 .correctUrlLink(BASTAMAG_BASE_URL)
                 .correctBastaMediaUrl(BASTAMAG_BASE_URL)
                 .setMainCssId(CLASS, MAIN_CONTAINER)

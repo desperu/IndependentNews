@@ -221,8 +221,9 @@ class ArticleListViewModel(
                     updateFilteredList(true, newArticleList)
                 }
 
-                // Update article list here (view model) and in adapter
-                getRecyclerAdapter()?.updateList(newArticleList.toMutableList())
+                // Update article list in adapter
+                val adapterList = newArticleList.toArticleItemVMList(articleListInterface)
+                getRecyclerAdapter()?.updateList(adapterList.toMutableList())
 
                 // Unfilter list (no visible for the user), and need for isFiltered value
                 // Synchronize the Fab Filter visibility and state

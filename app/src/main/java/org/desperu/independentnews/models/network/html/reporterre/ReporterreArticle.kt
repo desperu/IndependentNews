@@ -114,6 +114,8 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
+                .addNotes(getTagList(DIV), ENCART_NOTE) // Same val for note div and sources div ... take care
+                .addNoteRedirect()
                 .addDescription()
                 .addDonateCall()
                 .correctUrlLink(REPORTERRE_BASE_URL)

@@ -125,6 +125,8 @@ const val SOURCE_IMAGE_ROUTER = "sourceImageRouter"
 // To Convert Date
 internal val monthNumber = arrayOf("janvier", "février", "mars", "avril", "mai", "juin",
     "juillet", "août", "septembre", "octobre", "novembre", "décembre")
+
+// For image type
 internal val imageSuffix = listOf(".png", ".jpg", ".jpeg")
 
 // For compare result

@@ -112,6 +112,21 @@ const val DONATE_CALL =
             "<A HREF=\" https://reporterre.net/spip.php?page=don\" class=bouton_petitvert >Soutenir Reporterre</A>\n" +
             "</center></div>"
 
+// Note Redirect Script
+// To use for note redirect, need to be set in the original html code
+// to work as JavascriptInterface
+const val NOTE_REDIRECT =
+    "function scrollToElement(id) {\n" +
+            "    var elem = document.getElementById(id);\n" +
+            "    var y = 0;\n" +
+            "\n" +
+            "    while (elem != null) {\n" +
+            "        y += elem.offsetTop;\n" +
+            "        elem = elem.offsetParent;\n" +
+            "    }\n" +
+            "\n" +
+            "    AndroidFunction.webScrollTo(y);\n" + // Call Javascript interface function
+            "}"
 
 // --- Parse Css Style ---
 

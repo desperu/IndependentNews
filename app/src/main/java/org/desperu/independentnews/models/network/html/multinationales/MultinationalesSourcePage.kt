@@ -4,7 +4,6 @@ import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlSourcePage
 import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.extension.parseHtml.sources.addNotes
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.extension.parseHtml.toDocument
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
@@ -73,7 +72,8 @@ data class MultinationalesSourcePage(private val htmlPage: ResponseBody): BaseHt
     private fun String?.updateBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes(getTagList(DIV))
+                .addNotes(getTagList(DIV), NOTES)
+                .addNoteRedirect()
                 .correctUrlLink(MULTINATIONALES_BASE_URL)
                 .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
                 .setMainCssId(CLASS, CONTENT)

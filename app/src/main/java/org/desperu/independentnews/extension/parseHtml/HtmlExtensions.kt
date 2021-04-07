@@ -1,8 +1,10 @@
 package org.desperu.independentnews.extension.parseHtml
 
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import java.lang.StringBuilder
 
 /**
@@ -27,7 +29,36 @@ internal fun Document?.addViewPort(): Document? = // TODO seems to change nothin
     }
 
 /**
- * Correct all url links with their full url in the given html code.
+ * Add notes at the end of the article body.
+ *
+ * @param elements  the element list in which search notes.
+ * @param value     the value of the attr to match.
+ *
+ * @return the article body with notes at the end.
+ */
+internal fun Document?.addNotes(elements: Elements, value: String): Document? =
+    this?.let {
+        val notes = elements.getMatchAttr(CLASS, value).getOrNull(0)?.outerHtml()
+
+        notes?.let { select(BODY).append(it) }
+        this
+    }
+
+/**
+ * Add note redirect javascript to enable note redirection.
+ */
+internal fun Document?.addNoteRedirect(): Document? =
+    this?.let {
+        select(HEAD).getIndex(0)
+            ?.appendElement(SCRIPT)
+            ?.attr(TYPE, TEXT_JS)
+            ?.append(NOTE_REDIRECT)
+        this
+    }
+
+/**
+ * Correct all url links as needed, remove blank, note javascript redirect,
+ * remove on click or with their full url in the given html code.
  *
  * @param baseUrl the base url of the link.
  *
@@ -36,10 +67,11 @@ internal fun Document?.addViewPort(): Document? = // TODO seems to change nothin
 internal fun Document?.correctUrlLink(baseUrl: String): Document? =
     this?.let {
 
-        // TODO properly handle note redirect and pdf, preview and redirect
         select(a).forEach {
             when {
                 it.attr(HREF).isNullOrBlank() -> it.removeAttr(HREF) // Check there's no error
+                isNoteRedirect(it.attr(HREF)) ->
+                    it.attr(HREF, "javascript:webScrollTo('${it.attr(HREF).removePrefix("#")}')")
                 it.attr(ONCLICK).isNotBlank() -> it.removeAttr(ONCLICK)
                 else -> it.attrToFullUrl(HREF, baseUrl)
             }

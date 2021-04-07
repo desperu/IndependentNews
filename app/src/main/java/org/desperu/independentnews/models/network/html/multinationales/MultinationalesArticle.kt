@@ -4,7 +4,6 @@ import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
 import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.mToString
-import org.desperu.independentnews.extension.parseHtml.sources.addNotes
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.extension.parseHtml.toDocument
 import org.desperu.independentnews.models.database.Article
@@ -101,7 +100,8 @@ data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlA
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes(getTagList(DIV))
+                .addNotes(getTagList(DIV), NOTES)
+                .addNoteRedirect()
                 .correctUrlLink(MULTINATIONALES_BASE_URL) // TODO mail to error
                 .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
                 .setMainCssId(CLASS, CONTENT)

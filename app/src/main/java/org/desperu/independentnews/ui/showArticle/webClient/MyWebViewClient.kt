@@ -18,10 +18,8 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
-import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
-import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -47,8 +45,6 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
     // FOR DATA
     override lateinit var actualUrl: String
     internal var navigationCount = -1
-    private var isNoteRedirect = false
-    private var noteScrollPosition = -1
 
     init {
         configureKoinDependency()
@@ -128,15 +124,6 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
      * @return true if consumed, false otherwise.
      */
     private fun handleRedirect(url: String): Boolean = when {
-        isNoteRedirect(getPageNameFromUrl(url)) -> {
-            if (!isNoteRedirect) noteScrollPosition = sv.scrollY
-//            scrollPosition = -1
-            isNoteRedirect = !isNoteRedirect
-            val svBottom = sv.getChildAt(0).bottom - sv.measuredHeight
-            val y = if (isNoteRedirect) svBottom else noteScrollPosition
-            sv.smoothScrollTo(sv.scrollX, y, 1000)
-            true
-        }
         isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
         url.endsWith(".pdf") -> { activity.showInBrowser(url); true }
         isSourceArticleUrl(url) -> {
@@ -149,10 +136,8 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
             articleDesign.handleDesign(0)
             addPageToHistory()
             viewModel.article.set(null)
-            if (noteScrollPosition == -1) isNoteRedirect = false
             false
         }
-        // TODO handle if is blank !!!1
     }
 
     /**

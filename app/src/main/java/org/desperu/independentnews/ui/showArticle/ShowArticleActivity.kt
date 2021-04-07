@@ -29,6 +29,7 @@ import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.UPDATED_USER_ARTICLES
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
 import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
+import org.desperu.independentnews.ui.showArticle.webClient.JavaScriptInterface
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
 import org.desperu.independentnews.ui.sources.SourcesActivity
@@ -41,6 +42,7 @@ import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.io.ByteArrayOutputStream
+
 
 /**
  * The name of the arguments to received data for this Activity.
@@ -69,7 +71,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private lateinit var binding: ActivityShowArticleBinding
     private val router: ImageRouter = get { parametersOf(this) }
     override val viewModel: ArticleViewModel by viewModel { parametersOf(article, router) }
-    override val activity = this
+    override val activity = this // TODO wrong usage ???
     private var articleDesign: ArticleDesign? = null
     private var mWebViewClient: MyWebViewClient? = null
     private var mWebChromeClient: MyWebChromeClient? = null
@@ -87,10 +89,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
          * @param isExpanded        true if the app bar is expanded, false if is collapsed.
          * @param sharedElements    the shared elements to animate.
          */
-        fun routeFromActivity(activity: AppCompatActivity,
-                              article: Article,
-                              isExpanded: Boolean,
-                              vararg sharedElements: Pair<View, String>, // TODO try without list
+        fun routeFromActivity(
+            activity: AppCompatActivity,
+            article: Article,
+            isExpanded: Boolean,
+            vararg sharedElements: Pair<View, String>, // TODO try without list
         ) {
             val intent = Intent(activity, ShowArticleActivity::class.java)
                 .putExtra(ARTICLE, article)
@@ -186,6 +189,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             javaScriptCanOpenWindowsAutomatically = true
         }
 
+        val jsInterface = JavaScriptInterface(this)
+        web_view.addJavascriptInterface(jsInterface, "AndroidFunction")
+
         mWebViewClient = MyWebViewClient()
         web_view.webViewClient = mWebViewClient!!
 
@@ -239,14 +245,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             mWebViewClient?.webViewBack(viewModel.previousPage(navigationCount))
             Unit
         }
-//        article_loading_progress_bar.isShown -> {
-////            web_view.goBack()
-//            isWebViewDesigned = false
-//            updateDesign(actualUrl)
-//            handleNavigation(actualUrl)
-//            web_view.stopLoading()
-//        }
-//        isNoteRedirect -> { isNoteRedirect = false; scrollTo(noteScrollPosition) }
         else -> {
             sendResult()
             sendUpdatedUserArticles()
@@ -343,18 +341,19 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * parse url if it's a source url, otherwise display can't parse alert dialog.
      */
     private fun handleImplicitIntent() {
-        var url = String()
-        if (intent.action == Intent.ACTION_SEND) {
-            if (intent.type?.startsWith("text/") == true) {
-                url = intent.getStringExtra(Intent.EXTRA_TEXT).mToString()
-            }
-        } else if (intent.action == Intent.ACTION_VIEW) {
-            url = intent.data.toString()
+        val url = when {
+            intent.type == Intent.ACTION_SEND && intent.type?.startsWith("text/") == true ->
+                intent.getStringExtra(Intent.EXTRA_TEXT).mToString()
+
+            intent.type == Intent.ACTION_VIEW -> intent.dataString
+            else -> null
         }
 
-        if (isSourceArticleUrl(url))
-            viewModel.fetchArticle(url)
-        else
-            get<DialogHelper>().showDialog(CANT_PARSE)
+        url?.let {
+            if (isSourceArticleUrl(url))
+                viewModel.fetchArticle(url)
+            else
+                get<DialogHelper>().showDialog(CANT_PARSE)
+        }
     }
 }

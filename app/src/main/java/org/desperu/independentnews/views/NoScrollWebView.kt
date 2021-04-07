@@ -207,22 +207,6 @@ class NoScrollWebView @JvmOverloads constructor(
                 "margin-bottom:10px;" +
                 "}")
 
-    // To use for note redirect, need to be set in the original html code to work
-    // as JavascriptInterface
-//    private val scrollTo =
-//        ("function scrollToElement() {\n" +
-//                "    var elem = document.getElementById(id);\n" +
-//                "    var x = 0;\n" +
-//                "    var y = 0;\n" +
-//                "\n" +
-//                "    while (elem != null) {\n" +
-//                "        x += elem.offsetLeft;\n" +
-//                "        y += elem.offsetTop;\n" +
-//                "        elem = elem.offsetParent;\n" +
-//                "    }\n" +
-//                "    window.scrollTo(0, 0);\n" +
-//                "    AndroidFunction.showToast(id);\n" + // Call Javascript interface function
-//                "}")
 
     // --------------
     // DESIGN

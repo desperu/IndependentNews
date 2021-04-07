@@ -1,29 +1,12 @@
 package org.desperu.independentnews.extension.parseHtml.sources
 
 import org.desperu.independentnews.extension.parseHtml.attrToFullUrl
-import org.desperu.independentnews.extension.parseHtml.getMatchAttr
 import org.desperu.independentnews.extension.parseHtml.toFullUrl
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-
-/**
- * Add notes at the end of the article body.
- *
- * @param elements the element list in which search notes.
- *
- * @return the article body with notes at the end.
- */
-internal fun Document?.addNotes(elements: Elements): Document? = // Used in multinationales too
-    this?.let {
-        val notes = elements.getMatchAttr(CLASS, NOTES).getOrNull(0)?.outerHtml()
-
-        notes?.let { select(BODY).append(it) }
-        this
-    }
 
 /**
  * Correct all media url's with their full url's in the html code.

@@ -3,7 +3,6 @@ package org.desperu.independentnews.models.network.html.bastamag
 import okhttp3.ResponseBody
 import org.desperu.independentnews.base.html.BaseHtmlArticle
 import org.desperu.independentnews.extension.parseHtml.*
-import org.desperu.independentnews.extension.parseHtml.sources.addNotes
 import org.desperu.independentnews.extension.parseHtml.sources.correctBastaMediaUrl
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
@@ -99,7 +98,8 @@ data class BastamagArticle(private val htmlPage: ResponseBody): BaseHtmlArticle(
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes(getTagList(DIV))
+                .addNotes(getTagList(DIV), NOTES)
+                .addNoteRedirect()
                 .correctUrlLink(BASTAMAG_BASE_URL)
                 .correctBastaMediaUrl(BASTAMAG_BASE_URL)
                 .setMainCssId(CLASS, MAIN_CONTAINER)
