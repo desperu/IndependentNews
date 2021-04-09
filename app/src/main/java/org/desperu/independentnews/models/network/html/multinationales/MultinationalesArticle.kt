@@ -10,6 +10,7 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.stringToDate
+import org.jsoup.nodes.Document
 
 /**
  * Class which provides a model to parse multinationales article html page.
@@ -100,6 +101,7 @@ data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlA
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
+                .setChapoItemprop()
                 .addNotes(getTagList(DIV), NOTES)
                 .addNoteRedirect()
                 .correctUrlLink(MULTINATIONALES_BASE_URL) // TODO mail to error
@@ -108,5 +110,16 @@ data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlA
                 .mToString()
                 .forceHttps()
                 .escapeHashtag()
+        }
+
+    /**
+     * Set chapo div itemprop value to apply css style to the article description.
+     *
+     * @return the article with chapo itemprop set.
+     */
+    private fun Document?.setChapoItemprop(): Document? =
+        this?.let {
+            select(DIV).getContainsAttr(CLASS, CHAPO_MULTI)?.attr(ITEMPROP, DESCRIPTION)
+            this
         }
 }

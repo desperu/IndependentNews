@@ -4,6 +4,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.utils.SourcesUtils.getAdditionalCss
 import org.desperu.independentnews.utils.SourcesUtils.getBackgroundColorId
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.SourcesUtils.getLogoId
@@ -38,6 +39,28 @@ class SourceUtilsTest {
         val expected = "Source name not found from url : $url"
 
         val output = try { getSourceNameFromUrl(url) }
+        catch (e: IllegalArgumentException) { e.message }
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_sourceList_When_getAdditionalCss_Then_checkResult() {
+        val expectedList = listOf(BASTA_ADD_CSS, REPORTERRE_ADD_CSS, MULTI_ADD_CSS)
+
+        val outputList = SOURCE_LIST.map { getAdditionalCss(it.name) }
+
+        outputList.forEachIndexed { index, output ->
+            assertEquals(expectedList[index], output)
+        }
+    }
+
+    @Test
+    fun given_notSourceUrl_When_getAdditionalCss_Then_checkError() {
+        val sourceName = "Wrong Source"
+        val expected = "Source name not found : $sourceName"
+
+        val output = try { getAdditionalCss(sourceName) }
         catch (e: IllegalArgumentException) { e.message }
 
         assertEquals(expected, output)

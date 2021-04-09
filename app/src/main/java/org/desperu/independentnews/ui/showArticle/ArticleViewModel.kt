@@ -128,7 +128,9 @@ class ArticleViewModel(
      * @return the css of the current article.
      */
     internal suspend fun getCss(): Css = withContext(Dispatchers.IO) {
-        return@withContext cssRepository.getCssStyle(article.get()?.cssUrl ?: "")
+        val url = article.get()?.cssUrl ?: ""
+        val sourceName = article.get()?.source?.name
+        return@withContext cssRepository.getCssStyle(url, sourceName)
     }
 
     /**

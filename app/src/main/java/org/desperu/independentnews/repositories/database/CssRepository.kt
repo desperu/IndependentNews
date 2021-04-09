@@ -6,6 +6,7 @@ import org.desperu.independentnews.database.dao.CssDao
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
+import org.desperu.independentnews.utils.SourcesUtils.getAdditionalCss
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.koin.core.KoinComponent
 
@@ -36,12 +37,14 @@ interface CssRepository {
 
     /**
      * Returns the css for the given url, concatenate css style if there's multiples urls.
+     * Add additional css style to customize article style.
      *
-     * @param url the css url for which get the style.
+     * @param url           the css url for which get the style.
+     * @param sourceName    the source name of the css.
      *
      * @return the css style, concatenated if needed.
      */
-    suspend fun getCssStyle(url: String): Css
+    suspend fun getCssStyle(url: String, sourceName: String?): Css
 
     /**
      * Returns the list of all css with data from the database.
@@ -113,12 +116,14 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
 
     /**
      * Returns the css for the given url, concatenate css style if there's multiples urls.
+     * Add additional css style to customize article style.
      *
-     * @param url the css url for which get the style.
+     * @param url           the css url for which get the style.
+     * @param sourceName    the source name of the css.
      *
      * @return the css style, concatenated if needed.
      */
-    override suspend fun getCssStyle(url: String): Css = withContext(Dispatchers.IO) {
+    override suspend fun getCssStyle(url: String, sourceName: String?): Css = withContext(Dispatchers.IO) {
         var cssStyle = String()
 
         if (url.contains(",")) {
@@ -130,6 +135,8 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
             }
         } else
             cssStyle = cssDao.getCssForUrl(url)?.style.mToString()
+
+       sourceName?.let {  cssStyle += " ${getAdditionalCss(it)}" }
 
         return@withContext Css(url = url, style = cssStyle)
     }

@@ -78,6 +78,9 @@ class SourceDetailViewModel(
      * @return the css of the current article.
      */
     internal suspend fun getCss(): Css? = withContext(Dispatchers.IO) {
-        return@withContext primaryPage?.cssUrl?.let { cssRepository.getCssStyle(it) }
+        return@withContext primaryPage?.let {
+            val sourceName = sourceRepository.getSource(it.sourceId).name
+            cssRepository.getCssStyle(it.cssUrl, sourceName)
+        }
     }
 }

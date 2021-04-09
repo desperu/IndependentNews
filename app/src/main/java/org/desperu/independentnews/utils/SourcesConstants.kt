@@ -130,8 +130,15 @@ const val NOTE_REDIRECT =
 
 // --- Parse Css Style ---
 
+const val BASTA_ADD_CSS = // Used for Multinationales too
+    "div[itemprop=\"description\"]{font-weight:bold}" + // Description/chapo bold
+            "div.notes{font-size:1em;color:black}" + // Notes text style correction
+            ".notes > div p{font-size:normal;line-height:normal;font-weight:normal}" +
+            ".notes > h2{margin-bottom:10px;font-weight:bold}"
+const val REPORTERRE_ADD_CSS = "div.chapo{font-weight:bold}"
+const val MULTI_ADD_CSS = "$BASTA_ADD_CSS .content{text-align:left}" // Replacement below seems to bug
 const val MULTI_ORIG_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:center}"
-const val MULTI_NEW_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:left}"
+const val MULTI_NEW_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:left}" // Align text left
 
 
 // --- HTML PAGE TO PARSE ---

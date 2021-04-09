@@ -26,6 +26,20 @@ object SourcesUtils {
         else -> throw IllegalArgumentException("Source name not found from url : $url")
     }
 
+    /**
+     * Returns the additional css style for the given source name.
+     *
+     * @param sourceName the name of the source.
+     *
+     * @return the additional css style.
+     */
+    internal fun getAdditionalCss(sourceName: String) = when (sourceName) {
+        BASTAMAG -> BASTA_ADD_CSS
+        REPORTERRE -> REPORTERRE_ADD_CSS
+        MULTINATIONALES -> MULTI_ADD_CSS
+        else -> throw IllegalArgumentException("Source name not found : $sourceName")
+    }
+
     // -----------------
     // LOGO
     // -----------------
