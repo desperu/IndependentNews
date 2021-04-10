@@ -1,5 +1,6 @@
 package org.desperu.independentnews.helpers
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 
 /**
@@ -41,6 +42,14 @@ interface SystemUiHelper {
      * @param flags the screen orientation flags to set.
      */
     fun setOrientation(flags: Int)
+
+    /**
+     * Set the status bar color for the given activity.
+     * Works only for API >= LOLLIPOP.
+     *
+     * @param color the color to set.
+     */
+    fun setStatusBarColor(color: Int)
 }
 
 /**
@@ -95,5 +104,16 @@ class SystemUiHelperImpl(private val activity: AppCompatActivity) : SystemUiHelp
      */
     override fun setOrientation(flags: Int) {
         activity.requestedOrientation = flags
+    }
+
+    /**
+     * Set the status bar color for the given activity.
+     * Works only for API >= LOLLIPOP.
+     *
+     * @param color the color to set.
+     */
+    override fun setStatusBarColor(color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            activity.window.statusBarColor = color
     }
 }

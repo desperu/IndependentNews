@@ -37,7 +37,7 @@
     <color name="colorBlue">#127ABF</color>
     <color name="colorLightDark">#454545</color>
     <color name="colorLightBlue">#8C9EFF</color>
-    <color name="colorPassedWhite">#eeeeee</color>
+    <color name="colorPassedWhite">#F6F6F6</color>
     <color name="colorPurple">@color/design_default_color_primary</color>
     <color name="colorStar">#F0E00C</color>
 

@@ -5,18 +5,22 @@ import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.descendants
 import com.google.android.material.appbar.AppBarLayout
 import org.desperu.independentnews.R
+import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.extension.design.findSuitableScrollable
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
-import org.desperu.independentnews.utils.SYS_UI_HIDE
-import org.desperu.independentnews.utils.SYS_UI_VISIBLE
+import org.desperu.independentnews.utils.LOW_STATUS_BAR
+import org.desperu.independentnews.utils.SHOW_STATUS_BAR
 import org.koin.core.KoinComponent
 import java.lang.ref.WeakReference
+import kotlin.math.min
+import kotlin.properties.Delegates
 
 /**
  * This behavior animates the toolbar (frame appbar_container) and it's elements
@@ -31,6 +35,8 @@ class ToolbarBehavior : AppBarLayout.Behavior(), KoinComponent {
     private val iconList = mutableListOf<View>()
     private var toolbarOriginalHeight: Float = -1f
     private var toolbarCollapsedHeight: Float = -1f
+    private var originalColor by Delegates.notNull<Int>()
+    private var endColor by Delegates.notNull<Int>()
     private var viewsSet = false
     /** Used handle toolbar collapsed size, in show article, full collapse. */
     private val minScale
@@ -50,11 +56,13 @@ class ToolbarBehavior : AppBarLayout.Behavior(), KoinComponent {
 
     /**
      * Set the required view variables. Only accessed once because of the viewsSet variable.
+     * Set needed size and colors too.
      */
     private fun getViews(child: AppBarLayout) {
         if (viewsSet) return
         viewsSet = true
 
+        // For set views
         toolbar = child.findViewById(R.id.appbar_container)
         toolbarTitle = toolbar.findViewById(R.id.toolbar_title)
         toolbar.descendants.forEach {
@@ -62,8 +70,13 @@ class ToolbarBehavior : AppBarLayout.Behavior(), KoinComponent {
                 iconList.add(it)
         }
 
+        // For set sizes
         toolbarOriginalHeight = toolbar.layoutParams.height.toFloat()
         toolbarCollapsedHeight = toolbarOriginalHeight * minScale
+
+        // For set colors
+        originalColor = ResourcesCompat.getColor(child.resources, R.color.colorPrimary, null)
+        endColor = ResourcesCompat.getColor(child.resources, R.color.colorPassedWhite, null)
     }
 
     // -----------------
@@ -207,7 +220,13 @@ class ToolbarBehavior : AppBarLayout.Behavior(), KoinComponent {
      */
     private fun fullHideAnim() {
         val isFullCollapsed = toolbar.layoutParams.height == 0
-        systemUiHelper?.setDecorUiVisibility(if (isFullCollapsed) SYS_UI_HIDE else SYS_UI_VISIBLE)
+        val middleSize = toolbarOriginalHeight / 2
+        val ratio = min(1f, toolbar.layoutParams.height / middleSize)
+        val animatedColor = blendColors(originalColor, endColor, 1 - ratio)
+
+        toolbar.setBackgroundColor(animatedColor)
+        systemUiHelper?.setStatusBarColor(animatedColor)
+        systemUiHelper?.setDecorUiVisibility(if (isFullCollapsed) LOW_STATUS_BAR else SHOW_STATUS_BAR)
     }
 
     // -----------------

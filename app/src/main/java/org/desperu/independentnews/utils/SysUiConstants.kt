@@ -1,5 +1,6 @@
 package org.desperu.independentnews.utils
 
+import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.view.View
 import android.view.WindowManager
@@ -49,6 +50,14 @@ const val LOW_NAV_AND_STATUS_BAR = (
         View.SYSTEM_UI_FLAG_LOW_PROFILE // Alpha 0.5 the navigation bar
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
+// Low the status bar
+@SuppressLint("InlinedApi")
+@Suppress("Deprecation")
+const val LOW_STATUS_BAR = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR // Low status bar and set icon color to black
+
+// Show status bar
+@Suppress("Deprecation")
+const val SHOW_STATUS_BAR = View.STATUS_BAR_VISIBLE // Show status bar, white icon
 
 
 // System Orientation
