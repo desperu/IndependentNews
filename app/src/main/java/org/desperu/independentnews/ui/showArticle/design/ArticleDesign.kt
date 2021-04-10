@@ -177,6 +177,8 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 activity.window.setBackgroundDrawable(bgDrawable)
                 activity.window.sharedElementEnterTransition = getActivityTransition(true)
                 activity.window.sharedElementReturnTransition = getActivityTransition(false)
+                // To be sure that the coordinator and containers have a background color set.
+                activity.window.enterTransition.doOnEnd { activity.web_view.updateBackground("", "") }
             }
 
             else -> activity.web_view.updateBackground(body, sourceName) // Add from bottom anim ??

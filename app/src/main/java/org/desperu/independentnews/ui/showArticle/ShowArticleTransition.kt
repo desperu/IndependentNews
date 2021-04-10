@@ -80,7 +80,7 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
 
                 // Get views and prepare layout before animation
                 getViews(view)
-                prepareAnimation(animatorSet)
+                prepareAnimation()
 
                 // Set the animator, the change image transform
                 // and the top bottom animator.
@@ -120,16 +120,11 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
     // --------------
 
     /**
-     * Prepare the views for the animation, and handle after it.
-     *
-     * @param animatorSet the animator set used to synchronize animations.
+     * Prepare the views for the animation.
      */
-    private fun prepareAnimation(animatorSet: AnimatorSet) {
+    private fun prepareAnimation() {
         topContainer.setBackgroundColor(bgColor)
         webContainer.setBackgroundColor(bgColor)
-
-        // To be sure that the coordinator has a background color set.
-//        animatorSet.doOnEnd { webView.updateBackground() }
     }
 
     /**
