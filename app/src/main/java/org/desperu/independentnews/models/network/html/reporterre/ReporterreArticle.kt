@@ -33,9 +33,12 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     override fun getTitle(): String? = findData(H1, null, null, null)?.text()
 
     override fun getSection(): String? =
-        findData(A, CLASS, ARIANNE, 1)?.text()?.removeSuffix(" >")
+        findData(P, CLASS, GLIBELLE, null)?.text()
+            ?.split(" — ")?.getOrNull(0)
 
-    override fun getTheme(): String? = findData(A, CLASS, LIEN_THEME, null)?.text()
+    override fun getTheme(): String? =
+        findData(P, CLASS, GLIBELLE, null)?.text()
+            ?.split(" — ")?.run { getOrNull(lastIndex) }
 
     override fun getAuthor() : String? {
         val article = findData(DIV, STYLE, TEXT_ALIGN, null)
@@ -63,7 +66,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     override fun getDescription(): String? = findData(DIV, CLASS, CHAPO, null)?.text()
 
     override fun getImage(): List<String?> {
-        val element = findData(IMG, CLASS, IMAGE_SPIP, null)
+        val element = findData(IMG, CLASS, IMAGE_LOGO, null)
         return listOf(
             element?.attr(SRC).toFullUrl(REPORTERRE_BASE_URL),
             element?.attr(WIDTH),
@@ -114,14 +117,15 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     private fun String?.updateArticleBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes(getTagList(DIV), ENCART_NOTE) // Same val for note div and sources div ... take care
+                .addElement(getTagList(ASIDE), BOX_TEXT_COMPLEMENT)
+                .addElement(getTagList(ASIDE), BOX_AFTER_ARTICLE)
                 .addNoteRedirect()
                 .addDescription()
                 .addDonateCall()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
                 .setMainCssId(ID, CONTAINER)
-                .removeBottomLogo()
+//                .removeBottomLogo()
                 .mToString()
                 .escapeHashtag()
                 .forceHttps()

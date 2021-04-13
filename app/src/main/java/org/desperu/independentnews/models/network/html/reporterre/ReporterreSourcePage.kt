@@ -89,6 +89,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
     private fun String?.updateBody(): String? =
         this?.let {
             it.toDocument()
+                .addElement(getTagList(ASIDE), BOX_TEXT_COMPLEMENT)
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
                 .setMainCssId(ID, CONTAINER)

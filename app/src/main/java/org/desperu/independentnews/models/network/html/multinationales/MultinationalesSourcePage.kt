@@ -72,7 +72,7 @@ data class MultinationalesSourcePage(private val htmlPage: ResponseBody): BaseHt
     private fun String?.updateBody(): String? =
         this?.let {
             it.toDocument()
-                .addNotes(getTagList(DIV), NOTES)
+                .addElement(getTagList(DIV), NOTES) // Add Notes at the end
                 .addNoteRedirect()
                 .correctUrlLink(MULTINATIONALES_BASE_URL)
                 .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
