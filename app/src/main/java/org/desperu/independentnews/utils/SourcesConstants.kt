@@ -73,44 +73,46 @@ const val PHOTOS = "Photos"
 // Donate call for Reporterre
 val NO_DONATE_CALL = listOf("Brèves", "Hors les murs", "On en parle")
 const val DONATE_CALL =
-    "<div  id=\"appel-dons\"><p><strong>Puisque vous êtes ici…</strong></p>\n" +
-            "<p>... nous avons une faveur à vous demander. Le désastre environnemental" +
-            " s&#8217;accélère et s&#8217;aggrave, les citoyens sont de plus en plus concernés," +
-            " et pourtant, le sujet reste secondaire dans le paysage médiatique." +
-            " Ce bouleversement étant le problème fondamental de ce siècle, nous estimons" +
-            " qu&#8217;il doit occuper une place centrale dans le traitement de l&#8217;actualité." +
-            "<br class='autobr' />\n" +
+    "<div class=\"encart_gris\">\n" +
+            "<p>C&#8217;est maintenant que tout se joue…</p>\n" +
+            "<p>La communauté scientifique ne cesse d&#8217;alerter sur le désastre environnemental" +
+            " qui s&#8217;accélère et s&#8217;aggrave, la population est de plus en plus préoccupée," +
+            " et pourtant, le sujet reste secondaire dans le paysage médiatique. Ce bouleversement" +
+            " étant le problème fondamental de ce siècle, nous estimons qu&#8217;il doit occuper" +
+            " une place centrale dans le traitement de l&#8217;actualité.<br class='autobr' />\n" +
             "Contrairement à de nombreux autres médias, nous avons fait des choix drastiques :</p>\n" +
             "<ul class=\"spip\"><li> celui de l&#8217;indépendance éditoriale, ne laissant aucune" +
-            " prise aux influences de pouvoirs. Le journal n&#8217;appartient à aucun milliardaire" +
-            " ou entreprise<small class=\"fine d-inline\"> </small>; <i>Reporterre</i> est géré par" +
-            " une association à but non lucratif. Nous pensons que l&#8217;information ne doit pas" +
-            " être un levier d&#8217;influence de l&#8217;opinion au profit d&#8217;intérêts" +
-            " particuliers.</li><li> celui de l&#8217;ouverture : tous nos articles sont en libre" +
-            " consultation, sans aucune restriction. Nous considérons que l&#8217;accès à" +
-            " information est essentiel à la compréhension du monde et de ses enjeux, et ne doit" +
-            " pas être dépendant des ressources financières de chacun.</li><li> celui de la" +
-            " cohérence : <i>Reporterre</i> traite des bouleversements environnementaux," +
-            " causés entre autres par la surconsommation. C&#8217;est pourquoi le journal" +
-            " n&#8217;affiche strictement aucune publicité. De même, sans publicité, nous ne" +
-            " nous soucions pas de l&#8217;opinion que pourrait avoir un annonceur de la teneur" +
-            " des informations publiées.</li></ul>\n" +
-            "<p>Pour ces raisons, <i>Reporterre</i> est un modèle rare dans le paysage médiatique." +
-            " Le journal est composé d&#8217;une équipe de journalistes professionnels, qui" +
-            " produisent quotidiennement des articles, enquêtes et reportages sur les enjeux" +
-            " environnementaux et sociaux. Tout cela, nous le faisons car nous pensons qu’une" +
-            " information fiable, indépendante et transparente sur ces enjeux est une partie" +
+            " prise aux influences de pouvoirs. Le journal n&#8217;appartient pas à un milliardaire" +
+            " ou à une entreprise<small class=\"fine d-inline\"> </small>; <i>Reporterre</i>" +
+            " est géré par une association d&#8217;intérêt général, à but non lucratif. Nous" +
+            " pensons qu&#8217;un média doit informer, et non être un outil d&#8217;influence de" +
+            " l&#8217;opinion au profit d&#8217;intérêts particuliers.</li><li> celui de" +
+            " l&#8217;ouverture : tous nos articles sont en libre accès, sans aucune restriction." +
+            " Nous considérons que s&#8217;informer est un droit essentiel, nécessaire à la" +
+            " compréhension du monde et de ses enjeux. Ce droit ne doit pas être conditionné par" +
+            " les ressources financières de chacun.</li><li> celui de la cohérence : " +
+            "<i>Reporterre</i> traite des bouleversements environnementaux, causés entre autres" +
+            " par la surconsommation, elle-même encouragée par la publicité. Le journal" +
+            " n&#8217;affiche donc strictement aucune publicité. Cela garantit l&#8217;absence" +
+            " de lien financier avec des entreprises, et renforce d&#8217;autant plus" +
+            " l&#8217;indépendance de la rédaction.</li></ul>\n" +
+            "<p>En résumé, <i>Reporterre</i> est un exemple rare dans le paysage médiatique : " +
+            "totalement indépendant, à but non lucratif, en accès libre, et sans publicité. " +
+            "<br class='autobr' />\n" +
+            "Le journal emploie une équipe de journalistes professionnels, qui produisent chaque" +
+            " jour des articles, enquêtes et reportages sur les enjeux environnementaux et" +
+            " sociaux. Nous faisons cela car nous pensons que la publication d&#8217;informations" +
+            " fiables, transparentes et accessibles à tous sur ces questions est une partie" +
             " de la solution.</p>\n" +
             "<p>Vous comprenez donc pourquoi nous sollicitons votre soutien. Des dizaines de" +
-            " milliers de personnes viennent chaque jour s&#8217;informer sur <i>Reporterre</i>," +
-            " et de plus en plus de lecteurs comme vous soutiennent le journal, mais nos revenus" +
-            " ne sont toutefois pas assurés. Si toutes les personnes qui lisent et apprécient nos" +
-            " articles contribuent financièrement, le journal sera renforcé. <strong>Même pour 1 €," +
-            " vous pouvez soutenir <i>Reporterre</i> &mdash; et cela ne prend qu’une minute." +
-            " Merci.</strong></p>\n" +
-            "<center>\n" +
-            "<A HREF=\" https://reporterre.net/spip.php?page=don\" class=bouton_petitvert >Soutenir Reporterre</A>\n" +
-            "</center></div>"
+            " milliers de personnes viennent chaque jour s&#8217;informer sur <i>Reporterre</i>, " +
+            "et de plus en plus de lecteurs comme vous soutiennent le journal. Les dons de nos" +
+            " lecteurs représentent plus de 98% de nos ressources. Si toutes les personnes qui" +
+            " lisent et apprécient nos articles contribuent financièrement, le journal sera " +
+            "renforcé. <strong>Même pour 1 €, vous pouvez soutenir <i>Reporterre</i> &mdash; " +
+            "et cela ne prend qu’une minute. Merci.</strong></p>\n" +
+            "<p><A HREF=\"/dons\" class=\"bouton_petitvert bouton_noir\">Soutenir Reporterre</A></p>\n" +
+            "</div>"
 
 // Note Redirect Script
 // To use for note redirect, need to be set in the original html code

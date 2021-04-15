@@ -164,13 +164,10 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param bgDrawable    the background drawable used for the transition.
      */
     internal fun setActivityTransition(article: Article?, bgDrawable: Drawable?) {
-        val body = article?.article ?: ""
-        val sourceName = article?.source?.name ?: ""
-
         when {
             article?.id == 0L -> {
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                activity.web_view.updateBackground(body, sourceName)
+                activity.web_view.updateBackground()
             }
 
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bgDrawable != null -> {
@@ -178,10 +175,10 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 activity.window.sharedElementEnterTransition = getActivityTransition(true)
                 activity.window.sharedElementReturnTransition = getActivityTransition(false)
                 // To be sure that the coordinator and containers have a background color set.
-                activity.window.enterTransition.doOnEnd { activity.web_view.updateBackground("", "") }
+                activity.window.enterTransition.doOnEnd { activity.web_view.updateBackground() }
             }
 
-            else -> activity.web_view.updateBackground(body, sourceName) // Add from bottom anim ??
+            else -> activity.web_view.updateBackground() // Add from bottom anim ??
         }
     }
 

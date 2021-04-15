@@ -112,9 +112,10 @@ object FetchHelper : KoinComponent {
             val cssUrls = deConcatenateStringToMutableList(css.url)
 
             cssUrls.forEach { cssUrl ->
-                val cssId = cssRepository.getCssForUrl(cssUrl)?.id ?: 0L
+                val isInDb = cssRepository.getCssForUrl(cssUrl)?.id != 0L
+                val isInList = toFetchList.map { it.url }.contains(cssUrl)
 
-                if (!toFetchList.map { it.url }.contains(cssUrl) && cssId == 0L) {
+                if (!isInDb && !isInList) {
                     val fetchedCss = Css(url = cssUrl, style = block(cssUrl))
                     toFetchList.add(fetchedCss)
                 }

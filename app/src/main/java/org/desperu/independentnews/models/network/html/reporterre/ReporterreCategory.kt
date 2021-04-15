@@ -27,9 +27,9 @@ data class ReporterreCategory(private val htmlPage: ResponseBody): BaseHtmlCateg
         val topStory = Article(source = Source(name = REPORTERRE))
         topStory.url =
             getTagList(A)
-                .getMatchAttr(CLASS, BLOC_ARTICLE)
-                .attr(HREF).
-                toFullUrl(REPORTERRE_BASE_URL)
+                .getMatchAttr(CLASS, LIEN_ARTICLE)
+                .attr(HREF)
+                .toFullUrl(REPORTERRE_BASE_URL)
         articleList.add(topStory)
 
         // Get all articles.
@@ -38,7 +38,7 @@ data class ReporterreCategory(private val htmlPage: ResponseBody): BaseHtmlCateg
 
             article.url = element.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
-            element.select(SPAN).getMatchAttr(CLASS, PETIT_VERT).forEach {
+            element.select(P).getMatchAttr(CLASS, ARTICLE_DATE).forEach {
                 literalDateToMillis(it.ownText())?.let { millis -> article.publishedDate = millis }
             }
 

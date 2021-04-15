@@ -51,7 +51,9 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
     private lateinit var topContainer: View
     private lateinit var webContainer: FrameLayout
     private lateinit var webView: NoScrollWebView
-    private val bgColor get() = resources.getColor(android.R.color.white)
+    private val bgColor = resources.getColor(android.R.color.white)
+    private val transparent = resources.getColor(R.color.colorArticleTransition)
+
 
     // --------------
     // METHODS OVERRIDE
@@ -145,7 +147,7 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
 
                 animateView(topContainer, progress) // Anim top container
                 animateView(webContainer, progress) // Anim bottom container
-                backgroundAnim(webView, progress) // Anim the background of the views.
+                backgroundAnim(progress) // Anim the background of the views.
             }
         )
 
@@ -191,21 +193,17 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
     /**
      * Animate the background color of the views, coordinator, top and bottom container.
      *
-     * @param webView   the web view used to determinate the source color.
      * @param progress  the progression value used to animate the view.
      */
-    private fun backgroundAnim(webView: NoScrollWebView, progress: Float) {
-        val transparent = resources.getColor(R.color.colorArticleTransition)
-        val sourceColor = webView.getCurrentSourceColor()
-
+    private fun backgroundAnim(progress: Float) {
         // Root view, the coordinator, background color
         if (progress >= 0.9f) {
-            val coordinatorColor = blendColors(transparent, sourceColor, (progress - 0.9f) * 10)
+            val coordinatorColor = blendColors(transparent, bgColor, (progress - 0.9f) * 10)
             coordinator.setBackgroundColor(coordinatorColor)
         }
 
         // Containers background color
-        val containerColor = blendColors(bgColor, sourceColor, progress)
+        val containerColor = blendColors(bgColor, bgColor, progress)
         topContainer.setBackgroundColor(containerColor)
         webContainer.setBackgroundColor(containerColor)
     }

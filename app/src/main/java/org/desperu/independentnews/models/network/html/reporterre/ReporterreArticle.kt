@@ -125,7 +125,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
                 .setMainCssId(ID, CONTAINER)
-//                .removeBottomLogo()
+                .removeComment()
                 .mToString()
                 .escapeHashtag()
                 .forceHttps()
@@ -161,13 +161,13 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
         }
 
     /**
-     * Remove bottom logo.
+     * Remove comment section.
      *
-     * @return the article without bottom logo.
+     * @return the article without comment section.
      */
-    private fun Document?.removeBottomLogo(): Document? =
+    private fun Document?.removeComment(): Document? =
         this?.let {
-            select(DIV).getMatchAttr(CLASS, NO_PRINT).remove()
+            select(DIV).getMatchAttr(CLASS, NOTE_NO_PRINT).remove()
             this
         }
 }
