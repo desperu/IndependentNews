@@ -10,6 +10,7 @@ import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
 import org.desperu.independentnews.utils.SourcesUtils.getLogoId
 import org.desperu.independentnews.utils.SourcesUtils.getMiniLogoId
 import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.lang.IllegalArgumentException
@@ -62,6 +63,43 @@ class SourceUtilsTest {
 
         val output = try { getAdditionalCss(sourceName) }
         catch (e: IllegalArgumentException) { e.message }
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_sourceList_When_getSourceTextZoom_Then_checkResult() {
+        val expectedList = listOf(
+            ALTER_MEDIA_TEXT_ZOOM,  // Bastamag source name
+            0,                      // Reporterre source name
+            ALTER_MEDIA_TEXT_ZOOM,  // Multinationales source name
+            ALTER_MEDIA_TEXT_ZOOM,  // Bastamag url
+            0,                      // Reporterre url
+            ALTER_MEDIA_TEXT_ZOOM,  // Multinationales url
+            0,                      // Random url
+        )
+
+        val mapTest = mutableMapOf<String, String>()
+        SOURCE_LIST.forEachIndexed { index, source -> mapTest["<html>$index"] = source.name }
+        mapTest["https://www.bastamag.net/Jeux-olympiques-2024"] = ""
+        mapTest["https://reporterre.net/Le-mur-anti-migrants-aux-Etats-Unis-est-un-fleau-pour-la-vie-sauvage"] = ""
+        mapTest["https://multinationales.org/La-demesure-des-remunerations-patronales-et-ce-qu-il-y-a-derriere"] = ""
+        mapTest["https://www.delachauxetniestle.com/livre/sauvons-la-biodiversite"] = ""
+
+        val outputList = mapTest.map { getSourceTextZoom(it.key, it.value) }
+
+        outputList.forEachIndexed { index, output ->
+            assertEquals(expectedList[index], output)
+        }
+    }
+
+    @Test
+    fun given_notSourceUrl_When_getSourceTextZoom_Then_checkResult() {
+        val emptyUrl = ""
+        val sourceName = "Wrong Source"
+        val expected = 0
+
+        val output = getSourceTextZoom(emptyUrl, sourceName)
 
         assertEquals(expected, output)
     }

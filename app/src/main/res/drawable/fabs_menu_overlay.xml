@@ -8,7 +8,7 @@
         android:type="radial"
         android:gradientRadius="700dp"
         android:startColor="@color/colorSDOverlayStart"
-        android:centerColor="@color/subtitle_color"
+        android:centerColor="@color/colorSDOverlayCenter"
         android:endColor="@android:color/transparent" />
 
 </shape>

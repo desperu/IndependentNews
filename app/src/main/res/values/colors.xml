@@ -50,7 +50,7 @@
     <color name="colorRead2">#8018BDD6</color>
     <color name="colorRead3">#806AC5F6</color>
     <color name="colorSDOverlayStart">#C7E8ED</color>
-    <color name="colorSDOverlayCenter">#BDE6EC</color> <!-- not used -->
+    <color name="colorSDOverlayCenter">#BDE6EC</color>
     <color name="colorArticleTransition">#0051D1E2</color>
 
     <!-- Sources Background color -->

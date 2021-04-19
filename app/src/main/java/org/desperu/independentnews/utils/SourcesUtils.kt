@@ -4,6 +4,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.utils.Utils.getDomainFromUrl
+import org.desperu.independentnews.utils.Utils.isHtmlData
 
 /**
  * SourceUtils object witch provide utils functions for sources.
@@ -38,6 +39,21 @@ object SourcesUtils {
         REPORTERRE -> REPORTERRE_ADD_CSS
         MULTINATIONALES -> MULTI_ADD_CSS
         else -> throw IllegalArgumentException("Source name not found : $sourceName")
+    }
+
+    /**
+     * Returns the additional text zoom for the given couple of url and source name.
+     *
+     * @param url           the url of the page.
+     * @param sourceName    the name of the source.
+     *
+     * @return the additional source text zoom.
+     */
+    internal fun getSourceTextZoom(url: String, sourceName: String) = when {
+        isHtmlData(url) && sourceName in listOf(BASTAMAG, MULTINATIONALES) -> ALTER_MEDIA_TEXT_ZOOM
+        url.contains(BASTAMAG_BASE_URL) -> ALTER_MEDIA_TEXT_ZOOM
+        url.contains(MULTINATIONALES_BASE_URL) -> ALTER_MEDIA_TEXT_ZOOM
+        else -> 0
     }
 
     // -----------------

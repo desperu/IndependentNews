@@ -22,10 +22,12 @@ import org.desperu.independentnews.extension.design.*
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabIcon
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabId
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabLabel
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
 import org.desperu.independentnews.views.MySpeedDialView
 import org.desperu.independentnews.views.MySpeedDialView.OnAnimationEndListener
 import org.desperu.independentnews.views.MySpeedDialView.OnAnimationStartListener
@@ -50,6 +52,7 @@ class FabsMenu : KoinComponent{
     // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface = get()
     private val articleDesign: ArticleDesignInterface = get()
+    private val myWebViewClientInterface: MyWebViewClientInterface = get()
     private val prefs: SharedPrefService = get()
     private val activity = showArticleInterface.activity
 
@@ -195,8 +198,12 @@ class FabsMenu : KoinComponent{
             // Update text size
             wVSettings.textZoom = newTextZoom
 
+            // Calculus the real text zoom, take care of specific source text zoom.
+            val actualUrl = myWebViewClientInterface.actualUrl
+            val sourceName = activity.viewModel.article.get()?.source?.name ?: ""
+            val realTextZoom = newTextZoom - getSourceTextZoom(actualUrl, sourceName)
             // Store the new value in the preferences.
-            prefs.getPrefs().edit().putInt(TEXT_SIZE, wVSettings.textZoom).apply()
+            prefs.getPrefs().edit().putInt(TEXT_SIZE, realTextZoom).apply()
         }
     }
 

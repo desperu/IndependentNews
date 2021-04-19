@@ -117,6 +117,7 @@ const val DATABASE_VERSION = 1
 // --- FOR KOIN ---
 
 // For Qualifier Name
+// TODO try same for ArticleListInterface !!!
 const val SOURCE_IMAGE_ROUTER = "sourceImageRouter"
 
 

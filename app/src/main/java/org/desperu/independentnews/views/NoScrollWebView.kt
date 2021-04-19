@@ -27,6 +27,7 @@ import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.koin.core.KoinComponent
@@ -220,13 +221,7 @@ class NoScrollWebView @JvmOverloads constructor(
             textZoom = prefs.getPrefs().getInt(TEXT_SIZE, TEXT_SIZE_DEFAULT)
 
             // Needed to correct Bastamag and Multinationales articles text size.
-            if (isHtmlData(actualUrl) && sourceName == BASTAMAG
-                || isHtmlData(actualUrl) && sourceName == MULTINATIONALES
-                || actualUrl.contains(BASTAMAG_BASE_URL)
-                || actualUrl.contains(MULTINATIONALES_BASE_URL)
-            )
-
-                textZoom += 20
+            textZoom += getSourceTextZoom(actualUrl, sourceName)
 
             textAlignment = TEXT_ALIGNMENT_VIEW_START
         }

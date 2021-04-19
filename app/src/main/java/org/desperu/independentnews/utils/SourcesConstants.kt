@@ -60,6 +60,13 @@ val MULTINATIONALES_SOURCE = Source(
 )
 
 
+// --- FOR WEB VIEW ---
+
+// For text zoom
+// Alter media (Bastamag and Multinationales)
+const val ALTER_MEDIA_TEXT_ZOOM = 30
+
+
 // --- PARSE HTML ---
 
 // Source button link (to correct)
