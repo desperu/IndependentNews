@@ -15,6 +15,7 @@ import org.desperu.independentnews.utils.Utils.intStringToDate
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isInternetAvailable
+import org.desperu.independentnews.utils.Utils.isMailTo
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
@@ -401,6 +402,38 @@ class UtilsTest {
 
         urlList.forEach {
             val output = isSourceArticleUrl(it)
+            assertFalse(output)
+        }
+    }
+
+    @Test
+    fun given_mailToUri_When_isMailTo_Then_checkTrue() {
+        val list = listOf(
+            "mailto:dev@independent-news.org",
+            "mailto:administrator@google.com"
+        )
+
+        list.forEach {
+            val output = isMailTo(it)
+
+            assertTrue(output)
+        }
+    }
+
+    @Test
+    fun given_wrongMailToUri_When_isMailTo_Then_checkFalse() {
+        val list = listOf(
+            "mail:dev@independent-news.org",
+            "to:administrator@google.com",
+            "dev@independent-news.org",
+            "mailto:",
+            "mailtodev@independent-news.org",
+            "mailto:administratorgoogle.com"
+        )
+
+        list.forEach {
+            val output = isMailTo(it)
+
             assertFalse(output)
         }
     }

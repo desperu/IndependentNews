@@ -5,6 +5,7 @@ import android.os.Build
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.extension.sendMailTo
 import org.desperu.independentnews.extension.showInBrowser
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ImageRouter
@@ -20,6 +22,7 @@ import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
+import org.desperu.independentnews.utils.Utils.isMailTo
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.core.KoinComponent
 import org.koin.core.get
@@ -132,6 +135,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
             viewModel.fetchArticle(url)
             true
         }
+        isMailTo(url) -> { activity.sendMailTo(url.toUri()); true }
         else -> {
             articleDesign.handleDesign(0)
             addPageToHistory()

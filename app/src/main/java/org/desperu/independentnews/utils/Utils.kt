@@ -240,6 +240,15 @@ internal object Utils {
         }
     }
 
+    /**
+     * Returns true if the the given url is a mail to redirect.
+     * @param url the given url to compare.
+     * @return true if the the given url is a mail to redirect.
+     */
+    internal fun isMailTo(url: String): Boolean =
+        url.startsWith("mailto:")
+                && url.split(":").getOrNull(1)?.contains("@") ?: false
+
     // -----------------
     // WEB CONNECTION
     // -----------------

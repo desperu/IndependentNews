@@ -7,17 +7,6 @@ import android.os.Build
 import org.desperu.independentnews.R
 
 /**
- * Show the given url in the web browser.
- *
- * @param url the url to open in the browser.
- */
-internal fun Activity.showInBrowser(url: String) {
-    val browserIntent = Intent(Intent.ACTION_VIEW)
-    browserIntent.setDataAndType(Uri.parse(url), "text/html")
-    this.startActivity(browserIntent)
-}
-
-/**
  * Start activity, for the given class name.
  *
  * @param kClass the java class name.
@@ -33,6 +22,28 @@ internal fun <T: Activity> Activity.showActivity(kClass: Class<T>) =
  */
 internal fun <T: Activity> Activity.showActivityForResult(kClass: Class<T>, requestCode: Int) =
     startActivityForResult(Intent(this, kClass), requestCode)
+
+/**
+ * Show the given url in the web browser.
+ *
+ * @param url the url to open in the browser.
+ */
+internal fun Activity.showInBrowser(url: String) {
+    val browserIntent = Intent(Intent.ACTION_VIEW)
+    browserIntent.setDataAndType(Uri.parse(url), "text/html")
+    this.startActivity(browserIntent)
+}
+
+/**
+ * Open default mail activity to send a mail to receiver in the given uri.
+ *
+ * @param uri the uri for which open a mail to screen.
+ */
+internal fun Activity.sendMailTo(uri: Uri) {
+    val mailIntent = Intent(Intent.ACTION_SEND)
+    mailIntent.setDataAndNormalize(uri)
+    this.startActivity(mailIntent)
+}
 
 /**
  * Share an article with it's title and url, to other applications.
