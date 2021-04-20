@@ -212,7 +212,7 @@ internal object Utils {
      */
     internal fun isImageUrl(url: String): Boolean {
         // Specific here, it's html page...
-        if (url.contains("wikimedia.org")) return false
+        if (url.contains("wikimedia.org") || url.contains("wikipedia.org")) return false
         val pageName = getPageNameFromUrl(url)
 
         imageSuffix.forEach {

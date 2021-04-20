@@ -7,19 +7,19 @@ import android.net.ParseException
 import io.mockk.every
 import io.mockk.mockk
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
-import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getDomainFromUrl
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
+import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
-import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
+import org.desperu.independentnews.utils.Utils.millisToStartOfDay
 import org.desperu.independentnews.utils.Utils.millisToString
 import org.desperu.independentnews.utils.Utils.storeDelayMillis
 import org.desperu.independentnews.utils.Utils.stringToDate
@@ -350,6 +350,7 @@ class UtilsTest {
     fun given_wrongImageUrl_When_isImageUrl_Then_checkFalse() {
         val imageUrlList = listOf(
             "https://commons.wikimedia.org/wiki/File:Police_Municipale_Toulouse-3301.jpg",
+            "https://fr.wikipedia.org/wiki/Fichier:Barricade_rue_de_la_Bonne_Montmartre_Commune_Paris_1871.jpg",
             "https://www.bastamag.net/local/adapt-img/740/10x/IMG/png/charts-1-01.pnG",
             "https://reporterre.net/local/cache-gd2/20/aaaa97eaa9b5060e50383a02af2aa7jpg?1605601443",
             "https://www.bastamag.net/local/adapt-img/740/10x/IMG/arton8033.jipeg"
