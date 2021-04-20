@@ -116,7 +116,7 @@ fun ImageView.setImage(imageData: Any?) {
  * @return the Glide Request Listener for the Glide request.
  */
 private fun getRequestListener(imageView: ImageView, isFragImage: Boolean): RequestListener<Drawable> {
-    val loadingBar = (imageView.parent as View).findViewById<ContentLoadingProgressBar>(R.id.progress_loading_bar)
+    val loadingBar = (imageView.parent as View).findViewById<ContentLoadingProgressBar>(R.id.content_loading_bar)
 
     // TODO to put in another class / file
     return object : RequestListener<Drawable> {

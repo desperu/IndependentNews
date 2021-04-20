@@ -23,13 +23,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.parseHtml.mToString
+import org.desperu.independentnews.helpers.AsyncHelper.waitCondition
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.service.SharedPrefService
@@ -67,7 +65,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     // FOR DESIGN
     private val sv: NestedScrollView by bindView(activity, R.id.article_scroll_view)
     private val scrollBar: ProgressBar by bindView(activity, R.id.article_scroll_progress_bar)
-    private val loadingAnimBar: ContentLoadingProgressBar by bindView(activity, R.id.article_loading_progress_bar)
+    private val loadingAnimBar: ContentLoadingProgressBar by bindView(activity, R.id.content_loading_bar)
     private val loadingProgressBar: ProgressBar by bindView(activity, R.id.appbar_loading_progress_bar)
 
     // FOR DATA
@@ -148,7 +146,9 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     internal fun scheduleStartPostponedTransition(sharedElement: View) {
         sharedElement.doOnPreDraw {
             // Used here to be sure that the web content is full loaded.
-            waitHasScroll { activity.supportStartPostponedEnterTransition() }
+            waitCondition(activity.lifecycleScope, 2000L, { hasScroll }) {
+                activity.supportStartPostponedEnterTransition()
+            }
         }
     }
 
@@ -213,7 +213,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     private fun showScrollView() {
         // To prepare the view before the animation
         if (sv.alpha != 0f) sv.alpha = 0f
-        sv.visibility = View.VISIBLE
+//        sv.visibility = View.VISIBLE
 
         val anim = getValueAnimator(
             true,
@@ -223,7 +223,12 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         )
 
         // Seems to not delay after image download...
-        activity.article_image.doOnPreDraw { waitHasScroll { anim.start() } }
+        activity.article_image.doOnPreDraw {
+            waitCondition(activity.lifecycleScope, 2000L, { hasScroll }) {
+                loadingAnimBar.hide()
+                anim.start()
+            }
+        }
     }
 
     /**
@@ -315,22 +320,22 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             progress == 0 -> {
                 isLayoutDesigned = false
                 hasScroll = false
-                sv.visibility = View.INVISIBLE
+//                sv.visibility = View.INVISIBLE
                 sv.alpha = 0f
 
                 scrollBar.apply { visibility = View.INVISIBLE; this.progress = 0 }
-                loadingAnimBar.apply { visibility = View.VISIBLE; show() }
+                loadingAnimBar.show()
                 loadingProgressBar.visibility = View.VISIBLE
             }
             progress in 80..100 -> {
                 if (!isLayoutDesigned && !isFirstPage) {
                     isLayoutDesigned = true
                     if (!isHtmlData(actualUrl.mToString())) scrollTo(null)
-                    loadingAnimBar.hide()
                     showScrollView()
                 }
             }
             progress > 100 -> {
+                isLayoutDesigned = true
                 scrollBar.visibility = View.VISIBLE
                 loadingProgressBar.visibility = View.INVISIBLE
                 isFirstPage = false
@@ -425,23 +430,5 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             dialogHelper.showDialog(REMOVE_PAUSED)
         else
             activity.viewModel.updatePaused(0f)
-    }
-
-    // --------------
-    // UTILS
-    // --------------
-
-    /**
-     * Wait has scroll before invoke the given block.
-     *
-     * @param block the given block to invoke after has scroll.
-     */
-    private fun waitHasScroll(block: () -> Unit) {
-        val waitHasScroll = activity.lifecycleScope.async(Dispatchers.Main) {
-            do { delay(50) } while (!hasScroll)
-            block()
-        }
-
-        waitHasScroll[waitHasScroll.key]
     }
 }

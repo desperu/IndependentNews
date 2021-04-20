@@ -1,6 +1,7 @@
 package org.desperu.independentnews.utils
 
 import org.desperu.independentnews.models.database.Source
+import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
 
 // --- FOR RETROFIT REQUEST ---
 
@@ -134,7 +135,14 @@ const val NOTE_REDIRECT =
             "        elem = elem.offsetParent;\n" +
             "    }\n" +
             "\n" +
-            "    AndroidFunction.webScrollTo(y);\n" + // Call Javascript interface function
+            "    $JS_INTERFACE_NAME.webScrollTo(y);\n" + // Call Javascript interface function
+            "}"
+
+// Page listener used to received callback event from web view,
+// when the page is loaded and show.
+const val PAGE_LISTENER =
+    "function onPageShow() {\n" +
+            "    $JS_INTERFACE_NAME.onPageShow();\n" + // Call Javascript interface function
             "}"
 
 // --- Parse Css Style ---
@@ -142,7 +150,7 @@ const val NOTE_REDIRECT =
 const val BASTA_ADD_CSS = // Used for Multinationales too
     "div[itemprop=\"description\"]{font-weight:bold}" + // Description/chapo bold
             "div.notes{font-size:1em;color:black}" + // Notes text style correction
-            ".notes > div p{font-size:normal;line-height:normal;font-weight:normal}" +
+            ".notes > div p{margin-bottom:10px;font-size:normal;line-height:normal;font-weight:normal}" +
             ".notes > h2{margin-bottom:10px;font-weight:bold}"
 const val REPORTERRE_ADD_CSS = "div.chapo{font-weight:bold}"
 const val MULTI_ADD_CSS = "$BASTA_ADD_CSS .content{text-align:left}" // Replacement below seems to bug

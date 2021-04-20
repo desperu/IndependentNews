@@ -102,8 +102,8 @@ class ViewPagerFragment: BaseFragment(), KoinComponent {
         if (tabLayout?.isShown == false) {
             tabLayout?.setupWithViewPager(null)
             tabsHandler?.pageChangeListener?.let { viewPager?.removeOnPageChangeListener(it) } // Useless, always removed with viewPager = null
-            tabsHandler = null
         }
+        tabsHandler = null
         viewPager = null
         super.onDestroyView()
     }

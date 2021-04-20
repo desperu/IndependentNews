@@ -17,6 +17,7 @@ import com.google.android.material.navigation.NavigationView.OnNavigationItemSel
 import icepick.State
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.content_loading_bar.*
 import kotlinx.android.synthetic.main.layout_filter_motion.*
 import kotlinx.android.synthetic.main.nav_drawer.*
 import kotlinx.coroutines.Dispatchers
@@ -163,6 +164,11 @@ class MainActivity: BaseActivity(mainModule), MainInterface, OnNavigationItemSel
     // -----------------
     // METHODS OVERRIDE
     // -----------------
+
+    override fun onStart() {
+        super.onStart()
+        content_loading_bar.hide() // Needed when back from show article
+    }
 
     override fun onResume() {
         super.onResume()

@@ -14,13 +14,8 @@
         android:layout_height="match_parent"
         android:background="@android:color/transparent">
 
-        <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/progress_loading_bar"
-            style="?android:attr/progressBarStyleLargeInverse"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:theme="@style/RoundLoadingProgressBarStyle" />
+        <include layout="@layout/content_loading_bar"
+            android:visibility="visible"/>
 
         <org.desperu.independentnews.views.GestureImageView
             android:id="@+id/show_image_view"

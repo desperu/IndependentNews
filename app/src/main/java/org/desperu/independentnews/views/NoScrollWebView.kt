@@ -12,12 +12,15 @@ import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.ScrollView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setMargins
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.findView
+import org.desperu.independentnews.helpers.AsyncHelper.waitCondition
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.models.database.Source
@@ -56,6 +59,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private val prefs: SharedPrefService by inject()
     private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
+    internal var onPageShow = false
 
     // FOR UI
     private val bgColor by bindColor(android.R.color.white)
@@ -90,11 +94,17 @@ class NoScrollWebView @JvmOverloads constructor(
      */
     internal fun updateWebViewStart(url: String?, sourceName: String, css: Css) {
         url?.let {
+            onPageShow = false // Reset on new page load
             updateTextSize(it, sourceName)
             if (articleDesignInterface?.isFirstPage != true) // To allow enter transition, from article list
                 updateBackground()
             updateMargins(it, sourceName)
-            postDelayed({ applyCssStyle(it, css) }, 50) // To prevent design bug, mistake in source detail with 10
+
+            if (isHtmlData(url)) {
+                val lifecycleScope = (context as AppCompatActivity).lifecycleScope
+                waitCondition(lifecycleScope, 1500, { onPageShow }) { applyCssStyle(it, css) }
+            } else
+                postDelayed({ applyCssStyle(it, css) }, 50) // To prevent design bug, mistake in source detail with 10
         }
     }
 

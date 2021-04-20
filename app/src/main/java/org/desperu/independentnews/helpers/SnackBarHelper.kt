@@ -329,8 +329,8 @@ class SnackBarHelperImpl(private val activity: AppCompatActivity) : SnackBarHelp
     private fun initLoadingBar() {
         val snackText = snackBar?.view?.findViewById<View>(com.google.android.material.R.id.snackbar_text)
         val snackLayout = snackText?.parent as ViewGroup
-        val snackView = LayoutInflater.from(activity).inflate(R.layout.loading_bar, snackLayout)
-        loadingBar = snackView.findViewById(R.id.loading_bar)
+        val snackView = LayoutInflater.from(activity).inflate(R.layout.snack_loading_bar, snackLayout)
+        loadingBar = snackView.findViewById(R.id.snack_loading_bar)
 
         loadingBar?.updateLayoutParams<LinearLayout.LayoutParams> {
             gravity = Gravity.CENTER

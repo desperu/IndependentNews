@@ -1,12 +1,18 @@
 package org.desperu.independentnews.ui.showArticle.webClient
 
 import android.webkit.JavascriptInterface
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
+import kotlinx.android.synthetic.main.fragment_source_detail.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
+
+/**
+ * The javascript interface name, to call android function.
+ */
+const val JS_INTERFACE_NAME = "AndroidFunction"
 
 /**
  * Constant value for decal the focused line in the web view from the top of the visible view.
@@ -16,14 +22,13 @@ const val SCROLL_DECAL = 100
 /**
  * Javascript interface to communicate with the web view page code.
  *
+ * @property activity the activity that owns the web view.
+ *
  * @constructor Instantiate a new JavaScriptInterface.
  *
- * @param articleInterface the interface of the show article activity to set.
+ * @param activity the activity that owns the web view to set.
  */
-class JavaScriptInterface(articleInterface: ShowArticleInterface) {
-
-    // FOR DATA
-    private val activity = articleInterface.activity
+class JavaScriptInterface(private val activity: AppCompatActivity) {
 
     /**
      * Web scroll to, called from javascript, through the javascript interface.
@@ -47,5 +52,14 @@ class JavaScriptInterface(articleInterface: ShowArticleInterface) {
             activity.article_scroll_view.smoothScrollTo(0, scrollY, 1000)
             if (isToNotes) activity.fabs_menu.hide()
         }
+    }
+
+    /**
+     * On page show, web view event, called after page content finish loading.
+     */
+    @JavascriptInterface
+    fun onPageShow() {
+        val webView = activity.web_view ?: activity.source_detail_web_view
+        webView.onPageShow = true
     }
 }

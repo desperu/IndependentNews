@@ -18,7 +18,7 @@ import org.koin.core.get
 object FetchHelper : KoinComponent {
 
     // FOR DATA
-    private val snackBarHelper: SnackBarHelper? = getKoin().getOrNull()
+    private val snackBarHelper: SnackBarHelper? get() = getKoin().getOrNull()
     private val cssRepository: CssRepository = get()
 
     /**
@@ -112,7 +112,7 @@ object FetchHelper : KoinComponent {
             val cssUrls = deConcatenateStringToMutableList(css.url)
 
             cssUrls.forEach { cssUrl ->
-                val isInDb = cssRepository.getCssForUrl(cssUrl)?.id != 0L
+                val isInDb = cssRepository.getCssForUrl(cssUrl)?.id != null
                 val isInList = toFetchList.map { it.url }.contains(cssUrl)
 
                 if (!isInDb && !isInList) {

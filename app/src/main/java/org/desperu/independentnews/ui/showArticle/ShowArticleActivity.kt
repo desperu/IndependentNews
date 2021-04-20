@@ -5,16 +5,21 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.os.postDelayed
 import androidx.core.view.doOnAttach
 import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.content_loading_bar.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingActivity
@@ -29,6 +34,7 @@ import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.UPDATED_USER_ARTICLES
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
 import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
+import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
 import org.desperu.independentnews.ui.showArticle.webClient.JavaScriptInterface
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
@@ -111,6 +117,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                     decorBitmap.compress(Bitmap.CompressFormat.JPEG, 0, out)
 
                     intent.putExtra(TRANSITION_BG, out.toByteArray())
+
+                    // Add content loading bar if transition time > 500 millis
+                    Handler(Looper.getMainLooper()).postDelayed(500) {
+                        activity.content_loading_bar.show()
+                    }
                     
                     ActivityOptions.makeSceneTransitionAnimation(activity, *sharedElements)
                 } else
@@ -190,7 +201,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         }
 
         val jsInterface = JavaScriptInterface(this)
-        web_view.addJavascriptInterface(jsInterface, "AndroidFunction")
+        web_view.addJavascriptInterface(jsInterface, JS_INTERFACE_NAME)
 
         mWebViewClient = MyWebViewClient()
         web_view.webViewClient = mWebViewClient!!
