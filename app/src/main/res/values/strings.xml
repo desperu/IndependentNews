@@ -42,7 +42,6 @@
 
     <!-- Show Article Activity -->
     <string name="show_article_activity_article_error">Error, failed to retrieved article !</string>
-    <string name="show_article_activity_share_chooser_title">Share article !</string>
     <!-- Fabs Menu -->
     <string name="sub_fab_label_min_text">Minus text size</string>
     <string name="sub_fab_label_up_text">Up text size</string>
@@ -146,6 +145,10 @@
     <string name="notification_title">Today Articles !</string>
     <string name="notification_text">%1$s articles published today !</string>
     <string name="notification_text_no_today_articles">No article published today…</string>
+
+    <!-- INTENT CHOOSER -->
+    <string name="intent_chooser_send_mail_title">Send mail !</string>
+    <string name="intent_chooser_share_article_title">Share article !</string>
 
     <!-- SCENE TRANSITION -->
     <string name="animation_main_to_show_article" translatable="false">ImageAnimationMainToShowArticle</string>

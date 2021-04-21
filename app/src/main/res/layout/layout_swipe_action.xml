@@ -140,7 +140,7 @@
                 android:layout_below="@+id/swipe_share_icon"
                 android:gravity="center"
                 android:minLines="2"
-                android:text="@string/show_article_activity_share_chooser_title"
+                android:text="@string/intent_chooser_share_article_title"
                 android:textStyle="bold"
                 android:textColor="@color/subtitle_color"/>
 

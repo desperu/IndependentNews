@@ -1,5 +1,6 @@
 package org.desperu.independentnews.views
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
@@ -20,6 +21,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindColor
 import org.desperu.independentnews.extension.design.bindDimen
 import org.desperu.independentnews.extension.design.findView
+import org.desperu.independentnews.extension.sendMailTo
 import org.desperu.independentnews.helpers.AsyncHelper.waitCondition
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
@@ -33,6 +35,7 @@ import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
+import org.desperu.independentnews.utils.Utils.isMailTo
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.koin.core.qualifier.qualifier
@@ -130,16 +133,16 @@ class NoScrollWebView @JvmOverloads constructor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 val url = request?.url.toString()
 
-                if (isImageUrl(url))
-                    imageRouter?.openShowImages(arrayListOf(url))
-                else
-                    sourceRouter.openShowArticle(
-                        Article(
-                            url = url,
-                            source = Source(name = sourceName)
-                        ),
-                        sourcesInterface?.isExpanded ?: true
-                    )
+                when {
+                    isImageUrl(url) -> imageRouter?.openShowImages(arrayListOf(url))
+                    isMailTo(url) -> (context as Activity).sendMailTo(url)
+                    else ->
+                        sourceRouter.openShowArticle(
+                            Article(url = url, source = Source(name = sourceName)),
+                            sourcesInterface?.isExpanded ?: true
+                        )
+                }
+
                 true
 
             } else

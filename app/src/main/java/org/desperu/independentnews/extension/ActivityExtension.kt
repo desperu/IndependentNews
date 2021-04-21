@@ -35,14 +35,21 @@ internal fun Activity.showInBrowser(url: String) {
 }
 
 /**
- * Open default mail activity to send a mail to receiver in the given uri.
+ * Open default mail activity to send a mail to the address in the given uri.
+ * Create a chooser to allow the user to decide the receiving apk.
  *
- * @param uri the uri for which open a mail to screen.
+ * @param uriString the uri string for which open a mail to screen.
  */
-internal fun Activity.sendMailTo(uri: Uri) {
-    val mailIntent = Intent(Intent.ACTION_SEND)
-    mailIntent.setDataAndNormalize(uri)
-    this.startActivity(mailIntent)
+internal fun Activity.sendMailTo(uriString: String) {
+    val mailIntent = Intent(Intent.ACTION_SENDTO)
+    val uri = Uri.parse(uriString)
+
+    mailIntent.data = uri // only email apps should handle this
+    mailIntent.putExtra(Intent.EXTRA_EMAIL, uri.encodedPath)
+//    intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+
+//    if (mailIntent.resolveActivity(packageManager) != null) startActivity(mailIntent)
+    startActivity(Intent.createChooser(mailIntent, getString(R.string.intent_chooser_send_mail_title)))
 }
 
 /**
@@ -67,5 +74,5 @@ internal fun Activity.shareArticle(title: String?, url: String?) {
     share.putExtra(Intent.EXTRA_SUBJECT, title)
     share.putExtra(Intent.EXTRA_TEXT, url)
 
-    startActivity(Intent.createChooser(share, getString(R.string.show_article_activity_share_chooser_title)))
+    startActivity(Intent.createChooser(share, getString(R.string.intent_chooser_share_article_title)))
 }

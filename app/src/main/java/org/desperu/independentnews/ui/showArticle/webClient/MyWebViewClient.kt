@@ -5,7 +5,6 @@ import android.os.Build
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.core.net.toUri
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
@@ -129,13 +128,13 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
     private fun handleRedirect(url: String): Boolean = when {
         isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
         url.endsWith(".pdf") -> { activity.showInBrowser(url); true }
+        isMailTo(url) -> { activity.sendMailTo(url); true }
         isSourceArticleUrl(url) -> {
             articleDesign.handleDesign(0)
             addPageToHistory()
             viewModel.fetchArticle(url)
             true
         }
-        isMailTo(url) -> { activity.sendMailTo(url.toUri()); true }
         else -> {
             articleDesign.handleDesign(0)
             addPageToHistory()

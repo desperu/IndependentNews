@@ -48,6 +48,7 @@ import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.io.ByteArrayOutputStream
+import java.lang.ref.WeakReference
 
 
 /**
@@ -112,9 +113,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasShared) {
 
                     // Save previous activity window to use as background during the transition
-                    val decorBitmap = activity.window.decorView.drawToBitmap()
+                    val decorBitmap = WeakReference(activity.window.decorView.drawToBitmap())
                     val out =  ByteArrayOutputStream()
-                    decorBitmap.compress(Bitmap.CompressFormat.JPEG, 0, out)
+                    decorBitmap.get()?.compress(Bitmap.CompressFormat.JPEG, 0, out)
 
                     intent.putExtra(TRANSITION_BG, out.toByteArray())
 

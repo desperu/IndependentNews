@@ -39,7 +39,6 @@
 
     <!-- Show Article Activity -->
     <string name="show_article_activity_article_error">Erreur, impossible de retrouver l\'article !</string>
-    <string name="show_article_activity_share_chooser_title">Partager l\'article !</string>
     <!-- Fabs Menu -->
     <string name="sub_fab_label_min_text">Réduire text</string>
     <string name="sub_fab_label_up_text">Agrandir text</string>
@@ -139,5 +138,9 @@
     <string name="notification_title">Articles du jour !</string>
     <string name="notification_text">%1$s articles publiés aujourd\'hui !</string>
     <string name="notification_text_no_today_articles">Pas d\'article publié aujourd\'hui…</string>
+
+    <!-- INTENT CHOOSER -->
+    <string name="intent_chooser_send_mail_title">Envoyer un e-mail !</string>
+    <string name="intent_chooser_share_article_title">Partager l\'article !</string>
 
 </resources>
