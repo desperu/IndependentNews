@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:scaleType="centerInside"
+            android:adjustViewBounds="true"
             android:tag="frag_image"
             app:setImage="@{viewModel.imageUrl}" />
 
