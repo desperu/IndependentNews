@@ -6,6 +6,7 @@ import org.desperu.independentnews.database.dao.CssDao
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
+import org.desperu.independentnews.utils.SOURCE
 import org.desperu.independentnews.utils.SourcesUtils.getAdditionalCss
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.koin.core.KoinComponent
@@ -41,10 +42,11 @@ interface CssRepository {
      *
      * @param url           the css url for which get the style.
      * @param sourceName    the source name of the css.
+     * @param isSourcePage  true if it is for source page, false otherwise.
      *
      * @return the css style, concatenated if needed.
      */
-    suspend fun getCssStyle(url: String, sourceName: String?): Css
+    suspend fun getCssStyle(url: String, sourceName: String?, isSourcePage: Boolean): Css
 
     /**
      * Returns the list of all css with data from the database.
@@ -120,10 +122,15 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
      *
      * @param url           the css url for which get the style.
      * @param sourceName    the source name of the css.
+     * @param isSourcePage  true if it is for source page, false otherwise.
      *
      * @return the css style, concatenated if needed.
      */
-    override suspend fun getCssStyle(url: String, sourceName: String?): Css = withContext(Dispatchers.IO) {
+    override suspend fun getCssStyle(
+        url: String,
+        sourceName: String?,
+        isSourcePage: Boolean
+    ): Css = withContext(Dispatchers.IO) {
         var cssStyle = String()
 
         if (url.contains(",")) {
@@ -136,7 +143,11 @@ class CssRepositoryImpl(private val cssDao: CssDao): CssRepository, KoinComponen
         } else
             cssStyle = cssDao.getCssForUrl(url)?.style.mToString()
 
-       sourceName?.let {  cssStyle += " ${getAdditionalCss(it)}" }
+        if (!sourceName.isNullOrBlank()) {
+            // Add some css to correct/perfect article design
+            val handledSourceName = sourceName + if (isSourcePage) SOURCE else ""
+            cssStyle += " ${getAdditionalCss(handledSourceName)}"
+        }
 
         return@withContext Css(url = url, style = cssStyle)
     }

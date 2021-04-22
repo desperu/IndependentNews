@@ -36,8 +36,11 @@ object SourcesUtils {
      */
     internal fun getAdditionalCss(sourceName: String) = when (sourceName) {
         BASTAMAG -> BASTA_ADD_CSS
+        BASTAMAG + SOURCE -> BASTA_ADD_CSS
         REPORTERRE -> REPORTERRE_ADD_CSS
+        REPORTERRE + SOURCE -> REPORTERRE_SOURCE_ADD_CSS
         MULTINATIONALES -> MULTI_ADD_CSS
+        MULTINATIONALES + SOURCE -> MULTI_ADD_CSS
         else -> throw IllegalArgumentException("Source name not found : $sourceName")
     }
 

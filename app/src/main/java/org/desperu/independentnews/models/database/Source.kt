@@ -26,7 +26,7 @@ import org.desperu.independentnews.utils.NOT_EQUALS
 @Entity
 data class Source(@PrimaryKey(autoGenerate = true)
                   val id: Long = 0L,
-                  val name: String = "",
+                  var name: String = "",
                   val url: String = "",
                   var isEnabled: Boolean = true
 ): Parcelable, Comparable<Source> {

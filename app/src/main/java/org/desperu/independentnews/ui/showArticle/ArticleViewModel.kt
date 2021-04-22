@@ -130,7 +130,8 @@ class ArticleViewModel(
     internal suspend fun getCss(): Css = withContext(Dispatchers.IO) {
         val url = article.get()?.cssUrl ?: ""
         val sourceName = article.get()?.source?.name
-        return@withContext cssRepository.getCssStyle(url, sourceName)
+        val isSourcePage = article.get()?.sourceId == 0L
+        return@withContext cssRepository.getCssStyle(url, sourceName, isSourcePage)
     }
 
     /**

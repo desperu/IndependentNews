@@ -1,9 +1,6 @@
 package org.desperu.independentnews.models.database
 
-import org.desperu.independentnews.utils.BASTAMAG
-import org.desperu.independentnews.utils.BASTAMAG_BASE_URL
-import org.desperu.independentnews.utils.EQUALS
-import org.desperu.independentnews.utils.NOT_EQUALS
+import org.desperu.independentnews.utils.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -43,8 +40,10 @@ class SourceTest {
     fun given_emptySource_When_setSourceValues_Then_checkValues() {
         val source = Source()
 
+        source.name = name + SOURCE
         source.isEnabled = isEnabled
 
+        assertEquals(source.name, name + SOURCE)
         assertEquals(source.isEnabled, isEnabled)
     }
 

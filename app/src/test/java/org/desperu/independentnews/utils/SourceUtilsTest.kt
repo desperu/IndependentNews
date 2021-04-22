@@ -47,10 +47,20 @@ class SourceUtilsTest {
 
     @Test
     fun given_sourceList_When_getAdditionalCss_Then_checkResult() {
-        val expectedList = listOf(BASTA_ADD_CSS, REPORTERRE_ADD_CSS, MULTI_ADD_CSS)
+        val expectedList = listOf(
+            BASTA_ADD_CSS,
+            REPORTERRE_ADD_CSS,
+            MULTI_ADD_CSS,
+            BASTA_ADD_CSS,
+            REPORTERRE_SOURCE_ADD_CSS,
+            MULTI_ADD_CSS
+        )
 
-        val outputList = SOURCE_LIST.map { getAdditionalCss(it.name) }
+        val testList = mutableListOf<String>()
+        testList.addAll(SOURCE_LIST.map { it.name })
+        testList.addAll(SOURCE_LIST.map { it.name + SOURCE })
 
+        val outputList = testList.map { getAdditionalCss(it) }
         outputList.forEachIndexed { index, output ->
             assertEquals(expectedList[index], output)
         }

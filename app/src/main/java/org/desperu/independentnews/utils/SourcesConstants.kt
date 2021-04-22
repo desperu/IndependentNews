@@ -153,6 +153,8 @@ const val BASTA_ADD_CSS = // Used for Multinationales too
             ".notes > div p{margin-bottom:10px;font-size:normal;line-height:normal;font-weight:normal}" +
             ".notes > h2{margin-bottom:10px;font-weight:bold}"
 const val REPORTERRE_ADD_CSS = "div.chapo{font-weight:bold}"
+const val REPORTERRE_SOURCE_ADD_CSS = "body{margin-top: 20px}" +
+        "h3.spip{font-weight:bold;text-align:center;padding-top:30px;margin-bottom:20px}"
 const val MULTI_ADD_CSS = "$BASTA_ADD_CSS .content{text-align:left}" // Replacement below seems to bug
 const val MULTI_ORIG_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:center}"
 const val MULTI_NEW_CSS_BODY = "body{margin:0;padding:0;background:#FFF;text-align:left}" // Align text left
@@ -178,6 +180,7 @@ internal val BLACK_LIST = listOf(
     // Reporterre
     "https://reporterre.net/La-vie-de-Reporterre-10",
     "https://reporterre.net/Les-femmes-et-les-hommes-de-Reporterre-72",
+    "https://reporterre.net/Proposer-un-evenement",
     "https://reporterre.net/Hors-les-murs",
     "https://reporterre.net/Pres-de-chez-vous",
     "https://reporterre.net/Tribune-15",
