@@ -103,8 +103,9 @@ data class MultinationalesArticle(private val htmlPage: ResponseBody): BaseHtmlA
             it.toDocument()
                 .setChapoItemprop()
                 .addElement(getTagList(DIV), NOTES) // Add Notes at the end
-                .addNoteRedirect()
-                .correctUrlLink(MULTINATIONALES_BASE_URL) // TODO mail to error
+                .addScripts(NOTE_REDIRECT, PAGE_LISTENER)
+                .addPageListener()
+                .correctUrlLink(MULTINATIONALES_BASE_URL)
                 .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
                 .setMainCssId(CLASS, CONTENT)
                 .mToString()

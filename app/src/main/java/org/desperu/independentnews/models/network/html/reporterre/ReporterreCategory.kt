@@ -23,30 +23,19 @@ data class ReporterreCategory(private val htmlPage: ResponseBody): BaseHtmlCateg
     override fun getArticleList(): List<Article> {
         val articleList = mutableListOf<Article>()
 
-        // Get top story article.
-        val topStory = Article(source = Source(name = REPORTERRE))
-        topStory.url =
-            getTagList(A)
-                .getMatchAttr(CLASS, LIEN_ARTICLE)
-                .attr(HREF)
-                .toFullUrl(REPORTERRE_BASE_URL)
-        articleList.add(topStory)
-
         // Get all articles.
         getTagList(A).getMatchAttr(CLASS, LIEN_ARTICLE).forEach { element ->
             val article = Article(source = Source(name = REPORTERRE))
 
+            // Set the url of the article
             article.url = element.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
 
+            // Set the published date of the article
             element.select(P).getMatchAttr(CLASS, ARTICLE_DATE).forEach {
                 literalDateToMillis(it.ownText())?.let { millis -> article.publishedDate = millis }
             }
 
-            if (article.url != topStory.url)
-                articleList.add(article)
-
-            if (articleList.size == 51) // Fifty-one for the top story from category page
-                return articleList
+            articleList.add(article)
         }
 
         return articleList

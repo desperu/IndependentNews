@@ -58,7 +58,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
     }
 
     override fun getPublishedDate(): String? =
-        findData(SPAN, CLASS, DATE_PUBLICATION, null)?.text()
+        findData(SPAN, CLASS, DATE, null)?.text()
 
     override fun getArticle(): String? =
         findData(DIV, CLASS, TEXTE, null)?.outerHtml().updateArticleBody()
@@ -119,9 +119,10 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
             it.toDocument()
                 .addElement(getTagList(ASIDE), BOX_TEXT_COMPLEMENT)
                 .addElement(getTagList(ASIDE), BOX_AFTER_ARTICLE)
-                .addNoteRedirect()
+                .addScripts(NOTE_REDIRECT, PAGE_LISTENER)
                 .addDescription()
                 .addDonateCall()
+                .addPageListener()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
                 .setMainCssId(ID, CONTAINER)
@@ -144,7 +145,7 @@ data class ReporterreArticle(private val htmlPage: ResponseBody): BaseHtmlArticl
                 else
                     ""
 
-            select(BODY)?.getIndex(0)?.before(description)
+            select(DIV)?.getMatchAttr(CLASS, TEXTE)?.before(description)
             this
         }
 

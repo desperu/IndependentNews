@@ -72,7 +72,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             url = url.mToString(),
             buttonName = buttonName,
             title = getTitle().mToString(),
-            body = if (position != 4) getBody().mToString() else "", // For Men and Women of Reporterre
+            body = if (position != 2) getBody().mToString() else "", // For Men and Women of Reporterre
             cssUrl = getCssUrl(),
             position = position
         )
@@ -90,9 +90,12 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
         this?.let {
             it.toDocument()
                 .addElement(getTagList(ASIDE), BOX_TEXT_COMPLEMENT)
+                .addScripts(NOTE_REDIRECT, PAGE_LISTENER)
+                .addPageListener()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
                 .setMainCssId(ID, CONTAINER)
+//                .removeComment()
                 .mToString()
                 .forceHttps()
                 .escapeHashtag()
@@ -103,8 +106,23 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
      */
     private fun setButtonNameAndPageList() {
         getTagList(A).getMatchAttr(CLASS, LIEN_RUBRIQUE).forEach {
-            pageUrlList.add(it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL))
-            it.getChild(0)?.text()?.let { buttonName -> buttonNameList.add(buttonName) }
+            val url = it.attr(HREF).toFullUrl(REPORTERRE_BASE_URL)
+
+            if (!pageUrlList.contains(url)) { // To avoid duplicate
+                pageUrlList.add(url)
+                it.text()?.let { buttonName -> buttonNameList.add(buttonName) }
+            }
         }
     }
+
+    // TODO :
+    //  - source page redirection bug
+    //  - Source page duplicate, remove before store if already in db !!
+    //  - Update source design
+    //  - Add swipe to refresh
+    //  - Add search
+    //  - Reporterre new articles text size to correct
+    //  - Reduce onPageShow time out ??? to 1000L ???
+    //  - Add web fragment or web activity
+    //  - Support contact in basta source page
 }

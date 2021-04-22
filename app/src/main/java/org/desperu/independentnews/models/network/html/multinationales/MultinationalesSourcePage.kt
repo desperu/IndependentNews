@@ -73,7 +73,8 @@ data class MultinationalesSourcePage(private val htmlPage: ResponseBody): BaseHt
         this?.let {
             it.toDocument()
                 .addElement(getTagList(DIV), NOTES) // Add Notes at the end
-                .addNoteRedirect()
+                .addScripts(NOTE_REDIRECT, PAGE_LISTENER)
+                .addPageListener()
                 .correctUrlLink(MULTINATIONALES_BASE_URL)
                 .correctBastaMediaUrl(MULTINATIONALES_BASE_URL)
                 .setMainCssId(CLASS, CONTENT)

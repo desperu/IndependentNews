@@ -110,11 +110,14 @@ class ReporterreRepositoryImpl(
      */
     override suspend fun fetchCategories(): List<Article>? = fetchWithMessage(REPORTERRE + CATEGORY, FETCH) {
         val categories = listOf(REPORT_SEC_DECRYPTER, REPORT_SEC_RESISTER, REPORT_SEC_INVENTER)
+        val numbers = listOf(0, 20, 40)
         val articleList = mutableListOf<Article>()
 
         categories.forEach { category ->
-            val responseBody = webService.getCategory(category, 0.toString())
-            articleList.addAll(ReporterreCategory(responseBody).getArticleList())
+            numbers.forEach { number ->
+                val responseBody = webService.getCategory(category, number.toString())
+                articleList.addAll(ReporterreCategory(responseBody).getArticleList())
+            }
         }
 
         val newArticles = articleRepository.getNewArticles(articleList)

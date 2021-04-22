@@ -9,6 +9,6 @@ package org.desperu.independentnews.extension.parseHtml
  */
 internal fun String?.toFullUrl(baseUrl: String): String =
     if (!this.isNullOrBlank() && !this.contains("http"))
-        baseUrl + this
+        baseUrl + this.removePrefix("/").removePrefix("/")
     else
         this.mToString()

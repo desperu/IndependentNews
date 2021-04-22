@@ -1,6 +1,7 @@
 package org.desperu.independentnews.extension.parseHtml
 
 import org.desperu.independentnews.utils.*
+import org.desperu.independentnews.utils.Utils.isMailTo
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,14 +32,31 @@ internal fun Document?.addElement(elements: Elements, value: String): Document? 
     }
 
 /**
- * Add note redirect javascript to enable note redirection.
+ * Add the given javascript to the html document.
+ *
+ * @param javascript the javascript to add.
  */
-internal fun Document?.addNoteRedirect(): Document? =
+internal fun Document?.addScripts(vararg javascript: String): Document? =
     this?.let {
-        select(HEAD).getIndex(0)
-            ?.appendElement(SCRIPT)
-            ?.attr(TYPE, TEXT_JS)
-            ?.append(NOTE_REDIRECT)
+        val head = select(HEAD).getIndex(0)
+
+        javascript.forEach {
+            head?.appendElement(SCRIPT)
+                ?.attr(TYPE, TEXT_JS)
+                ?.text(it)
+        }
+
+        this
+    }
+
+/**
+ * Add on page show listener, to call javascript function onPageShow() in [PAGE_LISTENER].
+ */
+internal fun Document?.addPageListener(): Document? =
+    this?.let {
+
+        select(BODY).getIndex(0)
+            ?.attr(ON_PAGE_SHOW, "onPageShow()")
         this
     }
 
@@ -56,6 +74,7 @@ internal fun Document?.correctUrlLink(baseUrl: String): Document? =
         select(a).forEach {
             when {
                 it.attr(HREF).isNullOrBlank() -> it.removeAttr(HREF) // Check there's no error
+                isMailTo(it.attr(HREF)) -> return@forEach // Don't touch
                 isNoteRedirect(it.attr(HREF)) ->
                     it.attr(HREF, "javascript:scrollToElement('${it.attr(HREF).removePrefix("#")}')")
                 it.attr(ONCLICK).isNotBlank() -> it.removeAttr(ONCLICK)

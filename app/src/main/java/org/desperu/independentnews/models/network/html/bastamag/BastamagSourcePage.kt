@@ -97,7 +97,8 @@ data class BastamagSourcePage(private val htmlPage: ResponseBody): BaseHtmlSourc
         this?.let {
             it.toDocument()
                 .addElement(getTagList(DIV), NOTES) // Add Notes at the end
-                .addNoteRedirect()
+                .addScripts(NOTE_REDIRECT, PAGE_LISTENER)
+                .addPageListener()
                 .correctUrlLink(BASTAMAG_BASE_URL)
                 .correctBastaMediaUrl(BASTAMAG_BASE_URL)
                 .setMainCssId(CLASS, MAIN_CONTAINER)

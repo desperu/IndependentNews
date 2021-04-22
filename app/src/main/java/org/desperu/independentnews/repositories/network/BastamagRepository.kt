@@ -108,11 +108,11 @@ class BastamagRepositoryImpl(
      */
     override suspend fun fetchCategories(): List<Article>? = fetchWithMessage(BASTAMAG + CATEGORY, FETCH) {
         val categories = listOf(BASTA_SEC_DECRYPTER, BASTA_SEC_RESISTER, BASTA_SEC_INVENTER)
-        val number = listOf(0, 10, 20, 30, 40)
+        val numbers = listOf(0, 10, 20, 30, 40)
         val articleList = mutableListOf<Article>()
 
         categories.forEach { category ->
-            number.forEach { number ->
+            numbers.forEach { number ->
                 val responseBody = webService.getCategory(category, number.toString())
                 articleList.addAll(BastamagCategory(responseBody).getArticleList())
             }

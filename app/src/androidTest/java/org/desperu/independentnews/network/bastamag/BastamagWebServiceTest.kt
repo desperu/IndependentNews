@@ -22,7 +22,7 @@ class BastamagWebServiceTest : KoinTest {
     // FOR DATA
     private val bastamagWebService = get<BastamagWebService>()
     private val articleUrl = "Sympathies-fascistes-oppression-coloniale-brutalites-anti-ouvrieres-Michelin-caoutchouc"
-    private val cssUrl = "https://www.bastamag.net/local/cache-css/1253c746a35e95af461d518688c9dd5b.css?1610170708"
+    private val cssUrl = "https://www.bastamag.net/local/cache-css/012e01c534abe935e2dde8d496f3e681.css?1619045642"
 
     @Test
     fun fetchArticle() = runBlocking {
