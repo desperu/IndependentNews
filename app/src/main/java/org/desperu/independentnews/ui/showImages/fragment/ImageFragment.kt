@@ -361,6 +361,12 @@ class ImageFragment: BaseBindingFragment() {
             scaleFactor = max(minScale, min(scaleFactor, maxScale))
             image.setScale(scaleFactor)
 
+            // Correct scale position
+            if (scaleFactor !in listOf(minScale, maxScale)) {
+                image.translationX *= scaleGestureDetector.scaleFactor
+                image.translationY *= scaleGestureDetector.scaleFactor
+            }
+
             correctImagePosition()
 
             return true

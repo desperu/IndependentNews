@@ -34,8 +34,6 @@ import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.UPDATED_USER_ARTICLES
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
 import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
-import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
-import org.desperu.independentnews.ui.showArticle.webClient.JavaScriptInterface
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
 import org.desperu.independentnews.ui.sources.SourcesActivity
@@ -144,7 +142,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         configureKoinDependency()
         configureArticleDesign() // TODO force portrait ot prevent anim bug !!!
         setUserArticleState()
-        configureWebView()
+        configureWebViewClient()
         configureAppBar()
     }
 
@@ -192,18 +190,9 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     private fun setUserArticleState() { viewModel.setUserArticleState() }
 
     /**
-     * Configure the web view.
+     * Configure the web view client.
      */
-    @Suppress("Deprecation", "SetJavaScriptEnabled")
-    private fun configureWebView() {
-        web_view.settings.apply {
-            javaScriptEnabled = true
-            javaScriptCanOpenWindowsAutomatically = true
-        }
-
-        val jsInterface = JavaScriptInterface(this)
-        web_view.addJavascriptInterface(jsInterface, JS_INTERFACE_NAME)
-
+    private fun configureWebViewClient() {
         mWebViewClient = MyWebViewClient()
         web_view.webViewClient = mWebViewClient!!
 
@@ -362,6 +351,10 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         }
 
         url?.let {
+            // Clear intent data to avoid reload.
+            intent.removeExtra(Intent.EXTRA_TEXT)
+            intent.data = null
+
             if (isSourceArticleUrl(url))
                 viewModel.fetchArticle(url)
             else

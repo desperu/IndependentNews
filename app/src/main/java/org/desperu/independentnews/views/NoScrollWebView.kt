@@ -1,6 +1,6 @@
 package org.desperu.independentnews.views
 
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
@@ -25,10 +25,11 @@ import org.desperu.independentnews.extension.sendMailTo
 import org.desperu.independentnews.helpers.AsyncHelper.waitCondition
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Css
-import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
+import org.desperu.independentnews.ui.showArticle.webClient.JavaScriptInterface
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
@@ -60,6 +61,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private val imageRouter: ImageRouter? get() = getKoin().getOrNull(qualifier(SOURCE_IMAGE_ROUTER))
     private val sourceRouter: SourceRouter by inject()
     private val prefs: SharedPrefService by inject()
+    private val activity get() = context as AppCompatActivity
     private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
     internal var onPageShow = false
@@ -67,9 +69,24 @@ class NoScrollWebView @JvmOverloads constructor(
     // FOR UI
     private val bgColor by bindColor(android.R.color.white)
 
+    init {
+        setupJavascript()
+    }
+
     // --------------
     // CONFIGURATION
     // --------------
+
+    /**
+     * Setup javascript for the web view, and enable javascript interface too.
+     */
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setupJavascript() {
+        settings.javaScriptEnabled = true
+        settings.javaScriptCanOpenWindowsAutomatically = true
+        val jsInterface = JavaScriptInterface(activity)
+        addJavascriptInterface(jsInterface, JS_INTERFACE_NAME)
+    }
 
     /**
      * Update the design of the web view. Set the css style, text size, margin
@@ -103,10 +120,11 @@ class NoScrollWebView @JvmOverloads constructor(
                 updateBackground()
             updateMargins(it, sourceName)
 
-            if (isHtmlData(url)) {
-                val lifecycleScope = (context as AppCompatActivity).lifecycleScope
-                waitCondition(lifecycleScope, 1500, { onPageShow }) { applyCssStyle(it, css) }
-            } else
+            if (isHtmlData(url))
+                waitCondition(activity.lifecycleScope, 1500, { onPageShow }) {
+                    applyCssStyle(it, css)
+                }
+            else
                 postDelayed({ applyCssStyle(it, css) }, 50) // To prevent design bug, mistake in source detail with 10
         }
     }
@@ -135,10 +153,10 @@ class NoScrollWebView @JvmOverloads constructor(
 
                 when {
                     isImageUrl(url) -> imageRouter?.openShowImages(arrayListOf(url))
-                    isMailTo(url) -> (context as Activity).sendMailTo(url)
+                    isMailTo(url) -> activity.sendMailTo(url)
                     else ->
                         sourceRouter.openShowArticle(
-                            Article(url = url, source = Source(name = sourceName)),
+                            Article(url = url),
                             sourcesInterface?.isExpanded ?: true
                         )
                 }
