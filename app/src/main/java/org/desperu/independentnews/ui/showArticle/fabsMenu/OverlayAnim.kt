@@ -80,7 +80,7 @@ class OverlayAnim : KoinComponent {
         val mainFabRect = speedDialView.mainFab.run { Rect().apply(::getGlobalVisibleRect) }
 
         //Simply use the diagonal of the view
-        val finalRadius = sqrt((width * width + height * height).toDouble()).toFloat()
+        val finalRadius = sqrt((width * width + height * height).toFloat())
 
         val anim = createCircularReveal(
             overlay,

@@ -1,5 +1,7 @@
 package org.desperu.independentnews.ui.showArticle.design
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Handler
@@ -8,6 +10,7 @@ import android.transition.Transition
 import android.transition.TransitionInflater
 import android.transition.TransitionSet
 import android.view.View
+import android.view.ViewAnimationUtils.createCircularReveal
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.annotation.FloatRange
@@ -19,6 +22,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.core.widget.NestedScrollView
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
@@ -43,6 +47,7 @@ import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.koin.core.KoinComponent
 import org.koin.core.get
 import org.koin.core.parameter.parametersOf
+import kotlin.math.sqrt
 
 /**
  * Article Design class used to handle User Interface.
@@ -213,22 +218,57 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     private fun showScrollView() {
         // To prepare the view before the animation
         if (sv.alpha != 0f) sv.alpha = 0f
-//        sv.visibility = View.VISIBLE
 
-        val anim = getValueAnimator(
+        // Seems to not delay after image download...
+        activity.article_image.doOnPreDraw {
+            waitCondition(activity.lifecycleScope, 2000L, { hasScroll }) {
+                loadingAnimBar.hide()
+                getSVAlphaAnim().start()
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    getCircularReveal().start()
+            }
+        }
+    }
+
+    /**
+     * Returns the alpha animator for the scroll view.
+     *
+     * @return the alpha animator for the scroll view.
+     */
+    private fun getSVAlphaAnim(): ValueAnimator =
+        getValueAnimator(
             true,
             300L,
             DecelerateInterpolator(),
             { progress -> sv.alpha = progress }
         )
 
-        // Seems to not delay after image download...
-        activity.article_image.doOnPreDraw {
-            waitCondition(activity.lifecycleScope, 2000L, { hasScroll }) {
-                loadingAnimBar.hide()
-                anim.start()
-            }
-        }
+    /**
+     * Returns the circular reveal animator for the page transition.
+     *
+     * @return the circular reveal animator.
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun getCircularReveal(): Animator {
+        val width = sv.width
+        val height = sv.height
+
+        //Simply use the diagonal of the view
+        val finalRadius = sqrt((width * width + height * height).toFloat())
+
+        val anim = createCircularReveal(
+            sv,
+            width / 2,
+            height / 2,
+            0f,
+            finalRadius
+        )
+
+        anim.interpolator = FastOutSlowInInterpolator()
+        anim.duration = 300L
+
+        return anim
     }
 
     /**
