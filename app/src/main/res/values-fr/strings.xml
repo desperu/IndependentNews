@@ -11,11 +11,15 @@
     <string name="activity_first_start_ask_permissions">Cette application a besoin de permissions pour fonctionner correctement !\n\n- Status de la connexion internet (pour savoir si une connexion est disponible)\n- Internet (pour accèder au web)\n- Démarrage terminé (pour les notifications et rafraîchir les données)</string>
     <string name="activity_first_start_ask_permissions_oreo">Cette application a besoin de permissions pour fonctionner correctement !\n\n- Status de la connexion internet (pour savoir si une connexion est disponible)\n- Internet (pour accèder au web)\n- Démarrage terminé (pour les notifications et rafraîchir les données)\n- Données en arrière plan (pour rafraîchir automatiquement les données)</string>
     <string name="activity_first_start_toast_perm_refused">Permissions refusée !!</string>
+    <!-- Dialogs -->
     <string name="dialog_cant_start_message">Cette application a besoin d\'une connexion internet lors de son premier démarrage. Vérifiez votre connexion internet et réessayez, ou réessayez plus tard si vous ne pouvez pas avoir de connexion pour l\'instant.</string>
     <string name="dialog_cant_start_retry">Réessayer</string>
     <string name="dialog_cant_start_quit">Quitter</string>
     <string name="dialog_fetch_source_error_title">Erreur !</string>
     <string name="dialog_fetch_source_error_message">Une erreur est survenu lors du téléchargement des données. Cette application a besoin de ces données pour fonctionner correctement. Essayez de nouveau, si le problème persiste, <a href="https://github.com/desperu/IndependentNews/issues">ouvrez une "issue" (problème) sur github.com</a>.</string>
+    <!-- Showcase -->
+    <string name="showcase_button_who_owns_what">Clicker pour voir Qui possède quoi ?</string>
+
     <!-- Main Activity -->
     <!-- Article List Fragment -->
     <string name="fragment_article_list_no_article">Pas d\'article trouvé !</string>

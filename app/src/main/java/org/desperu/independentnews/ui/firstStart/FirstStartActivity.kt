@@ -7,10 +7,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.edit
+import androidx.core.os.postDelayed
+import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.android.synthetic.main.activity_first_start.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -250,10 +256,32 @@ class FirstStartActivity : BaseActivity(firstStartModule), FirstStartInterface {
      * Animate views for better user experience.
      */
     private fun animateViews() {
-        alphaViewAnimation(listOf(first_start_text), 1000L, true)
         alphaViewAnimation(listOf(first_start_who_owns_what), 3000L, true)
-        alphaViewAnimation(listOf(first_start_text), 5000L, false)
-        alphaViewAnimation(listOf(first_start_text_fetch_time), 10000L, true)
+        alphaViewAnimation(listOf(first_start_text), 4000L, false)
+        alphaViewAnimation(listOf(first_start_text_fetch_time), 4500L, true)
+        Handler(Looper.getMainLooper()).postDelayed(8000L) { showcaseButton() }
 //        (first_start_app_logo.drawable as Animatable).start()
+    }
+
+    /**
+     * Showcase for Who owns what button, to display to user the action possibility.
+     */
+    private fun showcaseButton() {
+        val button = first_start_who_owns_what
+
+        val tapTarget = TapTarget
+            .forView(button, getString(R.string.showcase_button_who_owns_what))
+            .transparentTarget(false)
+            .outerCircleColor(R.color.colorPrimaryDark)
+            .titleTextColor(R.color.subtitle_color)
+            .targetRadius(button.width / 5)
+            .drawShadow(true)
+
+        TapTargetView.showFor(this, tapTarget, object : TapTargetView.Listener() {
+            override fun onTargetClick(view: TapTargetView) {
+                super.onTargetClick(view)
+                view.postDelayed(200) { button.performClick() }
+            }
+        })
     }
 }

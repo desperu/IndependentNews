@@ -1,4 +1,5 @@
-package org.desperu.independentnews.ui.sources.fragment.sourceList
+
+ package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import android.os.Build
 import android.os.Bundle
@@ -91,6 +92,8 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
         super.onResume()
         updateRecyclerAnim()
         fromDetail = false
+
+        get<SourcesInterface>().handleShowcase()
 
         sources_recycler.doOnNextLayout {
             get<SourcesInterface>().updateAppBarOnTouch()

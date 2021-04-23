@@ -23,6 +23,11 @@ interface SourcesInterface {
     fun updateAppBarOnTouch()
 
     /**
+     * Handle showcase for Who Owns What button, to display to user the action possibility.
+     */
+    fun handleShowcase()
+
+    /**
      * Returns true if the app bar is expanded, false if is collapsed.
      */
     val isExpanded: Boolean

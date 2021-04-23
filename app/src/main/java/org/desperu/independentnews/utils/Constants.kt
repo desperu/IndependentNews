@@ -67,7 +67,6 @@ const val RC_SHOW_ARTICLE = 3000    // Back from Show Article to Sources
 const val RC_PERMS = 10000          // For permissions
 
 // --- FOR FABS MENU ---
-
 // For Sub Fabs Key
 const val SUB_FAB_MIN_TEXT = 0
 const val SUB_FAB_UP_TEXT = 1
@@ -85,6 +84,12 @@ internal val subFabList = listOf(
     SUB_FAB_PAUSE,
     SUB_FAB_HOME
 )
+
+// --- TAP TARGET ---
+// For display sequence keys
+const val SHOW = 1
+const val RETRY = 2
+const val END = 3
 
 
 // --- FOR FILTERS ---
@@ -150,6 +155,7 @@ const val INDEPENDENT_NEWS_PREFS = "IndependentNewsPrefs"
 // Shared preferences keys
 // global use
 const val IS_FIRST_TIME = "isFirstTime"
+const val SOURCE_OPENED_TIMES = "sourceOpenedTimes"
 // settings
 const val NOTIFICATION_ENABLED = "notificationEnabled"
 const val NOTIFICATION_TIME = "notificationTime"
@@ -166,6 +172,7 @@ const val ADDED_PAUSED = "addedPaused"
 // Settings default value
 // global use
 const val FIRST_TIME_DEFAULT = true
+const val SOURCE_OPENED_DEFAULT = 0
 // settings
 const val NOTIFICATION_DEFAULT = true
 const val NOTIFICATION_TIME_DEFAULT = 12

@@ -5,16 +5,19 @@ import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.view.doOnAttach
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.transition.*
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.material.transition.MaterialFade
 import icepick.State
-import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.sourcesModule
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.main.HAS_CHANGE
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.showArticle.ImageRouter
@@ -50,6 +53,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     private val fm = supportFragmentManager
     private var sourcePosition = -1
     private lateinit var imageRouter: ImageRouter
+    private val prefs: SharedPrefService = get()
 
     // --------------
     // BASE METHODS
@@ -242,19 +246,45 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      */
     override fun updateAppBarOnTouch() = appbar.updateOnTouch()
 
+    /**
+     * Showcase for Who Owns What button, to display to user the action possibility.
+     */
+    private fun showcaseButton() {
+        val button = info_icon
+
+        val tapTarget = TapTarget
+            .forView(button, getString(R.string.showcase_button_who_owns_what))
+            .transparentTarget(false)
+            .outerCircleColor(R.color.colorPrimaryDark)
+            .titleTextColor(R.color.subtitle_color)
+            .drawShadow(true)
+
+        TapTargetView.showFor(this, tapTarget, object : TapTargetView.Listener() {
+            override fun onTargetClick(view: TapTargetView) {
+                super.onTargetClick(view)
+                view.postDelayed(200) { button.performClick() }
+                prefs.getPrefs().edit().putInt(SOURCE_OPENED_TIMES, END).apply()
+            }
+        })
+    }
+
     // --------------
     // UTILS
     // --------------
 
     /**
-     * Send result for MainActivity, to synchronize sources state.
+     * Handle showcase for Who Owns What button, to display to user the action possibility.
+     * Called on each source list fragment onResume.
      */
-    private fun sendResult() {
-        setResult(
-            RESULT_OK,
-            Intent(baseContext, MainActivity::class.java)
-                .putExtra(HAS_CHANGE, sourceListFrag?.hasChange())
-        )
+    override fun handleShowcase() {
+        prefs.getPrefs().apply {
+            val openedTimes = getInt(SOURCE_OPENED_TIMES, SOURCE_OPENED_DEFAULT)
+
+            if (openedTimes in listOf(SHOW, RETRY)) showcaseButton()
+
+            if (openedTimes < END)
+                edit().putInt(SOURCE_OPENED_TIMES, openedTimes + 1).apply()
+        }
     }
 
     /**
@@ -275,6 +305,17 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
                 intent.removeExtra(WAS_EXPANDED)
             }
         }
+    }
+
+    /**
+     * Send result for MainActivity, to synchronize sources state.
+     */
+    private fun sendResult() {
+        setResult(
+            RESULT_OK,
+            Intent(baseContext, MainActivity::class.java)
+                .putExtra(HAS_CHANGE, sourceListFrag?.hasChange())
+        )
     }
 
     // --- GETTERS ---

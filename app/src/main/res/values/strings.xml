@@ -18,6 +18,9 @@
     <string name="dialog_cant_start_quit">Quit</string>
     <string name="dialog_fetch_source_error_title">Error !</string>
     <string name="dialog_fetch_source_error_message">An error happened while fetching data. This application need theses data to properly work. Try again, if the problem persist, <a href="https://github.com/desperu/IndependentNews/issues">open an issue on github.com</a>.</string>
+    <!-- Showcase -->
+    <string name="showcase_button_who_owns_what">Tap to see Who owns what ?</string>
+
     <!-- Main Activity -->
     <!-- Article List Fragment -->
     <string name="fragment_article_list_no_article">No article find !</string>
