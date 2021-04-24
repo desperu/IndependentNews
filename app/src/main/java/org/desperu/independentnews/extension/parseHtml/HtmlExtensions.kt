@@ -56,7 +56,8 @@ internal fun Document?.addPageListener(): Document? =
     this?.let {
 
         select(BODY).getIndex(0)
-            ?.attr(ON_PAGE_SHOW, "onPageShow()")
+            ?.attr(ON_PAGE_SHOW, "pageListener('$ON_PAGE_SHOW')")
+            ?.attr(ON_RESIZE, "pageListener('$ON_RESIZE')")
         this
     }
 

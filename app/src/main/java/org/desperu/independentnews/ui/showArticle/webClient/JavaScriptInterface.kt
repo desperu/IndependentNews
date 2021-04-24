@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.fragment_source_detail.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.desperu.independentnews.utils.ON_PAGE_SHOW
 
 /**
  * The javascript interface name, to call android function.
@@ -55,11 +56,18 @@ class JavaScriptInterface(private val activity: AppCompatActivity) {
     }
 
     /**
-     * On page show, web view event, called after page content finish loading.
+     * Apply CSS on web view page event, use on page show and on resize events.
+     * Check that the web view has content before allow apply css.
+     *
+     * @param event the event name that occur from the web view.
      */
     @JavascriptInterface
-    fun onPageShow() {
+    fun applyCss(event: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
         val webView = activity.web_view ?: activity.source_detail_web_view
-        webView.onPageShow = true
+        val hasContent = webView.contentHeight > 0
+
+        // If the web view has content or it's on page show event
+        // Web view is ready to apply css style
+        if (hasContent || event == ON_PAGE_SHOW) webView.toApplyCss = true
     }
 }

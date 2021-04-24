@@ -42,6 +42,10 @@ import org.koin.core.inject
 import org.koin.core.qualifier.qualifier
 import kotlin.properties.Delegates
 
+/**
+ * Time out for which wait to apply css on web view content.
+ */
+const val APPLY_CSS_TIMEOUT = 500L
 
 /**
  * A custom [WebView] that does not allow to vertical scroll.
@@ -64,7 +68,7 @@ class NoScrollWebView @JvmOverloads constructor(
     private val activity get() = context as AppCompatActivity
     private var css: Css by Delegates.notNull()
     private var sourceName: String by Delegates.notNull()
-    internal var onPageShow = false
+    internal var toApplyCss = false
 
     // FOR UI
     private val bgColor by bindColor(android.R.color.white)
@@ -114,14 +118,14 @@ class NoScrollWebView @JvmOverloads constructor(
      */
     internal fun updateWebViewStart(url: String?, sourceName: String, css: Css) {
         url?.let {
-            onPageShow = false // Reset on new page load
+            toApplyCss = false // Reset on new page load
             updateTextSize(it, sourceName)
             if (articleDesignInterface?.isFirstPage != true) // To allow enter transition, from article list
                 updateBackground()
             updateMargins(it, sourceName)
 
             if (isHtmlData(url))
-                waitCondition(activity.lifecycleScope, 1500, { onPageShow }) {
+                waitCondition(activity.lifecycleScope, APPLY_CSS_TIMEOUT, { toApplyCss }) {
                     applyCssStyle(it, css)
                 }
             else

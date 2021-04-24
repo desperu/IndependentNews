@@ -139,10 +139,10 @@ const val NOTE_REDIRECT =
             "}"
 
 // Page listener used to received callback event from web view,
-// when the page is loaded and show.
+// when the page is resize and/or is loaded and show.
 const val PAGE_LISTENER =
-    "function onPageShow() {\n" +
-            "    $JS_INTERFACE_NAME.onPageShow();\n" + // Call Javascript interface function
+    "function pageListener(event) {\n" +
+            "    $JS_INTERFACE_NAME.applyCss(event);\n" + // Call Javascript interface function
             "}"
 
 // --- Parse Css Style ---
