@@ -203,7 +203,7 @@ internal object Utils {
      * @return true if the given url is a note redirection, false otherwise.
      */
     internal fun isNoteRedirect(url: String): Boolean =
-        url.matches("""(#|%23)n([bh])(\d){1,2}(-\d{1,2})?""".toRegex())
+        url.matches("""(#|%23)n[bh]((\d{1,2}(-\d{1,2})?)|(_\d{1,2}[A-Z]))""".toRegex())
 
     /**
      * Returns true if the given url is an image url, false otherwise.

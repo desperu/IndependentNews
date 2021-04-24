@@ -310,7 +310,8 @@ class UtilsTest {
     fun given_noteRedirect_When_isNoteRedirect_Then_checkTrue() {
         val noteRedirectList = listOf(
             "#nb1", "%23nb99", "#nh1", "#nh99",
-            "%23nb1-1", "#nb1-99", "#nh1-1", "#nh1-99"
+            "%23nb1-1", "#nb1-99", "#nh1-1", "#nh1-99",
+            "#nb_2A", "#nh_2A", "%23nb_1P", "%23nh_12A"
         )
 
         noteRedirectList.forEach {
@@ -324,7 +325,7 @@ class UtilsTest {
         val noteRedirectList = listOf(
             "#nb", "%23nb9-99-9", "#nt1", "#nh99-",
             "#nb1-100", "#nb100", "#nh-", "#nh1--99",
-            "%nb2", "%24nh2-8"
+            "%nb2", "%24nh2-8", "#nh_A2", "#nb2_2A"
         )
 
         noteRedirectList.forEach {
