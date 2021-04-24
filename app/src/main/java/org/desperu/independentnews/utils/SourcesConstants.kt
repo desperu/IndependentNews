@@ -78,6 +78,14 @@ const val SOURCE = "Source"
 const val PHOTO = "Photo"
 const val PHOTOS = "Photos"
 
+// For Reporterre Contact Mail
+internal val REPORTERRE_CONTACT_MAILS = listOf(
+    "dons@reporterre.net",
+    "edition@reporterre.net",
+    "communication@reporterre.net",
+    "planete@reporterre.net"
+)
+
 // Donate call for Reporterre
 val NO_DONATE_CALL = listOf("Brèves", "Hors les murs", "On en parle")
 const val DONATE_CALL =

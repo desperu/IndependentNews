@@ -6,6 +6,7 @@ import org.desperu.independentnews.extension.parseHtml.*
 import org.desperu.independentnews.extension.parseHtml.sources.correctRepoMediaUrl
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.utils.*
+import org.jsoup.nodes.Document
 
 /**
  * Class which provides a model to parse reporterre source html page.
@@ -92,6 +93,7 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
                 .addElement(getTagList(ASIDE), BOX_TEXT_COMPLEMENT)
                 .addScripts(NOTE_REDIRECT, PAGE_LISTENER)
                 .addPageListener()
+                .updateContactMails()
                 .correctUrlLink(REPORTERRE_BASE_URL)
                 .correctRepoMediaUrl()
                 .setMainCssId(ID, CONTAINER)
@@ -114,6 +116,25 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
             }
         }
     }
+
+    /**
+     * Update contact mails, needed because they are protected by cloudflare..
+     *
+     * @return the article with updated contact mails.
+     */
+    private fun Document?.updateContactMails(): Document? =
+        this?.let {
+            select(a).getMatchAttr(CLASS, SPIP_MAIL).forEachIndexed { index, element ->
+
+                // Update href redirect
+                val mail = REPORTERRE_CONTACT_MAILS[index]
+                element.attr(HREF, MAIL_TO + mail)
+
+                // Update displayed text
+                element.getChild(0)?.text("[$mail]")
+            }
+            this
+        }
 
     // TODO :
     //  - source page redirection bug

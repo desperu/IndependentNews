@@ -246,7 +246,7 @@ internal object Utils {
      * @return true if the the given url is a mail to redirect.
      */
     internal fun isMailTo(url: String): Boolean =
-        url.startsWith("mailto:")
+        url.startsWith(MAIL_TO)
                 && url.split(":").getOrNull(1)?.contains("@") ?: false
 
     // -----------------
