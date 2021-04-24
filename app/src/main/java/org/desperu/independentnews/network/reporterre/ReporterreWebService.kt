@@ -29,10 +29,10 @@ interface ReporterreWebService {
      *
      * @return the category from the Reporterre Web Site.
      */
-    @GET("{category}" + "#pagination_autres_articles")
+    @GET("{category}" + "#pagination_articles")
     suspend fun getCategory(
         @Path("category") category: String,
-        @Query("debut_autres_articles") number: String
+        @Query("debut_articles") number: String
     ): ResponseBody
 
     /**

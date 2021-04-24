@@ -125,13 +125,10 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
     private fun Document?.updateContactMails(): Document? =
         this?.let {
             select(a).getMatchAttr(CLASS, SPIP_MAIL).forEachIndexed { index, element ->
-
-                // Update href redirect
                 val mail = REPORTERRE_CONTACT_MAILS[index]
-                element.attr(HREF, MAIL_TO + mail)
 
-                // Update displayed text
-                element.getChild(0)?.text("[$mail]")
+                element.attr(HREF, MAIL_TO + mail) // Update href redirect
+                element.getChild(0)?.text("[$mail]") // Update displayed text
             }
             this
         }
