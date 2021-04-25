@@ -1,69 +1,57 @@
 package org.desperu.independentnews.ui.sources
 
 import android.animation.Animator
-import android.animation.ObjectAnimator
+import android.os.Build
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
-import androidx.transition.Transition
-import androidx.transition.TransitionValues
+import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
+import androidx.core.animation.addListener
+import androidx.transition.*
+import java.lang.Exception
 
 /**
- * Constant values for the transition.
- */
-private const val PROGRESSBAR_PROPERTY = "cornerRadius"
-private const val TRANSITION_PROPERTY = "DrawableTransition:cornerRadius"
-
-/**
- * Custom transition class to animate drawable shape.
+ * Custom transition class to animate transition between source list and source detail.
  *
  * @constructor Instantiate a new SourceTransition.
  */
 class SourceTransition : Transition() {
 
-    override fun createAnimator(sceneRoot: ViewGroup, startValues: TransitionValues?,
-                                endValues: TransitionValues?): Animator? {
-        if (startValues != null && endValues != null && endValues.view is ImageView) {
-            val drawable = (endValues.view as ImageView).background
+    // FOR DATA
+    private val containerTransform = ChangeBounds()
+    private val imageTransform = ChangeBounds() // ChangeImageTransform() has bad animation result
 
-//            val startValue = (startValues.values[TRANSITION_PROPERTY] as Float?) ?: 500f
-//            val endValue = (endValues.values[TRANSITION_PROPERTY] as Float?) ?: 6f
-            val startValue = 500f
-            val endValue = 6f
-            val list = arrayOf(startValue, endValue)
+    // --------------
+    // METHODS OVERRIDE
+    // --------------
 
-            if (startValue != endValue) {
-                val objectAnimator = ObjectAnimator
-                    .ofFloat(drawable, PROGRESSBAR_PROPERTY, *list.toFloatArray())
-                objectAnimator.interpolator = DecelerateInterpolator()
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun createAnimator(
+        sceneRoot: ViewGroup,
+        startValues: TransitionValues?,
+        endValues: TransitionValues?
+    ): Animator? {
 
-                return objectAnimator
-            }
+        val view = endValues?.view
+        val anim = when (view) {
+            is CardView -> containerTransform.createAnimator(sceneRoot, startValues, endValues)
+            is ImageView -> imageTransform.createAnimator(sceneRoot, startValues, endValues)
+            else -> throw Exception("Animator for asked view $view not found !")
         }
 
-        return null
+        anim?.addListener(onEnd = { view.invalidate() })
+        return anim
     }
 
-    /**
-     * Capture values in the transition values.
-     *
-     * @param transitionValues the transition value to update.
-     */
-    private fun captureValues(transitionValues: TransitionValues) {
-//        if (transitionValues.view is ImageView) {
-//            // Save current corner radius in the transitionValues Map
-//            val drawable = (transitionValues.view as ImageView).background
-//            val gradientDrawable = GradientDrawable()
-//            gradientDrawable.draw(Canvas(drawable.toBitmap()))
-//            transitionValues.values[TRANSITION_PROPERTY] = gradientDrawable.cornerRadius // not work always 0.0
-//        }
-    }
+
 
     override fun captureStartValues(transitionValues: TransitionValues) {
-        captureValues(transitionValues)
+        containerTransform.captureStartValues(transitionValues)
+        imageTransform.captureStartValues(transitionValues)
     }
 
     override fun captureEndValues(transitionValues: TransitionValues) {
-        captureValues(transitionValues)
+        containerTransform.captureEndValues(transitionValues)
+        imageTransform.captureEndValues(transitionValues)
     }
 }

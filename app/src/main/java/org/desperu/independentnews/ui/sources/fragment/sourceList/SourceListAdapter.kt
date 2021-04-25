@@ -36,7 +36,7 @@ class SourceListAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(list[position])
-        sourceListInterface.updateTransitionName(position, holder.image)
+        sourceListInterface.updateTransitionName(position, holder.container, holder.image)
     }
 
     override fun getItemViewType(position: Int) = layoutId
@@ -52,6 +52,7 @@ class SourceListAdapter(
     class ViewHolder(private val binding: ViewDataBinding): RecyclerView.ViewHolder(binding.root) {
 
         val image: View by bindView(R.id.item_source_image)
+        val container: View by bindView(R.id.item_source_container)
 
         internal fun bind(any: Any?) {
             binding.setVariable(org.desperu.independentnews.BR.viewModel, any)

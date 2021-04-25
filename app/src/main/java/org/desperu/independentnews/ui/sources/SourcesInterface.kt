@@ -12,10 +12,10 @@ interface SourcesInterface {
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
      * @param sourceWithData the source with data to show in the fragment.
-     * @param imageView the image view to animate.
      * @param itemPosition the position of the source item in the recycler view.
+     * @param sharedElements    the shared elements to animate during transition.
      */
-    fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int)
+    fun showSourceDetail(sourceWithData: SourceWithData, itemPosition: Int, vararg sharedElements: View)
 
     /**
      * Update app bar on touch listener, used to finish app bar anim.

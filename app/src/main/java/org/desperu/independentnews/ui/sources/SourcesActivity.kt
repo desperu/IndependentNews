@@ -7,7 +7,9 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.doOnAttach
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
-import androidx.transition.*
+import androidx.transition.Transition
+import androidx.transition.TransitionInflater
+import androidx.transition.TransitionSet
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.android.material.transition.MaterialFade
@@ -21,12 +23,12 @@ import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.main.HAS_CHANGE
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.showArticle.ImageRouter
+import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SourceDetailFragment
 import org.desperu.independentnews.ui.sources.fragment.sourceList.SourceListFragment
-import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.*
-import org.desperu.independentnews.utils.WHO_OWNS_WHAT
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTransitionName
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 import org.koin.core.qualifier.qualifier
@@ -64,7 +66,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     override fun configureDesign() {
         configureKoinDependency()
         configAppBar()
-        configureAndShowFragment(FRAG_SOURCES_LIST, null, null, -1)
+        configureAndShowFragment(FRAG_SOURCES_LIST, null, -1)
     }
 
     // --------------
@@ -91,13 +93,18 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     /**
      * Configure and show corresponding fragment.
      *
-     * @param fragmentKey Key for fragment.
-     * @param sourceWithData the source with data detail to show.
-     * @param sharedElement the shared element to animate during the transition.
-     * @param sourcePosition the position of the source item in the recycler view.
+     * @param fragmentKey       the key of the fragment.
+     * @param sourceWithData    the source with data detail to show.
+     * @param sharedElements    the shared element to animate during the transition.
+     * @param sourcePosition    the position of the source item in the recycler view.
      */
-    private fun configureAndShowFragment(fragmentKey: Int, sourceWithData: SourceWithData?,
-                                         sharedElement: View?, sourcePosition: Int) {
+    private fun configureAndShowFragment(
+        fragmentKey: Int,
+        sourceWithData: SourceWithData?,
+        sourcePosition: Int,
+        vararg sharedElements: View
+    ) {
+
         if (this.fragmentKey != fragmentKey) {
             this.fragmentKey = fragmentKey
             this.sourcePosition = sourcePosition
@@ -109,7 +116,7 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
                     else -> Fragment()
                 }
 
-            fragmentTransaction(fragment, sharedElement)
+            fragmentTransaction(fragment, *sharedElements)
         }
     }
 
@@ -149,15 +156,19 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
      * for API > Lollipop.
      *
      * @param fragment the fragment to show in the frame layout.
-     * @param sharedElement the shared element to animate.
+     * @param sharedElements the shared elements to animate.
      */
-    private fun fragmentTransaction(fragment: Fragment, sharedElement: View?) {
+    private fun fragmentTransaction(fragment: Fragment, vararg sharedElements: View) {
         val fragTransaction = fm.beginTransaction()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && sharedElement != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             performTransition(fragment)
-            sharedElement.transitionName = getString(R.string.animation_source_list_to_detail) + sourcePosition
-            fragTransaction.addSharedElement(sharedElement, sharedElement.transitionName)
+            sharedElements.forEach {
+                val transitionName = getSourceTransitionName(it, sourcePosition)
+
+                it.transitionName = transitionName
+                fragTransaction.addSharedElement(it, transitionName)
+            }
         }
 
         if (!fm.isDestroyed) {
@@ -172,12 +183,12 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
     /**
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
-     * @param sourceWithData the source with data to show in the fragment.
-     * @param imageView the image view to animate.
-     * @param itemPosition the position of the source item in the recycler view.
+     * @param sourceWithData    the source with data to show in the fragment.
+     * @param itemPosition      the position of the source item in the recycler view.
+     * @param sharedElements    the shared elements to animate during transition.
      */
-    override fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int) =
-        configureAndShowFragment(FRAG_SOURCES_DETAIL, sourceWithData, imageView, itemPosition)
+    override fun showSourceDetail(sourceWithData: SourceWithData, itemPosition: Int, vararg sharedElements: View) =
+        configureAndShowFragment(FRAG_SOURCES_DETAIL, sourceWithData, itemPosition, *sharedElements)
 
     // --------------
     // ACTION
@@ -220,13 +231,14 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
         transitionSet.addTransition(
             TransitionInflater.from(this).inflateTransition(android.R.transition.move)
         )
-        transitionSet.addTransition(SourceTransition()) // ChangeImageTransform() has bad animation result
+        transitionSet.addTransition(SourceTransition())
         fragment.sharedElementEnterTransition = transitionSet
 
         // 3. Enter Transition for New Fragment
         val enterFade = MaterialFade()
         enterFade.duration = FADE_DEFAULT_TIME
-        fragment.enterTransition = enterFade // TODO anim mistake du to this line and use card view instead of image
+        enterFade.addListener(getTransitionListener(fragment))
+        fragment.enterTransition = enterFade // transition bug, resolved with transition listener
     }
 
     /**
@@ -266,6 +278,27 @@ class SourcesActivity : BaseActivity(sourcesModule), SourcesInterface {
                 prefs.getPrefs().edit().putInt(SOURCE_OPENED_TIMES, END).apply()
             }
         })
+    }
+
+    /**
+     * Returns the transition listener, used to clear enter animation on SourceDetail,
+     * and also avoid UI web view flash during exit transition.
+     * I know, i clear enter transition to avoid bug on exit, but not work on exit.
+     *
+     * @param fragment the fragment for which clear enter transition.
+     */
+    private fun getTransitionListener(fragment: Fragment) = object : Transition.TransitionListener {
+        override fun onTransitionStart(transition: Transition) {}
+
+        override fun onTransitionEnd(transition: Transition) {
+            fragment.enterTransition = null
+        }
+
+        override fun onTransitionCancel(transition: Transition) {}
+
+        override fun onTransitionPause(transition: Transition) {}
+
+        override fun onTransitionResume(transition: Transition) {}
     }
 
     // --------------

@@ -1,5 +1,6 @@
 package org.desperu.independentnews.ui.sources.fragment.sourceList
 
+import android.view.View
 import android.view.View.OnClickListener
 import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.models.database.SourceWithData
@@ -32,6 +33,11 @@ class SourceViewModel(
      * On click image listener.
      */
     val onClickImage = OnClickListener {
-        router.showSourceDetail(sourceWithData, it, itemPosition)
+        router.showSourceDetail(
+            sourceWithData,
+            itemPosition,
+            it.parent as View,  // Card container
+            it                  // Clicked image
+        )
     }
 }

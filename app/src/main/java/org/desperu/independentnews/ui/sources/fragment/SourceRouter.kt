@@ -16,10 +16,14 @@ interface SourceRouter {
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
      * @param sourceWithData    the source with data to show in the fragment.
-     * @param imageView         the image view to animate.
      * @param itemPosition      the position of the source item in the recycler view.
+     * @param sharedElements    the shared elements to animate during transition.
      */
-    fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int)
+    fun showSourceDetail(
+        sourceWithData: SourceWithData,
+        itemPosition: Int,
+        vararg sharedElements: View
+    )
 
     /**
      * Redirects the user to the ShowArticle Activity to show sources.
@@ -45,11 +49,16 @@ class SourceRouterImpl(private val activity: AppCompatActivity): SourceRouter {
      * Redirects the user to the SourcesDetailFragment to show sources detail.
      *
      * @param sourceWithData    the source with data to show in the fragment.
-     * @param imageView         the image view to animate.
      * @param itemPosition      the position of the source item in the recycler view.
+     * @param sharedElements    the shared elements to animate during transition.
      */
-    override fun showSourceDetail(sourceWithData: SourceWithData, imageView: View, itemPosition: Int) =
-        (activity as SourcesInterface).showSourceDetail(sourceWithData, imageView, itemPosition)
+    override fun showSourceDetail(
+        sourceWithData: SourceWithData,
+        itemPosition: Int,
+        vararg sharedElements: View
+    ) =
+        (activity as SourcesInterface)
+            .showSourceDetail(sourceWithData, itemPosition, *sharedElements)
 
     /**
      * Redirects the user to the Sources Activity to manage sources.

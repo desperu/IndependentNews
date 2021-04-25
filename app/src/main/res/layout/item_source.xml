@@ -11,6 +11,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_source_container"
+        android:transitionName="@string/animation_source_list_to_detail_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/default_margin"
@@ -24,7 +25,7 @@
 
         <ImageView
             android:id="@+id/item_source_image"
-            android:transitionName="@string/animation_source_list_to_detail"
+            android:transitionName="@string/animation_source_list_to_detail_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/default_little_margin"

@@ -1,15 +1,29 @@
 package org.desperu.independentnews.utils
 
+import android.view.View
+import android.widget.ImageView
+import androidx.cardview.widget.CardView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.service.ResourceService
+import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.Utils.getDomainFromUrl
 import org.desperu.independentnews.utils.Utils.isHtmlData
+import org.koin.core.KoinComponent
+import org.koin.core.get
 
 /**
  * SourceUtils object witch provide utils functions for sources.
  */
-object SourcesUtils {
+object SourcesUtils : KoinComponent {
+
+    // FOR DATA
+    private val resources: ResourceService = get()
+
+    // -----------------
+    // DATA
+    // -----------------
 
     /**
      * Returns the source name from the given source url.
@@ -57,6 +71,21 @@ object SourcesUtils {
         url.contains(BASTAMAG_BASE_URL) -> ALTER_MEDIA_TEXT_ZOOM
         url.contains(MULTINATIONALES_BASE_URL) -> ALTER_MEDIA_TEXT_ZOOM
         else -> 0
+    }
+
+    /**
+     * Returns the transition name for asked view type.
+     * Actually only used in [SourcesActivity].
+     *
+     * @param sharedElement the shared element for which retrieved transition name.
+     * @param position      the position of the item in the list.
+     *
+     * @return the transition name of shared element.
+     */
+    internal fun getSourceTransitionName(sharedElement: View, position: Int) = when (sharedElement) {
+        is CardView -> resources.getString(R.string.animation_source_list_to_detail_container) + position
+        is ImageView -> resources.getString(R.string.animation_source_list_to_detail_image) + position
+        else -> throw IllegalArgumentException("View type not found : $sharedElement")
     }
 
     // -----------------

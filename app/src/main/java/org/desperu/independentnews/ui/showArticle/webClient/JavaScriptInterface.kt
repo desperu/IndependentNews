@@ -64,10 +64,10 @@ class JavaScriptInterface(private val activity: AppCompatActivity) {
     @JavascriptInterface
     fun applyCss(event: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
         val webView = activity.web_view ?: activity.source_detail_web_view
-        val hasContent = webView.contentHeight > 0
+        val hasContent = webView?.contentHeight ?: 0 > 0
 
         // If the web view has content or it's on page show event
         // Web view is ready to apply css style
-        if (hasContent || event == ON_PAGE_SHOW) webView.toApplyCss = true
+        if (hasContent || event == ON_PAGE_SHOW) webView.toApplyCss = true // TODO remove on page show ??
     }
 }

@@ -95,6 +95,7 @@
     <!-- Sources Activity -->
     <dimen name="fragment_source_drawable_size">250dp</dimen>
     <dimen name="fragment_source_detail_card_container_size">350dp</dimen>
+    <dimen name="fragment_source_detail_card_container_corner_radius">200dp</dimen>
     <item name="fragment_source_detail_guideline_horizontal" type="integer">0.6</item>
     <item name="fragment_source_detail_guideline_vertical" type="integer">0.6</item>
 

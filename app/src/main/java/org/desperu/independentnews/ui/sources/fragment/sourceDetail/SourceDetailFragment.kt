@@ -5,10 +5,11 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.doOnNextLayout
+import androidx.core.view.doOnPreDraw
+import androidx.core.view.postOnAnimationDelayed
 import androidx.core.widget.NestedScrollView.OnScrollChangeListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.fragment_source_detail.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.extension.design.dp
 import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.ui.sources.SourcesInterface
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTransitionName
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -76,7 +78,6 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     override fun configureDesign() {
         updateTransitionName()
-        imageRequestLayout()
         configureWebView()
         configureRecyclerView()
     }
@@ -115,10 +116,13 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
 
     /**
      * Configure recycler view, support large screen size. Set from left animation
-     * for recycler view items,.
+     * for recycler view items.
      */
     private fun configureRecyclerView() {
         sourceDetailAdapter = SourceDetailAdapter(context!!, R.layout.item_source_link)
+        source_detail_web_view.postOnAnimationDelayed(500L) {
+            source_detail_recycler.adapter = sourceDetailAdapter
+        }
         source_detail_nested_scroll.setOnScrollChangeListener(scrollListener)
     }
 
@@ -140,17 +144,15 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     /**
      * Scroll listener, to show recycler animation each time it appear on user screen.
      */
-    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ -> // to perfect, not remove the adapter, just re-play anim
+    private val scrollListener = OnScrollChangeListener { v, _, scrollY, _, _ ->
         source_detail_nested_scroll?.let {
             val safeMarge = 50.dp // Safe marge to prevent ui mistake
             val recyclerTop = source_detail_recycler.top - v.measuredHeight - safeMarge
-            source_detail_recycler.adapter =
-                if (recyclerTop < scrollY)
-                    if (source_detail_recycler.adapter == null)
-                        sourceDetailAdapter
-                    else return@OnScrollChangeListener
-                else
-                    null
+
+            if (recyclerTop in scrollY..scrollY + safeMarge) // Should be + but not work
+                // Force adapter to re-set all visible items
+                // to re-play the animation
+                    sourceDetailAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -169,9 +171,11 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     private fun updateTransitionName() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             postponeEnterTransition()
-            source_detail_image.transitionName =
-                getString(R.string.animation_source_list_to_detail) + sourcePosition
-            startPostponedEnterTransition()
+            listOf(source_detail_container, source_detail_image).forEach {
+                it.transitionName = getSourceTransitionName(it, sourcePosition)
+            }
+
+            source_detail_image.doOnPreDraw { startPostponedEnterTransition() }
         }
     }
 
@@ -180,16 +184,9 @@ class SourceDetailFragment : BaseBindingFragment(), SourceDetailInterface {
     // --------------
 
     /**
-     * Request layout after transition animation for the image.
-     */
-    private fun imageRequestLayout() =
-        source_detail_image.postOnAnimation { source_detail_image.requestLayout() }
-
-    /**
      * Animate view when fragment appear.
      */
     private fun animateViews() {
-//        alphaViewAnimation(listOf(source_detail_container), 0, true) // TODO create a highlight on the image logo, try to animate the container
         scaleViewAnimation(source_detail_disable_button, 250)
         alphaViewAnimation(listOf(source_detail_title, source_detail_web_view), 50, true)
         fromBottomAnimation(source_detail_web_view, 50)

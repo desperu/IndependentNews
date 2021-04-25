@@ -1,11 +1,7 @@
-
- package org.desperu.independentnews.ui.sources.fragment.sourceList
+package org.desperu.independentnews.ui.sources.fragment.sourceList
 
 import android.os.Build
-import android.os.Bundle
 import android.view.View
-import android.view.animation.AnimationUtils
-import android.view.animation.LayoutAnimationController
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
@@ -15,6 +11,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.sourceDetail.SOURCE_POSITION
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTransitionName
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -33,8 +30,6 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
     private val binding get() = viewBinding!!
     private val viewModel: SourcesListViewModel by viewModel()
     private var sourceListAdapter: SourceListAdapter? = null
-    private lateinit var controller: LayoutAnimationController
-    private var fromDetail: Boolean? = null
 
     // --------------
     // BASE METHODS
@@ -79,9 +74,6 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
     private fun configureRecyclerView() {
         sourceListAdapter = SourceListAdapter(R.layout.item_source)
         sources_recycler.layoutManager = GridLayoutManager(context, 2)
-
-        controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_anim_fall_down)
-        updateRecyclerAnim()
     }
 
     // --------------
@@ -90,19 +82,12 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
 
     override fun onResume() {
         super.onResume()
-        updateRecyclerAnim()
-        fromDetail = false
 
         get<SourcesInterface>().handleShowcase()
 
         sources_recycler.doOnNextLayout {
             get<SourcesInterface>().updateAppBarOnTouch()
         }
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        fromDetail?.let { fromDetail = true }
     }
 
     override fun onDestroyView() {
@@ -124,16 +109,23 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
     // --------------
 
     /**
-     * Update shared element transition name.
+     * Update shared element transition name, and start scheduled transition
+     * when all transition names are updated.
      *
-     * @param itemPosition the position of the item that contains the shared element.
-     * @param image the image for which update it's transition name.
+     * @param itemPosition      the position of the item that contains the shared element.
+     * @param sharedElements    the shared elements for which update they're transition name.
      */
-    override fun updateTransitionName(itemPosition: Int, image: View) {
+    override fun updateTransitionName(itemPosition: Int, vararg sharedElements: View) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            image.transitionName = getString(R.string.animation_source_list_to_detail) + itemPosition
-            if (this.sourcePosition == itemPosition || this.sourcePosition == -1)
-                scheduleStartPostponedTransition(image)
+
+            sharedElements.forEach {
+                it.transitionName = getSourceTransitionName(it, itemPosition)
+
+                val isSharedItem = sourcePosition == itemPosition || sourcePosition == -1
+
+                if (isSharedItem)
+                    scheduleStartPostponedTransition(it)
+            }
         }
     }
 
@@ -145,25 +137,7 @@ class SourceListFragment : BaseBindingFragment(), SourceListInterface {
      * @param sharedElement the shared element to animate for the transition.
      */
     private fun scheduleStartPostponedTransition(sharedElement: View) {
-        sharedElement.doOnPreDraw {
-//            updateRecyclerAnim()
-            startPostponedEnterTransition()
-        }
-    }
-
-    /**
-     * Update recycler view layout animation, depends of fromDetail value
-     * to show or not the animation.
-     */
-    private fun updateRecyclerAnim() {
-        controller.animation.duration =
-            if (fromDetail == null || fromDetail == false) // Show animation
-                resources.getInteger(R.integer.item_anim_duration).toLong()
-            else
-                0L
-
-        sources_recycler.layoutAnimation = controller
-        sources_recycler.scheduleLayoutAnimation()
+        sharedElement.doOnPreDraw { startPostponedEnterTransition() }
     }
 
     // --- GETTERS ---

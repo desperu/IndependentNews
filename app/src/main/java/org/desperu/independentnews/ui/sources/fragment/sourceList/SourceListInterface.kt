@@ -16,8 +16,8 @@ interface SourceListInterface {
     /**
      * Update shared element transition name.
      *
-     * @param itemPosition the position of the item that contains the shared element.
-     * @param image the image for which update it's transition name.
+     * @param itemPosition      the position of the item that contains the shared elements.
+     * @param sharedElements    the shared elements to animate during transition.
      */
-    fun updateTransitionName(itemPosition: Int, image: View)
+    fun updateTransitionName(itemPosition: Int, vararg sharedElements: View)
 }

@@ -1,9 +1,17 @@
 package org.desperu.independentnews.utils
 
+import android.content.Context
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import io.mockk.every
+import io.mockk.mockk
 import org.desperu.independentnews.R
+import org.desperu.independentnews.di.module.serviceModule
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.models.database.SourceWithData
+import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.utils.SourcesUtils.getAdditionalCss
 import org.desperu.independentnews.utils.SourcesUtils.getBackgroundColorId
 import org.desperu.independentnews.utils.SourcesUtils.getButtonLinkColor
@@ -11,17 +19,46 @@ import org.desperu.independentnews.utils.SourcesUtils.getLogoId
 import org.desperu.independentnews.utils.SourcesUtils.getMiniLogoId
 import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
 import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
+import org.desperu.independentnews.utils.SourcesUtils.getSourceTransitionName
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
-import java.lang.IllegalArgumentException
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.core.context.unloadKoinModules
+import org.koin.test.KoinTest
+import org.koin.test.get
 
 /**
  * Source Utils class test, to check that all utils functions work as needed.
  */
-class SourceUtilsTest {
+class SourceUtilsTest : KoinTest {
 
     // FOR DATA
     private val sourceList = listOf(BASTAMAG, REPORTERRE, MULTINATIONALES)
+    private var mockContext: Context = mockk()
+    private lateinit var resources: ResourceService
+
+    @Before
+    fun before() {
+        startKoin {
+            androidContext(mockContext)
+            modules(serviceModule)
+        }
+
+        resources = get()
+
+        every { resources.getString(R.string.animation_source_list_to_detail_container) } returns "ImageAnimationSourceListToDetailContainer"
+        every { resources.getString(R.string.animation_source_list_to_detail_image) } returns  "ImageAnimationSourceListToDetailImage"
+    }
+
+    @After
+    fun after() {
+        unloadKoinModules(listOf(serviceModule))
+        stopKoin()
+    }
 
     @Test
     fun given_sourceList_When_getSourceNameFromUrl_Then_checkResult() {
@@ -110,6 +147,32 @@ class SourceUtilsTest {
         val expected = 0
 
         val output = getSourceTextZoom(emptyUrl, sourceName)
+
+        assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_viewList_When_getSourceTransitionName_Then_checkResult() {
+        val expectedList = listOf(
+            R.string.animation_source_list_to_detail_container,
+            R.string.animation_source_list_to_detail_image
+        )
+
+        val inputList = listOf(mockk<CardView>(), mockk<ImageView>())
+        val outputList = inputList.mapIndexed { index, view -> getSourceTransitionName(view, index) }
+
+        outputList.forEachIndexed { index, output ->
+            assertEquals(resources.getString(expectedList[index]) + index, output)
+        }
+    }
+
+    @Test
+    fun given_wrongViewList_When_getSourceTransitionName_Then_checkError() {
+        val wrongViewType = TextView(mockContext)
+        val expected = "View type not found : $wrongViewType"
+
+        val output = try { getSourceTransitionName(wrongViewType, 0) }
+        catch (e: IllegalArgumentException) { e.message }
 
         assertEquals(expected, output)
     }

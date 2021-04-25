@@ -27,12 +27,13 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/source_detail_container"
+                    android:transitionName="@string/animation_source_list_to_detail_container"
                     android:layout_width="@dimen/fragment_source_detail_card_container_size"
                     android:layout_height="@dimen/fragment_source_detail_card_container_size"
                     android:layout_marginVertical="@dimen/default_margin"
                     android:tag="frag_source_detail"
                     app:cardPreventCornerOverlap="true"
-                    app:cardCornerRadius="@dimen/item_article_corner_radius"
+                    app:cardCornerRadius="@dimen/fragment_source_detail_card_container_corner_radius"
                     app:cardElevation="@dimen/default_elevation"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +44,7 @@
 
                     <ImageView
                         android:id="@+id/source_detail_image"
-                        android:transitionName="@string/animation_source_list_to_detail"
+                        android:transitionName="@string/animation_source_list_to_detail_image"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:minWidth="@dimen/fragment_source_detail_card_container_size"

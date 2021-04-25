@@ -15,6 +15,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.anim.AnimHelper.animatedValue
 import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.extension.design.getValueAnimator
+import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.views.NoScrollWebView
 import org.koin.core.KoinComponent
@@ -183,8 +184,8 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
                          else view.top - view.bottom // From top
         view.translationY = animatedValue(fromYDelta, progress)
 
-        // Container X scale animation, for more smoothly animation entry
-        view.scaleX = 0.7f + (0.3f * progress) // 0.7f ??? -->try, was 0.5f before
+        // Container scale animation, for more smoothly animation entry
+        view.setScale(0.7f + (0.3f * progress)) // 0.7f ??? -->try, was 0.5f before
 
         // Content alpha animation, for animation end
         (view as ViewGroup?)?.children?.forEach { it.alpha = (progress - 0.8f) * 5 }
