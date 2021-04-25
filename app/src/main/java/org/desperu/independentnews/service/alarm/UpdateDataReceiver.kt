@@ -3,8 +3,9 @@ package org.desperu.independentnews.service.alarm
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.service.SharedPrefService
@@ -44,9 +45,18 @@ class UpdateDataReceiver: BroadcastReceiver(), KoinComponent {
     /**
      * Update data for all sources in database.
      */
-    private fun updateData() = GlobalScope.launch(Dispatchers.IO) {
+    private fun updateData() = CoroutineScope(Dispatchers.IO).launch { // Was GlobalScope, on test
+        // All data logged to find error, to remove and correct
+        val tag = javaClass.simpleName
+
         val isWifiOnly = prefs.value.getPrefs().getBoolean(REFRESH_ONLY_WIFI, REFRESH_ONLY_WIFI_DEFAULT)
-        if (!isWifiOnly || isWifiOnly && isWifiAvailable(context!!))
+        Log.e(tag, "isWifiOnly : $isWifiOnly")
+
+        Log.e(tag, "isWifiAvailable ${isWifiAvailable(context!!)}")
+
+        if (!isWifiOnly || isWifiOnly && isWifiAvailable(context!!)) {
             ideNewsRepository.value.refreshData()
+            Log.e(tag, "Start to refresh data !! Rocks !!")
+        }
     }
 }
