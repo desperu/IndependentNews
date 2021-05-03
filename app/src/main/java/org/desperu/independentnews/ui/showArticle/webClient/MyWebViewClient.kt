@@ -45,7 +45,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
     private val sv: NestedScrollView by bindView(activity, R.id.article_scroll_view)
 
     // FOR DATA
-    override lateinit var actualUrl: String
+    override var actualUrl: String? = null
     internal var navigationCount = -1
 
     init {
@@ -147,10 +147,15 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
      * Add the previous page in the navigation history.
      */
     private fun addPageToHistory() {
-        viewModel.addPage(
-            navigationCount,
-            Pair(if (isHtmlData(actualUrl)) viewModel.article.get() else null, sv.scrollY)
-        )
+        if (!articleDesign.isRefresh)
+            viewModel.addPage(
+                navigationCount,
+                Pair(
+                    if (isHtmlData(actualUrl ?: "")) viewModel.article.get()
+                    else null,
+                    sv.scrollY
+                )
+            )
     }
 
     /**

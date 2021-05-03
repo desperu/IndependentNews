@@ -76,6 +76,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     // FOR DATA
     override var isFirstPage = true
     private var isLayoutDesigned = false
+    override var isRefresh = false
     private val scrollHeight get() = sv.getChildAt(0).bottom - sv.measuredHeight
     override var scrollPosition = -1
     private var hasScroll = false
@@ -85,6 +86,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         configureKoinDependency()
         setupScrollListener()
         configureAppBar()
+        configureSwipeRefresh()
     }
 
     // --------------
@@ -110,17 +112,22 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     }
 
     /**
-     * Scroll Changed Listener, update scroll progress bar
-     * and handle paused article reach bottom.
+     * Scroll Changed Listener, update scroll progress bar,
+     * handle paused article reach bottom,
+     * and handle swipe refresh listener.
      *
      * @param scrollY the given scroll Y position.
      */
     private fun onScrollChanged(scrollY: Int?) {
         val newScrollY = scrollY ?: sv.scrollY
+
         updateScrollProgress(newScrollY)
 
         val isPaused = activity.viewModel.isPaused.get()
         if (isPaused && newScrollY == scrollHeight) showRemovePausedDialog()
+
+        if (newScrollY == 0) configureSwipeRefresh()
+        else activity.article_swipe_refresh.setOnRefreshListener(null)
     }
 
     /**
@@ -128,6 +135,24 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      */
     private fun configureAppBar() {
         activity.appbar_container.tag = activity::class.java.simpleName
+    }
+
+    /**
+     * Configure swipe refresh listener, re-set article or web page on refresh.
+     */
+    private fun configureSwipeRefresh() {
+        activity.run {
+            article_swipe_refresh.setOnRefreshListener {
+                val article = viewModel.article.get()
+
+                isRefresh = true // To handle navigation history
+
+                if (article != null)
+                    viewModel.article.apply { set(article); notifyChange() }
+                else
+                    web_view.loadUrl(actualUrl ?: "")
+            }
+        }
     }
 
     // --------------
@@ -370,12 +395,14 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             progress in 80..100 -> {
                 if (!isLayoutDesigned && !isFirstPage) {
                     isLayoutDesigned = true
+                    activity.article_swipe_refresh.isRefreshing = false
                     if (!isHtmlData(actualUrl.mToString())) scrollTo(null)
                     showScrollView()
                 }
             }
             progress > 100 -> {
                 isLayoutDesigned = true
+                isRefresh = false
                 scrollBar.visibility = View.VISIBLE
                 loadingProgressBar.visibility = View.INVISIBLE
                 isFirstPage = false

@@ -13,6 +13,11 @@ interface ArticleDesignInterface {
     var isFirstPage: Boolean
 
     /**
+     * True if is a refresh page, false otherwise.
+     */
+    var isRefresh: Boolean
+
+    /**
      * Used to store the page scroll position.
      */
     var scrollPosition: Int

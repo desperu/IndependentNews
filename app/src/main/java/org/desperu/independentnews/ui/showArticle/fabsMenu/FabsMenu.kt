@@ -199,7 +199,7 @@ class FabsMenu : KoinComponent{
             wVSettings.textZoom = newTextZoom
 
             // Calculus the real text zoom, take care of specific source text zoom.
-            val actualUrl = myWebViewClientInterface.actualUrl
+            val actualUrl = myWebViewClientInterface.actualUrl ?: ""
             val sourceName = activity.viewModel.article.get()?.source?.name ?: ""
             val realTextZoom = newTextZoom - getSourceTextZoom(actualUrl, sourceName)
             // Store the new value in the preferences.
