@@ -9,8 +9,8 @@ import org.desperu.independentnews.models.database.SourcePage
 import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * FetchHelper which provide functions to fetch data.

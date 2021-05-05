@@ -10,8 +10,8 @@ import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.utils.Utils.getDomainFromUrl
 import org.desperu.independentnews.utils.Utils.isHtmlData
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * SourceUtils object witch provide utils functions for sources.

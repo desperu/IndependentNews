@@ -24,8 +24,8 @@ import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.TODAY_ARTICLES
 import org.desperu.independentnews.utils.*
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 // FOR NOTIFICATION
 private const val CHANNEL_ID = "IndependentNewsNotification"

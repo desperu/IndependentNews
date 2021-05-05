@@ -8,8 +8,8 @@ import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragm
 import org.desperu.independentnews.ui.main.fragment.articleList.FRAG_KEY
 import org.desperu.independentnews.ui.main.fragment.viewPager.ViewPagerFragment
 import org.desperu.independentnews.ui.main.fragment.viewPager.VP_FRAG_KEY
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * MainUtils object witch provide utils functions for main activity.

@@ -17,8 +17,8 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.design.screenWidth
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * Icon animation class, used to animate icons for user actions, favorite and paused article.

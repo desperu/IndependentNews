@@ -17,7 +17,7 @@ import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.ui.showArticle.ShowArticleActivity
 import org.desperu.independentnews.utils.LOW_STATUS_BAR
 import org.desperu.independentnews.utils.SHOW_STATUS_BAR
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 import java.lang.ref.WeakReference
 import kotlin.math.min
 import kotlin.properties.Delegates

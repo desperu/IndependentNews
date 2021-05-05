@@ -11,8 +11,8 @@ import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.views.NoScrollWebView
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * My custom Web Chrome Client, used to show full screen video in a custom view.

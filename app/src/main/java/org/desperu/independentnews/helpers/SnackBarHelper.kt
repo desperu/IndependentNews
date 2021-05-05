@@ -27,8 +27,8 @@ import org.desperu.independentnews.ui.main.MainInterface
 import org.desperu.independentnews.ui.main.NEW_ARTICLES
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * SnackBarHelper witch provide functions to display messages into the snack bar.

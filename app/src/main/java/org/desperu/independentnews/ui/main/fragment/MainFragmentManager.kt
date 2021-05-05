@@ -15,7 +15,7 @@ import org.desperu.independentnews.utils.FRAG_TOP_STORY
 import org.desperu.independentnews.utils.FRAG_USER_ARTICLE
 import org.desperu.independentnews.utils.MainUtils.getFragFromKey
 import org.desperu.independentnews.utils.MainUtils.retrievedKeyFromFrag
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 /**
  * Main Fragment Manager class witch manage all fragments for main activity.

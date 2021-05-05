@@ -10,7 +10,7 @@ import org.desperu.independentnews.base.ui.BaseFragment
 import org.desperu.independentnews.ui.main.fragment.articleList.ArticleListFragment
 import org.desperu.independentnews.utils.FRAG_USER_ARTICLE
 import org.desperu.independentnews.utils.NO_FRAG
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 /**
  * The argument name for bundle to received the fragment key to this Fragment.

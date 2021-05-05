@@ -7,7 +7,7 @@ import org.desperu.independentnews.di.module.network.networkModule
 import org.desperu.independentnews.di.module.network.sourceNetModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.KoinContextHandler
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 
 class IndependentNews : Application() {
@@ -17,7 +17,7 @@ class IndependentNews : Application() {
      */
     override fun onCreate() {
         super.onCreate()
-        if (KoinContextHandler.getOrNull() == null) { // For Robolectric in unit test.
+        if (GlobalContext.getOrNull() == null) { // For Robolectric in unit test.
             startKoin {
                 androidLogger()
                 androidContext(this@IndependentNews)

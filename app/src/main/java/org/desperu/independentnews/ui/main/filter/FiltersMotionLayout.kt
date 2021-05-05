@@ -15,8 +15,8 @@ import org.desperu.independentnews.views.MultiListenerMotionLayout
 import org.desperu.independentnews.views.NoScrollRecyclerView
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.ui.main.MainInterface
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * All Transitions and ConstraintSets are defined in R.xml.scene_filter

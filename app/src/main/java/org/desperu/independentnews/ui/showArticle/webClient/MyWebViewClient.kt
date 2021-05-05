@@ -23,8 +23,8 @@ import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isMailTo
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
 
 /**

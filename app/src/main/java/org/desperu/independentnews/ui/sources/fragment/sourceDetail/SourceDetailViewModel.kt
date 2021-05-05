@@ -12,8 +12,8 @@ import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.service.ResourceService
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * View Model witch provide details data for source.

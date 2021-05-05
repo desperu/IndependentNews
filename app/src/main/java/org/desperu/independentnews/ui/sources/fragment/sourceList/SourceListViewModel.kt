@@ -8,8 +8,8 @@ import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.repositories.database.SourceRepository
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
 import org.desperu.independentnews.utils.EQUALS
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * View Model witch provide data for sources list.

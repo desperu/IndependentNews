@@ -43,7 +43,7 @@ import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.android.ext.android.get
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.getKoin
 import org.koin.core.parameter.parametersOf
 import java.io.ByteArrayOutputStream
 import java.lang.ref.WeakReference

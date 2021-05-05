@@ -13,8 +13,8 @@ import org.desperu.independentnews.service.alarm.AppAlarmManager.getAlarmTime
 import org.desperu.independentnews.service.alarm.AppAlarmManager.startAlarm
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * Broadcast Receiver to handle broadcast call for update data (alarm or system).

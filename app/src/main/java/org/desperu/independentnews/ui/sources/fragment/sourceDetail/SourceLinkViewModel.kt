@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import org.desperu.independentnews.models.database.SourceWithData
 import org.desperu.independentnews.ui.sources.SourcesInterface
 import org.desperu.independentnews.ui.sources.fragment.SourceRouter
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * View Model witch provide data for source link.

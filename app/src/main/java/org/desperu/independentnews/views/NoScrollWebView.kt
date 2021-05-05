@@ -37,8 +37,8 @@ import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isMailTo
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import org.koin.core.qualifier.qualifier
 import kotlin.properties.Delegates
 

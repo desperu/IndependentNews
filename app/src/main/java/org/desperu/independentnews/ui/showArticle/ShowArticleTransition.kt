@@ -18,8 +18,8 @@ import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.service.ResourceService
 import org.desperu.independentnews.views.NoScrollWebView
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * Custom transition class to animate transition between article list in main to show article.

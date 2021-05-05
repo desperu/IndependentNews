@@ -9,7 +9,7 @@ import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.utils.SOURCE
 import org.desperu.independentnews.utils.SourcesUtils.getAdditionalCss
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 /**
  * Css Repository interface to get data from Css database.

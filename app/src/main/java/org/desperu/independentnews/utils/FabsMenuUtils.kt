@@ -2,8 +2,8 @@ package org.desperu.independentnews.utils
 
 import org.desperu.independentnews.R
 import org.desperu.independentnews.service.ResourceService
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * FabsMenuUtils object witch provide utils functions for Fabs Menu.

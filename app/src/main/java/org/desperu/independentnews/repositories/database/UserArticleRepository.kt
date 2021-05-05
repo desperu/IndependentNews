@@ -11,7 +11,7 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.models.database.Favorite
 import org.desperu.independentnews.models.database.Paused
 import org.desperu.independentnews.models.database.Source
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 import java.util.*
 
 /**

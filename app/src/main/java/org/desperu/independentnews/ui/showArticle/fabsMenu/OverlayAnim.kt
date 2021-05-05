@@ -18,8 +18,8 @@ import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.views.MySpeedDialView
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import kotlin.math.sqrt
 
 /**

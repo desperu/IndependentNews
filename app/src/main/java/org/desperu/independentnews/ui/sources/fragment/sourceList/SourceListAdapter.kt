@@ -9,8 +9,8 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 /**
  * Recycler view adapter for Source List.
  *

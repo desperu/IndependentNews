@@ -22,8 +22,8 @@ import org.desperu.independentnews.utils.ADDED_FAVORITE
 import org.desperu.independentnews.utils.ADDED_FAVORITE_DEFAULT
 import org.desperu.independentnews.utils.FRAG_FAVORITE
 import org.desperu.independentnews.utils.FRAG_PAUSED
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * View Model which provide data for article item.

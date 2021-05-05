@@ -21,9 +21,9 @@ import org.desperu.independentnews.utils.ADDED_FAVORITE_DEFAULT
 import org.desperu.independentnews.utils.ADDED_PAUSED
 import org.desperu.independentnews.utils.ADDED_PAUSED_DEFAULT
 import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
-import org.koin.core.KoinComponent
-import org.koin.core.get
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
+import org.koin.core.component.inject
 import kotlin.properties.Delegates
 
 /**

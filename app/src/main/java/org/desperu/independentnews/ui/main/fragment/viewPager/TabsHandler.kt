@@ -14,8 +14,8 @@ import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.USER_ARTICLE_ICONS
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * Tabs Handler used to mange tab layout for icon color animation and badge.

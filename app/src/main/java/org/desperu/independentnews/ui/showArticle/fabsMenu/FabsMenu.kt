@@ -31,8 +31,8 @@ import org.desperu.independentnews.utils.SourcesUtils.getSourceTextZoom
 import org.desperu.independentnews.views.MySpeedDialView
 import org.desperu.independentnews.views.MySpeedDialView.OnAnimationEndListener
 import org.desperu.independentnews.views.MySpeedDialView.OnAnimationStartListener
-import org.koin.core.KoinComponent
-import org.koin.core.get
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * Fabs Menu class that is used to handle the Speed Dial View.
