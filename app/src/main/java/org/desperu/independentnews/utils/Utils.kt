@@ -249,6 +249,19 @@ internal object Utils {
         url.startsWith(MAIL_TO)
                 && url.split(":").getOrNull(1)?.contains("@") ?: false
 
+    /**
+     * Returns true if the given urls are the same type
+     * (global web or source url & html data), false otherwise.
+     *
+     * @param currentUrl    the current url, or html data.
+     * @param newUrl        the new url.
+     *
+     * @return true if the two urls are the same type, false otherwise.
+     */
+    internal fun isSameDataType(currentUrl: String, newUrl: String) =
+        isHtmlData(currentUrl) && isSourceArticleUrl(newUrl)
+                || !isHtmlData(currentUrl) && !isSourceArticleUrl(newUrl)
+
     // -----------------
     // WEB CONNECTION
     // -----------------

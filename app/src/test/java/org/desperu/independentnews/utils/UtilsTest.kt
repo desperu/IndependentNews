@@ -17,6 +17,7 @@ import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.desperu.independentnews.utils.Utils.isMailTo
 import org.desperu.independentnews.utils.Utils.isNoteRedirect
+import org.desperu.independentnews.utils.Utils.isSameDataType
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.desperu.independentnews.utils.Utils.isWifiAvailable
 import org.desperu.independentnews.utils.Utils.literalDateToMillis
@@ -437,6 +438,36 @@ class UtilsTest {
 
             assertFalse(output)
         }
+    }
+
+    @Test
+    fun given_htmlDataAndSourceUrl_When_isSameDataType_Then_checkTrue() {
+        val htmlData = "data:text/html; charset=UTF-8,"
+        val sourceUrl = "https://reporterre.net/Tout-le-monde-craque-les-jeunes-activistes-du-climat-sonnes-par-le-Covid"
+
+        val output = isSameDataType(htmlData, sourceUrl)
+
+        assertTrue(output)
+    }
+
+    @Test
+    fun given_normalUrl_When_isSameDataType_Then_checkTrue() {
+        val normalUrl = "https://github.com/Bumblebee-Project/bbswitch/issues/140"
+        val otherUrl = "https://www.duckduckgo.com"
+
+        val output = isSameDataType(normalUrl, otherUrl)
+
+        assertTrue(output)
+    }
+
+    @Test
+    fun given_differentDataType_When_isSameDataType_Then_checkFalse() {
+        val htmlData = "data:text/html; charset=UTF-8,"
+        val normalUrl = "https://www.duckduckgo.com"
+
+        val output = isSameDataType(htmlData, normalUrl)
+
+        assertFalse(output)
     }
 
     @Test
