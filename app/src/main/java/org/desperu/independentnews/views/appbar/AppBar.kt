@@ -78,7 +78,7 @@ class AppBar @JvmOverloads constructor(
      * Update on touch listener when the fragment change.
      */
     internal fun updateOnTouch() {
-        if (suitableScroll?.get()?.isShown == false) {
+        if (suitableScroll?.get()?.isShown != true) {
             suitableScroll = null
             toolbarBehavior.suitableScroll = null
             configureOnTouch()

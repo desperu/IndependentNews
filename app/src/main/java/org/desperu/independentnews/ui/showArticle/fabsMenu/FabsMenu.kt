@@ -51,7 +51,7 @@ class FabsMenu : KoinComponent{
 
     // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface = get()
-    private val articleDesign: ArticleDesignInterface = get()
+    private val articleDesign: ArticleDesignInterface get() = get()
     private val myWebViewClientInterface: MyWebViewClientInterface get() = get()
     private val prefs: SharedPrefService = get()
     private val activity = showArticleInterface.activity

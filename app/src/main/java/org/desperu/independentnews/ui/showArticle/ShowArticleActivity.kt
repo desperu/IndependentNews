@@ -42,7 +42,7 @@ import org.desperu.independentnews.utils.CANT_PARSE
 import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
-import org.desperu.independentnews.views.NoScrollWebView
+import org.desperu.independentnews.views.MyWebView
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 import java.io.ByteArrayOutputStream
@@ -84,7 +84,7 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
     private val fragmentInterface: FragmentInterface get() = get { parametersOf(getCurrentFragment()) }
     private val mWebViewClient get() = fragmentInterface.mWebViewClient
     private val mWebChromeClient get() = fragmentInterface.mWebChromeClient
-    override val webView: NoScrollWebView get() = article_web_view ?: web_view
+    override val webView: MyWebView get() = article_web_view ?: web_view
     private lateinit var navController: NavController
 
     /**

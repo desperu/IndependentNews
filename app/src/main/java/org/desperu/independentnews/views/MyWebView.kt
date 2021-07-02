@@ -51,11 +51,11 @@ const val APPLY_CSS_TIMEOUT = 500L
  * A custom [WebView] that does not allow to vertical scroll.
  * To correct scroll jump when init the web view.
  *
- * This [NoScrollWebView] should be placed in a [ScrollView] to allow the user to scroll
- * and show the content of this [NoScrollWebView].
+ * This [MyWebView] should be placed in a [ScrollView] to allow the user to scroll
+ * and show the content of this [MyWebView].
  * Set the [isScrollContainer] xml attribute to true to better performances.
  */
-class NoScrollWebView @JvmOverloads constructor(
+open class MyWebView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : WebView(context, attrs, defStyleAttr), KoinComponent {
 

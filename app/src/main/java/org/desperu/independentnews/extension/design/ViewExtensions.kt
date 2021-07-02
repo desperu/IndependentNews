@@ -9,6 +9,7 @@ import androidx.core.view.children
 import androidx.core.view.descendants
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
+import org.desperu.independentnews.views.MyWebView
 
 /**
  * Find the suitable scrollable that owns the app bar animation.
@@ -30,13 +31,10 @@ internal fun View?.findSuitableScrollable(): View? {
             // If the view is a view group, search a scrollable in it's descendants
             view.descendants.forEach {
 
-                if (it is NestedScrollView) {
-                    // We've found a NestedScrollView, use it
-                    return it
-
-                } else if (it is RecyclerView) {
-                    // We've found a RecyclerView, use it
-                    return it
+                when(it) {
+                    is NestedScrollView -> return it // We've found a NestedScrollView, use it
+                    is MyWebView -> return it // We've found a MyWebView, use it
+                    is RecyclerView -> return it // We've found a RecyclerView, use it
                 }
             }
         }

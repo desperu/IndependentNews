@@ -1,7 +1,7 @@
 package org.desperu.independentnews.ui.showArticle
 
 import org.desperu.independentnews.models.database.Article
-import org.desperu.independentnews.views.NoScrollWebView
+import org.desperu.independentnews.views.MyWebView
 
 /**
  * Interface to allow communications with Show Article Activity.
@@ -21,7 +21,7 @@ interface ShowArticleInterface {
     /**
      * The web view of the current fragment.
      */
-    val webView: NoScrollWebView
+    val webView: MyWebView
 
     /**
      * The article currently show in the web view.

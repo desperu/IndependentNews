@@ -17,7 +17,7 @@ import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.service.ResourceService
-import org.desperu.independentnews.views.NoScrollWebView
+import org.desperu.independentnews.views.MyWebView
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -51,7 +51,7 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
     private lateinit var coordinator: View
     private lateinit var topContainer: View
     private lateinit var webContainer: FrameLayout
-    private lateinit var webView: NoScrollWebView
+    private lateinit var webView: MyWebView
     private val bgColor = resources.getColor(android.R.color.white)
     private val transparent = resources.getColor(R.color.colorArticleTransition)
 
