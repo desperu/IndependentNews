@@ -115,7 +115,7 @@ class ShowArticleTransition(private val isEnter: Boolean) : Transition(), KoinCo
         coordinator = view.rootView.findViewById(R.id.article_root_view)
         topContainer = view.rootView.findViewById(R.id.article_metadata_container)
         webContainer = view.rootView.findViewById(R.id.web_view_container)
-        webView = view.rootView.findViewById(R.id.web_view)
+        webView = view.rootView.findViewById(R.id.article_web_view)
     }
 
     // --------------

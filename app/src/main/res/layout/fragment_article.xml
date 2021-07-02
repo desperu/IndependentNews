@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.showArticle.ArticleViewModel"/>
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/article_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:isScrollContainer="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--                tools:ignore="WebViewLayout">-->
+
+            <LinearLayout
+                android:id="@+id/article_data_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/article_metadata_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin">
+
+                        <ImageView
+                            android:id="@+id/article_source_image"
+                            android:layout_width="@dimen/article_image_source_width_height"
+                            android:layout_height="@dimen/article_image_source_width_height"
+                            android:layout_alignTop="@id/article_source_name"
+                            android:layout_alignBottom="@id/article_source_name"
+                            android:scaleType="fitCenter"
+                            app:setMiniLogo="@{viewModel.article.source.name}"/>
+
+                        <TextView
+                            android:id="@+id/article_source_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/default_little_margin"
+                            android:layout_toEndOf="@id/article_source_image"
+                            android:textStyle="italic"
+                            android:text="@{viewModel.article.source.name}"/>
+
+                        <TextView
+                            android:id="@+id/article_subtitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/article_source_name"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="@dimen/default_margin"
+                            android:gravity="end"
+                            android:textStyle="italic"
+                            app:setSectionTheme="@{viewModel.article}"/>
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/article_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/default_margin"
+                        android:gravity="center"
+                        android:textSize="@dimen/article_title_text_size"
+                        android:textStyle="bold"
+                        android:text="@{viewModel.article.title}" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
+                        app:toShow="@{viewModel.article.id != 0L}">
+
+                        <TextView
+                            android:id="@+id/article_author"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@id/article_date"
+                            android:textStyle="italic"
+                            android:text="@{viewModel.article.author}"/>
+
+                        <TextView
+                            android:id="@+id/article_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignBottom="@id/article_author"
+                            android:layout_marginStart="@dimen/default_margin"
+                            android:textStyle="italic"
+                            app:setDate="@{viewModel.article.publishedDate}"/>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/article_image"
+                    android:transitionName="@string/animation_main_to_show_article"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minWidth="@dimen/article_image_min_width_height"
+                    android:minHeight="@dimen/article_image_min_width_height"
+                    android:tag="show_article"
+                    android:onClick="@{viewModel.onClickImage}"
+                    app:setImage="@{viewModel.article.imageUrl}"
+                    tools:ignore="UnusedAttribute" />
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/web_view_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <org.desperu.independentnews.views.NoScrollWebView
+                    android:id="@+id/article_web_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:setArticle="@{viewModel.article}"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

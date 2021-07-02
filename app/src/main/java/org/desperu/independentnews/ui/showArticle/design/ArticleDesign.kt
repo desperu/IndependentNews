@@ -26,6 +26,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_show_article.*
 import kotlinx.android.synthetic.main.app_bar.*
+import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
@@ -86,7 +87,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         configureKoinDependency()
         setupScrollListener()
         configureAppBar()
-        configureSwipeRefresh()
+//        configureSwipeRefresh()
     }
 
     // --------------
@@ -126,8 +127,8 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         val isPaused = activity.viewModel.isPaused.get()
         if (isPaused && newScrollY == scrollHeight) showRemovePausedDialog()
 
-        if (newScrollY == 0) configureSwipeRefresh()
-        else activity.article_swipe_refresh.setOnRefreshListener(null)
+//        if (newScrollY == 0) configureSwipeRefresh()
+//        else activity.article_swipe_refresh.setOnRefreshListener(null)
     }
 
     /**
@@ -137,23 +138,23 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         activity.appbar_container.tag = activity::class.java.simpleName
     }
 
-    /**
-     * Configure swipe refresh listener, re-set article or web page on refresh.
-     */
-    private fun configureSwipeRefresh() {
-        activity.run {
-            article_swipe_refresh.setOnRefreshListener {
-                val article = viewModel.article.get()
-
-                isRefresh = true // To handle navigation history
-
-                if (article != null)
-                    viewModel.article.apply { set(article); notifyChange() }
-                else
-                    web_view.loadUrl(actualUrl ?: "")
-            }
-        }
-    }
+//    /**
+//     * Configure swipe refresh listener, re-set article or web page on refresh.
+//     */
+//    private fun configureSwipeRefresh() {
+//        activity.run {
+//            article_swipe_refresh.setOnRefreshListener {
+//                val article = viewModel.article.get()
+//
+//                isRefresh = true // To handle navigation history
+//
+//                if (article != null)
+//                    viewModel.article.apply { set(article); notifyChange() }
+//                else
+//                    web_view.loadUrl(actualUrl ?: "")
+//            }
+//        }
+//    }
 
     // --------------
     // TRANSITION
@@ -197,7 +198,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         when {
             article?.id == 0L -> {
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                activity.web_view.updateBackground()
+                activity.webView.updateBackground()
             }
 
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && bgDrawable != null -> {
@@ -205,10 +206,10 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 activity.window.sharedElementEnterTransition = getActivityTransition(true)
                 activity.window.sharedElementReturnTransition = getActivityTransition(false)
                 // To be sure that the coordinator and containers have a background color set.
-                activity.window.enterTransition.doOnEnd { activity.web_view.updateBackground() }
+                activity.window.enterTransition.doOnEnd { activity.webView.updateBackground() }
             }
 
-            else -> activity.web_view.updateBackground() // Add from bottom anim ??
+            else -> activity.webView.updateBackground() // Add from bottom anim ??
         }
     }
 
@@ -244,8 +245,8 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         // To prepare the view before the animation
         if (sv.alpha != 0f) sv.alpha = 0f
 
-        // Seems to not delay after image download...
-        activity.article_image.doOnPreDraw {
+        // Seems to not delay after image download... // TODO remove ????
+//        activity.article_image.doOnPreDraw {
             waitCondition(activity.lifecycleScope, 2000L, { hasScroll }) {
                 loadingAnimBar.hide()
                 getSVAlphaAnim().start()
@@ -253,7 +254,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
                     getCircularReveal().start()
             }
-        }
+//        }
     }
 
     /**
@@ -328,7 +329,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @return the current text ratio.
      */
     override fun getTextRatio(): Float =
-        activity.web_view.settings.textZoom.toFloat() / TEXT_SIZE_DEFAULT.toFloat()
+        activity.webView.settings.textZoom.toFloat() / TEXT_SIZE_DEFAULT.toFloat()
 
     /**
      * Returns the current scroll y value in percent.
@@ -395,9 +396,9 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             progress in 80..100 -> {
                 if (!isLayoutDesigned && !isFirstPage) {
                     isLayoutDesigned = true
-                    activity.article_swipe_refresh.isRefreshing = false
+//                    activity.article_swipe_refresh.isRefreshing = false
                     if (!isHtmlData(actualUrl.mToString())) scrollTo(null)
-                    showScrollView()
+                    else showScrollView()
                 }
             }
             progress > 100 -> {
@@ -415,8 +416,8 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      *
      * @param toHide true to hide data container, false to show.
      */
-    override fun hideArticleDataContainer(toHide: Boolean) {
-        activity.article_data_container.visibility = if (toHide) View.GONE else View.VISIBLE
+    override fun hideArticleDataContainer(toHide: Boolean) { // TODO to remove??? useless ???
+        activity.article_data_container?.visibility = if (toHide) View.GONE else View.VISIBLE
     }
 
     /**
@@ -460,7 +461,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param toShow    true to show the fabs menu, false to hide.
      * @param toDelay   true to delay show fabs menu, false to do on transition end.
      */
-    internal fun showFabsMenu(toShow: Boolean, toDelay: Boolean = true) {
+    override fun showFabsMenu(toShow: Boolean, toDelay: Boolean) {
         val delay = activity.resources.getInteger(
             if (toDelay)
                 android.R.integer.config_longAnimTime

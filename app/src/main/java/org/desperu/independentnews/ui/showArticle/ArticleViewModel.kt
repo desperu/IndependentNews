@@ -36,7 +36,7 @@ import kotlin.properties.Delegates
  * @property articleDesign          the article design interface access.
  * @property cssRepository          the repository that allow access for css from the database.
  * @property prefs                  the shared preferences service interface access.
- * @property navHistoryMap          the navigation history of the web view.
+ * @property navHistory             the navigation history of the web view.
  * @property updatedUserArticles    the id list of updated user articles state.
  * @property isFavorite             true if the article is favorite, false otherwise.
  * @property isPaused               true if the article is paused, false otherwise.
@@ -56,11 +56,13 @@ class ArticleViewModel(
     private val router: ImageRouter
 ): ViewModel(), KoinComponent {
 
-    // FOR DATA
+    // FOR COMMUNICATION
     private val articleDesign: ArticleDesignInterface by inject()
     private val cssRepository: CssRepository = get()
     private val prefs: SharedPrefService = get()
-    private val navHistoryMap = mutableMapOf<Int, Pair<Article?, Int>>()
+
+    // FOR DATA
+    internal val navHistory = mutableListOf<Pair<Article, Int>>()
     internal val updatedUserArticles = mutableListOf<Long>()
     val isFavorite = ObservableBoolean(false)
     val isPaused = ObservableBoolean(false)
@@ -165,15 +167,26 @@ class ArticleViewModel(
     // --------------
 
     /**
-     * Fetch article and display it to the user.
+     * Fetch the article for the given url.
+     *
+     * @param url the article url to fetch.
+     *
+     * @return the fetched article.
+     */
+    internal suspend fun fetchArticle(url: String): Article = withContext(Dispatchers.Main) {
+        val article = Article(url = url, source = Source(name = getSourceNameFromUrl(url)))
+        var articleDb by Delegates.notNull<Article>()
+        ideNewsRepository.fetchArticle(article)?.let { articleDb = it }
+        return@withContext articleDb
+    }
+
+    /**
+     * Fetch and set article for the given url to display it to the user.
      *
      * @param url the article url to fetch.
      */
-    internal fun fetchArticle(url: String) = viewModelScope.launch(Dispatchers.Main) {
-        val article = Article(url = url, source = Source(name = getSourceNameFromUrl(url)))
-        var articleDb by Delegates.notNull<Article>()
-        withContext(Dispatchers.IO) { ideNewsRepository.fetchArticle(article)?.let { articleDb = it } }
-        this@ArticleViewModel.article.set(articleDb)
+    internal fun fetchAndSetArticle(url: String) = viewModelScope.launch(Dispatchers.IO) {
+        article.set(fetchArticle(url))
     }
 
     // --------------
@@ -200,24 +213,21 @@ class ArticleViewModel(
     /**
      * Add a page to the history navigation.
      *
-     * @param index         the index of the new page to add to the history.
      * @param articlePair   the pair of article and scroll view position.
      */
-    internal fun addPage(index: Int, articlePair: Pair<Article?, Int>) {
-        navHistoryMap[index] = articlePair
+    internal fun addPage(articlePair: Pair<Article, Int>) {
+        navHistory.add(articlePair)
     }
 
     /**
      * Back to the previous page in the history.
      *
-     * @param index the index of the page.
-     *
      * @return the article pair for the index.
      */
-    internal fun previousPage(index: Int): Pair<Article?, Int>? {
-        navHistoryMap.remove(index)
-        val previous = navHistoryMap[index - 1]
-        previous?.let { article.set(it.first) }
+    internal fun previousPage(): Pair<Article, Int> {
+        val previous = navHistory[navHistory.lastIndex]
+        navHistory.removeAt(navHistory.lastIndex)
+        article.set(previous.first)
         article.notifyChange()
         return previous
     }

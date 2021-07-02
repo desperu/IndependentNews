@@ -52,7 +52,7 @@ class FabsMenu : KoinComponent{
     // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface = get()
     private val articleDesign: ArticleDesignInterface = get()
-    private val myWebViewClientInterface: MyWebViewClientInterface = get()
+    private val myWebViewClientInterface: MyWebViewClientInterface get() = get()
     private val prefs: SharedPrefService = get()
     private val activity = showArticleInterface.activity
 
@@ -184,14 +184,14 @@ class FabsMenu : KoinComponent{
             val yPercent = articleDesign.getScrollYPercent()
 
             // Calculus new text zoom and ratio
-            val wVSettings = activity.web_view.settings
+            val wVSettings = activity.webView.settings
             val origTextZoom = wVSettings.textZoom
             val newTextZoom = origTextZoom + if (toUp) 10 else -10
             val textRatio = newTextZoom.toFloat() / origTextZoom.toFloat()
             val correct = if (toUp) 0.9f else 1.1f
 
             // Correct the scroll position
-            activity.web_view.doOnNextLayout {
+            activity.webView.doOnNextLayout {
                 articleDesign.scrollTo(yPercent * textRatio * correct)
             }
 
@@ -199,7 +199,7 @@ class FabsMenu : KoinComponent{
             wVSettings.textZoom = newTextZoom
 
             // Calculus the real text zoom, take care of specific source text zoom.
-            val actualUrl = myWebViewClientInterface.actualUrl ?: ""
+            val actualUrl = myWebViewClientInterface.actualUrl
             val sourceName = activity.viewModel.article.get()?.source?.name ?: ""
             val realTextZoom = newTextZoom - getSourceTextZoom(actualUrl, sourceName)
             // Store the new value in the preferences.

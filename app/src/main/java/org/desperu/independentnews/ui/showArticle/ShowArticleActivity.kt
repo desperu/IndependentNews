@@ -3,47 +3,47 @@ package org.desperu.independentnews.ui.showArticle
 import android.app.ActivityOptions
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Pair
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.os.postDelayed
 import androidx.core.view.doOnAttach
 import androidx.core.view.drawToBitmap
-import androidx.databinding.DataBindingUtil
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_show_article.*
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import kotlinx.android.synthetic.main.app_bar.*
 import kotlinx.android.synthetic.main.content_loading_bar.*
+import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.android.synthetic.main.fragment_web.*
 import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import org.desperu.independentnews.R
-import org.desperu.independentnews.base.ui.BaseBindingActivity
-import org.desperu.independentnews.databinding.ActivityShowArticleBinding
+import org.desperu.independentnews.base.ui.BaseActivity
 import org.desperu.independentnews.di.module.ui.showArticleModule
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.shareArticle
+import org.desperu.independentnews.extension.sharedGraphViewModel
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.UPDATED_USER_ARTICLES
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
+import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
-import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
-import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
+import org.desperu.independentnews.ui.showArticle.fragment.FragmentInterface
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.ui.sources.WAS_EXPANDED
 import org.desperu.independentnews.utils.CANT_PARSE
 import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
+import org.desperu.independentnews.views.NoScrollWebView
 import org.koin.android.ext.android.get
-import org.koin.android.ext.android.getKoin
 import org.koin.core.parameter.parametersOf
 import java.io.ByteArrayOutputStream
 import java.lang.ref.WeakReference
@@ -57,11 +57,11 @@ const val IS_EXPANDED: String = "isExpanded"                // For app bar size
 const val TRANSITION_BG: String = "transitionBackground"    // For transition background
 
 /**
- * Activity to show articles list.
+ * Activity to show article content, in custom article frag or in web frag.
  *
  * @constructor Instantiates a new ShowArticleActivity.
  */
-class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleInterface {
+class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface {
 
     // TODO add a GestureOverlayView to detect ^ event to back home, the article list.
 
@@ -70,17 +70,22 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         get() = intent.getParcelableExtra(ARTICLE)
             ?: Article(title = getString(R.string.show_article_activity_article_error))
     private val isExpanded: Boolean get() = intent.getBooleanExtra(IS_EXPANDED, true)
-    private val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG)
+    override val transitionBg: ByteArray? get() = intent.getByteArrayExtra(TRANSITION_BG)
 
     // FOR DATA
-    private lateinit var binding: ActivityShowArticleBinding
     private val router: ImageRouter = get { parametersOf(this) }
-    override val viewModel: ArticleViewModel by viewModel { parametersOf(article, router) }
+    override val viewModel: ArticleViewModel by sharedGraphViewModel(
+        navHostId = R.id.nav_host_fragment,
+        navGraphId = R.id.nav_graph,
+        parameters = { parametersOf(article, router) }
+    )
     override val activity = this // TODO wrong usage ???
-    private var articleDesign: ArticleDesign? = null
-    private var mWebViewClient: MyWebViewClient? = null
-    private var mWebChromeClient: MyWebChromeClient? = null
-    private val navigationCount get() = mWebViewClient?.navigationCount ?: -1
+    private val articleDesign: ArticleDesignInterface get() = get()
+    private val fragmentInterface: FragmentInterface get() = get { parametersOf(getCurrentFragment()) }
+    private val mWebViewClient get() = fragmentInterface.mWebViewClient
+    private val mWebChromeClient get() = fragmentInterface.mWebChromeClient
+    override val webView: NoScrollWebView get() = article_web_view ?: web_view
+    private lateinit var navController: NavController
 
     /**
      * Companion object, used to redirect to this Activity.
@@ -136,30 +141,17 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     // BASE METHODS
     // --------------
 
-    override fun getBindingView(): View = configureDataBinding()
+    override fun getActivityLayout(): Int = R.layout.activity_show_article
 
     override fun configureDesign() {
         configureKoinDependency()
-        configureArticleDesign() // TODO force portrait ot prevent anim bug !!!
-        setUserArticleState()
-        configureWebViewClient()
+        configureNavController()
         configureAppBar()
     }
 
     // --------------
     // CONFIGURATION
     // --------------
-
-    /**
-     * Configure data binding and return the root view.
-     *
-     * @return the binding root view.
-     */
-    private fun configureDataBinding(): View {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_show_article)
-        binding.viewModel = viewModel
-        return binding.root
-    }
 
     /**
      * Configure koin dependency for show article activity.
@@ -171,33 +163,20 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     }
 
     /**
-     * Configure the article design.
+     * Configure the navigation controller and set graph to show start destination with arguments.
      */
-    private fun configureArticleDesign() {
-        articleDesign = ArticleDesign()
+    private fun configureNavController() {
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-        articleDesign?.apply {
-            postponeSceneTransition()
-            this@ShowArticleActivity.setActivityTransition()
-            scheduleStartPostponedTransition(article_image)
-            showFabsMenu(true, transitionBg == null)
-        }
-    }
+        val bundle = Bundle()
+        bundle.putParcelable(ARTICLE, article)
+        // Set graph and so, show start fragment (article frag).
+        navController.setGraph(R.navigation.nav_graph, bundle)
 
-    /**
-     * Set user article state after Article Design, for koin instance lifecycle.
-     */
-    private fun setUserArticleState() { viewModel.setUserArticleState() }
-
-    /**
-     * Configure the web view client.
-     */
-    private fun configureWebViewClient() {
-        mWebViewClient = MyWebViewClient()
-        web_view.webViewClient = mWebViewClient!!
-
-        mWebChromeClient = MyWebChromeClient()
-        web_view.webChromeClient = mWebChromeClient
+        // If is not html data, show web fragment.
+        if (!isHtmlData(article.article)) showFragment(article)
     }
 
     /**
@@ -209,6 +188,35 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     }
 
     // --------------
+    // FRAGMENT
+    // --------------
+
+    /**
+     * Show fragment for the given article, or web url.
+     *
+     * @param article the article to display in the fragment.
+     */
+    override fun showFragment(article: Article) {
+        val actionId =
+            if (article.id == 0L) R.id.action_articleFragment_to_webFragment
+            else R.id.action_webFragment_to_articleFragment
+        val bundle = Bundle()
+        bundle.putParcelable(ARTICLE, article)
+
+        navController.navigate(actionId, bundle)
+    }
+
+    /**
+     * Return the current fragment instance host by the navigation host fragment.
+     *
+     * @return the current fragment instance.
+     */
+    private fun getCurrentFragment(): Fragment? {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+        return navHostFragment?.childFragmentManager?.primaryNavigationFragment
+    }
+
+    // --------------
     // METHODS OVERRIDE
     // --------------
 
@@ -216,7 +224,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 
     override fun onResume() {
         super.onResume()
-        web_view.onResume()
+        webView.onResume()
         handleImplicitIntent()
 
         // TODO try to restore activity options to enable return transition when have stop activity
@@ -224,7 +232,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
 //        if (articleDesign?.isFirstPage == false) setActivityTransition()
     }
 
-    override fun onPause() { super.onPause(); web_view.onPause() }
+    override fun onPause() { super.onPause(); webView.onPause() }
 
     override fun onStop() {
         super.onStop()
@@ -232,9 +240,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     }
 
     override fun onDestroy() {
-        mWebViewClient = null
-        mWebChromeClient = null
-        articleDesign = null
         super.onDestroy()
         supportFinishAfterTransition()
     }
@@ -242,15 +247,17 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     override fun onBackPressed() = when {
         mWebChromeClient?.inCustomView == true -> hideCustomView()
         fabs_menu.isOpen -> fabs_menu.close()
-        web_view.canGoBack() && navigationCount > 0 -> {
-            mWebViewClient?.webViewBack(viewModel.previousPage(navigationCount))
-            Unit
-        }
+        viewModel.navHistory.size > 0 ->
+            mWebViewClient?.webViewBack(
+                mWebViewClient?.actualUrl ?: error("Can't retrieved the actual url"),
+                viewModel.previousPage()
+            ) ?: Unit
         else -> {
             sendResult()
             sendUpdatedUserArticles()
-            articleDesign?.showFabsMenu(false)
-            super.onBackPressed()
+            articleDesign.showFabsMenu(false)
+//            super.onBackPressed()
+            finishAfterTransition()
         }
     }
 
@@ -276,6 +283,11 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
     @Suppress("unused_parameter")
     fun onClickShare(v: View) = shareArticle()
 
+    /**
+     * Convenience call for on back pressed, allow system to handle back action.
+     */
+    override fun goBack() = super.onBackPressed() // TODO to remove
+
     // --------------
     // UI
     // --------------
@@ -284,20 +296,6 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
      * Hide video custom view.
      */
     private fun hideCustomView() { mWebChromeClient?.onHideCustomView() }
-
-    /**
-     * Set the activity transition.
-     */
-    private fun setActivityTransition() {
-        val drawable = if (transitionBg != null) {
-            val length = transitionBg?.size ?: 0
-            val bitmap = BitmapFactory.decodeByteArray(transitionBg, 0, length)
-            bitmap.toDrawable(resources)
-        } else
-            null
-
-        articleDesign?.setActivityTransition(article, drawable)
-    }
 
     // --------------
     // UTILS
@@ -312,7 +310,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
         if (isHtmlData(actualUrl))
             shareArticle(viewModel.article.get()?.title, viewModel.article.get()?.url)
         else
-            shareArticle(web_view.title, actualUrl)
+            shareArticle(webView.title, actualUrl)
     }
 
     /**
@@ -356,7 +354,7 @@ class ShowArticleActivity: BaseBindingActivity(showArticleModule), ShowArticleIn
             intent.data = null
 
             if (isSourceArticleUrl(url))
-                viewModel.fetchArticle(url)
+                viewModel.fetchAndSetArticle(url)
             else
                 get<DialogHelper>().showDialog(CANT_PARSE)
         }

@@ -8,5 +8,5 @@ interface MyWebViewClientInterface {
     /**
      * The actual url of the web view client.
      */
-    var actualUrl: String?
+    var actualUrl: String
 }

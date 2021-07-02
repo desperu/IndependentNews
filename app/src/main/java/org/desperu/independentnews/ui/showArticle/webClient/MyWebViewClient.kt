@@ -5,13 +5,10 @@ import android.os.Build
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.activity_show_article.*
+import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.desperu.independentnews.R
-import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.extension.sendMailTo
 import org.desperu.independentnews.extension.showInBrowser
@@ -22,6 +19,7 @@ import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isMailTo
+import org.desperu.independentnews.utils.Utils.isSameDataType
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -41,12 +39,8 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
     private val articleDesign: ArticleDesignInterface = get()
     private val router: ImageRouter = get()
 
-    // FOR DESIGN
-    private val sv: NestedScrollView by bindView(activity, R.id.article_scroll_view)
-
     // FOR DATA
-    override var actualUrl: String? = null
-    internal var navigationCount = -1
+    override var actualUrl: String = ""
 
     init {
         configureKoinDependency()
@@ -94,28 +88,8 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
         }
     }
 
-    /**
-     * Update web view start loading, update text size, background, margins and css style.
-     *
-     * @param url the new url to load.
-     */
-    private fun updateWebViewStart(url: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
-        val sourceName = viewModel.article.get()?.source?.name ?: ""
-        activity.web_view.updateWebViewStart(url, sourceName, viewModel.getCss())
-    }
-
-    /**
-     * Show previous page in the web view.
-     */
-    internal fun webViewBack(previousPage: Pair<Article?, Int>?) {
-        articleDesign.handleDesign(0)
-        articleDesign.scrollPosition = previousPage?.second ?: 0
-        if (previousPage?.first == null) activity.web_view.goBack()
-        navigationCount -= 2 // TODO to check why not use previousPage.second instead !!
-    }
-
     // --------------
-    // UTILS
+    // NAVIGATION
     // --------------
 
     /**
@@ -129,18 +103,70 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
         isImageUrl(url) -> { router.openShowImages(arrayListOf(url)); true }
         url.endsWith(".pdf") -> { activity.showInBrowser(url); true }
         isMailTo(url) -> { activity.sendMailTo(url); true }
-        isSourceArticleUrl(url) -> {
-            articleDesign.handleDesign(0)
-            addPageToHistory()
-            viewModel.fetchArticle(url)
-            true
-        }
         else -> {
+            val fromHtmlData = isHtmlData(actualUrl)
+
+            // Prepare to load a new page.
             articleDesign.handleDesign(0)
             addPageToHistory()
-            viewModel.article.set(null)
-            false
+
+            if (fromHtmlData) showPage(url)
+
+            // Else handle by the web view
+            fromHtmlData
         }
+    }
+
+    /**
+     * Show the new page for the given url,
+     * handle different data type and switch fragment if needed.
+     *
+     * @param newUrl the new url to display.
+     */
+    private fun showPage(newUrl: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
+        if (isSameDataType(actualUrl, newUrl)) {
+            if (isSourceArticleUrl(newUrl))
+                viewModel.fetchAndSetArticle(newUrl)
+            else
+                activity.webView.loadUrl(newUrl)
+        } else {
+            val article = if (isSourceArticleUrl(newUrl)) viewModel.fetchArticle(newUrl)
+                          else Article(url = newUrl)
+            showArticleInterface.showFragment(article)
+        }
+    }
+
+    /**
+     * Show previous page in the web view.
+     *
+     * @param actualUrl     the actual url of the web view.
+     * @param previousPage  the previous page pair, Article and scroll position.
+     */
+    internal fun webViewBack(actualUrl: String, previousPage: Pair<Article, Int>) {
+        val isSameDataType = isSameDataType(actualUrl, previousPage.first.url)
+        val newIsHtmlData = isHtmlData(previousPage.first.url)
+
+        articleDesign.scrollPosition = previousPage.second // Needed every times
+
+        if (isSameDataType) { // Already back if is html data, when call viewModel.previousPage()
+            articleDesign.handleDesign(0)
+            if (!newIsHtmlData) activity.webView.goBack()
+        } else
+            showPage(previousPage.first.url)
+    }
+
+    // --------------
+    // UTILS
+    // --------------
+
+    /**
+     * Update web view start loading, update text size, background, margins and css style.
+     *
+     * @param url the new url to load.
+     */
+    private fun updateWebViewStart(url: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
+        val sourceName = viewModel.article.get()?.source?.name ?: ""
+        activity.webView.updateWebViewStart(url, sourceName, viewModel.getCss())
     }
 
     /**
@@ -149,27 +175,23 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
     private fun addPageToHistory() {
         if (!articleDesign.isRefresh)
             viewModel.addPage(
-                navigationCount,
                 Pair(
-                    if (isHtmlData(actualUrl ?: "")) viewModel.article.get()
-                    else null,
-                    sv.scrollY
+                    if (isHtmlData(actualUrl)) viewModel.article.get() ?: Article()
+                    else Article(url = actualUrl),
+                    activity.article_scroll_view?.scrollY ?: 0 // TODO use content container ?? Web handle scroll position ???
                 )
             )
     }
 
     /**
      * Handle web view navigation, hide article data container, show loading progress,
-     * hide scroll view during loading and manage navigation count.
+     * hide scroll view during loading.
      *
      * @param url the url that the loading start.
      */
     private fun handleNavigation(url: String) {
         articleDesign.hideArticleDataContainer(!isHtmlData(url))
 
-        if (navigationCount >= 0) articleDesign.handleDesign(0)
-
-        if (url.contains(showArticleInterface.article.article)) navigationCount = 0
-        else navigationCount += 1
+        if (viewModel.navHistory.size > 0) articleDesign.handleDesign(0)
     }
 }

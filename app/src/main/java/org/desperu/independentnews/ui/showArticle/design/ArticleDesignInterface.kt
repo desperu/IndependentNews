@@ -86,4 +86,12 @@ interface ArticleDesignInterface {
      * @param toHide true to hide data container, false to show.
      */
     fun hideArticleDataContainer(toHide: Boolean)
+
+    /**
+     * Show or hide fabs menu, depends of to show value.
+     *
+     * @param toShow    true to show the fabs menu, false to hide.
+     * @param toDelay   true to delay show fabs menu, false to do on transition end.
+     */
+    fun showFabsMenu(toShow: Boolean, toDelay: Boolean = true)
 }

@@ -1,183 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-    <data>
-        <variable
-            name="viewModel"
-            type="org.desperu.independentnews.ui.showArticle.ArticleViewModel"/>
-    </data>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/article_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.showArticle.ShowArticleActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/article_root_view"
+    <include layout="@layout/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content" />
 
-        <include layout="@layout/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+    <include layout="@layout/content_loading_bar" />
 
-        <include layout="@layout/content_loading_bar" />
+<!--        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--            android:id="@+id/article_swipe_refresh"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/article_swipe_refresh"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/article_scroll_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:isScrollContainer="true"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-        <!--                tools:ignore="WebViewLayout">-->
+        <ProgressBar
+            android:id="@+id/article_scroll_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/article_scroll_progress_bar_margin_top"
+            android:max="100"
+            android:scaleY="1.5"
+            app:layout_anchor="@+id/appbar"
+            app:layout_anchorGravity="bottom"
+            style="@style/ScrollProgressBarStyle"/>
 
-                    <LinearLayout
-                        android:id="@+id/article_data_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+        <FrameLayout
+            android:id="@+id/video_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
 
-                        <LinearLayout
-                            android:id="@+id/article_metadata_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical">
+        <include layout="@layout/layout_fabs_menu" />
 
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/default_margin">
+<!--        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
-                                <ImageView
-                                    android:id="@+id/article_source_image"
-                                    android:layout_width="@dimen/article_image_source_width_height"
-                                    android:layout_height="@dimen/article_image_source_width_height"
-                                    android:layout_alignTop="@id/article_source_name"
-                                    android:layout_alignBottom="@id/article_source_name"
-                                    android:scaleType="fitCenter"
-                                    app:setMiniLogo="@{viewModel.article.source.name}"/>
-
-                                <TextView
-                                    android:id="@+id/article_source_name"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="@dimen/default_little_margin"
-                                    android:layout_toEndOf="@id/article_source_image"
-                                    android:textStyle="italic"
-                                    android:text="@{viewModel.article.source.name}"/>
-
-                                <TextView
-                                    android:id="@+id/article_subtitle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_toEndOf="@id/article_source_name"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_marginStart="@dimen/default_margin"
-                                    android:gravity="end"
-                                    android:textStyle="italic"
-                                    app:setSectionTheme="@{viewModel.article}"/>
-
-                            </RelativeLayout>
-
-                            <TextView
-                                android:id="@+id/article_title"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="@dimen/default_margin"
-                                android:gravity="center"
-                                android:textSize="@dimen/article_title_text_size"
-                                android:textStyle="bold"
-                                android:text="@{viewModel.article.title}" />
-
-                            <RelativeLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/default_margin"
-                                app:toShow="@{viewModel.article.id != 0L}">
-
-                                <TextView
-                                    android:id="@+id/article_author"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_toStartOf="@id/article_date"
-                                    android:textStyle="italic"
-                                    android:text="@{viewModel.article.author}"/>
-
-                                <TextView
-                                    android:id="@+id/article_date"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentEnd="true"
-                                    android:layout_alignBottom="@id/article_author"
-                                    android:layout_marginStart="@dimen/default_margin"
-                                    android:textStyle="italic"
-                                    app:setDate="@{viewModel.article.publishedDate}"/>
-
-                            </RelativeLayout>
-
-                        </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/article_image"
-                            android:transitionName="@string/animation_main_to_show_article"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:minWidth="@dimen/article_image_min_width_height"
-                            android:minHeight="@dimen/article_image_min_width_height"
-                            android:tag="show_article"
-                            android:onClick="@{viewModel.onClickImage}"
-                            app:setImage="@{viewModel.article.imageUrl}"
-                            tools:ignore="UnusedAttribute" />
-
-                    </LinearLayout>
-
-                    <FrameLayout
-                        android:id="@+id/web_view_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <org.desperu.independentnews.views.NoScrollWebView
-                            android:id="@+id/web_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:setArticle="@{viewModel.article}"/>
-
-                    </FrameLayout>
-
-                </LinearLayout>
-
-            </androidx.core.widget.NestedScrollView>
-
-            <ProgressBar
-                android:id="@+id/article_scroll_progress_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/article_scroll_progress_bar_margin_top"
-                android:max="100"
-                android:scaleY="1.5"
-                app:layout_anchor="@+id/appbar"
-                app:layout_anchorGravity="bottom"
-                style="@style/ScrollProgressBarStyle"/>
-
-            <FrameLayout
-                android:id="@+id/video_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="invisible" />
-
-            <include layout="@layout/layout_fabs_menu" />
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
