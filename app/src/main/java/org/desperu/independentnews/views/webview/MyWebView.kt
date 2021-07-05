@@ -1,4 +1,4 @@
-package org.desperu.independentnews.views
+package org.desperu.independentnews.views.webview
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,7 +12,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.setMargins
 import androidx.core.widget.NestedScrollView
@@ -40,6 +39,7 @@ import org.desperu.independentnews.utils.Utils.isMailTo
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.qualifier.qualifier
+import kotlin.math.floor
 import kotlin.properties.Delegates
 
 /**
@@ -48,12 +48,9 @@ import kotlin.properties.Delegates
 const val APPLY_CSS_TIMEOUT = 500L
 
 /**
- * A custom [WebView] that does not allow to vertical scroll.
- * To correct scroll jump when init the web view.
+ * A custom [WebView] that implements custom features.
  *
- * This [MyWebView] should be placed in a [ScrollView] to allow the user to scroll
- * and show the content of this [MyWebView].
- * Set the [isScrollContainer] xml attribute to true to better performances.
+ * @constructor Instantiate a new MyWebView.
  */
 open class MyWebView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -290,4 +287,18 @@ open class MyWebView @JvmOverloads constructor(
         findView<NestedScrollView>()?.setBackgroundColor(bgColor)
         rootView.findViewById<View>(R.id.article_metadata_container)?.setBackgroundColor(bgColor)
     }
+
+    // -----------------
+    // UTILS
+    // -----------------
+
+    /**
+     * Returns the content height of the web view, formatted with the screen density.
+     *
+     * @return the formatted content height of the wb view.
+     */
+    internal fun getFormattedContentHeight(): Int =
+        floor(
+            (contentHeight * resources.displayMetrics.density).toDouble()
+        ).toInt()
 }

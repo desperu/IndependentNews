@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.showArticle.fragment
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.doOnNextLayout
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialFadeThrough
@@ -12,6 +13,7 @@ import org.desperu.independentnews.extension.sharedGraphViewModel
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.desperu.independentnews.ui.showArticle.ImageRouter
+import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
@@ -98,6 +100,13 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
     // --------------
     // METHODS OVERRIDE
     // --------------
+
+    override fun onResume() {
+        super.onResume()
+        web_view.doOnNextLayout {
+            get<ShowArticleInterface>().updateAppBarOnTouch()
+        }
+    }
 
     // TODO to check here
     override fun onCreate(savedInstanceState: Bundle?) {

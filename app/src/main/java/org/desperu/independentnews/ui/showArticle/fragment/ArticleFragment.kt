@@ -4,10 +4,12 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.doOnNextLayout
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.android.synthetic.main.fragment_article.*
+import kotlinx.android.synthetic.main.fragment_web.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.extension.sharedGraphViewModel
@@ -104,6 +106,13 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
     // -----------------
     // METHODS OVERRIDE
     // -----------------
+
+    override fun onResume() {
+        super.onResume()
+        article_scroll_view.doOnNextLayout {
+            get<ShowArticleInterface>().updateAppBarOnTouch()
+        }
+    }
 
     // TODO to check here
     override fun onCreate(savedInstanceState: Bundle?) {

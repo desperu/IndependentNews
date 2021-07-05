@@ -105,7 +105,7 @@
                 android:textStyle="bold"
                 android:text="@{viewModel.primaryPage.title}" />
 
-            <org.desperu.independentnews.views.MyWebView
+            <org.desperu.independentnews.views.webview.MyWebView
                 android:id="@+id/source_detail_web_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

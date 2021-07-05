@@ -17,7 +17,7 @@ import org.desperu.independentnews.extension.design.blendColors
 import org.desperu.independentnews.extension.design.getValueAnimator
 import org.desperu.independentnews.extension.design.setScale
 import org.desperu.independentnews.service.ResourceService
-import org.desperu.independentnews.views.MyWebView
+import org.desperu.independentnews.views.webview.MyWebView
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 

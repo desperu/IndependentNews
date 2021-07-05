@@ -42,7 +42,7 @@ import org.desperu.independentnews.utils.CANT_PARSE
 import org.desperu.independentnews.utils.RC_SHOW_ARTICLE
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
-import org.desperu.independentnews.views.MyWebView
+import org.desperu.independentnews.views.webview.MyWebView
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 import java.io.ByteArrayOutputStream
@@ -211,7 +211,7 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
      *
      * @return the current fragment instance.
      */
-    private fun getCurrentFragment(): Fragment? {
+    override fun getCurrentFragment(): Fragment? {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
         return navHostFragment?.childFragmentManager?.primaryNavigationFragment
     }
@@ -296,6 +296,11 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
      * Hide video custom view.
      */
     private fun hideCustomView() { mWebChromeClient?.onHideCustomView() }
+
+    /**
+     * Update app bar on touch listener, used to finish app bar anim.
+     */
+    override fun updateAppBarOnTouch() = appbar.updateOnTouch()
 
     // --------------
     // UTILS

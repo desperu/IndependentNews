@@ -8,7 +8,7 @@
             type="org.desperu.independentnews.ui.showArticle.ArticleViewModel"/>
     </data>
 
-    <org.desperu.independentnews.views.NestedWebView
+    <org.desperu.independentnews.views.webview.NestedWebView
         android:id="@+id/web_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

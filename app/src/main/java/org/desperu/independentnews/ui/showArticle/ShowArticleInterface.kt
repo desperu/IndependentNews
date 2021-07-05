@@ -1,7 +1,8 @@
 package org.desperu.independentnews.ui.showArticle
 
+import androidx.fragment.app.Fragment
 import org.desperu.independentnews.models.database.Article
-import org.desperu.independentnews.views.MyWebView
+import org.desperu.independentnews.views.webview.MyWebView
 
 /**
  * Interface to allow communications with Show Article Activity.
@@ -41,7 +42,19 @@ interface ShowArticleInterface {
     fun showFragment(article: Article)
 
     /**
+     * Return the current fragment instance host by the navigation host fragment.
+     *
+     * @return the current fragment instance.
+     */
+    fun getCurrentFragment(): Fragment?
+
+    /**
      * Convenience call for on back pressed, allow system to handle back action.
      */
     fun goBack()
+
+    /**
+     * Update app bar on touch listener, used to finish app bar anim.
+     */
+    fun updateAppBarOnTouch()
 }

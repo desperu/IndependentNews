@@ -1,4 +1,4 @@
-package org.desperu.independentnews.views
+package org.desperu.independentnews.views.webview
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -54,7 +54,7 @@ class NestedWebView @JvmOverloads constructor (
 
                 // NestedScroll
 //                if (dispatchNestedScroll(0, mScrollOffset[1], 0, deltaY, mScrollOffset)) {
-                // Switch between consumed and unconsumed to support all behaviors
+                // Switch between Y consumed and unconsumed to support all behaviors
                 if (dispatchNestedScroll(0, deltaY, 0, mScrollOffset[1], mScrollOffset)) {
                     onNestedScroll(this, 0, mScrollOffset[1], 0, deltaY)
                     totalScrollOffset += mScrollOffset[1]

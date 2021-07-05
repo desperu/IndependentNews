@@ -11,6 +11,7 @@ import android.transition.TransitionInflater
 import android.transition.TransitionSet
 import android.view.View
 import android.view.ViewAnimationUtils.createCircularReveal
+import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.annotation.FloatRange
@@ -39,12 +40,14 @@ import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.ShowArticleTransition
 import org.desperu.independentnews.ui.showArticle.fabsMenu.IconAnim
+import org.desperu.independentnews.ui.showArticle.fragment.ArticleFragment
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
 import org.desperu.independentnews.utils.AUTO_REMOVE_PAUSE
 import org.desperu.independentnews.utils.AUTO_REMOVE_PAUSE_DEFAULT
 import org.desperu.independentnews.utils.REMOVE_PAUSED
 import org.desperu.independentnews.utils.TEXT_SIZE_DEFAULT
 import org.desperu.independentnews.utils.Utils.isHtmlData
+import org.desperu.independentnews.views.webview.NestedWebView
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.parameter.parametersOf
@@ -63,13 +66,17 @@ import kotlin.math.sqrt
 class ArticleDesign : ArticleDesignInterface, KoinComponent {
 
     // FOR COMMUNICATION
-    private val activity = get<ShowArticleInterface>().activity
+    private val showArticleInterface = get<ShowArticleInterface>()
+    private val activity = showArticleInterface.activity
     private val actualUrl get() = getKoin().getOrNull<MyWebViewClientInterface>()?.actualUrl
     private val dialogHelper: DialogHelper = get()
     private val prefs: SharedPrefService = get()
 
     // FOR DESIGN
     private val sv: NestedScrollView by bindView(activity, R.id.article_scroll_view)
+    private val nestedWebView: NestedWebView by bindView(activity, R.id.web_view)
+    private val isArticleFrag = showArticleInterface.getCurrentFragment() is ArticleFragment
+    private val scrollable: ViewGroup = if (isArticleFrag) sv else nestedWebView
     private val scrollBar: ProgressBar by bindView(activity, R.id.article_scroll_progress_bar)
     private val loadingAnimBar: ContentLoadingProgressBar by bindView(activity, R.id.content_loading_bar)
     private val loadingProgressBar: ProgressBar by bindView(activity, R.id.appbar_loading_progress_bar)
@@ -78,7 +85,9 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     override var isFirstPage = true
     private var isLayoutDesigned = false
     override var isRefresh = false
-    private val scrollHeight get() = sv.getChildAt(0).bottom - sv.measuredHeight
+    private val scrollHeight get() =
+        if (isArticleFrag) sv.run { getChildAt(0).bottom - measuredHeight }
+        else activity.webView.run { getFormattedContentHeight() - measuredHeight }
     override var scrollPosition = -1
     private var hasScroll = false
     private var dialogCount = 0
@@ -87,7 +96,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         configureKoinDependency()
         setupScrollListener()
         configureAppBar()
-//        configureSwipeRefresh()
+        configureSwipeRefresh()
     }
 
     // --------------
@@ -107,9 +116,9 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     private fun setupScrollListener() {
         // TODO on scroll video should pause ...
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            sv.setOnScrollChangeListener { _, _, scrollY, _, _ -> onScrollChanged(scrollY) }
+            scrollable.setOnScrollChangeListener { _, _, scrollY, _, _ -> onScrollChanged(scrollY) }
         else
-            sv.viewTreeObserver.addOnScrollChangedListener { onScrollChanged(null) }
+            scrollable.viewTreeObserver.addOnScrollChangedListener { onScrollChanged(null) }
     }
 
     /**
@@ -120,15 +129,15 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param scrollY the given scroll Y position.
      */
     private fun onScrollChanged(scrollY: Int?) {
-        val newScrollY = scrollY ?: sv.scrollY
+        val newScrollY = scrollY ?: scrollable.scrollY
 
         updateScrollProgress(newScrollY)
 
         val isPaused = activity.viewModel.isPaused.get()
         if (isPaused && newScrollY == scrollHeight) showRemovePausedDialog()
 
-//        if (newScrollY == 0) configureSwipeRefresh()
-//        else activity.article_swipe_refresh.setOnRefreshListener(null)
+        // Handle swipe refresh state
+        activity.article_swipe_refresh.isEnabled = newScrollY == 0
     }
 
     /**
@@ -138,23 +147,23 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         activity.appbar_container.tag = activity::class.java.simpleName
     }
 
-//    /**
-//     * Configure swipe refresh listener, re-set article or web page on refresh.
-//     */
-//    private fun configureSwipeRefresh() {
-//        activity.run {
-//            article_swipe_refresh.setOnRefreshListener {
-//                val article = viewModel.article.get()
-//
-//                isRefresh = true // To handle navigation history
-//
-//                if (article != null)
-//                    viewModel.article.apply { set(article); notifyChange() }
-//                else
-//                    web_view.loadUrl(actualUrl ?: "")
-//            }
-//        }
-//    }
+    /**
+     * Configure swipe refresh listener, re-set article or web page on refresh.
+     */
+    private fun configureSwipeRefresh() {
+        activity.run {
+            article_swipe_refresh.setOnRefreshListener {
+                val article = viewModel.article.get()
+
+                isRefresh = true // To handle navigation history
+
+                if (article != null)
+                    viewModel.article.apply { set(article); notifyChange() }
+                else
+                    webView.loadUrl(actualUrl ?: "")
+            }
+        }
+    }
 
     // --------------
     // TRANSITION
@@ -243,7 +252,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      */
     private fun showScrollView() {
         // To prepare the view before the animation
-        if (sv.alpha != 0f) sv.alpha = 0f
+        if (scrollable.alpha != 0f) scrollable.alpha = 0f
 
         // Seems to not delay after image download... // TODO remove ????
 //        activity.article_image.doOnPreDraw {
@@ -267,7 +276,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             true,
             300L,
             DecelerateInterpolator(),
-            { progress -> sv.alpha = progress }
+            { progress -> scrollable.alpha = progress }
         )
 
     /**
@@ -277,14 +286,14 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun getCircularReveal(): Animator {
-        val width = sv.width
-        val height = sv.height
+        val width = scrollable.width
+        val height = scrollable.height
 
         //Simply use the diagonal of the view
         val finalRadius = sqrt((width * width + height * height).toFloat())
 
         val anim = createCircularReveal(
-            sv,
+            scrollable,
             width / 2,
             height / 2,
             0f,
@@ -313,7 +322,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 // Restore scroll position
                 val yPercent = scrollPercent * getTextRatio()
                 val y = (scrollHeight * yPercent).toInt()
-                sv.smoothScrollTo(sv.scrollX, y, 1000)
+                sv.smoothScrollTo(scrollable.scrollX, y, 1000)
             }
             anim.start()
         }
@@ -339,14 +348,14 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @return the current scroll y value in percent.
      */
     override fun getScrollYPercent(svScrollY: Int): Float {
-        val scrollY = if (svScrollY != 0) svScrollY else sv.scrollY
+        val scrollY = if (svScrollY != 0) svScrollY else scrollable.scrollY
         return (scrollY.toFloat() / scrollHeight.toFloat())
     }
 
     /**
      * Save the scroll position of the scroll view.
      */
-    override fun saveScrollPosition() { scrollPosition = sv.scrollY }
+    override fun saveScrollPosition() { scrollPosition = scrollable.scrollY }
 
     /**
      * Scroll vertically to the y position value, if null restore scroll position.
@@ -354,14 +363,14 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param y the y value, vertical axe, to scroll to.
      */
     override fun scrollTo(y: Int?) {
-        sv.doOnLayout {
+        scrollable.doOnLayout {
             val scrollY = when {
                 y != null -> y
                 scrollPosition > -1 -> scrollPosition
                 else -> 0
             }
 
-            sv.scrollTo(sv.scrollX, scrollY)
+            scrollable.scrollTo(scrollable.scrollX, scrollY)
             scrollPosition = -1
             hasScroll = true
         }
@@ -373,7 +382,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
      * @param yPercent the y percent value, vertical axe, to scroll to.
      */
     override fun scrollTo(@FloatRange(from = 0.0, to = 1.0) yPercent: Float) {
-        sv.scrollTo(sv.scrollX, (scrollHeight * yPercent).toInt())
+        scrollable.scrollTo(scrollable.scrollX, (scrollHeight * yPercent).toInt())
     }
 
     /**
@@ -387,7 +396,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                 isLayoutDesigned = false
                 hasScroll = false
 //                sv.visibility = View.INVISIBLE
-                sv.alpha = 0f
+                scrollable.alpha = 0f
 
                 scrollBar.apply { visibility = View.INVISIBLE; this.progress = 0 }
                 loadingAnimBar.show()
@@ -396,7 +405,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
             progress in 80..100 -> {
                 if (!isLayoutDesigned && !isFirstPage) {
                     isLayoutDesigned = true
-//                    activity.article_swipe_refresh.isRefreshing = false
+                    activity.article_swipe_refresh.isRefreshing = false
                     if (!isHtmlData(actualUrl.mToString())) scrollTo(null)
                     else showScrollView()
                 }

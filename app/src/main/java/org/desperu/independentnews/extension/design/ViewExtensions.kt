@@ -9,7 +9,7 @@ import androidx.core.view.children
 import androidx.core.view.descendants
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
-import org.desperu.independentnews.views.MyWebView
+import org.desperu.independentnews.views.webview.MyWebView
 
 /**
  * Find the suitable scrollable that owns the app bar animation.

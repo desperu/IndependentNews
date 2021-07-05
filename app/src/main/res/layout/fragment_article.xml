@@ -128,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <org.desperu.independentnews.views.MyWebView
+                <org.desperu.independentnews.views.webview.MyWebView
                     android:id="@+id/article_web_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
