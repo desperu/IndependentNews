@@ -9,11 +9,8 @@ import org.desperu.independentnews.helpers.SystemUiHelperImpl
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ImageRouterImpl
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.design.*
 import org.desperu.independentnews.ui.showArticle.fragment.FragmentInterface
-import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
-import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
 import org.koin.dsl.module
 
 /**
@@ -36,6 +33,27 @@ val showArticleModule = module {
     }
 
     /**
+     * Provides an ArticleDesignInterface from the instance of ArticleDesign.
+     */
+    single<ArticleDesignInterface> { (articleDesign: ArticleDesign) ->
+        articleDesign
+    }
+
+    /**
+     * Provides a ScrollHandlerInterface from the instance of ScrollHandler.
+     */
+    single<ScrollHandlerInterface> { (scrollHandler: ScrollHandler) ->
+        scrollHandler
+    }
+
+    /**
+     * Provides an ArticleAnimations from the instance of ArticleAnimationsImpl.
+     */
+    single<ArticleAnimations> { (activity: BaseActivity) ->
+        ArticleAnimationsImpl(activity)
+    }
+
+    /**
      * Provides an ImageRouter from the instance of ShowArticleActivity.
      */
     single<ImageRouter>(override = true) { (activity: BaseActivity) ->
@@ -54,19 +72,5 @@ val showArticleModule = module {
      */
     single<DialogHelper>(override = true) { (activity: BaseActivity) ->
         DialogHelperImpl(activity)
-    }
-
-    /**
-     * Provides an ArticleDesignInterface from the instance of ArticleDesign.
-     */
-    single<ArticleDesignInterface> { (articleDesign: ArticleDesign) ->
-        articleDesign
-    }
-
-    /**
-     * Provides a MyWebViewClientInterface from the instance of MyWebViewClient.
-     */
-    single<MyWebViewClientInterface> { (mWebViewClient: MyWebViewClient) ->
-        mWebViewClient
     }
 }

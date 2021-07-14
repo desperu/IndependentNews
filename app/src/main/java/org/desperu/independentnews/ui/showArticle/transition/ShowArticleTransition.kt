@@ -1,4 +1,4 @@
-package org.desperu.independentnews.ui.showArticle
+package org.desperu.independentnews.ui.showArticle.transition
 
 import android.animation.Animator
 import android.animation.AnimatorSet

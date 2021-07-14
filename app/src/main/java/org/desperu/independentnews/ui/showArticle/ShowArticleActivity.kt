@@ -33,9 +33,10 @@ import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.main.MainActivity
 import org.desperu.independentnews.ui.main.UPDATED_USER_ARTICLES
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.design.*
 import org.desperu.independentnews.ui.showArticle.fabsMenu.FabsMenu
 import org.desperu.independentnews.ui.showArticle.fragment.FragmentInterface
+import org.desperu.independentnews.ui.showArticle.transition.TransitionHandler
 import org.desperu.independentnews.ui.sources.SourcesActivity
 import org.desperu.independentnews.ui.sources.WAS_EXPANDED
 import org.desperu.independentnews.utils.CANT_PARSE
@@ -80,8 +81,9 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
         parameters = { parametersOf(article, router) }
     )
     override val activity = this // TODO wrong usage ???
-    private val articleDesign: ArticleDesignInterface get() = get()
-    private val fragmentInterface: FragmentInterface get() = get { parametersOf(getCurrentFragment()) }
+    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var articleDesign: ArticleDesign
+    override val fragmentInterface: FragmentInterface get() = get { parametersOf(getCurrentFragment()) }
     private val mWebViewClient get() = fragmentInterface.mWebViewClient
     private val mWebChromeClient get() = fragmentInterface.mWebChromeClient
     override val webView: MyWebView get() = article_web_view ?: web_view
@@ -166,7 +168,7 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
      * Configure the navigation controller and set graph to show start destination with arguments.
      */
     private fun configureNavController() {
-        val navHostFragment =
+        navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
@@ -185,6 +187,30 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
     private fun configureAppBar() {
         appbar.showAppBarIcon(listOf(R.id.back_arrow_icon, R.id.share_icon))
         appbar.doOnAttach { appbar.syncAppBarSize(appbar, isExpanded) }
+    }
+
+    /**
+     * Configure design dependencies.
+     */
+    private fun configureDesignDependency() {
+        articleDesign = ArticleDesign()
+        get<ArticleDesignInterface> { parametersOf(articleDesign) }
+
+        get<ScrollHandlerInterface> { parametersOf(ScrollHandler()) }
+        get<ArticleAnimations> { parametersOf(this) }
+    }
+
+    /**
+     * Configure transition for this activity.
+     */
+    private fun configureTransition() {
+        TransitionHandler().run {
+            postponeSceneTransition()
+            setActivityTransition(article, transitionBg)
+            scheduleStartPostponedTransition(article_image ?: web_view)
+        }
+
+        articleDesign.showFabsMenu(true, transitionBg == null)
     }
 
     // --------------
@@ -211,16 +237,19 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
      *
      * @return the current fragment instance.
      */
-    override fun getCurrentFragment(): Fragment? {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-        return navHostFragment?.childFragmentManager?.primaryNavigationFragment
-    }
+    override fun getCurrentFragment(): Fragment? =
+        navHostFragment.childFragmentManager.primaryNavigationFragment
 
     // --------------
     // METHODS OVERRIDE
     // --------------
 
-    override fun onAttachedToWindow() { super.onAttachedToWindow(); FabsMenu() }
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        configureDesignDependency() // To prevent bug when bindView at start
+        configureTransition()
+        FabsMenu() // Need ArticleDesignInterface Koin instance
+    }
 
     override fun onResume() {
         super.onResume()

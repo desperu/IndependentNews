@@ -6,7 +6,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.lifecycleScope
-import kotlinx.android.synthetic.main.fragment_article.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.extension.parseHtml.mToString
@@ -16,6 +15,7 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.desperu.independentnews.utils.Utils.isImageUrl
 import org.desperu.independentnews.utils.Utils.isMailTo
@@ -23,39 +23,25 @@ import org.desperu.independentnews.utils.Utils.isSameDataType
 import org.desperu.independentnews.utils.Utils.isSourceArticleUrl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.parameter.parametersOf
+import org.koin.core.component.inject
 
 /**
  * Web view client for the web view.
  *
  * @constructor Instantiate a new MyWebViewClient.
  */
-class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent {
+class MyWebViewClient : WebViewClient(), KoinComponent {
 
     // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface = get()
     private val activity = showArticleInterface.activity
     private val viewModel = showArticleInterface.viewModel
-    private val articleDesign: ArticleDesignInterface = get()
+    private val articleDesign: ArticleDesignInterface by inject()
+    private val scrollHandler: ScrollHandlerInterface by inject()
     private val router: ImageRouter = get()
 
     // FOR DATA
-    override var actualUrl: String = ""
-
-    init {
-        configureKoinDependency()
-    }
-
-    // --------------
-    // CONFIGURATION
-    // --------------
-
-    /**
-     * Configure koin dependency for article design.
-     */
-    private fun configureKoinDependency() {
-        get<MyWebViewClientInterface> { parametersOf(this) }
-    }
+    var actualUrl: String = ""
 
     // --------------
     // METHODS OVERRIDE
@@ -70,9 +56,13 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
         }
     }
 
+    override fun onPageCommitVisible(view: WebView?, url: String?) {
+        super.onPageCommitVisible(view, url)
+        articleDesign.handleDesign(100)
+    }
     override fun onPageFinished(view: WebView?, url: String?) {
-        articleDesign.handleDesign(101)
         super.onPageFinished(view, url)
+        articleDesign.handleDesign(101) // To finish loading page
     }
 
     override fun shouldOverrideUrlLoading(
@@ -83,7 +73,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
             val url = request?.url.mToString()
             handleRedirect(url)
         } else {
-            articleDesign.saveScrollPosition()
+            scrollHandler.saveScrollPosition()
             super.shouldOverrideUrlLoading(view, request)
         }
     }
@@ -146,7 +136,8 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
         val isSameDataType = isSameDataType(actualUrl, previousPage.first.url)
         val newIsHtmlData = isHtmlData(previousPage.first.url)
 
-        articleDesign.scrollPosition = previousPage.second // Needed every times
+        // TODO not good when switch fragment, switch article design instance too
+        scrollHandler.scrollPosition = previousPage.second // Needed every times
 
         if (isSameDataType) { // Already back if is html data, when call viewModel.previousPage()
             articleDesign.handleDesign(0)
@@ -178,7 +169,7 @@ class MyWebViewClient : WebViewClient(), MyWebViewClientInterface, KoinComponent
                 Pair(
                     if (isHtmlData(actualUrl)) viewModel.article.get() ?: Article()
                     else Article(url = actualUrl),
-                    activity.article_scroll_view?.scrollY ?: 0 // TODO use content container ?? Web handle scroll position ???
+                    scrollHandler.scrollable.scrollY
                 )
             )
     }

@@ -21,8 +21,7 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.*
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
-import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClientInterface
+import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabIcon
 import org.desperu.independentnews.utils.FabsMenuUtils.getSubFabId
@@ -39,7 +38,7 @@ import org.koin.core.component.get
  * Customize animation, handle actions.
  *
  * @property showArticleInterface   the interface of the show article activity.
- * @property articleDesign          the article design interface access.
+ * @property scrollHandler          the scroll handler interface access.
  * @property prefs                  the shared preferences interface access.
  * @property activity               the activity that owns this Fabs Menu.
  *
@@ -51,8 +50,7 @@ class FabsMenu : KoinComponent{
 
     // FOR COMMUNICATION
     private val showArticleInterface: ShowArticleInterface = get()
-    private val articleDesign: ArticleDesignInterface get() = get()
-    private val myWebViewClientInterface: MyWebViewClientInterface get() = get()
+    private val scrollHandler: ScrollHandlerInterface = get()
     private val prefs: SharedPrefService = get()
     private val activity = showArticleInterface.activity
 
@@ -181,7 +179,7 @@ class FabsMenu : KoinComponent{
 
         Handler(Looper.getMainLooper()).postDelayed(500L) {
             // Save the scroll Y percent
-            val yPercent = articleDesign.getScrollYPercent()
+            val yPercent = scrollHandler.getScrollYPercent()
 
             // Calculus new text zoom and ratio
             val wVSettings = activity.webView.settings
@@ -192,14 +190,14 @@ class FabsMenu : KoinComponent{
 
             // Correct the scroll position
             activity.webView.doOnNextLayout {
-                articleDesign.scrollTo(yPercent * textRatio * correct)
+                scrollHandler.scrollTo(yPercent * textRatio * correct)
             }
 
             // Update text size
             wVSettings.textZoom = newTextZoom
 
             // Calculus the real text zoom, take care of specific source text zoom.
-            val actualUrl = myWebViewClientInterface.actualUrl
+            val actualUrl = showArticleInterface.fragmentInterface.mWebViewClient?.actualUrl ?: ""
             val sourceName = activity.viewModel.article.get()?.source?.name ?: ""
             val realTextZoom = newTextZoom - getSourceTextZoom(actualUrl, sourceName)
             // Store the new value in the preferences.
@@ -240,8 +238,8 @@ class FabsMenu : KoinComponent{
         val subFab = speedDialView.getFabWithLabelViewById(id)?.fab
         val isPaused = isStateEnabled(subFab)
         val newColor = if (!isPaused) pauseColor else fabImageTintColor
-        val yPercent = articleDesign.getScrollYPercent()
-        val textRatio = articleDesign.getTextRatio()
+        val yPercent = scrollHandler.getScrollYPercent()
+        val textRatio = activity.webView.getTextRatio()
 
         // Switch state
         activity.viewModel.updatePaused(yPercent / textRatio)

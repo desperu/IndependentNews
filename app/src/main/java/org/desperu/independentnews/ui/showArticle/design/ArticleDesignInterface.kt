@@ -1,7 +1,5 @@
 package org.desperu.independentnews.ui.showArticle.design
 
-import androidx.annotation.FloatRange
-
 /**
  * Interface to allow communications with Article Design.
  */
@@ -16,55 +14,6 @@ interface ArticleDesignInterface {
      * True if is a refresh page, false otherwise.
      */
     var isRefresh: Boolean
-
-    /**
-     * Used to store the page scroll position.
-     */
-    var scrollPosition: Int
-
-    /**
-     * Resume paused article to the saved scroll position, with drawable transition,
-     * play to pause and smooth scroll to the saved position.
-     * Delay this animation after the activity shared element enter transition.
-     *
-     * @param scrollPercent the scroll position to restore.
-     */
-    fun resumePausedArticle(scrollPercent: Float)
-
-    /**
-     * Returns the text ratio of the current web view.
-     *
-     * @return the current text ratio.
-     */
-    fun getTextRatio(): Float
-
-    /**
-     * Returns the current scroll y value in percent.
-     *
-     * @param svScrollY the scroll y value, def value 0.
-     *
-     * @return the current scroll y value in percent.
-     */
-    fun getScrollYPercent(svScrollY: Int = 0): Float
-
-    /**
-     * Save the scroll position of the scroll view position.
-     */
-    fun saveScrollPosition()
-
-    /**
-     * Scroll vertically to the y position value, if null restore scroll position.
-     *
-     * @param y the y value, vertical axe, to scroll to.
-     */
-    fun scrollTo(y: Int?)
-
-    /**
-     * Scroll vertically to the y percent value.
-     *
-     * @param yPercent the y percent value, vertical axe, to scroll to.
-     */
-    fun scrollTo(@FloatRange(from = 0.0, to = 1.0) yPercent: Float)
 
     /**
      * Update loading progress bar, in app bar, with the new progress value.
@@ -88,10 +37,23 @@ interface ArticleDesignInterface {
     fun hideArticleDataContainer(toHide: Boolean)
 
     /**
+     * Update scroll progress bar, below the app bar, with the new scroll Y value.
+     * If the given scroll Y is null, direct get the current value in the nested scroll view.
+     *
+     * @param scrollY the new scroll Y value.
+     */
+    fun updateScrollProgress(scrollY: Int)
+
+    /**
      * Show or hide fabs menu, depends of to show value.
      *
      * @param toShow    true to show the fabs menu, false to hide.
      * @param toDelay   true to delay show fabs menu, false to do on transition end.
      */
     fun showFabsMenu(toShow: Boolean, toDelay: Boolean = true)
+
+    /**
+     * Show the remove pause dialog, when reach the bottom of a paused article.
+     */
+    fun showRemovePausedDialog()
 }

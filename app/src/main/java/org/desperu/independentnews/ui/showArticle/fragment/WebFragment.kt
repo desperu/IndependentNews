@@ -14,10 +14,11 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
+import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 /**
@@ -38,9 +39,9 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
         navGraphId = R.id.nav_graph,
         parameters = { parametersOf(article, get<ImageRouter>()) }
     )
-    private var articleDesign: ArticleDesign? = null
-    override var mWebViewClient: MyWebViewClient? = null
-    override var mWebChromeClient: MyWebChromeClient? = null
+    private val scrollHandler: ScrollHandlerInterface by inject()
+    override lateinit var mWebViewClient: MyWebViewClient
+    override lateinit var mWebChromeClient: MyWebChromeClient
 
     // --------------
     // BASE METHODS
@@ -49,9 +50,7 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
     override fun getBindingView(): View = configureViewModel()
 
     override fun configureDesign() {
-        configureArticleDesign()
         configureWebView()
-        // TODO to handle app bar and suitable scrollable, nested web view needed ???
     }
 
     override fun updateDesign() {}
@@ -70,31 +69,17 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
     }
 
     /**
-     * Configure the article design.
-     */
-    private fun configureArticleDesign() {
-        articleDesign = ArticleDesign()
-        articleDesign?.run {
-            if (isFirstPage) setActivityTransition(article, null)
-            showFabsMenu(toShow = true, toDelay = true)
-        }
-    }
-
-    /**
      * Configure the web view client and load url.
      */
     private fun configureWebView() {
         mWebViewClient = MyWebViewClient()
-        web_view.webViewClient = mWebViewClient!!
+        web_view.webViewClient = mWebViewClient
 
         mWebChromeClient = MyWebChromeClient()
         web_view.webChromeClient = mWebChromeClient
 
         // TODO add some custom config, pinch zoom ect...
-//        web_view.loadUrl(article.url)
         viewModel.article.set(article)
-
-//        Log.e("WebFragment", "$mWebViewClient")
     }
 
     // --------------
@@ -105,6 +90,7 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
         super.onResume()
         web_view.doOnNextLayout {
             get<ShowArticleInterface>().updateAppBarOnTouch()
+            scrollHandler.setupScrollListener()
         }
     }
 
@@ -112,13 +98,6 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialFadeThrough()
-        exitTransition = MaterialFadeThrough()
+//        exitTransition = MaterialFadeThrough()
     }
-
-//    override fun onDestroyView() {
-//        mWebViewClient = null
-//        mWebChromeClient = null
-//        articleDesign = null
-//        super.onDestroyView()
-//    }
 }

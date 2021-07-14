@@ -9,17 +9,20 @@ import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.helpers.SystemUiHelper
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.utils.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.inject
 
 /**
  * My custom Web Chrome Client, used to show full screen video in a custom view.
  *
  * @property activity               the parent activity through it's interface.
  * @property articleDesign          the article design interface access.
+ * @property scrollHandler          the scroll handler interface access.
  * @property sysUiHelper            the interface of the system ui helper to manage it.
- * @property navHost                the navigation host that contains the web view.
+ * @property swipeContainer         the swipe refresh that contains the web view.
  * @property customViewContainer    the container of the custom view.
  * @property mCustomView            the custom view used to display the video.
  * @property customViewCallback     the callback of the custom view, used to communicate with.
@@ -31,11 +34,12 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
 
     // FOR COMMUNICATION
     private val activity = get<ShowArticleInterface>().activity
-    private val articleDesign: ArticleDesignInterface? = getKoin().getOrNull()
+    private val articleDesign: ArticleDesignInterface by inject()
+    private val scrollHandler: ScrollHandlerInterface by inject()
     private val sysUiHelper: SystemUiHelper = get()
 
     // FOR UI
-    private val navHost: View by bindView(activity, R.id.nav_host_fragment)
+    private val swipeContainer: View by bindView(activity, R.id.article_swipe_refresh)
     private val customViewContainer: FrameLayout by bindView(activity, R.id.video_container)
     private var mCustomView: View? = null
     private var customViewCallback: CustomViewCallback? = null
@@ -70,24 +74,22 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
         customViewCallback = callback
 
         // Hide web view and show custom view
-        navHost.visibility = View.GONE
+        swipeContainer.visibility = View.GONE
         customViewContainer.visibility = View.VISIBLE
 
         // Configure Ui for full screen video
         sysUiHelper.setWindowFlag(KEEP_SCREEN_ON) // Seems to properly work
         sysUiHelper.setDecorUiVisibility(SYS_UI_FULL_HIDE)
         sysUiHelper.setOrientation(LANDSCAPE) // Not needed for new api
-        articleDesign?.saveScrollPosition()
-        articleDesign?.showFabsMenu(toShow = false, toDelay = false)
+        scrollHandler.saveScrollPosition()
+        articleDesign.showFabsMenu(toShow = false, toDelay = false)
 
         inCustomView = true
     }
 
     override fun onProgressChanged(view: WebView, newProgress: Int) {
         super.onProgressChanged(view, newProgress)
-        articleDesign?.updateLoadingProgress(newProgress)
-        // Update layout design.
-        if (newProgress >= 80) articleDesign?.handleDesign(newProgress)
+        articleDesign.updateLoadingProgress(newProgress)
     }
 
     override fun onHideCustomView() {
@@ -95,7 +97,7 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
         if (mCustomView == null) return
 
         // Show web view and hide custom view
-        navHost.visibility = View.VISIBLE
+        swipeContainer.visibility = View.VISIBLE
         customViewContainer.visibility = View.GONE
         mCustomView!!.visibility = View.GONE
 
@@ -108,7 +110,7 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
         sysUiHelper.removeWindowFlag(KEEP_SCREEN_ON)
         sysUiHelper.setDecorUiVisibility(SYS_UI_VISIBLE)
         sysUiHelper.setOrientation(FULL_USER)
-        articleDesign?.scrollTo(null)
+        scrollHandler.scrollTo(null)
 
         inCustomView = false
     }

@@ -15,7 +15,7 @@ import org.desperu.independentnews.repositories.IndependentNewsRepository
 import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.UserArticleRepository
 import org.desperu.independentnews.service.SharedPrefService
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.design.ArticleAnimations
 import org.desperu.independentnews.utils.ADDED_FAVORITE
 import org.desperu.independentnews.utils.ADDED_FAVORITE_DEFAULT
 import org.desperu.independentnews.utils.ADDED_PAUSED
@@ -33,7 +33,7 @@ import kotlin.properties.Delegates
  * @property ideNewsRepository      the app repository interface witch provide database and network access.
  * @property userArticleRepository  the repository which provide user article database access.
  * @property router                 the image router which provide user redirection.
- * @property articleDesign          the article design interface access.
+ * @property articleAnimations      the article animations interface access.
  * @property cssRepository          the repository that allow access for css from the database.
  * @property prefs                  the shared preferences service interface access.
  * @property navHistory             the navigation history of the web view.
@@ -57,7 +57,7 @@ class ArticleViewModel(
 ): ViewModel(), KoinComponent {
 
     // FOR COMMUNICATION
-    private val articleDesign: ArticleDesignInterface by inject()
+    private val articleAnimations: ArticleAnimations by inject()
     private val cssRepository: CssRepository = get()
     private val prefs: SharedPrefService = get()
 
@@ -107,7 +107,7 @@ class ArticleViewModel(
         
         val paused = userArticleRepository.getPausedArticle(articleId)
         isPaused.set(paused != null)
-        paused?.let { articleDesign.resumePausedArticle(it.scrollPosition) }
+        paused?.let { articleAnimations.resumePausedArticle(it.scrollPosition) }
     }
 
     /**

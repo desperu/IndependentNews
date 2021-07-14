@@ -1,15 +1,12 @@
 package org.desperu.independentnews.ui.showArticle.fragment
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.doOnNextLayout
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.android.synthetic.main.fragment_article.*
-import kotlinx.android.synthetic.main.fragment_web.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
 import org.desperu.independentnews.extension.sharedGraphViewModel
@@ -17,10 +14,11 @@ import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.desperu.independentnews.ui.showArticle.design.ArticleDesign
+import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
 
 /**
@@ -41,10 +39,9 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
         navGraphId = R.id.nav_graph,
         parameters = { parametersOf(article, get<ImageRouter>()) }
     )
-    private val showArticle: ShowArticleInterface = get()
-    private var articleDesign: ArticleDesign? = null
-    override var mWebViewClient: MyWebViewClient? = null
-    override var mWebChromeClient: MyWebChromeClient? = null
+    private val scrollHandler: ScrollHandlerInterface by inject()
+    override lateinit var mWebViewClient: MyWebViewClient
+    override lateinit var mWebChromeClient: MyWebChromeClient
 
     // --------------
     // BASE METHODS
@@ -53,9 +50,7 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
     override fun getBindingView(): View = configureViewModel()
 
     override fun configureDesign() {
-        configureArticleDesign() // TODO force portrait to prevent anim bug !!!
-        setUserArticleState()
-        configureWebViewClient()
+        configureWebViewClient()// TODO force portrait to prevent anim bug !!!
     }
 
     override fun updateDesign() {}
@@ -74,30 +69,11 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
     }
 
     /**
-     * Configure the article design.
-     */
-    private fun configureArticleDesign() {
-        articleDesign = ArticleDesign()
-
-        articleDesign?.apply {
-            postponeSceneTransition()
-            this@ArticleFragment.setActivityTransition()
-            scheduleStartPostponedTransition(article_image)
-            showFabsMenu(true, showArticle.transitionBg == null)
-        }
-    }
-
-    /**
-     * Set user article state after Article Design, for koin instance lifecycle.
-     */
-    private fun setUserArticleState() { viewModel.setUserArticleState() }
-
-    /**
      * Configure the web view client.
      */
     private fun configureWebViewClient() {
         mWebViewClient = MyWebViewClient()
-        article_web_view.webViewClient = mWebViewClient!!
+        article_web_view.webViewClient = mWebViewClient
 
         mWebChromeClient = MyWebChromeClient()
         article_web_view.webChromeClient = mWebChromeClient
@@ -111,38 +87,16 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
         super.onResume()
         article_scroll_view.doOnNextLayout {
             get<ShowArticleInterface>().updateAppBarOnTouch()
+            viewModel.setUserArticleState() // Need ArticleDesignInterface Koin instance set
+            scrollHandler.setupScrollListener()
         }
     }
 
     // TODO to check here
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enterTransition = MaterialFadeThrough()
+//        enterTransition = MaterialFadeThrough()
+//        reenterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
-    }
-
-//    override fun onDestroyView() {
-//        mWebViewClient = null
-//        mWebChromeClient = null
-//        articleDesign = null
-//        super.onDestroyView()
-//    }
-
-    // --------------
-    // UI
-    // --------------
-
-    /**
-     * Set the activity transition.
-     */
-    private fun setActivityTransition() {
-        val drawable = if (showArticle.transitionBg != null) {
-            val length = showArticle.transitionBg?.size ?: 0
-            val bitmap = BitmapFactory.decodeByteArray(showArticle.transitionBg, 0, length)
-            bitmap.toDrawable(resources)
-        } else
-            null
-
-        articleDesign?.setActivityTransition(article, drawable)
     }
 }

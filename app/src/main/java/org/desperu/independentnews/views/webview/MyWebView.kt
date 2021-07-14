@@ -27,6 +27,7 @@ import org.desperu.independentnews.models.database.Css
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ImageRouter
 import org.desperu.independentnews.ui.showArticle.design.ArticleDesignInterface
+import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
 import org.desperu.independentnews.ui.showArticle.webClient.JavaScriptInterface
 import org.desperu.independentnews.ui.sources.SourcesInterface
@@ -58,6 +59,7 @@ open class MyWebView @JvmOverloads constructor(
 
     // FOR DATA
     private val articleDesignInterface: ArticleDesignInterface? get() = getKoin().getOrNull()
+    private val scrollHandler: ScrollHandlerInterface? get() = getKoin().getOrNull()
     private val sourcesInterface: SourcesInterface? get() = getKoin().getOrNull()
     private val imageRouter: ImageRouter? get() = getKoin().getOrNull(qualifier(SOURCE_IMAGE_ROUTER))
     private val sourceRouter: SourceRouter by inject()
@@ -181,7 +183,7 @@ open class MyWebView @JvmOverloads constructor(
     private fun applyCssStyle(url: String, css: Css) {
         // Used to delay the scroll action to be sure that the css style is applied,
         // and prevent scroll gap error.
-        val callback = { postDelayed({ articleDesignInterface?.scrollTo(null) }, 50) }
+        val callback = { postDelayed({ scrollHandler?.scrollTo(null) }, 50) }
 
         injectCssCode(resizeMedia) { }
         if (isHtmlData(url)) {
@@ -301,4 +303,12 @@ open class MyWebView @JvmOverloads constructor(
         floor(
             (contentHeight * resources.displayMetrics.density).toDouble()
         ).toInt()
+
+    /**
+     * Returns the text ratio of the current web view.
+     *
+     * @return the current text ratio.
+     */
+    internal fun getTextRatio(): Float =
+        settings.textZoom.toFloat() / TEXT_SIZE_DEFAULT.toFloat()
 }
