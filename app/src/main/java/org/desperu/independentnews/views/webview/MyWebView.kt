@@ -89,6 +89,7 @@ open class MyWebView @JvmOverloads constructor(
         settings.javaScriptCanOpenWindowsAutomatically = true
         val jsInterface = JavaScriptInterface(activity)
         addJavascriptInterface(jsInterface, JS_INTERFACE_NAME)
+        // TODO add JQuery
     }
 
     /**

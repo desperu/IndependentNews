@@ -11,6 +11,7 @@ buildscript {
         leak_canary_version = '2.6'
         lifecycle_version = '2.3.1'
         nav_version = '2.3.5'
+        okhttp_version = '4.9.0'
         retrofit_version = '2.9.0'
         room_version = '2.2.6'
         tikxml_version = '0.8.13'

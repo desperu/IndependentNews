@@ -122,6 +122,8 @@ const val DATABASE_VERSION = 1
 // --- FOR KOIN ---
 
 // For Qualifier Name
+const val STANDARD_HTTP_REQUEST = "standardHttpRequest"
+const val CLOUDFLARE_BYPASS = "cloudflareBypass"
 // TODO try same for ArticleListInterface !!!
 const val SOURCE_IMAGE_ROUTER = "sourceImageRouter"
 
@@ -153,6 +155,8 @@ const val NOTIFICATION = 1
 const val INDEPENDENT_NEWS_PREFS = "IndependentNewsPrefs"
 
 // Shared preferences keys
+// Http Request
+const val COOKIES_KEY = "appCookies"
 // global use
 const val IS_FIRST_TIME = "isFirstTime"
 const val SOURCE_OPENED_TIMES = "sourceOpenedTimes"
@@ -170,6 +174,8 @@ const val ADDED_FAVORITE = "addedFavorite"
 const val ADDED_PAUSED = "addedPaused"
 
 // Settings default value
+// Http Request
+val COOKIES_DEFAULT = setOf<String>()
 // global use
 const val FIRST_TIME_DEFAULT = true
 const val SOURCE_OPENED_DEFAULT = 0

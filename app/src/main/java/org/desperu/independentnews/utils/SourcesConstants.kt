@@ -9,6 +9,16 @@ import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
 const val XML = 0
 const val HTML = 1
 
+// Fake Curl Headers to bypass cloudflare protect
+val CURL_HEADERS = setOf(
+    Pair("User-Agent", "curl/7.58.0"),
+    Pair("Accept", "*/*")
+)
+
+// Headers Cookies Keys
+const val COOKIE_HEADER = "Cookie" // For request, send cookie
+const val SET_COOKIE_HEADER = "Set-Cookie" // For response, cookie to handle
+
 // Base url for retrofit request
 const val BASTAMAG_BASE_URL = "https://www.bastamag.net/"
 const val REPORTERRE_BASE_URL = "https://reporterre.net/"
