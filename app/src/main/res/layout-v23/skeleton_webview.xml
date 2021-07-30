@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bones="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.views.webview.skeleton.SkeletonWebViewBinding"/>
+
+        <import type="com.eudycontreras.boneslibrary.properties.ShapeType" />
+        <import alias="Utils" type="com.eudycontreras.boneslibrary.extensions.NumberExtensionsKt" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/skeleton_web_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginHorizontal="@dimen/default_margin"
+
+        bones:skeletonEnabled="@{viewModel.isLoading}"
+
+        bones:skeletonBoneColor="@{@color/colorBone}"
+        bones:skeletonBoneCornerRadius="@{Utils.getDp(10)}"
+
+        bones:skeletonShimmerRayColor="@{@android:color/white}"
+        bones:skeletonShimmerRayCount="@{4}"
+        bones:skeletonShimmerRayInterpolator="@{@android:interpolator/accelerate_quad}"
+        bones:skeletonShimmerRaySharedInterpolator="@{true}"
+        bones:skeletonShimmerRaySpeedMultiplier="@{1f}"
+        bones:skeletonShimmerRayThicknessRatio="@{0.45f}"
+        bones:skeletonShimmerRayTilt="@{-0.2f}"
+        bones:skeletonTransitionDuration="@{viewModel.duration}"
+        bones:skeletonDissectLargeBones="@{true}"
+        bones:skeletonUseStateTransition="@{true}"
+        bones:skeletonAnimateRestoredBounds="@{true}"
+        bones:skeletonAllowSavedState="@{true}">
+
+        <TextView
+            android:id="@+id/skeleton_web_view_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.title}"
+            android:textSize="@dimen/article_title_text_size"
+            android:textColor="@android:color/white"
+
+            bones:skeletonBoneShadeMultiplier="@{0.9f}"
+            bones:skeletonBoneMaxThickness="@{Utils.getDp(20)}"
+            bones:skeletonBoneMinThickness="@{Utils.getDp(18)}"/>
+
+        <TextView
+            android:id="@+id/skeleton_web_view_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.skeletonContent}"
+            android:textSize="@dimen/default_edit_text_size"
+            android:textColor="@android:color/white"
+
+            bones:skeletonBoneShadeMultiplier="@{0.9f}"
+            bones:skeletonBoneMaxThickness="@{Utils.getDp(18)}"
+            bones:skeletonBoneMinThickness="@{Utils.getDp(16)}"/>
+
+    </LinearLayout>
+
+</layout>

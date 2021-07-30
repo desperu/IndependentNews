@@ -40,6 +40,7 @@
     <color name="colorPassedWhite">#F6F6F6</color>
     <color name="colorPurple">@color/design_default_color_primary</color>
     <color name="colorStar">#F0E00C</color>
+    <color name="colorBone">#80319DD5</color>
 
     <!-- Translucent Colors -->
     <color name="colorTransWhite">#CDEEEEEE</color>

@@ -129,6 +129,26 @@ internal object Utils {
     }
 
     // -----------------
+    // STRING
+    // -----------------
+
+    /**
+     * Create a list of desired char for the random string.
+     */
+    private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+
+    /**
+     * Returns a random string with the desired length.
+     * @param length the length of the random string.
+     * @return a random string for the desired length.
+     */
+    internal fun getRandomString(length: Int): String =
+        (1..length)
+            .map { i -> kotlin.random.Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
+
+    // -----------------
     // CONVERT STRING
     // -----------------
 

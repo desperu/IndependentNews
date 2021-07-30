@@ -158,6 +158,9 @@ dependencies {
     // Item Touch Helper Extension
     implementation 'com.loopeer.library:itemtouchhelperextension:1.0.6'
 
+    // Skeleton-Bones
+    implementation 'com.github.EudyContreras:Skeleton-Bones:1.4.4'
+
     // Koin
     implementation "io.insert-koin:koin-android:$koin_version"
 //    implementation "io.insert-koin:koin-android-ext:$koin_version"

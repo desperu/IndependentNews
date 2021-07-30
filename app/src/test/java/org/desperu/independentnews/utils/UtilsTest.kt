@@ -10,6 +10,7 @@ import org.desperu.independentnews.utils.Utils.concatenateStringFromMutableList
 import org.desperu.independentnews.utils.Utils.deConcatenateStringToMutableList
 import org.desperu.independentnews.utils.Utils.getDomainFromUrl
 import org.desperu.independentnews.utils.Utils.getPageNameFromUrl
+import org.desperu.independentnews.utils.Utils.getRandomString
 import org.desperu.independentnews.utils.Utils.intDateToString
 import org.desperu.independentnews.utils.Utils.intStringToDate
 import org.desperu.independentnews.utils.Utils.isHtmlData
@@ -233,6 +234,29 @@ class UtilsTest {
         val output = storeDelayMillis(givenMillis, storeDelay)
 
         assertEquals(expected, output)
+    }
+
+    @Test
+    fun given_askedLength_When_getRandomString_Then_checkString() {
+        val expected = 10
+
+        output = getRandomString(expected)
+
+        // Check that the asked length is good
+        assertEquals(expected, output.length)
+
+        val secondString = getRandomString(expected)
+
+        assertNotEquals(output, secondString)
+    }
+
+    @Test
+    fun given_askedLength_When_getRandomString_Then_checkEmptyString() {
+        val expected = 0
+
+        output = getRandomString(expected)
+
+        assertEquals(expected, output.length)
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.desperu.independentnews.utils
 
 import org.desperu.independentnews.models.database.Source
 import org.desperu.independentnews.ui.showArticle.webClient.JS_INTERFACE_NAME
+import org.desperu.independentnews.ui.showArticle.webClient.JavaScriptInterface
 
 // --- FOR RETROFIT REQUEST ---
 
@@ -153,14 +154,14 @@ const val NOTE_REDIRECT =
             "        elem = elem.offsetParent;\n" +
             "    }\n" +
             "\n" +
-            "    $JS_INTERFACE_NAME.webScrollTo(y);\n" + // Call Javascript interface function
+            "    $JS_INTERFACE_NAME.webScrollTo(y);\n" + /** Call Javascript interface function [JavaScriptInterface.webScrollTo] */
             "}"
 
 // Page listener used to received callback event from web view,
 // when the page is resize and/or is loaded and show.
 const val PAGE_LISTENER =
     "function pageListener(event) {\n" +
-            "    $JS_INTERFACE_NAME.applyCss(event);\n" + // Call Javascript interface function
+            "    $JS_INTERFACE_NAME.applyCss(event);\n" + /** Call Javascript interface function [JavaScriptInterface.applyCss] */
             "}"
 
 // --- Parse Css Style ---

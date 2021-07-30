@@ -66,6 +66,10 @@ const val RC_SOURCE = 2000          // Source activity
 const val RC_SHOW_ARTICLE = 3000    // Back from Show Article to Sources
 const val RC_PERMS = 10000          // For permissions
 
+// For Skeleton Web View Content
+const val SKELETON_TITLE_LENGTH = 300
+const val SKELETON_CONTENT_LENGTH = 10000
+
 // --- FOR FABS MENU ---
 // For Sub Fabs Key
 const val SUB_FAB_MIN_TEXT = 0
