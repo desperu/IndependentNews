@@ -16,11 +16,10 @@ interface ArticleDesignInterface {
     var isRefresh: Boolean
 
     /**
-     * Update loading progress bar, in app bar, with the new progress value.
-     *
-     * @param newProgress the new progress value.
+     * Setup scrollable visibility, to show it at first start,
+     * and use alpha 0 for fragment transition, from xml layout.
      */
-    fun updateLoadingProgress(newProgress: Int)
+    fun setupScrollableVisibility()
 
     /**
      * Handle layout design, used between page navigation to hide or show ui elements.
@@ -35,6 +34,13 @@ interface ArticleDesignInterface {
      * @param toHide true to hide data container, false to show.
      */
     fun hideArticleDataContainer(toHide: Boolean)
+
+    /**
+     * Update loading progress bar, in app bar, with the new progress value.
+     *
+     * @param newProgress the new progress value.
+     */
+    fun updateLoadingProgress(newProgress: Int)
 
     /**
      * Update scroll progress bar, below the app bar, with the new scroll Y value.

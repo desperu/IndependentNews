@@ -59,10 +59,13 @@ class MyWebViewClient : WebViewClient(), KoinComponent {
     override fun onPageCommitVisible(view: WebView?, url: String?) {
         super.onPageCommitVisible(view, url)
         articleDesign.handleDesign(100)
+        articleDesign.handleDesign(101)
     }
+
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
-        articleDesign.handleDesign(101) // To finish loading page
+//        articleDesign.handleDesign(101) // To finish loading page
+        // TODO rocks ????
     }
 
     override fun shouldOverrideUrlLoading(
@@ -115,14 +118,18 @@ class MyWebViewClient : WebViewClient(), KoinComponent {
      */
     private fun showPage(newUrl: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
         if (isSameDataType(actualUrl, newUrl)) {
+            scrollHandler.scrollTo(0f) // Back on top of the page
+
             if (isSourceArticleUrl(newUrl))
                 viewModel.fetchAndSetArticle(newUrl)
             else
                 activity.webView.loadUrl(newUrl)
         } else {
-            val article = if (isSourceArticleUrl(newUrl)) viewModel.fetchArticle(newUrl)
-                          else Article(url = newUrl)
-            showArticleInterface.showFragment(article)
+//            val article = if (isSourceArticleUrl(newUrl)) viewModel.fetchArticle(newUrl)
+//                          else Article(url = newUrl)
+
+            val id = if (isSourceArticleUrl(newUrl)) -1L else 0L
+            showArticleInterface.showFragment(Article(id = id, url = newUrl))
         }
     }
 

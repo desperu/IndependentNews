@@ -1,14 +1,13 @@
 package org.desperu.independentnews.ui.showArticle.fragment
 
-import android.os.Bundle
 import android.view.View
+import android.webkit.WebView
 import androidx.core.view.doOnNextLayout
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.transition.MaterialFadeThrough
-import kotlinx.android.synthetic.main.fragment_web.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
+import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.sharedGraphViewModel
 import org.desperu.independentnews.models.database.Article
 import org.desperu.independentnews.ui.showArticle.ArticleViewModel
@@ -32,6 +31,9 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
     private val safeArgs: WebFragmentArgs by navArgs()
     private val article: Article
         get() = safeArgs.article ?: Article(title = getString(R.string.show_article_activity_article_error))
+
+    // FOR DESIGN
+    private val webView: WebView by bindView(R.id.web_view)
 
     // FOR DATA
     private val binding get() = viewBinding!!
@@ -73,10 +75,10 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
      */
     private fun configureWebView() {
         mWebViewClient = MyWebViewClient()
-        web_view.webViewClient = mWebViewClient
+        webView.webViewClient = mWebViewClient
 
         mWebChromeClient = MyWebChromeClient()
-        web_view.webChromeClient = mWebChromeClient
+        webView.webChromeClient = mWebChromeClient
 
         // TODO add some custom config, pinch zoom ect...
         viewModel.article.set(article)
@@ -88,16 +90,9 @@ class WebFragment : BaseBindingFragment(), FragmentInterface {
 
     override fun onResume() {
         super.onResume()
-        web_view.doOnNextLayout {
+        webView.doOnNextLayout {
             get<ShowArticleInterface>().updateAppBarOnTouch()
             scrollHandler.setupScrollListener()
         }
-    }
-
-    // TODO to check here
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enterTransition = MaterialFadeThrough()
-//        exitTransition = MaterialFadeThrough()
     }
 }

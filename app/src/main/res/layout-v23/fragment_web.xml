@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="org.desperu.independentnews.ui.showArticle.ArticleViewModel"/>
+    </data>
+
+    <FrameLayout
+        android:id="@+id/web_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <org.desperu.independentnews.views.webview.skeleton.NestedSkeletonWebView
+            android:id="@+id/web_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:setArticle="@{viewModel.article}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    </FrameLayout>
+
+</layout>

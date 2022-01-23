@@ -38,6 +38,11 @@ const val DOCUMENTATION_URL = "https://github.com/desperu/IndependentNews/blob/m
 // Who owns what image list // TODO add divided images for better view
 internal val WHO_OWNS_WHAT = arrayListOf(R.drawable.who_owns_what_2019, R.drawable.who_owns_what_2016)
 
+// WebView State Keys
+const val HAS_STARTED = 0
+const val HAS_LOADED = 1
+const val HAS_FINISHED = 2
+
 // SnackBar Keys
 const val SOURCE_FETCH = 0
 const val SOURCE_ERROR = 1

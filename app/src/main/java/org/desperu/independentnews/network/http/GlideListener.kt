@@ -1,6 +1,7 @@
 package org.desperu.independentnews.network.http
 
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.View
 import android.widget.ImageView
 import androidx.core.content.res.ResourcesCompat
@@ -9,6 +10,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.eudycontreras.boneslibrary.extensions.notifySkeletonImageLoaded
 import org.desperu.independentnews.R
 import org.desperu.independentnews.views.GestureImageView
 
@@ -37,6 +39,8 @@ fun getRequestListener(imageView: ImageView, isFragImage: Boolean): RequestListe
             imageView.background = ResourcesCompat
                 .getDrawable(imageView.context.resources, R.drawable.no_image, null)
 
+            // TODO retry 3 times ??
+//            return handleSkeletonImage(imageView)
             return false
         }
 
@@ -55,7 +59,18 @@ fun getRequestListener(imageView: ImageView, isFragImage: Boolean): RequestListe
                 }
             loadingBar?.hide()
 
+//            return handleSkeletonImage(imageView)
             return false
         }
     }
 }
+
+/**
+ * Handle Skeleton image, to notify loaded finish, for API >= 23,
+ * else return false to allow Glide to call [Target.onLoadFailed]. // TODO to check
+ */
+private fun handleSkeletonImage(imageView: ImageView): Boolean =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        imageView.notifySkeletonImageLoaded()
+    else
+        false

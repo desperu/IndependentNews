@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:bones="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="viewModel"
             type="org.desperu.independentnews.ui.showArticle.ArticleViewModel"/>
+
+        <import type="com.eudycontreras.boneslibrary.properties.ShapeType" />
+        <import alias="Utils" type="com.eudycontreras.boneslibrary.extensions.NumberExtensionsKt" />
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -14,6 +17,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:isScrollContainer="true"
+
+        bones:skeletonEnabled="@{viewModel.isFetching}"
+
+        bones:skeletonBoneColor="@{@color/colorBone}"
+        bones:skeletonBoneCornerRadius="@{Utils.getDp(10)}"
+        bones:skeletonBoneMaxThickness="@{Utils.getDp(12)}"
+        bones:skeletonBoneMinThickness="@{Utils.getDp(10)}"
+
+        bones:skeletonShimmerRayColor="@{@android:color/white}"
+        bones:skeletonShimmerRayCount="@{4}"
+        bones:skeletonShimmerRayInterpolator="@{@android:interpolator/accelerate_quad}"
+        bones:skeletonShimmerRaySharedInterpolator="@{true}"
+        bones:skeletonShimmerRaySpeedMultiplier="@{1f}"
+        bones:skeletonShimmerRayThicknessRatio="@{0.45f}"
+        bones:skeletonShimmerRayTilt="@{-0.2f}"
+        bones:skeletonTransitionDuration="@{viewModel.duration}"
+        bones:skeletonDissectLargeBones="@{true}"
+        bones:skeletonUseStateTransition="@{true}"
+        bones:skeletonAnimateRestoredBounds="@{true}"
+        bones:skeletonAllowSavedState="@{true}"
+
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -78,7 +102,10 @@
                         android:gravity="center"
                         android:textSize="@dimen/article_title_text_size"
                         android:textStyle="bold"
-                        android:text="@{viewModel.article.title}" />
+                        android:text="@{viewModel.article.title}"
+                        bones:skeletonBoneShadeMultiplier="@{0.9f}"
+                        bones:skeletonBoneMaxThickness="@{Utils.getDp(20)}"
+                        bones:skeletonBoneMinThickness="@{Utils.getDp(18)}"/>
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -109,6 +136,31 @@
 
                 </LinearLayout>
 
+<!--                <ImageView-->
+<!--                    android:id="@+id/article_image"-->
+<!--                    android:transitionName="@string/animation_main_to_show_article"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:minWidth="@dimen/article_image_min_width_height"-->
+<!--                    android:minHeight="@dimen/article_image_min_width_height"-->
+<!--                    android:tag="show_article"-->
+
+<!--                    bones:skeletonBoneEnabled="@{true}"-->
+<!--                    bones:skeletonBoneStateOwner="@{true}"-->
+<!--                    bones:skeletonBoneShadeMultiplier="@{0.9f}"-->
+<!--                    bones:skeletonBoneShapeType="@{ShapeType.RECTANGULAR}"-->
+<!--                    bones:skeletonBoneShimmerRayColor="@android:color/white"-->
+<!--                    bones:skeletonBoneShimmerRayCount="@{3}"-->
+<!--                    bones:skeletonBoneShimmerRayInterpolator="@{@android:interpolator/decelerate_quad}"-->
+<!--                    bones:skeletonBoneShimmerRaySharedInterpolator="@{false}"-->
+<!--                    bones:skeletonBoneShimmerRaySpeedMultiplier="@{1.4f}"-->
+<!--                    bones:skeletonBoneShimmerRayThickness="@{50f}"-->
+<!--                    bones:skeletonBoneShimmerRayTilt="@{-0.2f}"-->
+
+<!--                    android:onClick="@{viewModel.onClickImage}"-->
+<!--                    app:setImage="@{viewModel.article.imageUrl}"-->
+<!--                    tools:ignore="UnusedAttribute" />-->
+
                 <ImageView
                     android:id="@+id/article_image"
                     android:transitionName="@string/animation_main_to_show_article"
@@ -128,7 +180,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <org.desperu.independentnews.views.webview.MyWebView
+                <org.desperu.independentnews.views.webview.skeleton.SkeletonWebView
                     android:id="@+id/article_web_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

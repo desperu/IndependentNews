@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.activity_show_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.fragment.ArticleFragment
-import org.desperu.independentnews.views.webview.NestedWebView
+import org.desperu.independentnews.views.webview.MyWebView
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
@@ -28,7 +28,7 @@ class ScrollHandler : ScrollHandlerInterface, KoinComponent {
 
     // FOR DESIGN
     private val sv: NestedScrollView get() = activity.findViewById(R.id.article_scroll_view)
-    private val nestedWebView: NestedWebView get() = activity.findViewById(R.id.web_view)
+    private val nestedWebView: MyWebView get() = activity.findViewById(R.id.web_view)
     private val isArticleFrag get() = showArticleInterface.getCurrentFragment() is ArticleFragment
     override val scrollable: ViewGroup get() = if (isArticleFrag) sv else nestedWebView
 
@@ -98,6 +98,7 @@ class ScrollHandler : ScrollHandlerInterface, KoinComponent {
     override fun scrollTo(y: Int?) {
         Log.e(javaClass.enclosingMethod?.name, "Scroll To Scrollable : $scrollable")
         scrollable.doOnLayout {
+//        scrollable.doOnNextLayout {
             val scrollY = when {
                 y != null -> y
                 scrollPosition > -1 -> scrollPosition

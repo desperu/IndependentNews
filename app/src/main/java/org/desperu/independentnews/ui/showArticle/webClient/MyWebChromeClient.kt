@@ -36,7 +36,7 @@ class MyWebChromeClient : WebChromeClient(), KoinComponent {
     private val activity = get<ShowArticleInterface>().activity
     private val articleDesign: ArticleDesignInterface by inject()
     private val scrollHandler: ScrollHandlerInterface by inject()
-    private val sysUiHelper: SystemUiHelper = get()
+    private val sysUiHelper: SystemUiHelper get() = get()
 
     // FOR UI
     private val swipeContainer: View by bindView(activity, R.id.article_swipe_refresh)

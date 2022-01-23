@@ -19,9 +19,7 @@ import org.desperu.independentnews.extension.parseHtml.mToString
 import org.desperu.independentnews.helpers.DialogHelper
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
-import org.desperu.independentnews.utils.AUTO_REMOVE_PAUSE
-import org.desperu.independentnews.utils.AUTO_REMOVE_PAUSE_DEFAULT
-import org.desperu.independentnews.utils.REMOVE_PAUSED
+import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.Utils.isHtmlData
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -58,6 +56,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
     override var isFirstPage = true
 //    private var hasStarted = false
 //    private var isLayoutDesigned = false
+    private var webViewState = -1
     override var isRefresh = false
     private var dialogCount = 0
 
@@ -95,6 +94,14 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
         }
     }
 
+    /**
+     * Setup scrollable visibility, to show it at first start,
+     * and use alpha 0 for fragment transition, from xml layout.
+     */
+    override fun setupScrollableVisibility() { // TODO to remove ??
+        scrollHandler.scrollable.alpha = if (isFirstPage) 1f else 0f
+    }
+
     // --------------
     // UI
     // --------------
@@ -114,34 +121,50 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
 
         Log.e(javaClass.enclosingMethod?.name, "progress : $progress") // TODO to remove
 
+        // TODO WebView lifecycle mistake onStart onFinish onPageCommit ...
+
+        // TODO create state hasStart hasLoaded/hasDesigned hasFinish
         when(progress) {
             0 -> { // TODO hasStart hasFinished ????
+//                if (webViewState != HAS_FINISHED)
+//                    return
+//                webViewState = HAS_STARTED
+
 //                hasStarted = true
 //                isLayoutDesigned = false
                 scrollHandler.hasScroll = false
 //                sv.visibility = View.INVISIBLE
-                scrollHandler.scrollable.alpha = 0f
+//                scrollHandler.scrollable.alpha = 0f
 
                 scrollBar.visibility = View.INVISIBLE
-                loadingAnimBar.show()
+//                loadingAnimBar.show()
                 loadingProgressBar.visibility = View.VISIBLE
+
+                // TODO extend app bar and isLoading = true
             }
             in 80..100 -> {
-                if (!isFirstPage) {
+//                if (!isFirstPage && webViewState < HAS_LOADED) {
+//                    webViewState = HAS_LOADED
+
 //                if (!isLayoutDesigned && !isFirstPage) {
 //                    isLayoutDesigned = true
 //                    Log.e(javaClass.enclosingMethod?.name, "is Layout designed : $isLayoutDesigned") // TODO to remove
                     activity.article_swipe_refresh.isRefreshing = false
                     Log.e(javaClass.enclosingMethod?.name, "ActualUrl : $actualUrl")
-                    if (!isHtmlData(actualUrl.mToString())) scrollHandler.scrollTo(null)
+//                    if (!isHtmlData(actualUrl.mToString())) scrollHandler.scrollTo(null)
                     articleAnimations.showScrollView()
-                }
+//                }
             }
             101 -> {
+//                webViewState = HAS_FINISHED
+
 //                hasStarted = false
 //                isLayoutDesigned = true
                 isRefresh = false
                 isFirstPage = false
+//                Handler(Looper.getMainLooper()).postDelayed(2000L) {
+//                    activity.viewModel.isLoading.set(false)
+//                }
 
                 scrollBar.apply { visibility = View.VISIBLE; this.progress = 0 }
                 loadingProgressBar.visibility = View.INVISIBLE

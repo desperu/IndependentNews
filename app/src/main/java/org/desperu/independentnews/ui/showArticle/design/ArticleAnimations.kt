@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
@@ -16,11 +15,9 @@ import androidx.core.os.postDelayed
 import androidx.core.transition.doOnEnd
 import androidx.core.widget.ContentLoadingProgressBar
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.lifecycle.lifecycleScope
 import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.bindView
 import org.desperu.independentnews.extension.design.getValueAnimator
-import org.desperu.independentnews.helpers.AsyncHelper.waitCondition
 import org.desperu.independentnews.ui.showArticle.fabsMenu.IconAnim
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -74,18 +71,18 @@ class ArticleAnimationsImpl(private val activity: AppCompatActivity) : ArticleAn
      */
     override fun showScrollView() {
         // To prepare the view before the animation
-        if (scrollable.alpha != 0f) scrollable.alpha = 0f // TODO not always the good scrollable, use doOnPreDraw ???
-        Log.e(javaClass.enclosingClass?.name, "Show ScrollView Scrollable : $scrollable")
-
-        // TODO add do to execute each pass and swipe container to loading progress, and expand app bar on reload ??
-        waitCondition(activity.lifecycleScope, 2000L, { scrollHandler.hasScroll }) {
-            Log.e(javaClass.enclosingMethod?.name, "show scroll view") // TODO to remove
-            loadingAnimBar.hide()
-            getSVAlphaAnim().start()
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                getCircularReveal().start()
-        }
+//        if (scrollable.alpha != 0f) scrollable.alpha = 0f // TODO not always the good scrollable, use doOnPreDraw ???
+//        Log.e(javaClass.enclosingClass?.name, "Show ScrollView Scrollable : $scrollable")
+//
+//        // TODO add do to execute each pass and swipe container to loading progress, and expand app bar on reload ??
+//        waitCondition(activity.lifecycleScope, 2000L, { scrollHandler.hasScroll }) {
+//            Log.e(javaClass.enclosingMethod?.name, "show scroll view") // TODO to remove
+//            loadingAnimBar.hide()
+//            getSVAlphaAnim().start()
+//
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+//                getCircularReveal().start()
+//        }
     }
 
     /**

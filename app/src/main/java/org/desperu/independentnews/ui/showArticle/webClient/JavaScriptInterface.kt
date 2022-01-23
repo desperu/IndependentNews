@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.layout_fabs_menu.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.desperu.independentnews.utils.ON_PAGE_SHOW
+import org.desperu.independentnews.views.webview.MyWebView
 
 /**
  * The javascript interface name, to call android function.
@@ -43,7 +44,7 @@ class JavaScriptInterface(private val activity: AppCompatActivity) {
     @JavascriptInterface
     fun webScrollTo(y: Int) {
         activity.lifecycleScope.launch(Dispatchers.Main) {
-            val contentHeight = activity.article_web_view.contentHeight
+            val contentHeight = (activity.article_web_view as MyWebView).contentHeight
             val realHeight = activity.article_web_view.height
             val articleDataHeight = activity.article_data_container.measuredHeight
 
@@ -64,8 +65,8 @@ class JavaScriptInterface(private val activity: AppCompatActivity) {
      */
     @JavascriptInterface
     fun applyCss(event: String) = activity.lifecycleScope.launch(Dispatchers.Main) {
-        val webView = activity.run { article_web_view ?: web_view ?: source_detail_web_view }
-        val hasContent = webView?.contentHeight ?: 0 > 0
+        val webView = activity.run { article_web_view ?: web_view ?: source_detail_web_view } as MyWebView
+        val hasContent = webView.contentHeight > 0
 
         // If the web view has content or it's on page show event
         // Web view is ready to apply css style

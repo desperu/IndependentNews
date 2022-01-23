@@ -13,7 +13,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
-import androidx.core.transition.doOnEnd
 import androidx.core.view.doOnPreDraw
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -36,7 +35,7 @@ private const val LOADING_SKELETON = 1
 private const val HIDE_SKELETON = 2
 
 /**
- * Skeleton Web View that fake web view content loading with text view and extend from [MyWebView].
+ * Skeleton Web View that fake web view content loading with text view and extend from [MyWebView].
  * Require Api > Marshmallow, for Skeleton support.
  * Need to be wrapped under a ViewGroup to properly works, if not throw an exception.
  *
@@ -93,26 +92,6 @@ open class SkeletonWebView @JvmOverloads constructor (
     }
 
     /**
-     * Show the skeleton web view only if not already shown.
-     */
-    private fun showSkeleton() {
-        if (state != LOADING_SKELETON) {
-            viewModel.isLoading.set(true)
-            addSkeletonWebView()
-            state = LOADING_SKELETON
-        }
-    }
-
-    /**
-     * Add the skeleton web view at the place of the web view in its parent view group.
-     */
-    private fun addSkeletonWebView() {
-        setSkeletonBindingView()
-        visibility = INVISIBLE
-        viewGroup.addView(skeletonBindingView.root, index)
-    }
-
-    /**
      * Set the Skeleton Binding View with the skeleton view model.
      */
     private fun setSkeletonBindingView() {
@@ -129,35 +108,51 @@ open class SkeletonWebView @JvmOverloads constructor (
         )
     }
 
+    // --------------
+    // SHOW / HIDE
+    // --------------
+
     /**
-     * Hide the skeleton web view.
+     * Show the skeleton web view only if not already shown,
+     * add it at the same place of the web view in its parent view group.
      */
-    private fun hideSkeleton() {
-        if (state != HIDE_SKELETON && ::skeletonBindingView.isInitialized) {
-            removeSkeletonWebView()
-            state = HIDE_SKELETON
+    private fun showSkeleton() {
+        if (state != LOADING_SKELETON) {
+            viewModel.isLoading.set(true)
+            if (!::skeletonBindingView.isInitialized) setSkeletonBindingView()
+            visibility = INVISIBLE
+            viewGroup.addView(skeletonBindingView.root, index)
+            state = LOADING_SKELETON
         }
     }
 
     /**
-     * Remove the skeleton web view from its parent view group, after has scroll.
+     * Hide the skeleton web view, remove from its parent view group, after has scroll.
      */
-    private fun removeSkeletonWebView() {
-        waitCondition(findViewTreeLifecycleOwner()?.lifecycleScope ?: return,
-            2000L,
-            { scrollHandler.hasScroll } // TODO use toApplyCss or create onCssApplied
-        ) {
-            // Add fade transition
-            val fade = Fade().apply { duration = viewModel.duration }
-            TransitionManager.beginDelayedTransition(viewGroup, fade)
+    private fun hideSkeleton() {
+        if (state != HIDE_SKELETON && ::skeletonBindingView.isInitialized) {
+            waitCondition(findViewTreeLifecycleOwner()?.lifecycleScope ?: return,
+                2000L,
+                { scrollHandler.hasScroll } // TODO use toApplyCss or create onCssApplied
+            ) {
+                // Add fade transition
+                val fade = Fade().apply { duration = viewModel.duration }
+                TransitionManager.beginDelayedTransition(viewGroup, fade)
 
-            viewModel.isLoading.set(false)
-            viewGroup.removeView(skeletonBindingView.root)
+                viewModel.isLoading.set(false)
+                viewGroup.removeView(skeletonBindingView.root)
 
-            TransitionManager.beginDelayedTransition(viewGroup, fade)
-            visibility = VISIBLE
+                TransitionManager.beginDelayedTransition(viewGroup, fade)
+                visibility = VISIBLE
 
-            fade.doOnEnd { skeletonWebViewContainer.requireSkeletonDrawable().dispose() }
+//                fade.doOnEnd { && doOnCancel
+                    state = HIDE_SKELETON
+                    skeletonWebViewContainer.requireSkeletonDrawable().dispose()
+                    requireSkeletonDrawable().dispose()
+                // TODO kill after each playing ot prevent memory leak...
+                    // skeletonBindingView = null
+//                }
+            }
         }
     }
 
@@ -173,12 +168,13 @@ open class SkeletonWebView @JvmOverloads constructor (
         super.setWebViewClient(skeletonWebViewClient)
     }
 
-//    override fun destroy() {
-//        // TO prevent leak from SkeletonManager.owner on View.mContext
-//        viewGroup.requireSkeletonDrawable().dispose()
-//        skeletonWebViewContainer.requireSkeletonDrawable().dispose()
-//        super.destroy()
-//    }
+    override fun destroy() {
+        // TO prevent leak from SkeletonManager.owner on View.mContext
+        requireSkeletonDrawable().dispose()
+        skeletonWebViewContainer.requireSkeletonDrawable().dispose()
+        // skeletonBindingView = null
+        super.destroy()
+    }
 
     // --------------
     // WEB CLIENT

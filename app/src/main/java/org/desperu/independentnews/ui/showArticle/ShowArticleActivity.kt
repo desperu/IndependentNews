@@ -86,7 +86,7 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
     override val fragmentInterface: FragmentInterface get() = get { parametersOf(getCurrentFragment()) }
     private val mWebViewClient get() = fragmentInterface.mWebViewClient
     private val mWebChromeClient get() = fragmentInterface.mWebChromeClient
-    override val webView: MyWebView get() = article_web_view ?: web_view
+    override val webView: MyWebView get() = (article_web_view ?: web_view) as MyWebView
     private lateinit var navController: NavController
 
     /**
@@ -249,6 +249,16 @@ class ShowArticleActivity: BaseActivity(showArticleModule), ShowArticleInterface
         configureDesignDependency() // To prevent bug when bindView at start
         configureTransition()
         FabsMenu() // Need ArticleDesignInterface Koin instance
+
+//        SkeletonDrawable.create(article_scroll_view)
+//            .builder()
+//            .setEnabled(true)
+//            .setAllowSavedState(true)
+//            .withShimmerBuilder {
+//                setThickness(10.dp)
+//                setTilt(0.3f)
+//            }
+//            .setCornerRadii(10f)
     }
 
     override fun onResume() {

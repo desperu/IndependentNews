@@ -134,13 +134,20 @@ data class ReporterreSourcePage(private val htmlPage: ResponseBody): BaseHtmlSou
         }
 
     // TODO :
-    //  - source page redirection bug
-    //  - Source page duplicate, remove before store if already in db !!
-    //  - Update source design
-    //  - Add swipe to refresh
+    //  - Source page duplicate, remove before store if already in db !!                        -> Already do...
+    //  - Add swipe to refresh                                                                  -> To check with history
     //  - Add search
-    //  - Reporterre new articles text size to correct
-    //  - Reduce onPageShow time out ??? to 1000L ???
+    //  - Reporterre new articles text size to correct <<<<<<<<<<<<<<<<<<<
+    //  - Update Show article transition, remove by two use
+    //  - Reduce onPageShow time out ??? to 1000L ???                                           -> Do, to check on real device
+    //  - Correct update data receiver mistake                                                  -> Log add, check on real device
+    //  - App name in android app overview in white                                             -> Style updated, check on read device
     //  - Add web fragment or web activity
-    //  - Support contact in basta source page
+    //  - Support contact javascript in basta source page
+    //  - Correct nav menu header size
+    //  - Check when back into show article, if css is properly applied !!
+    //  - Correct bug in source, when back from detail to list
+    //  - Video full screen bug
+    //  - Try to use curl to bypass cloudlfare, it seems to work, tried on my real device (rooted one A9)
+    //  - Minus FabMenu expand durantion
 }

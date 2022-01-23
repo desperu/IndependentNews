@@ -1,11 +1,9 @@
 package org.desperu.independentnews.ui.showArticle.fragment
 
-import android.os.Bundle
 import android.view.View
 import androidx.core.view.doOnNextLayout
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.transition.MaterialFadeThrough
 import kotlinx.android.synthetic.main.fragment_article.*
 import org.desperu.independentnews.R
 import org.desperu.independentnews.base.ui.BaseBindingFragment
@@ -17,6 +15,7 @@ import org.desperu.independentnews.ui.showArticle.ShowArticleInterface
 import org.desperu.independentnews.ui.showArticle.design.ScrollHandlerInterface
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebChromeClient
 import org.desperu.independentnews.ui.showArticle.webClient.MyWebViewClient
+import org.desperu.independentnews.views.webview.MyWebView
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
@@ -72,11 +71,13 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
      * Configure the web view client.
      */
     private fun configureWebViewClient() {
+        val webView = article_web_view as MyWebView
+
         mWebViewClient = MyWebViewClient()
-        article_web_view.webViewClient = mWebViewClient
+        webView.webViewClient = mWebViewClient
 
         mWebChromeClient = MyWebChromeClient()
-        article_web_view.webChromeClient = mWebChromeClient
+        webView.webChromeClient = mWebChromeClient
     }
 
     // -----------------
@@ -90,13 +91,5 @@ class ArticleFragment : BaseBindingFragment(), FragmentInterface {
             viewModel.setUserArticleState() // Need ArticleDesignInterface Koin instance set
             scrollHandler.setupScrollListener()
         }
-    }
-
-    // TODO to check here
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        enterTransition = MaterialFadeThrough()
-//        reenterTransition = MaterialFadeThrough()
-        exitTransition = MaterialFadeThrough()
     }
 }
