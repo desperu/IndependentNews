@@ -59,6 +59,7 @@ class ArticleAnimationsImpl(private val activity: AppCompatActivity) : ArticleAn
 
     // FOR COMMUNICATION
     private val scrollHandler: ScrollHandlerInterface by inject()
+    private val articleDesign: ArticleDesign by inject()
 
     // FOR DESIGN
     private val scrollable: ViewGroup get() = scrollHandler.scrollable
@@ -83,8 +84,10 @@ class ArticleAnimationsImpl(private val activity: AppCompatActivity) : ArticleAn
             loadingAnimBar.hide()
             getSVAlphaAnim().start()
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !articleDesign.isFirstPage) {
                 getCircularReveal().start()
+                articleDesign.isFirstPage = false
+            }
         }
     }
 
