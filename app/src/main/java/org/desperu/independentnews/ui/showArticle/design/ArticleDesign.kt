@@ -134,7 +134,7 @@ class ArticleDesign : ArticleDesignInterface, KoinComponent {
                     activity.article_swipe_refresh.isRefreshing = false
                     Log.e(javaClass.enclosingMethod?.name, "ActualUrl : $actualUrl")
                     if (!isHtmlData(actualUrl.mToString())) scrollHandler.scrollTo(null)
-                    articleAnimations.showScrollView()
+                    else articleAnimations.showScrollView()
                 }
             }
             101 -> {

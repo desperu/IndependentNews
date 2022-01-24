@@ -5,7 +5,6 @@ import androidx.databinding.Observable
 import androidx.databinding.Observable.OnPropertyChangedCallback
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,11 +15,10 @@ import org.desperu.independentnews.repositories.database.CssRepository
 import org.desperu.independentnews.repositories.database.UserArticleRepository
 import org.desperu.independentnews.service.SharedPrefService
 import org.desperu.independentnews.ui.showArticle.design.ArticleAnimations
-import org.desperu.independentnews.utils.ADDED_FAVORITE
-import org.desperu.independentnews.utils.ADDED_FAVORITE_DEFAULT
-import org.desperu.independentnews.utils.ADDED_PAUSED
-import org.desperu.independentnews.utils.ADDED_PAUSED_DEFAULT
+import org.desperu.independentnews.utils.*
 import org.desperu.independentnews.utils.SourcesUtils.getSourceNameFromUrl
+import org.desperu.independentnews.utils.Utils.getRandomString
+import org.desperu.independentnews.views.webview.skeleton.SkeletonWebViewBinding
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.inject
@@ -54,7 +52,7 @@ class ArticleViewModel(
     private val ideNewsRepository: IndependentNewsRepository,
     private val userArticleRepository: UserArticleRepository,
     private val router: ImageRouter
-): ViewModel(), KoinComponent {
+): SkeletonWebViewBinding(), KoinComponent {
 
     // FOR COMMUNICATION
     private val articleAnimations: ArticleAnimations by inject()
@@ -66,6 +64,11 @@ class ArticleViewModel(
     internal val updatedUserArticles = mutableListOf<Long>()
     val isFavorite = ObservableBoolean(false)
     val isPaused = ObservableBoolean(false)
+
+    // FOR SkeletonWebViewBinding implementation
+    override val title = article.get()?.title ?: getRandomString(SKELETON_TITLE_LENGTH)
+    override val isFetching = ObservableBoolean(false)
+    override val isLoading = ObservableBoolean(true)
 
     // --------------
     // LISTENERS
@@ -85,7 +88,12 @@ class ArticleViewModel(
     private val onArticleChanged = object : OnPropertyChangedCallback() {
 
         override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-            setUserArticleState()
+            isLoading.set(true) // Show loading anim on each reloadE
+
+            if (article.get()?.id == -1L)
+                fetchAndSetArticle(article.get()!!.url)
+            else
+                setUserArticleState()
         }
     }
 
@@ -104,7 +112,7 @@ class ArticleViewModel(
     internal fun setUserArticleState() = viewModelScope.launch(Dispatchers.IO) {
         val articleId = article.get()?.id ?: 0L
         isFavorite.set(userArticleRepository.getFavoriteArticle(articleId) != null)
-        
+
         val paused = userArticleRepository.getPausedArticle(articleId)
         isPaused.set(paused != null)
         paused?.let { articleAnimations.resumePausedArticle(it.scrollPosition) }
@@ -182,11 +190,14 @@ class ArticleViewModel(
 
     /**
      * Fetch and set article for the given url to display it to the user.
+     * Switch fetching state to handle skeleton loading anim.
      *
      * @param url the article url to fetch.
      */
     internal fun fetchAndSetArticle(url: String) = viewModelScope.launch(Dispatchers.IO) {
+        isFetching.set(true)
         article.set(fetchArticle(url))
+        isFetching.set(false)
     }
 
     // --------------
