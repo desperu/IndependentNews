@@ -2,10 +2,10 @@
 <resources>
 
     <!-- Filter Motion Animation Duration -->
-    <integer name="pathAnimDuration">300</integer>
-    <integer name="revealAnimDuration">300</integer>
-    <integer name="settleAnimDuration">300</integer>
-    <integer name="collapseAnimDuration">350</integer>
+    <integer name="pathAnimDuration">200</integer>
+    <integer name="revealAnimDuration">200</integer>
+    <integer name="settleAnimDuration">200</integer>
+    <integer name="collapseAnimDuration">250</integer>
 
     <integer name="insetAnimDuration">200</integer>
     <integer name="loadingAnimDuration">600</integer>

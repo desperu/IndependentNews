@@ -47,7 +47,7 @@ import org.desperu.independentnews.utils.Utils.isInternetAvailable
 import org.koin.android.ext.android.get
 import org.koin.core.parameter.parametersOf
 
-var animationPlaybackSpeed: Double = 1.0 // Was 0.8
+var animationPlaybackSpeed: Double = 1.2 // Was 0.8
 /**
  * The names of the arguments to received data to this Activity.
  */
