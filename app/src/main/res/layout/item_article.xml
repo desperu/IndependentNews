@@ -7,6 +7,10 @@
         <variable
             name="viewModel"
             type="org.desperu.independentnews.ui.main.fragment.articleList.ArticleItemViewModel"/>
+
+        <variable
+            name="handler"
+            type="org.desperu.independentnews.ui.main.fragment.articleList.ArticleHandler" />
     </data>
 
     <!--
@@ -176,7 +180,7 @@
                         android:layout_marginTop="@dimen/item_article_expand_view_padding_top"
                         android:layout_marginEnd="@dimen/default_middle_margin"
                         android:visibility="gone"
-                        android:onClick="@{viewModel.onClickArticle}"
+                        android:onClick="@{() -> handler.onClickItem()}"
                         tools:visibility="gone">
 
                         <TextView

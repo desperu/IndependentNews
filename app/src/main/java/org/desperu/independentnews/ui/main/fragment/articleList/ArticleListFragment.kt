@@ -2,6 +2,7 @@ package org.desperu.independentnews.ui.main.fragment.articleList
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.postOnAnimationDelayed
 import androidx.databinding.DataBindingUtil
@@ -33,7 +34,7 @@ const val TODAY_ARTICLES_FRAG: String = "todayArticlesFrag"
  *
  * @constructor Instantiates a new ArticleListFragment.
  */
-class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
+class ArticleListFragment: BaseBindingFragment(), ArticleListInterface, ArticleHandler {
 
     // FROM BUNDLE
     override val fragKey: Int? get() = arguments?.getInt(FRAG_KEY, NO_FRAG)
@@ -99,7 +100,9 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
      * Configure Recycler view.
      */
     private fun configureRecyclerView() {
-        articleListAdapter = context?.let { ArticleListAdapter(it, R.layout.item_article) }
+        articleListAdapter = context?.let {
+            ArticleListAdapter(it, R.layout.item_article, this)
+        }
         recycler_view.adapter = articleListAdapter
         recycler_view.layoutManager = LinearLayoutManager(context)
         recycler_view.setHasFixedSize(true)
@@ -147,6 +150,10 @@ class ArticleListFragment: BaseBindingFragment(), ArticleListInterface {
         swipeItem = null
         itemTouch = null
         super.onDestroyView()
+    }
+
+    override fun onClickItem() {
+        Toast.makeText(context, "Article clicked with Handler interface", Toast.LENGTH_LONG).show()
     }
 
     // -----------------

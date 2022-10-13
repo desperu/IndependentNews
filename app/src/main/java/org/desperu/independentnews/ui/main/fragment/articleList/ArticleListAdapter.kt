@@ -23,7 +23,11 @@ import org.desperu.independentnews.R
 import org.desperu.independentnews.extension.design.*
 import org.desperu.independentnews.ui.main.animationPlaybackSpeed
 
-class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int) : RecyclerView.Adapter<ArticleListAdapter.ArticleViewHolder>() {
+class ArticleListAdapter(
+    context: Context,
+    @LayoutRes private val layoutId: Int,
+    private val handler: ArticleHandler
+) : RecyclerView.Adapter<ArticleListAdapter.ArticleViewHolder>() {
 
     private val originalBg: Int by bindColor(context, R.color.list_item_bg_collapsed)
     private val expandedBg: Int by bindColor(context, R.color.list_item_bg_expanded)
@@ -76,7 +80,8 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder =
         ArticleViewHolder(
-            DataBindingUtil.inflate(inflater, viewType, parent, false)
+            DataBindingUtil.inflate(inflater, viewType, parent, false),
+            handler
         )
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -280,7 +285,10 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
     // ViewHolder
     ///////////////////////////////////////////////////////////////////////////
 
-    class ArticleViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ArticleViewHolder(
+        private val binding: ViewDataBinding,
+        private val handler: ArticleHandler
+    ) : RecyclerView.ViewHolder(binding.root) {
         val expandView: View by bindView(R.id.expand_view)
         val chevron: View by bindView(R.id.chevron)
         val cardContainer: View by bindView(R.id.card_container)
@@ -299,6 +307,7 @@ class ArticleListAdapter(context: Context, @LayoutRes private val layoutId: Int)
 
         internal fun bind(any: Any?) {
             binding.setVariable(org.desperu.independentnews.BR.viewModel, any)
+            binding.setVariable(org.desperu.independentnews.BR.handler, handler)
             binding.executePendingBindings()
         }
     }
